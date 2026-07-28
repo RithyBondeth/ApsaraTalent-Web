@@ -103,7 +103,7 @@ export function ExperienceCard({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="border border-border rounded-lg overflow-hidden shadow-sm bg-background">
+    <div className="border border-border border-l-[5px] border-l-foreground rounded-none overflow-hidden shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] bg-background">
       {/* Card Header Section */}
       <div
         className="flex items-center justify-between px-3 py-2 bg-muted/30 cursor-pointer select-none border-b border-border/40"

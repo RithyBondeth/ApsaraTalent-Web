@@ -2521,7 +2521,7 @@ body:has(.auth-scope),
 /* Primary auth button — calm, with a soft lift on hover */
 .auth-submit {
   min-height: 48px;
-  border-radius: 12px;
+  border-radius: 0;
   transition:
     transform 0.18s ease,
     box-shadow 0.2s ease,
@@ -2534,7 +2534,7 @@ body:has(.auth-scope),
 /* Social buttons — quiet lift on hover */
 .auth-social {
   min-height: 48px;
-  border-radius: 12px !important;
+  border-radius: 0 !important;
   transition:
     transform 0.2s ease,
     border-color 0.2s ease,
@@ -2577,7 +2577,7 @@ body:has(.auth-scope),
     .auth-control-trigger
   ) {
   min-height: 46px;
-  border-radius: 12px;
+  border-radius: 0;
 }
 
 /* Auth checkboxes remain compact and do not inherit action-button sizing. */
@@ -2586,7 +2586,7 @@ body:has(.auth-scope),
   height: 1.15rem;
   min-width: 1.15rem;
   min-height: 1.15rem;
-  border-radius: 0.35rem;
+  border-radius: 0;
   border-color: hsl(var(--foreground) / 0.48);
   background: hsl(var(--card) / 0.72);
   transition:
@@ -2606,10 +2606,11 @@ body:has(.auth-scope),
 .auth-wizard-form {
   overflow: hidden;
   border: 1px solid hsl(var(--border));
-  border-radius: 18px;
+  border-top: 5px solid hsl(var(--foreground));
+  border-radius: 0;
   background: hsl(var(--card) / 0.5);
   padding: 1.25rem;
-  box-shadow: 0 1px 0 hsl(var(--foreground) / 0.025);
+  box-shadow: 5px 5px 0 hsl(var(--foreground) / 0.055);
 }
 
 .auth-wizard-step {
@@ -2665,12 +2666,12 @@ body:has(.auth-scope),
 /* Keep compact utility actions compact inside the wizard. */
 .auth-wizard-form button[class*="h-6"] {
   min-height: 1.5rem !important;
-  border-radius: 0.375rem;
+  border-radius: 0;
 }
 
 .auth-wizard-actions > button {
   min-height: 46px;
-  border-radius: 12px;
+  border-radius: 0;
 }
 
 @media (min-width: 768px) {
@@ -2749,7 +2750,7 @@ body:has(.auth-scope),
 @media (max-width: 767px) {
   .auth-wizard-form {
     padding: 1rem;
-    border-radius: 16px;
+    border-radius: 0;
   }
 
   .auth-wizard-actions > button {

@@ -283,7 +283,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
                 key={s.id}
                 onClick={() => setSelectedStyle(s.id)}
                 disabled={isBusy}
-                className={`text-xs px-3 py-1 rounded-full border transition-all shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`text-xs px-3 py-1 rounded-none border transition-all shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${
                   selectedStyle === s.id
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-transparent text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"

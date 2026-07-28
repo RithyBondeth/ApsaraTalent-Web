@@ -22,35 +22,35 @@ export default function CompanyCardSkeleton() {
       <div className="flex flex-1 flex-col gap-2 tablet-md:gap-1.5 px-4 pt-2 pb-3">
         {/* Name and Meta Section */}
         <div className="flex flex-col gap-1">
-          <Skeleton className="h-4 w-32 rounded" />
+          <Skeleton className="h-4 w-32 rounded-none" />
           <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-            <Skeleton className="h-3 w-20 rounded" />
-            <Skeleton className="h-3 w-16 rounded" />
-            <Skeleton className="h-3 w-[4.5rem] rounded" />
-            <Skeleton className="h-3 w-14 rounded" />
+            <Skeleton className="h-3 w-20 rounded-none" />
+            <Skeleton className="h-3 w-16 rounded-none" />
+            <Skeleton className="h-3 w-[4.5rem] rounded-none" />
+            <Skeleton className="h-3 w-14 rounded-none" />
           </div>
         </div>
 
         {/* Description Section */}
         <div className="space-y-1.5">
-          <Skeleton className="h-3 w-full rounded" />
-          <Skeleton className="h-3 w-4/5 rounded" />
+          <Skeleton className="h-3 w-full rounded-none" />
+          <Skeleton className="h-3 w-4/5 rounded-none" />
         </div>
 
         {/* Open Positions Section */}
         <div className="space-y-1.5">
-          <Skeleton className="h-3 w-28 rounded" />
+          <Skeleton className="h-3 w-28 rounded-none" />
           <div className="flex flex-wrap gap-1.5">
-            <Skeleton className="h-6 w-20 rounded-full" />
-            <Skeleton className="h-6 w-24 rounded-full" />
-            <Skeleton className="h-6 w-16 rounded-full" />
+            <Skeleton className="h-6 w-20 rounded-none" />
+            <Skeleton className="h-6 w-24 rounded-none" />
+            <Skeleton className="h-6 w-16 rounded-none" />
           </div>
         </div>
 
         {/* Benefits Section */}
         <div className="flex flex-wrap gap-1.5">
-          <Skeleton className="h-6 w-[4.5rem] rounded-full" />
-          <Skeleton className="h-6 w-[5.5rem] rounded-full" />
+          <Skeleton className="h-6 w-[4.5rem] rounded-none" />
+          <Skeleton className="h-6 w-[5.5rem] rounded-none" />
         </div>
       </div>
 

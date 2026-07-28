@@ -131,7 +131,7 @@ export default function SkillReferenceStepForm({
             return (
               <div
                 key={index}
-                className={`flex items-center ${bg} pr-2 rounded-2xl`}
+                className={`flex items-center ${bg} pr-2 rounded-none border border-border`}
               >
                 <Tag label={skill} />
                 <LucideXCircle

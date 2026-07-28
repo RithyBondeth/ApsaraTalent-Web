@@ -23,7 +23,7 @@ export function AiQuotaBadge({ className }: { className?: string }) {
     return (
       <div
         className={cn(
-          "h-6 w-36 animate-pulse rounded-full bg-muted",
+          "h-6 w-36 animate-pulse rounded-none bg-muted",
           className,
         )}
       />
@@ -64,7 +64,7 @@ export function AiQuotaBadge({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-2 rounded-full border px-2.5 py-1",
+        "inline-flex items-center gap-2 rounded-none border px-2.5 py-1",
         tone.ring,
         className,
       )}

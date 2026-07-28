@@ -9,11 +9,11 @@ export default function EmployeeCardSkeleton() {
       <div className="flex items-start gap-3 p-4 pb-3 tablet-md:p-3 tablet-md:pb-2">
         <Skeleton className="size-16 shrink-0 rounded-none" />
         <div className="flex-1 flex flex-col gap-1.5">
-          <Skeleton className="h-4 w-28 rounded" />
-          <Skeleton className="h-3 w-20 rounded" />
+          <Skeleton className="h-4 w-28 rounded-none" />
+          <Skeleton className="h-3 w-20 rounded-none" />
           <div className="flex gap-2 mt-0.5">
-            <Skeleton className="h-3 w-16 rounded" />
-            <Skeleton className="h-3 w-14 rounded" />
+            <Skeleton className="h-3 w-16 rounded-none" />
+            <Skeleton className="h-3 w-14 rounded-none" />
           </div>
         </div>
         {/* Like and Quick View Buttons Section (Stacked) */}
@@ -25,27 +25,27 @@ export default function EmployeeCardSkeleton() {
 
       {/* Status Badges Section */}
       <div className="flex flex-wrap items-center gap-1.5 px-4 pb-3">
-        <Skeleton className="h-6 w-20 rounded-full" />
+        <Skeleton className="h-6 w-20 rounded-none" />
       </div>
 
       {/* Skills Section */}
       <div className="flex flex-wrap gap-1.5 px-4 pb-3">
-        <Skeleton className="h-6 w-16 rounded-full" />
-        <Skeleton className="h-6 w-20 rounded-full" />
-        <Skeleton className="h-6 w-14 rounded-full" />
-        <Skeleton className="h-6 w-[4.5rem] rounded-full" />
+        <Skeleton className="h-6 w-16 rounded-none" />
+        <Skeleton className="h-6 w-20 rounded-none" />
+        <Skeleton className="h-6 w-14 rounded-none" />
+        <Skeleton className="h-6 w-[4.5rem] rounded-none" />
       </div>
 
       {/* Experience and Education Section */}
       <div className="flex flex-col gap-1 px-4 pb-3">
-        <Skeleton className="h-3 w-40 rounded" />
-        <Skeleton className="h-3 w-48 rounded" />
+        <Skeleton className="h-3 w-40 rounded-none" />
+        <Skeleton className="h-3 w-48 rounded-none" />
       </div>
 
       {/* Description Section */}
       <div className="px-4 pb-3 flex-1 space-y-1.5">
-        <Skeleton className="h-3 w-full rounded" />
-        <Skeleton className="h-3 w-4/5 rounded" />
+        <Skeleton className="h-3 w-full rounded-none" />
+        <Skeleton className="h-3 w-4/5 rounded-none" />
       </div>
 
       {/* Footer Section */}

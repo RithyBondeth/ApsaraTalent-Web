@@ -31,9 +31,9 @@ function NeutralCardSkeleton() {
       <div className="flex items-start gap-3 p-4 pb-3">
         <Skeleton className="size-16 shrink-0 rounded-none" />
         <div className="flex-1 flex flex-col gap-1.5">
-          <Skeleton className="h-4 w-28 rounded" />
-          <Skeleton className="h-3 w-20 rounded" />
-          <Skeleton className="h-3 w-16 rounded" />
+          <Skeleton className="h-4 w-28 rounded-none" />
+          <Skeleton className="h-3 w-20 rounded-none" />
+          <Skeleton className="h-3 w-16 rounded-none" />
         </div>
         <div className="flex flex-col gap-1 shrink-0">
           <Skeleton className="size-8 rounded-none" />
@@ -41,13 +41,13 @@ function NeutralCardSkeleton() {
         </div>
       </div>
       <div className="flex gap-1.5 px-4 pb-3">
-        <Skeleton className="h-6 w-16 rounded-full" />
-        <Skeleton className="h-6 w-20 rounded-full" />
-        <Skeleton className="h-6 w-14 rounded-full" />
+        <Skeleton className="h-6 w-16 rounded-none" />
+        <Skeleton className="h-6 w-20 rounded-none" />
+        <Skeleton className="h-6 w-14 rounded-none" />
       </div>
       <div className="px-4 pb-3 space-y-1.5">
-        <Skeleton className="h-3 w-full rounded" />
-        <Skeleton className="h-3 w-4/5 rounded" />
+        <Skeleton className="h-3 w-full rounded-none" />
+        <Skeleton className="h-3 w-4/5 rounded-none" />
       </div>
       <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-border/50">
         <Skeleton className="h-8 w-16 rounded-none" />

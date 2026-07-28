@@ -1539,7 +1539,7 @@ export default function EmployeeProfilePage() {
                           calendarDisabled={{ after: new Date() }}
                           popoverClassName="profile-overlay profile-calendar-popover"
                           calendarClassName="profile-calendar"
-                          className="h-12 rounded-lg bg-background px-3 py-0 font-normal"
+                          className="h-12 rounded-none bg-background px-3 py-0 font-normal"
                         />
                       )
                     }

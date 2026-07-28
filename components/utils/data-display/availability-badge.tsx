@@ -29,7 +29,7 @@ export function AvailabilityBadge({ availability }: { availability: string }) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <span
-      className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-medium ${config.color}`}
+      className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-none border border-current/15 font-medium ${config.color}`}
     >
       {/* Availability Dot Section */}
       <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${config.dot}`} />

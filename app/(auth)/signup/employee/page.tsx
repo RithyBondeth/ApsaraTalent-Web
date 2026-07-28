@@ -439,14 +439,14 @@ export default function EmployeeSignup() {
     <div className="auth-wizard w-full max-w-4xl mx-auto flex flex-col gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* SmartResumeUpload Chip Title Section */}
       {!!parsedData && (
-        <div className="auth-wizard-notice flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-800/50 px-3 py-1.5 rounded-full w-fit">
+        <div className="auth-wizard-notice flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-800/50 border-l-[4px] border-l-emerald-500 px-3 py-1.5 rounded-none w-fit">
           <LucideCheckCircle2 size={13} className="shrink-0" />
           {t("smartUploadDataApplied")}
         </div>
       )}
 
       {/* Step Progress Indicator Section */}
-      <div className="auth-wizard-progress w-full overflow-x-auto pb-1">
+      <div className="auth-wizard-progress w-full overflow-x-auto border border-border border-t-[5px] border-t-foreground bg-card p-4 shadow-[4px_4px_0_hsl(var(--foreground)/0.05)]">
         <div className="w-full min-w-[280px] flex items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => {
@@ -458,20 +458,20 @@ export default function EmployeeSignup() {
               return (
                 <div key={st} className="w-full flex items-center">
                   <div
-                    className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-full font-bold transition-all ${
+                    className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-none font-bold transition-all ${
                       isSkipped
                         ? "bg-muted text-muted-foreground opacity-40 line-through"
                         : isActive
-                          ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
+                          ? "bg-primary text-primary-foreground shadow-[2px_2px_0_hsl(var(--foreground)/0.16)]"
                           : "bg-muted text-muted-foreground"
                     }`}
                   >
                     {st}
                   </div>
                   {index < totalSteps - 1 && (
-                    <div className="flex-1 h-1 bg-muted rounded-full relative">
+                    <div className="flex-1 h-1 bg-muted rounded-none relative">
                       <div
-                        className={`absolute top-0 left-0 h-full rounded-full bg-primary transition-all duration-300 ${
+                        className={`absolute top-0 left-0 h-full rounded-none bg-primary transition-all duration-300 ${
                           step > st && !isSkipped ? "w-full" : "w-0"
                         }`}
                       />

@@ -87,7 +87,7 @@ export default function ExperienceStepForm({
       {fields.map((field, index) => (
         <div
           key={field.id}
-          className="relative flex flex-col items-start gap-3 w-full border border-muted-foreground/10 rounded-xl bg-muted p-5"
+          className="relative flex flex-col items-start gap-3 w-full border border-border border-l-[5px] border-l-foreground rounded-none bg-muted p-5"
         >
           {/* Header Without Remove Button Section */}
           {fields.length === 1 && (

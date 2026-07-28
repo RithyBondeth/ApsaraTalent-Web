@@ -146,7 +146,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
               </SelectContent>
             </Select>
           ) : (
-            <TypographyMuted className="rounded-lg bg-muted/50 px-3 py-2.5 text-sm">
+            <TypographyMuted className="rounded-none border-l-[4px] border-l-foreground bg-muted/50 px-3 py-2.5 text-sm">
               {t("noMatchedEmployees")}
             </TypographyMuted>
           )}
@@ -287,7 +287,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
         </div>
 
         {error && (
-          <p className="rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <p className="rounded-none border border-destructive/20 border-l-[4px] border-l-destructive bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {error}
           </p>
         )}

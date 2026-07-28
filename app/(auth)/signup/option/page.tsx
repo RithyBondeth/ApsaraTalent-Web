@@ -105,10 +105,10 @@ export default function SingUpOption() {
 
   /* ---------------------------------------- Render UI ---------------------------------------- */
   return (
-    <div className="w-full max-w-[500px] mx-auto flex flex-col items-start gap-6 py-8 tablet-lg:py-4">
+    <div className="w-full max-w-[540px] mx-auto flex flex-col items-start gap-6 border border-border border-t-[5px] border-t-foreground bg-card p-6 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-8 tablet-lg:my-4">
       {/* Icon Badge Section */}
-      <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-        <LucideUsers className="size-6 text-primary" />
+      <div className="size-14 rounded-none bg-foreground flex items-center justify-center">
+        <LucideUsers className="size-6 text-background" />
       </div>
 
       {/* Title Section */}
@@ -175,7 +175,7 @@ export default function SingUpOption() {
           if (!open) goToSignup();
         }}
       >
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg rounded-none border-t-[5px] border-t-foreground shadow-[6px_6px_0_hsl(var(--foreground)/0.1)]">
           <div className="px-6 pt-6 pb-5 flex flex-col gap-5">
             {/* Header Section */}
             <DialogHeader>
@@ -194,7 +194,7 @@ export default function SingUpOption() {
             <Button
               type="button"
               variant="ghost"
-              className="w-full text-muted-foreground hover:text-foreground text-sm"
+              className="w-full rounded-none text-muted-foreground hover:text-foreground text-sm"
               onClick={goToSignup}
             >
               {t("smartUploadDialogSkip")}

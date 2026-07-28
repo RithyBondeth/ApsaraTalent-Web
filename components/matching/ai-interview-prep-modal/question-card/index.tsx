@@ -15,7 +15,7 @@ export function QuestionCard(props: IQuestionCardProps) {
 
   /* -------------------------- Render UI ------------------------- */
   return (
-    <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden px-4 py-4 flex flex-col gap-3 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+    <div className="rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] overflow-hidden px-4 py-4 flex flex-col gap-3 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
       {/* Question Section */}
       <div className="flex gap-3">
         <span className="shrink-0 text-xs font-semibold text-muted-foreground/50 w-5 text-right leading-5 mt-0.5">
@@ -23,7 +23,7 @@ export function QuestionCard(props: IQuestionCardProps) {
         </span>
         <div className="flex-1">
           <span
-            className={`inline-flex text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-2 ${interviewPrepChip}`}
+            className={`inline-flex text-[11px] font-semibold px-2.5 py-0.5 rounded-none border border-current/15 mb-2 ${interviewPrepChip}`}
           >
             {item.category}
           </span>
@@ -39,7 +39,7 @@ export function QuestionCard(props: IQuestionCardProps) {
       </div>
 
       {/* Tip Section */}
-      <div className="ml-8 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/30 px-4 py-3">
+      <div className="ml-8 rounded-none bg-amber-50 dark:bg-amber-900/20 border border-amber-100 border-l-[4px] border-l-amber-500 dark:border-amber-800/30 px-4 py-3">
         <div className="flex gap-2.5">
           {/* Icon Section */}
           <LucideLightbulb className="size-4 text-amber-500 shrink-0 mt-0.5" />

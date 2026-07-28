@@ -25,13 +25,13 @@ export function SectionTitle(props: {
         <div
           className={cn(
             "flex size-8 flex-shrink-0 items-center justify-center bg-primary/10",
-            isDetail ? "border border-border bg-muted/60" : "rounded-lg",
+            isDetail ? "border border-border bg-muted/60" : "rounded-none bg-foreground text-background",
           )}
         >
           <span
             className={cn(
               "[&>svg]:size-[18px] [&>svg]:stroke-[1.5]",
-              isDetail ? "[&>svg]:text-foreground" : "[&>svg]:text-primary",
+              isDetail ? "[&>svg]:text-foreground" : "[&>svg]:text-background",
             )}
           >
             {icon}
@@ -63,7 +63,7 @@ export function SectionTitleSkeleton() {
       <Skeleton className="size-8 shrink-0 rounded-none" />
 
       {/* Title Skeleton Section */}
-      <Skeleton className="h-5 w-32" />
+      <Skeleton className="h-5 w-32 rounded-none" />
     </div>
   );
 }

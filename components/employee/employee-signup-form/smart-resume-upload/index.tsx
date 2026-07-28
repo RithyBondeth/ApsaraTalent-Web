@@ -27,7 +27,7 @@ import { toast } from "sonner";
 /* ---------------------------------- Helper ---------------------------------- */
 function Chip({ icon, label }: { icon?: React.ReactNode; label: string }) {
   return (
-    <span className="inline-flex items-center gap-1 text-[11px] bg-background border rounded-full px-2.5 py-0.5 text-foreground/80">
+    <span className="inline-flex items-center gap-1 text-[11px] bg-background border rounded-none px-2.5 py-0.5 text-foreground/80">
       {icon}
       {label}
     </span>
@@ -116,7 +116,7 @@ export default function SmartResumeUpload({
   if (data) {
     const filled = countFilledFields(data);
     return (
-      <div className="w-full rounded-xl border border-green-500/30 bg-green-50/50 dark:bg-green-950/20 overflow-hidden">
+      <div className="w-full rounded-none border border-green-500/30 border-l-[5px] border-l-green-500 bg-green-50/50 dark:bg-green-950/20 overflow-hidden">
         {/* Header Section */}
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
@@ -254,7 +254,7 @@ export default function SmartResumeUpload({
   /* --------------------------------- Loading State -------------------------------- */
   if (loading) {
     return (
-      <div className="w-full rounded-xl border border-dashed border-primary/40 bg-primary/5 px-6 py-8 flex flex-col items-center gap-3">
+      <div className="w-full rounded-none border border-dashed border-primary/40 border-l-[5px] border-l-primary bg-primary/5 px-6 py-8 flex flex-col items-center gap-3">
         {/* Icon Section */}
         <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
           <LucideFileText className="size-5 text-primary" />
@@ -286,7 +286,7 @@ export default function SmartResumeUpload({
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
       onDrop={onDrop}
-      className={`w-full rounded-xl border-2 border-dashed transition-all duration-200 ${
+      className={`w-full rounded-none border-2 border-dashed transition-all duration-200 ${
         isDragging
           ? "border-primary bg-primary/10 scale-[1.01]"
           : "border-border bg-muted/30 hover:border-primary/50 hover:bg-muted/50"

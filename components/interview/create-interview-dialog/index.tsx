@@ -166,8 +166,8 @@ export function CreateInterviewDialog({
   // ── Header Content ──────────────────────────────────────────────────
   const headerContent = (
     <div className="flex items-center gap-3">
-      <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10">
-        <LucideCalendarCheck className="size-5 text-primary" />
+      <div className="flex size-10 items-center justify-center rounded-none bg-foreground text-background">
+        <LucideCalendarCheck className="size-5 text-background" />
       </div>
       <div>
         <p className="text-xs text-muted-foreground mt-0.5">

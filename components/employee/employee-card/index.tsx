@@ -72,7 +72,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
               src={props.avatar}
               alt={props.username ?? "Profile"}
               className="size-16 shrink-0 border border-border shadow-none"
-              rounded="md"
+              rounded="none"
               onClick={props.onProfileImageClick}
               preload={true}
               showLoadingState={true}
@@ -223,7 +223,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
   // ─── Default Variant Section ──────────────────────────────────
   return (
-    <div className="h-fit w-full flex flex-col items-start gap-4 rounded-2xl border border-border/70 bg-card p-4 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_12px_36px_hsl(var(--foreground)/0.11)] hover:border-primary/25">
+    <div className="h-fit w-full flex flex-col items-start gap-4 rounded-none border border-border border-t-[5px] border-t-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] hover:border-foreground/40">
       {/* Profile Section */}
       <div className="w-full flex flex-wrap items-start justify-between gap-3">
         {/* Avatar, Username, JobTitle and Location Section */}
@@ -232,7 +232,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             src={props.avatar}
             alt={props.username ?? "Profile"}
             className="size-20 laptop-sm:size-16"
-            rounded="md"
+            rounded="none"
             onClick={props.onProfileImageClick}
             preload={true}
             showLoadingState={true}
@@ -254,14 +254,14 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         <div className="flex items-center gap-1 shrink-0">
           <Button
             aria-label="Quick view"
-            className="size-10 sm:size-12 rounded-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95"
+            className="size-10 sm:size-12 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95"
             onClick={handleClickDialog}
           >
             <LucideEye className="!size-5 sm:!size-6 transition-all duration-300 ease-in-out" />
           </Button>
           <Button
             aria-label="Like"
-            className="size-10 sm:size-12 rounded-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95"
+            className="size-10 sm:size-12 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
           >
@@ -301,7 +301,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
       <div className="w-full flex items-center justify-end gap-2 sm:gap-3 tablet-lg:justify-stretch tablet-lg:[&>button]:flex-1 phone-xl:justify-stretch phone-xl:[&>button]:flex-1">
         {!props.hideSaveButton && (
           <Button
-            className="text-sm"
+            className="text-sm rounded-none"
             variant="outline"
             onClick={props.onSaveClick}
           >
@@ -309,7 +309,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             <LucideBookmark />
           </Button>
         )}
-        <Button className="text-sm" onClick={props.onViewClick}>
+        <Button className="text-sm rounded-none" onClick={props.onViewClick}>
           {t("view")}
           <LucideCircleArrowRight />
         </Button>
