@@ -241,7 +241,7 @@ function SearchPageLoadingSkeleton({
 
 /* ------------------------- Employee Search Loading -------------------------- */
 export function SearchEmployeeLoadingSkeleton() {
-  return <SearchPageLoadingSkeleton filterCount={5} resultKind="company" />;
+  return <SearchPageLoadingSkeleton filterCount={4} resultKind="company" />;
 }
 
 /* -------------------------- Company Search Loading -------------------------- */

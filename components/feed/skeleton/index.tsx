@@ -136,9 +136,12 @@ export function FeedRecommendationsSkeleton({
   return (
     <div className="flex w-full flex-col gap-5 border-y border-border py-6">
       {/* Title Section */}
-      <div className="flex items-center gap-3">
-        <Skeleton className="h-3 w-5 rounded-none" />
-        <Skeleton className="h-7 w-48 rounded-none" />
+      <div className="flex items-end justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-3 w-5 rounded-none" />
+          <Skeleton className="h-7 w-48 rounded-none" />
+        </div>
+        <Skeleton className="size-5 rounded-none" />
       </div>
 
       {/* Card Grid Section */}

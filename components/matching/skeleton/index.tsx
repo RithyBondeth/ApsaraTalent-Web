@@ -80,12 +80,12 @@ function MatchingEmployeeCardSkeleton() {
       {/* Action Bar Section: AI Score left, Schedule+Chat right (single row on all sizes) */}
       <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/25 px-4 py-3 sm:px-5">
         <div className="flex items-center gap-1.5">
-          <Skeleton className="h-8 w-8 rounded-none sm:w-[90px]" />
+          <Skeleton className="h-8 w-[90px] rounded-none" />
           <Skeleton className="h-8 w-8 rounded-none sm:w-[82px]" />
         </div>
         <div className="flex items-center gap-2">
-          <Skeleton className="h-8 w-8 rounded-none sm:w-[90px]" />
-          <Skeleton className="h-8 w-8 rounded-none sm:w-[90px]" />
+          <Skeleton className="h-8 w-[90px] rounded-none" />
+          <Skeleton className="h-8 w-[90px] rounded-none" />
         </div>
       </div>
     </div>

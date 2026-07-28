@@ -440,7 +440,7 @@ export default function CompanySearchPage() {
             {/* Filter Panel Skeleton Section */}
             {employees === null ? (
               <div className="w-full flex flex-col gap-6">
-                {Array.from({ length: 4 }).map((_, i) => (
+                {Array.from({ length: 2 }).map((_, i) => (
                   <div key={i} className="flex flex-col gap-3">
                     <Skeleton className="h-4 w-32 rounded-none" />
                     <Skeleton className="ml-3 h-3 w-24 rounded-none" />

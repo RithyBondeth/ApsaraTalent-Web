@@ -26,11 +26,11 @@ export default function NotificationLoadingSkeleton() {
         {/* Pill Tabs Filter Section: Hidden on tablet-sm */}
         <div className="flex items-center gap-1 overflow-x-auto bg-muted/45 p-1 scrollbar-none tablet-sm:hidden">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-7 w-16 shrink-0 rounded-none" />
+            <Skeleton key={i} className="h-10 w-16 shrink-0 rounded-none" />
           ))}
         </div>
         {/* Mobile Dropdown Section: Shown only on tablet-sm */}
-        <Skeleton className="hidden h-9 w-full rounded-none tablet-sm:flex" />
+        <Skeleton className="hidden h-11 w-full rounded-none tablet-sm:flex" />
 
         {/* Action Buttons Section: Mobile: full-width split, desktop: fixed-width */}
         <div className="flex items-center gap-2 w-full sm:hidden">
@@ -71,7 +71,7 @@ export function NotificationCardSkeleton() {
           <Skeleton className="h-5 w-36 rounded-none" />
           <div className="flex items-center gap-2">
             <Skeleton className="h-3.5 w-20 rounded-none" />
-            <Skeleton className="size-2 rounded-none" />
+            <Skeleton className="size-2 rounded-full" />
           </div>
         </div>
 

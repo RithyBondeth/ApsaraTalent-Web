@@ -746,16 +746,16 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                     isEmployee ? (
                       <div key={i} className="flex h-full flex-col">
                         <div className="flex items-center gap-1 mb-1.5 px-1">
-                          <Skeleton className="size-3 rounded" />
-                          <Skeleton className="h-2.5 w-16 rounded" />
+                          <Skeleton className="size-3 rounded-none" />
+                          <Skeleton className="h-2.5 w-16 rounded-none" />
                         </div>
                         <CompanyCardSkeleton />
                       </div>
                     ) : (
                       <div key={i} className="flex h-full flex-col">
                         <div className="flex items-center gap-1 mb-1.5 px-1">
-                          <Skeleton className="size-3 rounded" />
-                          <Skeleton className="h-2.5 w-16 rounded" />
+                          <Skeleton className="size-3 rounded-none" />
+                          <Skeleton className="h-2.5 w-16 rounded-none" />
                         </div>
                         <EmployeeCardSkeleton />
                       </div>

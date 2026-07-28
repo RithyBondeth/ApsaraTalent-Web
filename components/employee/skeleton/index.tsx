@@ -6,7 +6,7 @@ export default function EmployeeCardSkeleton() {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden rounded-none border border-border border-t-[5px] border-t-foreground bg-card">
       {/* Header Section */}
-      <div className="flex items-start gap-3 p-4 pb-3 tablet-md:p-3 tablet-md:pb-2">
+      <div className="flex items-start gap-3 p-4 pb-3">
         <Skeleton className="size-16 shrink-0 rounded-none" />
         <div className="flex-1 flex flex-col gap-1.5">
           <Skeleton className="h-4 w-28 rounded-none" />

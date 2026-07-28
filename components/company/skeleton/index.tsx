@@ -19,7 +19,7 @@ export default function CompanyCardSkeleton() {
         <Skeleton className="size-16 rounded-none border-4 border-card tablet-md:size-14" />
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 tablet-md:gap-1.5 px-4 pt-2 pb-3">
+      <div className="flex flex-1 flex-col gap-3 px-4 pb-4 pt-3 tablet-md:gap-2.5">
         {/* Name and Meta Section */}
         <div className="flex flex-col gap-1">
           <Skeleton className="h-4 w-32 rounded-none" />
