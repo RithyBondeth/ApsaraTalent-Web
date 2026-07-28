@@ -46,10 +46,10 @@ export function AccountSection(props: IAccountSectionProps) {
       description={t("accountDescription")}
     >
       {/* Header Section: Avatar, DisplayName, Email, Role */}
-      <div className="flex items-center gap-4 px-4 py-4 bg-muted/30">
-        <Avatar className="size-14 rounded-xl shrink-0">
+      <div className="flex items-center gap-4 bg-muted/30 px-4 py-5 sm:px-5">
+        <Avatar className="size-14 shrink-0 rounded-none border border-border">
           <AvatarImage src={avatarSrc} alt={displayName} />
-          <AvatarFallback className="rounded-xl text-base font-semibold">
+          <AvatarFallback className="rounded-none text-base font-black">
             {getNameInitials(displayName)}
           </AvatarFallback>
         </Avatar>
@@ -62,7 +62,7 @@ export function AccountSection(props: IAccountSectionProps) {
           </TypographyMuted>
           <Badge
             variant="secondary"
-            className="w-fit mt-0.5 text-[10px] capitalize"
+            className="mt-0.5 w-fit rounded-none text-[10px] font-bold uppercase tracking-wider"
           >
             {role ?? "—"}
           </Badge>
@@ -78,9 +78,9 @@ export function AccountSection(props: IAccountSectionProps) {
       />
 
       {/* Two-Factor Auth Section */}
-      <div className="flex items-center justify-between gap-4 px-4 py-3">
+      <div className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
         <div className="flex items-center gap-3 min-w-0">
-          <span className="text-muted-foreground shrink-0 [&>svg]:size-4">
+          <span className="flex size-8 shrink-0 items-center justify-center bg-muted text-foreground [&>svg]:size-4">
             <LucideShieldCheck />
           </span>
           <div className="flex flex-col">
@@ -92,15 +92,15 @@ export function AccountSection(props: IAccountSectionProps) {
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex shrink-0 items-center gap-2 pl-11 sm:pl-0">
           {isTwoFactorEnabled ? (
-            <Badge className="text-[10px] bg-emerald-500/10 text-emerald-600 border border-emerald-300/40 hover:bg-emerald-500/10">
+            <Badge className="rounded-none border border-emerald-300/40 bg-emerald-500/10 text-[10px] text-emerald-600 hover:bg-emerald-500/10">
               {t("enabled")}
             </Badge>
           ) : (
             <Badge
               variant="outline"
-              className="text-[10px] text-muted-foreground"
+              className="rounded-none text-[10px] text-muted-foreground"
             >
               {t("disabled")}
             </Badge>
@@ -108,13 +108,14 @@ export function AccountSection(props: IAccountSectionProps) {
           <Button
             size="sm"
             variant={isTwoFactorEnabled ? "outline" : "default"}
-            className="shrink-0 text-xs rounded-lg"
+            className="shrink-0 rounded-none text-xs"
             onClick={onToggleTwoFactor}
           >
             {isTwoFactorEnabled ? t("disable") : t("enable")}
           </Button>
         </div>
       </div>
+      <Separator />
 
       {/* Last Login Section */}
       <SettingRow
@@ -131,9 +132,9 @@ export function AccountSection(props: IAccountSectionProps) {
       />
 
       {/* Reset Password Section */}
-      <div className="flex items-center justify-between gap-4 px-4 py-3">
+      <div className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
         <div className="flex items-center gap-3 min-w-0">
-          <span className="text-muted-foreground shrink-0 [&>svg]:size-4">
+          <span className="flex size-8 shrink-0 items-center justify-center bg-muted text-foreground [&>svg]:size-4">
             <LucideKeyRound />
           </span>
           <div className="flex flex-col">
@@ -146,7 +147,7 @@ export function AccountSection(props: IAccountSectionProps) {
         <Button
           size="sm"
           variant="outline"
-          className="shrink-0 text-xs rounded-lg"
+          className="ml-11 shrink-0 self-start rounded-none text-xs sm:ml-0 sm:self-auto"
           onClick={onResetPassword}
         >
           {t("reset")}
