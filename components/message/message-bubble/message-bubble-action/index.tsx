@@ -28,7 +28,7 @@ export function MessageBubbleActions(props: IMessageBubbleActionsProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground"
+          className="h-7 w-7 rounded-none text-muted-foreground hover:text-foreground"
           onClick={onReply}
           aria-label="Reply to message"
         >
@@ -44,7 +44,7 @@ export function MessageBubbleActions(props: IMessageBubbleActionsProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground"
+          className="h-7 w-7 rounded-none text-muted-foreground hover:text-foreground"
           onClick={onEdit}
           aria-label="Edit message"
         >
@@ -57,7 +57,7 @@ export function MessageBubbleActions(props: IMessageBubbleActionsProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 rounded-full text-muted-foreground hover:text-destructive"
+          className="h-7 w-7 rounded-none text-muted-foreground hover:text-destructive"
           onClick={onDelete}
           aria-label="Delete message"
         >

@@ -47,7 +47,7 @@ export default function AttachmentRender(props: {
           alt={filename || "Image attachment"}
           width={960}
           height={720}
-          className="max-w-full rounded-xl max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+          className="max-w-full rounded-none max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity border border-current/15"
           unoptimized
         />
       </a>
@@ -57,7 +57,7 @@ export default function AttachmentRender(props: {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`mt-2 rounded-2xl border overflow-hidden ${
+      className={`mt-2 rounded-none border overflow-hidden ${
         isMe
           ? "border-primary-foreground/20 bg-primary-foreground/10"
           : "border-border bg-background"
@@ -95,7 +95,7 @@ export default function AttachmentRender(props: {
         <a
           href={fullUrl}
           download={filename}
-          className={`flex-1 h-8 flex items-center justify-center gap-1.5 rounded-lg border text-xs font-medium transition-colors ${
+          className={`flex-1 h-8 flex items-center justify-center gap-1.5 rounded-none border text-xs font-medium transition-colors ${
             isMe
               ? "border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
               : "border-border text-foreground hover:bg-muted"
@@ -109,7 +109,7 @@ export default function AttachmentRender(props: {
           href={fullUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex-1 h-8 flex items-center justify-center gap-1.5 rounded-lg border text-xs font-medium transition-colors ${
+          className={`flex-1 h-8 flex items-center justify-center gap-1.5 rounded-none border text-xs font-medium transition-colors ${
             isMe
               ? "border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
               : "border-border text-foreground hover:bg-muted"

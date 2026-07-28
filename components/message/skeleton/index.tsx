@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 /* -------------------- Message Loading Skeleton Component -------------------- */
 export default function MessageLoadingSkeleton() {
   return (
-    <div className="w-full h-full flex bg-background overflow-hidden relative">
+    <div className="mx-auto w-full max-w-[1500px] h-full flex bg-card overflow-hidden relative border border-border border-t-[5px] border-t-foreground shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
       <div className="hidden lg:flex w-full h-full">
         {/* Loading Skeleton for Sidebar Section */}
         <div className="w-[26%] min-w-[260px] max-w-[420px]">
@@ -27,14 +27,14 @@ export default function MessageLoadingSkeleton() {
 /* -------------------- Chat List Item Skeleton Component -------------------- */
 function ChatListItemSkeleton() {
   return (
-    <div className="w-full flex items-center gap-3 px-4 py-3">
-      <Skeleton className="h-12 w-12 rounded-full shrink-0" />
+    <div className="w-full flex items-center gap-3 px-4 py-3 border-b border-border border-l-[4px] border-l-transparent">
+      <Skeleton className="h-12 w-12 rounded-none shrink-0" />
       <div className="flex-1 min-w-0 space-y-2">
         <div className="flex items-center justify-between gap-2">
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-3 w-12" />
+          <Skeleton className="h-4 w-32 rounded-none" />
+          <Skeleton className="h-3 w-12 rounded-none" />
         </div>
-        <Skeleton className="h-3 w-full max-w-[180px]" />
+        <Skeleton className="h-3 w-full max-w-[180px] rounded-none" />
       </div>
     </div>
   );
@@ -43,13 +43,16 @@ function ChatListItemSkeleton() {
 /* -------------------- Chat Sidebar Skeleton Component -------------------- */
 function ChatSidebarSkeleton() {
   return (
-    <div className="flex flex-col h-full border-r bg-background">
-      <div className="px-4 pt-5 pb-3 flex items-center justify-between shrink-0">
-        <Skeleton className="h-8 w-24" />
-        <Skeleton className="h-9 w-9 rounded-full" />
+    <div className="flex flex-col h-full border-r border-border bg-card">
+      <div className="px-4 pt-5 pb-4 flex items-end justify-between shrink-0 border-b border-border">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-3 w-5 rounded-none" />
+          <Skeleton className="h-8 w-24 rounded-none" />
+        </div>
+        <Skeleton className="h-9 w-9 rounded-none" />
       </div>
-      <div className="px-4 pb-3 shrink-0">
-        <Skeleton className="h-10 w-full rounded-full" />
+      <div className="px-4 py-3 shrink-0 border-b border-border">
+        <Skeleton className="h-10 w-full rounded-none" />
       </div>
       <div className="flex-1 overflow-hidden">
         {Array.from({ length: 8 }).map((_, i) => (
@@ -63,21 +66,21 @@ function ChatSidebarSkeleton() {
 /* -------------------- Message Thread Skeleton Component -------------------- */
 export function MessageThreadSkeleton() {
   return (
-    <div className="flex-1 px-3 py-4 md:px-4 overflow-hidden bg-muted/20 space-y-3">
+    <div className="flex-1 px-3 py-4 md:px-5 overflow-hidden bg-muted/10 space-y-4">
       <div className="flex justify-start">
-        <Skeleton className="h-16 w-[70%] rounded-2xl" />
+        <Skeleton className="h-16 w-[70%] rounded-none border-l-[4px] border-l-foreground" />
       </div>
       <div className="flex justify-end">
-        <Skeleton className="h-16 w-[58%] rounded-2xl" />
+        <Skeleton className="h-16 w-[58%] rounded-none" />
       </div>
       <div className="flex justify-start">
-        <Skeleton className="h-24 w-[78%] rounded-2xl" />
+        <Skeleton className="h-24 w-[78%] rounded-none border-l-[4px] border-l-foreground" />
       </div>
       <div className="flex justify-end">
-        <Skeleton className="h-14 w-[44%] rounded-2xl" />
+        <Skeleton className="h-14 w-[44%] rounded-none" />
       </div>
       <div className="flex justify-start">
-        <Skeleton className="h-20 w-[66%] rounded-2xl" />
+        <Skeleton className="h-20 w-[66%] rounded-none border-l-[4px] border-l-foreground" />
       </div>
     </div>
   );
@@ -87,27 +90,30 @@ export function MessageThreadSkeleton() {
 export function MessagePaneSkeleton() {
   return (
     <div className="flex flex-col h-full min-w-0">
-      <div className="px-3 md:px-4 py-3 border-b flex items-center justify-between bg-background shrink-0 gap-2">
+      <div className="px-3 md:px-5 py-3 border-b border-border flex items-center justify-between bg-card shrink-0 gap-2 min-h-16">
         <div className="flex items-center gap-2 min-w-0">
-          <Skeleton className="h-9 w-9 rounded-md lg:hidden" />
-          <Skeleton className="h-9 w-9 rounded-md hidden lg:block" />
-          <Skeleton className="h-9 w-9 rounded-full" />
+          <Skeleton className="h-9 w-9 rounded-none lg:hidden" />
+          <Skeleton className="h-9 w-9 rounded-none hidden lg:block" />
+          <Skeleton className="h-9 w-9 rounded-none" />
           <div className="space-y-1">
-            <Skeleton className="h-4 w-28" />
-            <Skeleton className="h-3 w-12" />
+            <Skeleton className="h-4 w-28 rounded-none" />
+            <Skeleton className="h-3 w-12 rounded-none" />
           </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
-          <Skeleton className="h-9 w-9 rounded-md hidden sm:block" />
-          <Skeleton className="h-9 w-9 rounded-md hidden sm:block" />
-          <Skeleton className="h-9 w-9 rounded-md" />
+          <Skeleton className="h-9 w-9 rounded-none hidden sm:block" />
+          <Skeleton className="h-9 w-9 rounded-none hidden sm:block" />
+          <Skeleton className="h-9 w-9 rounded-none" />
         </div>
       </div>
 
       <MessageThreadSkeleton />
 
-      <div className="px-3 py-3 border-t bg-background shrink-0">
-        <Skeleton className="h-14 w-full rounded-2xl" />
+      <div className="px-3 md:px-5 py-3 border-t border-border bg-card shrink-0">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-14 flex-1 rounded-none border-l-[4px] border-l-foreground" />
+          <Skeleton className="h-10 w-10 rounded-none" />
+        </div>
       </div>
     </div>
   );

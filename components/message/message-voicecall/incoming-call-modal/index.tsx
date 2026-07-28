@@ -23,7 +23,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-background rounded-2xl shadow-2xl border border-border w-80 p-6 flex flex-col items-center gap-5 animate-in zoom-in-95 duration-200">
+      <div className="bg-card rounded-none shadow-[7px_7px_0_hsl(var(--foreground)/0.14)] border border-border border-t-[5px] border-t-foreground w-80 p-6 flex flex-col items-center gap-5 animate-in zoom-in-95 duration-200">
         {/* Incoming Voice Call Label Section */}
         <div className="text-center space-y-1">
           <TypographyMuted className="text-xs text-muted-foreground uppercase tracking-widest font-medium">
@@ -35,9 +35,9 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
         <div className="relative flex items-center justify-center">
           <span className="animate-ping absolute inline-flex h-20 w-20 rounded-full bg-green-400 opacity-20" />
           <span className="absolute inline-flex h-16 w-16 rounded-full bg-green-500/10 border-2 border-green-500/30" />
-          <Avatar className="h-16 w-16 relative z-10">
+          <Avatar className="h-16 w-16 relative z-10 rounded-none border-2 border-background">
             <AvatarImage src={caller.avatar} alt={caller.name} />
-            <AvatarFallback className="text-lg font-semibold">
+            <AvatarFallback className="text-lg font-semibold rounded-none">
               {initials}
             </AvatarFallback>
           </Avatar>

@@ -356,7 +356,7 @@ export default function ChatInput(props: IChatInputProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="px-2.5 py-2 md:px-4 md:py-3 bg-background border-t shrink-0 [padding-bottom:calc(env(safe-area-inset-bottom)+0.5rem)] md:[padding-bottom:0.75rem]">
+    <div className="px-2.5 py-2.5 md:px-5 md:py-3 bg-card border-t border-border shrink-0 [padding-bottom:calc(env(safe-area-inset-bottom)+0.5rem)] md:[padding-bottom:0.75rem]">
       {/* Reply Preview Bar Section */}
       {replyTarget && (
         <MessageReplyPreview
@@ -380,7 +380,7 @@ export default function ChatInput(props: IChatInputProps) {
         />
 
         {/* Input Pill Section */}
-        <div className="flex-1 rounded-2xl border border-border bg-muted/30 focus-within:border-primary/40 focus-within:bg-background transition-colors overflow-hidden">
+        <div className="flex-1 rounded-none border border-border border-l-[4px] border-l-foreground bg-muted/20 focus-within:border-primary focus-within:border-l-primary focus-within:bg-background transition-colors overflow-hidden shadow-[3px_3px_0_hsl(var(--foreground)/0.04)]">
           {/* Attachment Thumbnail Strip Section (inside the pill, above the textarea) */}
           {hasAnyFiles && (
             <MessageAttachmentStrip
@@ -429,7 +429,7 @@ export default function ChatInput(props: IChatInputProps) {
                   <button
                     type="button"
                     disabled={inputDisabled}
-                    className="shrink-0 h-8 w-8 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                    className="shrink-0 h-8 w-8 flex items-center justify-center rounded-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
                     aria-label="Emoji"
                   >
                     <SmilePlus className="h-4 w-4" />
@@ -462,7 +462,7 @@ export default function ChatInput(props: IChatInputProps) {
                 type="button"
                 disabled={inputDisabled || atFileLimit}
                 onClick={openFilePicker}
-                className="shrink-0 h-8 w-8 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                className="shrink-0 h-8 w-8 flex items-center justify-center rounded-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
                 aria-label={
                   atFileLimit
                     ? t("maxFilesReached", { max: CHAT_MAX_FILES })
@@ -482,7 +482,7 @@ export default function ChatInput(props: IChatInputProps) {
                 type="button"
                 disabled={inputDisabled}
                 onClick={startRecording}
-                className="shrink-0 h-8 w-8 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                className="shrink-0 h-8 w-8 flex items-center justify-center rounded-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
                 aria-label="Record voice message"
               >
                 <Mic className="h-4 w-4" />
@@ -497,7 +497,7 @@ export default function ChatInput(props: IChatInputProps) {
             variant="default"
             onClick={handleSend}
             disabled={sendDisabled}
-            className="shrink-0 h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0 font-medium"
+            className="shrink-0 h-9 w-9 sm:h-10 sm:w-10 rounded-none p-0 font-medium shadow-[3px_3px_0_hsl(var(--foreground)/0.12)]"
             aria-label="Send message"
           >
             <LucideSendHorizonal className="h-4 w-4" />

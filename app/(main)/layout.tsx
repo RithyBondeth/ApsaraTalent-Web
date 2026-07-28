@@ -49,7 +49,7 @@ export default function MainLayout({
       <main
         className={
           isMessage
-            ? "h-[calc(100dvh-8rem)] md:h-[calc(100dvh-4rem)] flex flex-col"
+            ? "h-[calc(100dvh-8rem)] md:h-[calc(100dvh-4rem)] flex flex-col px-3 pb-3 sm:px-4 sm:pb-4 lg:px-5 lg:pb-5"
             : "container mx-auto px-3 sm:px-4 lg:px-6 py-5 pb-24 lg:pb-8"
         }
       >

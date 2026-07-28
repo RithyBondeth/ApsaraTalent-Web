@@ -48,7 +48,7 @@ export default function ReactionSummary(props: {
       <PopoverTrigger asChild>
         {/* Reaction Badge Section */}
         <div
-          className={`absolute -bottom-2 flex gap-1 bg-background/80 backdrop-blur-sm border shadow-sm rounded-full px-1.5 py-0.5 z-10 cursor-pointer hover:bg-muted transition-colors ${badgePositionClass}`}
+          className={`absolute -bottom-2 flex gap-1 bg-background/90 backdrop-blur-sm border shadow-sm rounded-none px-1.5 py-0.5 z-10 cursor-pointer hover:bg-muted transition-colors ${badgePositionClass}`}
         >
           {Object.entries(reactionsByEmoji).map(([emoji, userIds]) => (
             <div key={emoji} className="flex items-center gap-0.5">

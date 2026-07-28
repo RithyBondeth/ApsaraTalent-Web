@@ -79,13 +79,13 @@ export const ChatMessages = (props: IChatMessagesProps) => {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-muted/20 px-2.5 py-3 sm:px-3 sm:py-4 md:px-4">
+    <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-muted/10 px-3 py-4 sm:px-4 md:px-5">
       {messages.length === 0 ? (
         /* Empty State Section */
         <div className="h-full flex flex-col items-center justify-center gap-2 text-center px-4">
-          <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+          <div className="w-12 h-12 rounded-none bg-foreground text-background flex items-center justify-center">
             <svg
-              className="w-6 h-6 text-muted-foreground"
+              className="w-6 h-6 text-background"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

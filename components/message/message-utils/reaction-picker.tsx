@@ -28,7 +28,7 @@ export const ReactionPicker = (props: {
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity bg-background/50 backdrop-blur-sm"
+          className="h-8 w-8 rounded-none opacity-0 group-hover:opacity-100 transition-opacity bg-background/50 backdrop-blur-sm"
         >
           <Smile className="h-4 w-4 text-muted-foreground" />
         </Button>
@@ -37,7 +37,7 @@ export const ReactionPicker = (props: {
       <PopoverContent
         side="top"
         align="center"
-        className="w-fit p-1 rounded-full shadow-lg border-muted bg-background/95 backdrop-blur-md"
+        className="w-fit p-1 rounded-none shadow-lg border-muted bg-background/95 backdrop-blur-md"
       >
         {/* Emoji List Section */}
         <div className="flex gap-1">
@@ -45,7 +45,7 @@ export const ReactionPicker = (props: {
             <button
               key={emoji}
               onClick={() => handleReactionSelect(emoji)}
-              className={`p-2 transition-all hover:scale-125 rounded-full hover:bg-muted ${
+              className={`p-2 transition-all hover:scale-125 rounded-none hover:bg-muted ${
                 currentReaction === emoji ? "bg-primary/20 scale-110" : ""
               }`}
             >

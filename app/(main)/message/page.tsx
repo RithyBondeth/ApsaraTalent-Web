@@ -219,7 +219,7 @@ export default function MessagePageContent() {
   /* -------------------------------- Render UI -------------------------------- */
   // Chat View Section
   const chatView = activeChat ? (
-    <div className="flex flex-col h-full min-h-0 min-w-0">
+    <div className="flex flex-col h-full min-h-0 min-w-0 bg-card">
       {/* Chat Header Section */}
       <ChatHeader
         chat={activeChat}
@@ -254,14 +254,14 @@ export default function MessagePageContent() {
 
   // Desktop Empty State View Section
   const desktopEmptyStateView = (
-    <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/5">
+    <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/10">
       <div className="w-full flex flex-col items-center justify-center my-16">
         <Image
           src={messageEmptySvg}
           alt="Message"
           height={300}
           width={300}
-          className="animate-float"
+          className="animate-float border-b-[5px] border-b-foreground pb-4"
         />
         <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
           {t("selectConversation")}
@@ -271,7 +271,7 @@ export default function MessagePageContent() {
   );
 
   return (
-    <div className="w-full h-[calc(100dvh-4rem)] md:h-full min-h-0 flex bg-background overflow-hidden relative animate-page-in">
+    <div className="message-editorial mx-auto w-full max-w-[1500px] h-full min-h-0 flex bg-card overflow-hidden relative animate-page-in border border-border border-t-[5px] border-t-foreground shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
       {/* Call Overlay + Incoming Modal Section */}
       <CallOrchestrator />
 

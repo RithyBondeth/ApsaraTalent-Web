@@ -80,12 +80,12 @@ export function CallOverlay(props: ICallOverlayProps) {
       <audio ref={remoteAudioRef} autoPlay playsInline className="hidden" />
 
       {/* Call Overlay Section */}
-      <div className="fixed bottom-6 right-6 z-50 w-72 bg-background border border-border rounded-2xl shadow-2xl p-4 animate-in slide-in-from-bottom-4 duration-200">
+      <div className="fixed bottom-6 right-6 z-50 w-72 bg-card border border-border border-t-[5px] border-t-foreground rounded-none shadow-[6px_6px_0_hsl(var(--foreground)/0.12)] p-4 animate-in slide-in-from-bottom-4 duration-200">
         <div className="flex items-center gap-3 mb-4">
           {/* Partner Avatar Section */}
-          <Avatar className="h-10 w-10 shrink-0">
+          <Avatar className="h-10 w-10 shrink-0 rounded-none border border-border">
             <AvatarImage src={partner.avatar} alt={partner.name} />
-            <AvatarFallback className="text-sm font-medium">
+            <AvatarFallback className="text-sm font-medium rounded-none">
               {partnerInitials}
             </AvatarFallback>
           </Avatar>

@@ -39,7 +39,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="px-2.5 sm:px-3 md:px-4 py-2.5 md:py-3 border-b flex items-center justify-between bg-background shrink-0 gap-1.5 sm:gap-2 min-h-14">
+    <div className="px-2.5 sm:px-3 md:px-5 py-2.5 md:py-3 border-b border-border flex items-center justify-between bg-card shrink-0 gap-1.5 sm:gap-2 min-h-16">
       {/* Header Identity Section */}
       <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
         {/* Back Button (Mobile) */}
@@ -47,7 +47,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden h-8 w-8 shrink-0 -ml-1"
+            className="lg:hidden h-8 w-8 shrink-0 -ml-1 rounded-none"
             onClick={onBack}
             aria-label="Back to conversations"
           >
@@ -60,7 +60,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           variant="ghost"
           size="icon"
           onClick={onToggleSidebar}
-          className="hidden lg:flex h-9 w-9 shrink-0"
+          className="hidden lg:flex h-9 w-9 shrink-0 rounded-none border border-border"
           aria-label={sidebarToggleLabel}
         >
           {isSidebarOpen ? (
@@ -72,15 +72,15 @@ export default function ChatHeader(props: IChatHeaderProps) {
 
         {/* Avatar and Online Status Section */}
         <div className="relative shrink-0">
-          <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
+          <Avatar className="h-8 w-8 sm:h-9 sm:w-9 rounded-none border border-border">
             {chat.isGroup ? (
-              <AvatarFallback className="bg-primary/10">
+              <AvatarFallback className="bg-primary/10 rounded-none">
                 <Users className="h-4 w-4 text-primary" />
               </AvatarFallback>
             ) : (
               <>
                 <AvatarImage src={chat.avatar} alt={chat.name} />
-                <AvatarFallback className="text-sm font-medium">
+                <AvatarFallback className="text-sm font-medium rounded-none">
                   {avatarInitials}
                 </AvatarFallback>
               </>
@@ -97,7 +97,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
 
         {/* Chat Name and Status Section */}
         <div className="min-w-0 max-w-[52vw] sm:max-w-none">
-          <h2 className="font-semibold text-sm text-foreground truncate leading-tight">
+          <h2 className="font-black text-sm text-foreground truncate leading-tight tracking-[-0.01em]">
             {chat.name}
           </h2>
           <TypographyMuted
@@ -116,7 +116,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
         <Button
           variant="outline"
           size="icon"
-          className="hidden sm:flex h-9 w-9 text-muted-foreground hover:text-foreground"
+          className="hidden sm:flex h-9 w-9 rounded-none text-muted-foreground hover:text-foreground"
           onClick={onStartVideoCall}
           aria-label="Start video call"
         >
@@ -127,7 +127,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8 sm:h-9 sm:w-9 text-muted-foreground hover:text-foreground"
+          className="h-8 w-8 sm:h-9 sm:w-9 rounded-none text-muted-foreground hover:text-foreground"
           onClick={onStartVoiceCall}
           aria-label="Start voice call"
         >
@@ -139,7 +139,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden h-8 w-8"
+            className="lg:hidden h-8 w-8 rounded-none"
             onClick={onOpenMobileSidebar}
             aria-label="Open conversations"
           >
