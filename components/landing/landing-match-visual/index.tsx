@@ -2,6 +2,7 @@
 
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { useGsapScrollAnimation } from "@/hooks/utils/use-gsap-animation";
+import { useMediaQuery } from "@/hooks/utils/use-media-query";
 import { cn } from "@/lib/utils";
 import {
   LucideArrowLeftRight,
@@ -171,6 +172,9 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
   /* ------------------------------- Utils ------------------------------- */
   const t = useTranslations("landing");
   const sectionRef = useGsapScrollAnimation<HTMLElement>();
+  const prefersReducedMotion = useMediaQuery(
+    "(prefers-reduced-motion: reduce)",
+  );
 
   /* ---------------------------- All States ---------------------------- */
   const matchStageRef = useRef<HTMLDivElement>(null);
@@ -181,12 +185,12 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
     const matchStage = matchStageRef.current;
     if (!matchStage) return;
 
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    );
     const isDesktop = window.matchMedia("(min-width: 1024px)");
 
-    if (prefersReducedMotion.matches) {
+    if (
+      prefersReducedMotion ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
       setIsMatchActive(true);
       return;
     }
@@ -351,7 +355,7 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
 
     observer.observe(matchStage);
     return () => observer.disconnect();
-  }, []);
+  }, [prefersReducedMotion]);
 
   /* ----------------------------- Render UI ----------------------------- */
   return (

@@ -7,6 +7,7 @@ import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { IChatMessagesProps } from "./props";
 import { useTranslations } from "next-intl";
 import { PageState } from "@/components/utils/feedback/page-state";
+import { useMediaQuery } from "@/hooks/utils/use-media-query";
 
 /* --------------------------------- Helper --------------------------------- */
 // Resolve last seen message index
@@ -21,6 +22,9 @@ function resolveLastSeenMessageIndex(messages: IMessage[]): number {
 export const ChatMessages = (props: IChatMessagesProps) => {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("message");
+  const prefersReducedMotion = useMediaQuery(
+    "(prefers-reduced-motion: reduce)",
+  );
 
   /* --------------------------------- Props --------------------------------- */
   const { messages, activeChat, isTyping, onReply, onEdit } = props;
@@ -59,9 +63,11 @@ export const ChatMessages = (props: IChatMessagesProps) => {
         messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
       }, 0);
     } else if (isNewMessage || isTyping) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current.scrollIntoView({
+        behavior: prefersReducedMotion ? "instant" : "smooth",
+      });
     }
-  }, [messages, isTyping]);
+  }, [messages, isTyping, prefersReducedMotion]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Resolve Date Divider Visibility ─────────────────────────────────────────

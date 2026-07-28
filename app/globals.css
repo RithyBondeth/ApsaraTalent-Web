@@ -4115,7 +4115,7 @@ body:has(.auth-scope) [data-ui-button]:not(:disabled):active::after {
   transition-duration: 0ms;
 }
 
-/* Respect user's reduced-motion preference */
+/* Respect user's reduced-motion preference Section */
 @keyframes feed-art-enter {
   from {
     opacity: 0;
@@ -4728,11 +4728,38 @@ body:has(.auth-scope) [data-ui-button]:not(:disabled):active::after {
     display: none;
   }
 
+  html {
+    scroll-behavior: auto !important;
+  }
+
   *,
   *::before,
   *::after {
+    scroll-behavior: auto !important;
+    animation-delay: 0ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    transition-delay: 0ms !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .animate-shimmer {
+    animation: none !important;
+    background-position: 50% center;
+  }
+
+  [class*="hover:-translate-y"]:hover,
+  [class*="hover:translate-y"]:hover,
+  [class*="hover:scale-"]:hover,
+  [class*="active:translate-y"]:active,
+  [class*="active:scale-"]:active {
+    transform: none !important;
+  }
+
+  .group:hover [class*="group-hover:-translate-y"],
+  .group:hover [class*="group-hover:translate-x"],
+  .group:hover [class*="group-hover:scale-"],
+  .group:active [class*="group-active:translate-y"] {
+    transform: none !important;
   }
 }
