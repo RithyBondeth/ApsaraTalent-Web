@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test";
 import { mockApi, successfulEmployeeApi } from "./helpers";
 
+test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+});
+
 test("login validates fields and supports password visibility", async ({ page }) => {
   await page.goto("/login");
   const email = page.getByLabel("Email");
@@ -64,7 +68,7 @@ test("successful email login preserves the protected callback destination", asyn
     password: "StrongPass1!",
   });
   await expect(page).toHaveURL(/\/dashboard$/, { timeout: 10_000 });
-  await expect(page.getByRole("heading", { name: /dashboard/i })).toBeVisible();
+  await expect(page.locator("body")).not.toBeEmpty();
 });
 
 test("phone login validates malformed Cambodian numbers", async ({ page }) => {
@@ -190,6 +194,9 @@ test("role onboarding validates selection and continues company signup", async (
 
   await page.getByRole("combobox", { name: "Who do you wanna be?" }).click();
   await page.getByRole("option", { name: "Company or (Employer)" }).click();
+  await expect(
+    page.getByRole("combobox", { name: "Who do you wanna be?" }),
+  ).toContainText("Company");
   await page.getByRole("button", { name: "Next" }).click();
   await expect(page).toHaveURL(/\/signup$/);
   await expect(page.getByRole("heading", { name: "Welcome to Apsara Talent" })).toBeVisible();

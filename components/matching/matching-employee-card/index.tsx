@@ -47,12 +47,12 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
-      <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
+    <article className="group w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+      <div className="flex gap-4 p-4 sm:gap-5 sm:p-5">
         {/* Avatar Section */}
         <Avatar
           rounded="md"
-          className="size-16 sm:size-20 flex-shrink-0 ring-[2px] ring-border/40"
+          className="size-14 flex-shrink-0 !rounded-none border border-border sm:size-16"
         >
           <AvatarFallback className="text-sm font-semibold">
             {getNameInitials(props.name)}
@@ -61,11 +61,11 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
         </Avatar>
 
         {/* Content Section */}
-        <div className="flex-1 min-w-0 flex flex-col gap-3">
+        <div className="flex min-w-0 flex-1 flex-col gap-3">
           {/* Header Section */}
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <h3 className="text-base font-bold leading-tight truncate">
+              <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
                 {props.name}
               </h3>
               <TypographyMuted className="text-sm text-muted-foreground mt-0.5">
@@ -73,7 +73,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
               </TypographyMuted>
             </div>
             <span
-              className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${getAvailabilityStyleClass(props.availability)}`}
+              className={`flex-shrink-0 whitespace-nowrap rounded-none border border-current/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
             >
               {availabilityLabel}
             </span>
@@ -89,8 +89,13 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
           {/* Skills Tags Section */}
           {props.skills.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
-              {props.skills.map((skill, index) => (
-                <Tag label={skill} key={index} />
+              {props.skills.slice(0, 6).map((skill, index) => (
+                <Tag
+                  label={skill}
+                  key={index}
+                  neutral
+                  className="!rounded-none border border-border hover:shadow-none"
+                />
               ))}
             </div>
           )}
@@ -100,18 +105,24 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
             <MetaChip
               icon={<LucideBriefcaseBusiness />}
               text={props.position}
+              className="rounded-none border border-border bg-muted/45"
             />
-            <MetaChip icon={<LucideClock />} text={props.experience} />
+            <MetaChip
+              icon={<LucideClock />}
+              text={props.experience}
+              className="rounded-none border border-border bg-muted/45"
+            />
             <MetaChip
               icon={<LucideMapPin />}
               text={translateLocation(props.location, tl)}
+              className="rounded-none border border-border bg-muted/45"
             />
           </div>
         </div>
       </div>
 
       {/* Action Bar Section */}
-      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/25 px-4 py-3 sm:px-5">
         {/* Left Section: AI Actions and Unmatch */}
         <div className="flex items-center gap-1.5">
           <AiMatchExplanationModal
@@ -124,7 +135,8 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
           <Button
             size="sm"
             variant="ghost"
-            className="h-8 px-2 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            className="h-8 rounded-none px-2 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+            aria-label={t("unmatch")}
             disabled={isUnmatching}
             onClick={() => setUnmatchDialogOpen(true)}
           >
@@ -171,7 +183,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
             <Button
               size="sm"
               variant="outline"
-              className="h-8 text-xs px-3"
+              className="h-8 rounded-none px-3 text-xs"
               onClick={props.onScheduleClick}
             >
               <LucideCalendarCheck className="size-3.5" />
@@ -180,7 +192,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
           )}
           <Button
             size="sm"
-            className="h-8 text-xs px-3"
+            className="h-8 rounded-none px-3 text-xs"
             onClick={props.onChatNowClick}
             disabled={props.isChatLoading}
           >
@@ -193,7 +205,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
           </Button>
         </div>
       </div>
-    </div>
+    </article>
   );
 });
 

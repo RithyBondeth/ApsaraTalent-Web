@@ -35,6 +35,8 @@ Commands:
   accessibility checks, performance budgets, visual regression, and the 404
   response. Desktop journeys run in Chromium, Firefox, and WebKit; the mobile
   matrix uses an emulated Pixel viewport.
+  The production test build uses `.next-e2e`, so it can run alongside the
+  normal development server without corrupting either build.
 - `npm run test:e2e:smoke` runs the fast HTTP-level standalone checks only.
 - `npm run test:e2e:browser` runs Playwright and builds first unless
   `PLAYWRIGHT_SKIP_BUILD=1` is set.

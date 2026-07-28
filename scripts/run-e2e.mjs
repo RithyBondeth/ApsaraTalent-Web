@@ -6,6 +6,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const distDir = process.env.NEXT_DIST_DIR ?? ".next-e2e";
 const port = 14000;
 const baseUrl = `http://127.0.0.1:${port}`;
 let runtimeDir;
@@ -69,6 +70,7 @@ try {
     await run("npm", ["run", "build"], {
       env: {
         ...process.env,
+        NEXT_DIST_DIR: distDir,
         NEXT_PUBLIC_API_URL: "http://127.0.0.1:13000",
         SENTRY_AUTH_TOKEN: "",
         SENTRY_ORG: "",
@@ -78,7 +80,7 @@ try {
     });
   }
 
-  const standalone = join(root, ".next/standalone");
+  const standalone = join(root, distDir, "standalone");
   assert(
     existsSync(join(standalone, "server.js")),
     "Standalone build missing. Run npm run build first.",
@@ -86,7 +88,7 @@ try {
 
   runtimeDir = await mkdtemp(join(tmpdir(), "apsara-web-e2e-"));
   await cp(standalone, runtimeDir, { recursive: true });
-  await cp(join(root, ".next/static"), join(runtimeDir, ".next/static"), {
+  await cp(join(root, distDir, "static"), join(runtimeDir, distDir, "static"), {
     recursive: true,
   });
   if (existsSync(join(root, "public"))) {

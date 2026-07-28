@@ -57,7 +57,11 @@ describe("WebRTC manager", () => {
   it("clears ring and connection timers before they fire", () => {
     const ringCallback = vi.fn();
     const connectCallback = vi.fn();
-    setRingTimeout(setTimeout(ringCallback, 1_000));
+    setRingTimeout(
+      setTimeout(ringCallback, 1_000) as unknown as ReturnType<
+        typeof setTimeout
+      >,
+    );
     armConnectTimeout(connectCallback);
 
     clearRingTimeout();

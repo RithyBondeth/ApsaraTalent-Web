@@ -198,7 +198,11 @@ describe("employee API stores", () => {
     await useSearchEmployeeStore.getState().querySearchEmployee({ keyword: "engineer" });
     expect(useSearchEmployeeStore.getState()).toMatchObject({ loading: false, error: "search failed" });
 
-    useSearchEmployeeStore.setState({ employees: [{ id: "employee-1" }] as never, page: 1, total: 2, hasMore: true });
+    useSearchEmployeeStore.setState({
+      employees: [{ id: "employee-1" }] as never,
+      page: 1,
+      total: 2,
+    });
     axiosMocks.get.mockRejectedValueOnce(new Error("next page failed"));
     await useSearchEmployeeStore.getState().loadMoreEmployees({ keyword: "engineer" });
     expect(axiosMocks.get).toHaveBeenCalledTimes(2);

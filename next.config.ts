@@ -38,6 +38,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  distDir: process.env.NEXT_DIST_DIR ?? ".next",
 
   // Strip console.log in production — keeps console.error and console.warn
   compiler: {

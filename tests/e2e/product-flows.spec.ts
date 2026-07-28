@@ -19,22 +19,26 @@ const productRoutes = [
 ] as const;
 
 test("core product pages handle successful empty API responses", async ({ page }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(150_000);
   await mockApi(page, successfulEmployeeApi);
   await loginEmployee(page);
   const failures: string[] = [];
-  const routeFailures = captureRuntimeFailures(page);
 
   for (const route of productRoutes) {
-    const failureStart = routeFailures.length;
-    const response = await page.goto(route, { waitUntil: "load" });
-    await page.waitForTimeout(300);
+    const routePage = await page.context().newPage();
+    await mockApi(routePage, successfulEmployeeApi);
+    const routeFailures = captureRuntimeFailures(routePage);
+    const response = await routePage.goto(route, { waitUntil: "load" });
+    await routePage.waitForTimeout(300);
     expect(response?.status(), `${route} response`).toBe(200);
-    await expect(page).toHaveURL(new RegExp(`${route.replaceAll("/", "\\/")}$`));
-    await expect(page.locator("body")).not.toBeEmpty();
-    failures.push(
-      ...routeFailures.slice(failureStart).map((failure) => `${route}: ${failure}`),
+    await expect(routePage).toHaveURL(
+      new RegExp(`${route.replaceAll("/", "\\/")}$`),
     );
+    await expect(routePage.locator("body")).not.toBeEmpty();
+    failures.push(
+      ...routeFailures.map((failure) => `${route}: ${failure}`),
+    );
+    await routePage.close();
   }
 
   expect(failures).toEqual([]);

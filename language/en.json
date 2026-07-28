@@ -654,6 +654,10 @@
     "loading": "Loading..."
   },
   "favorite": {
+    "savedFavorites": "Saved Favorites",
+    "companiesSaved": "companies saved",
+    "talentSaved": "talent profiles saved",
+    "explore": "Explore more",
     "bannerTitle": "Find your favorites at a Glance",
     "bannerSubtitle1": "Quick access to the companies and talents you've saved",
     "bannerSubtitle2": "Review, connect, and take the next step whenever you're ready",
@@ -667,6 +671,9 @@
     "yrsExp": "{years} yrs exp"
   },
   "matching": {
+    "matchNetwork": "Match Network",
+    "yourMatches": "Your Matches",
+    "connections": "mutual connections",
     "bannerTitle": "Ready to find your match? Let's make it happen.",
     "bannerSubtitle1": "Find Your Perfect Match & Start a Conversation",
     "bannerSubtitle2": "Start chatting, connect instantly, and build your future together.",

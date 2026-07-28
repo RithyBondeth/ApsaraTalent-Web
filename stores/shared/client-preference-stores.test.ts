@@ -58,12 +58,13 @@ describe("client preference stores", () => {
 
   it("uses browser storage through the safe persistence adapter", async () => {
     const { safePersistStorage } = await import("./persist-storage");
-    await safePersistStorage.setItem("preference", { state: { enabled: true }, version: 0 });
-    expect(await safePersistStorage.getItem("preference")).toEqual({
+    expect(safePersistStorage).toBeDefined();
+    await safePersistStorage!.setItem("preference", { state: { enabled: true }, version: 0 });
+    expect(await safePersistStorage!.getItem("preference")).toEqual({
       state: { enabled: true },
       version: 0,
     });
-    await safePersistStorage.removeItem("preference");
-    expect(await safePersistStorage.getItem("preference")).toBeNull();
+    await safePersistStorage!.removeItem("preference");
+    expect(await safePersistStorage!.getItem("preference")).toBeNull();
   });
 });

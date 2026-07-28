@@ -34,6 +34,7 @@ describe("cookie manager", () => {
         maxAge: COOKIE_CONFIG.PREFERENCE_STORAGE,
         sameSite: "strict",
         path: "/",
+        secure: false,
       }),
     );
     expect(setCookie).toHaveBeenNthCalledWith(

@@ -5,11 +5,11 @@ export const AUTH_ROLE_COOKIE = "auth-session-role";
 export async function setRole(page: Page, role: "employee" | "company" | "none") {
   const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:14001";
   const cookie = {
-      name: AUTH_ROLE_COOKIE,
-      value: role,
-      httpOnly: true,
-      sameSite: "Strict",
-    } as const;
+    name: AUTH_ROLE_COOKIE,
+    value: role,
+    httpOnly: true,
+    sameSite: "Strict",
+  } as const;
   await page.context().addCookies([
     { ...cookie, url: new URL(baseURL).origin },
     { ...cookie, url: "http://localhost:14001" },
@@ -17,6 +17,9 @@ export async function setRole(page: Page, role: "employee" | "company" | "none")
 }
 
 export async function mockBackendUnavailable(page: Page) {
+  await page.routeWebSocket("ws://127.0.0.1:13000/**", () => {
+    // Keep route resilience checks focused on HTTP failure handling.
+  });
   await page.route("http://127.0.0.1:13000/**", async (route) => {
     const origin = route.request().headers()["origin"] ?? "http://127.0.0.1:14001";
     const headers = {
@@ -40,7 +43,9 @@ export async function mockBackendUnavailable(page: Page) {
 
 type MockApiResult = {
   body?: unknown;
+  contentType?: string;
   headers?: Record<string, string>;
+  rawBody?: string;
   status?: number;
 };
 
@@ -48,6 +53,10 @@ export async function mockApi(
   page: Page,
   resolver: (request: Request) => MockApiResult | Promise<MockApiResult>,
 ) {
+  await page.routeWebSocket("ws://127.0.0.1:13000/**", () => {
+    // Empty-state journeys only need an open socket. Socket behavior has
+    // dedicated store tests.
+  });
   await page.route("http://127.0.0.1:13000/**", async (route) => {
     const request = route.request();
     const origin = request.headers()["origin"] ?? "http://localhost:14001";
@@ -65,9 +74,12 @@ export async function mockApi(
     const result = await resolver(request);
     await route.fulfill({
       status: result.status ?? 200,
-      contentType: "application/json",
+      contentType: result.contentType ?? "application/json",
       headers: { ...corsHeaders, ...result.headers },
-      body: JSON.stringify(result.body ?? {}),
+      body:
+        result.rawBody !== undefined
+          ? result.rawBody
+          : JSON.stringify(result.body ?? {}),
     });
   });
 }

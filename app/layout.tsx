@@ -3,22 +3,10 @@ import { LanguageProvider } from "@/components/utils/languages/language-provider
 import { ThemeProvider } from "@/components/utils/themes/theme-provider";
 import { TitleSync } from "@/components/utils/seo/title-sync";
 import type { Metadata } from "next";
-import { Preahvihear, Ubuntu } from "next/font/google";
+import "@fontsource/preahvihear/khmer-400.css";
+import "@fontsource/ubuntu/latin-400.css";
+import "@fontsource/ubuntu/latin-700.css";
 import "./globals.css";
-
-const ubuntuFont = Ubuntu({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  display: "swap",
-  variable: "--font-ubuntu",
-});
-
-const preahvihearFont = Preahvihear({
-  subsets: ["khmer"],
-  weight: ["400"],
-  display: "swap",
-  variable: "--font-preahvihear",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -41,7 +29,7 @@ export default function RootLayout({
     /*---------------------------------- Main Layout ----------------------------------*/
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
-        className={`${ubuntuFont.variable} ${preahvihearFont.variable} antialiased`}
+        className="antialiased"
         style={{
           fontFamily: "var(--font-ubuntu), var(--font-preahvihear), sans-serif",
         }}

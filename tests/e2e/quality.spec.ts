@@ -125,7 +125,7 @@ test("key production pages stay within navigation and resource budgets", async (
   browserName,
 }) => {
   test.skip(browserName !== "chromium", "Performance budgets are calibrated for Chromium");
-  test.setTimeout(45_000);
+  test.setTimeout(75_000);
   await mockApi(page, successfulEmployeeApi);
 
   for (const route of ["/", "/product"] as const) {
@@ -142,7 +142,13 @@ test("key production pages stay within navigation and resource budgets", async (
   }
 
   await loginEmployee(page);
-  for (const route of ["/feed", "/message", "/resume-builder"] as const) {
+  for (const route of [
+    "/favorite",
+    "/feed",
+    "/matching",
+    "/message",
+    "/resume-builder",
+  ] as const) {
     await page.goto(route, { waitUntil: "load" });
     await page.waitForTimeout(500);
     const transferredBytes = await page.evaluate(() =>

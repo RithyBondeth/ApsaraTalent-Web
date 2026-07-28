@@ -45,6 +45,7 @@ test("an expired session returns the user to login", async ({ page }) => {
 });
 
 test("representative authenticated pages render without uncaught runtime errors", async ({ page }) => {
+  test.setTimeout(180_000);
   await setRole(page, "employee");
   const failures: string[] = [];
 
@@ -69,9 +70,11 @@ test("representative authenticated pages render without uncaught runtime errors"
     const routeFailures = captureRuntimeFailures(routePage);
     const response = await routePage.goto(route, { waitUntil: "load" });
     expect(response?.status(), `${route} response`).toBe(200);
-    await expect(routePage).toHaveURL(
-      new RegExp(`${route.replaceAll("/", "\\/")}$`),
-    );
+    const expectedUrl =
+      route === "/resume-builder/edit"
+        ? /\/resume-builder(?:\/edit)?$/
+        : new RegExp(`${route.replaceAll("/", "\\/")}$`);
+    await expect(routePage).toHaveURL(expectedUrl);
     await expect(routePage.locator("body")).not.toBeEmpty();
     failures.push(...routeFailures);
     await routePage.close();

@@ -231,6 +231,35 @@ describe("chat store", () => {
     });
   });
 
+  it("marks the connection offline after socket errors and disconnects", () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const socket = createMockSocket({}, false);
+    socketManagerMocks.createSocket.mockReturnValue(socket);
+
+    useChatStore.getState().connect({ id: "user-1", name: "Sokha" });
+    useChatStore.setState({ isConnected: true });
+    socket.listeners.get("connect_error")?.(new Error("network unavailable"));
+
+    expect(useChatStore.getState().isConnected).toBe(false);
+    expect(errorSpy).toHaveBeenCalledWith(
+      "[Socket] Connection error:",
+      "network unavailable",
+    );
+
+    useChatStore.setState({ isConnected: true });
+    socket.listeners.get("disconnect")?.("transport close");
+
+    expect(useChatStore.getState().isConnected).toBe(false);
+    expect(warnSpy).toHaveBeenCalledWith(
+      "[Socket] Disconnected:",
+      "transport close",
+    );
+
+    errorSpy.mockRestore();
+    warnSpy.mockRestore();
+  });
+
   it("sends an optimistic message and replaces its temporary id after acknowledgement", () => {
     const socket = createMockSocket({
       sendMessage: (_payload, callback) =>

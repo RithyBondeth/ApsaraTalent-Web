@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +25,7 @@ import { useLocale, useTranslations } from "next-intl";
 import MissingCard from "./missing-card";
 import { IAiSkillGapModalProps } from "./props";
 
-/* ---------------------------------- Helper ----------------------------------- */
+/* ---------------------------------- Helpers ----------------------------------- */
 const GAP_COLOR: Record<string, string> = {
   none: "border-green-500/30 bg-green-50 dark:bg-green-900/10 text-green-800 dark:text-green-300",
   small:
@@ -35,6 +35,32 @@ const GAP_COLOR: Record<string, string> = {
   large:
     "border-red-500/30 bg-red-50 dark:bg-red-900/10 text-red-800 dark:text-red-300",
 };
+
+function isMissingSkill(
+  value: Record<string, unknown>,
+): value is Record<string, unknown> & ISkillGapMissing {
+  return (
+    value.t === "missing" &&
+    typeof value.skill === "string" &&
+    ["high", "medium", "low"].includes(String(value.criticality)) &&
+    Array.isArray(value.positions) &&
+    value.positions.every((position) => typeof position === "string") &&
+    typeof value.tip === "string"
+  );
+}
+
+function isSkillGapSummary(
+  value: Record<string, unknown>,
+): value is Record<string, unknown> & ISkillGapSummary {
+  return (
+    value.t === "summary" &&
+    ["none", "small", "moderate", "large"].includes(String(value.overallGap)) &&
+    typeof value.estimatedWeeks === "number" &&
+    Number.isFinite(value.estimatedWeeks) &&
+    value.estimatedWeeks >= 0 &&
+    typeof value.topPriority === "string"
+  );
+}
 
 export function AiSkillGapModal(props: IAiSkillGapModalProps) {
   /* ---------------------------------- Props ---------------------------------- */
@@ -51,6 +77,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
   const [summary, setSummary] = useState<ISkillGapSummary | null>(null);
   const [generating, setGenerating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const hasData = matched.length > 0 || missing.length > 0 || summary !== null;
 
@@ -76,11 +103,11 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
         if (obj.t === "matched" && typeof obj.skill === "string") {
           receivedMatched.push(obj.skill);
           flushSync(() => setMatched([...receivedMatched]));
-        } else if (obj.t === "missing" && typeof obj.skill === "string") {
-          receivedMissing.push(obj as unknown as ISkillGapMissing);
+        } else if (isMissingSkill(obj)) {
+          receivedMissing.push(obj);
           flushSync(() => setMissing([...receivedMissing]));
-        } else if (obj.t === "summary") {
-          flushSync(() => setSummary(obj as unknown as ISkillGapSummary));
+        } else if (isSkillGapSummary(obj)) {
+          flushSync(() => setSummary(obj));
         }
       } catch {
         // Incomplete JSON fragment — wait for more chunks
@@ -147,9 +174,11 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
     <>
       {/* Trigger Button Section */}
       <Button
+        ref={triggerRef}
         size="sm"
         variant="outline"
-        className="h-8 text-xs gap-1.5 px-2.5 sm:px-3"
+        className="h-8 gap-1.5 rounded-none px-2.5 text-xs sm:px-3"
+        aria-label={t("skillGap")}
         onClick={handleOpen}
       >
         <LucideTarget className="size-3.5 text-primary shrink-0" />
@@ -160,7 +189,13 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
 
       {/* Dialog Section */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-2xl flex flex-col p-0 gap-0">
+        <DialogContent
+          className="sm:max-w-2xl flex flex-col p-0 gap-0"
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            triggerRef.current?.focus();
+          }}
+        >
           {/* Header Section */}
           <DialogHeader className="shrink-0 px-5 pt-5 pb-4 border-b border-border/60">
             <div className="flex items-center gap-3 pr-8">
@@ -325,4 +360,3 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
     </>
   );
 }
-

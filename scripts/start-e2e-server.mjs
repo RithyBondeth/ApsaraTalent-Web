@@ -4,17 +4,18 @@ import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
-const standalone = join(root, ".next", "standalone");
+const distDir = process.env.NEXT_DIST_DIR ?? ".next-e2e";
+const standalone = join(root, distDir, "standalone");
 const serverEntry = join(standalone, "server.js");
 
 if (!existsSync(serverEntry)) {
   throw new Error("Standalone build missing. Run npm run build first.");
 }
 
-const staticTarget = join(standalone, ".next", "static");
+const staticTarget = join(standalone, distDir, "static");
 await rm(staticTarget, { recursive: true, force: true });
-await mkdir(join(standalone, ".next"), { recursive: true });
-await cp(join(root, ".next", "static"), staticTarget, { recursive: true });
+await mkdir(join(standalone, distDir), { recursive: true });
+await cp(join(root, distDir, "static"), staticTarget, { recursive: true });
 
 if (existsSync(join(root, "public"))) {
   const publicTarget = join(standalone, "public");

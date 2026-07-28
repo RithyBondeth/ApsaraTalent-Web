@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCoverLetterPdfStore } from "@/stores/apis/resume/cover-letter-pdf.store";
 import { useDownloadProgress } from "@/hooks/utils/use-download-progress";
 import { downloadBase64File } from "@/utils/functions/file";
@@ -68,6 +68,9 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
 
   // Download
   const [downloading, setDownloading] = useState<boolean>(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
+  const requestController = useRef<AbortController | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const {
     progress: dlProgress,
     start: startProgress,
@@ -77,76 +80,119 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
   /* ---------------------- Computed State --------------------- */
   const isBusy = generating || polishing || downloading;
 
+  useEffect(
+    () => () => {
+      requestController.current?.abort();
+    },
+    [],
+  );
+
   /* ------------------------- Methods ------------------------- */
   // ── Handle Generate ───────────────────────────
-  const generate = async () => {
+  const generate = async (force = false) => {
     setOpen(true);
-    if (coverLetter) return;
+    if (coverLetter && !force) return;
+    requestController.current?.abort();
+    const controller = new AbortController();
+    requestController.current = controller;
     setGenerating(true);
     setGenError(null);
     setPolishError(null);
     setCoverLetter("");
 
-    await streamFetch(
-      API_RESUME_COVER_LETTER_STREAM_URL,
-      {
-        method: "POST",
-        body: {
-          employeeName: props.employeeName,
-          employeeJob: props.employeeJob,
-          employeeSkills: props.employeeSkills,
-          employeeExperience: props.employeeExperience,
-          employeeDescription: props.employeeDescription,
-          companyName: props.companyName,
-          companyIndustry: props.companyIndustry,
-          companyDescription: props.companyDescription,
-          openPositions: props.openPositions,
+    try {
+      await streamFetch(
+        API_RESUME_COVER_LETTER_STREAM_URL,
+        {
+          method: "POST",
+          signal: controller.signal,
+          body: {
+            employeeName: props.employeeName,
+            employeeJob: props.employeeJob,
+            employeeSkills: props.employeeSkills,
+            employeeExperience: props.employeeExperience,
+            employeeDescription: props.employeeDescription,
+            companyName: props.companyName,
+            companyIndustry: props.companyIndustry,
+            companyDescription: props.companyDescription,
+            openPositions: props.openPositions,
+          },
         },
-      },
-      (event) => {
-        if (event.t === "chunk") {
-          setCoverLetter((prev) => (prev ?? "") + event.v);
-        } else if (event.t === "error") {
-          // Surface the server's message when the AI quota / rate limit is hit.
-          setGenError(event.code === 429 ? event.v : t("coverLetterFailed"));
-          setCoverLetter(null);
-        }
-      },
-    );
-
-    setGenerating(false);
+        (event) => {
+          if (event.t === "chunk") {
+            setCoverLetter((prev) => (prev ?? "") + event.v);
+          } else if (event.t === "error") {
+            setGenError(event.code === 429 ? event.v : t("coverLetterFailed"));
+            setCoverLetter(null);
+          }
+        },
+      );
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === "AbortError")) {
+        setGenError(t("coverLetterFailed"));
+        setCoverLetter(null);
+      }
+    } finally {
+      if (requestController.current === controller) {
+        requestController.current = null;
+      }
+      setGenerating(false);
+    }
   };
 
   // ── Handle Regenerate ───────────────────────────
   const handleRegenerate = () => {
     setCoverLetter(null);
     setPolishError(null);
-    generate();
+    void generate(true);
   };
 
   // ── Handle Polish ────────────────────────────────
   const handlePolish = async () => {
     if (!coverLetter) return;
+    requestController.current?.abort();
+    const controller = new AbortController();
+    requestController.current = controller;
     setPolishing(true);
     setPolishError(null);
     const originalText = coverLetter;
     setCoverLetter("");
 
-    await streamFetch(
-      API_RESUME_POLISH_COVER_LETTER_STREAM_URL,
-      { method: "POST", body: { coverLetterText: originalText } },
-      (event) => {
-        if (event.t === "chunk") {
-          setCoverLetter((prev) => (prev ?? "") + event.v);
-        } else if (event.t === "error") {
-          // Surface the server's message when the AI quota / rate limit is hit.
-          setPolishError(event.code === 429 ? event.v : t("polishFailed"));
-          setCoverLetter(originalText);
-        }
-      },
-    );
+    try {
+      await streamFetch(
+        API_RESUME_POLISH_COVER_LETTER_STREAM_URL,
+        {
+          method: "POST",
+          body: { coverLetterText: originalText },
+          signal: controller.signal,
+        },
+        (event) => {
+          if (event.t === "chunk") {
+            setCoverLetter((prev) => (prev ?? "") + event.v);
+          } else if (event.t === "error") {
+            setPolishError(event.code === 429 ? event.v : t("polishFailed"));
+            setCoverLetter(originalText);
+          }
+        },
+      );
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === "AbortError")) {
+        setPolishError(t("polishFailed"));
+        setCoverLetter(originalText);
+      }
+    } finally {
+      if (requestController.current === controller) {
+        requestController.current = null;
+      }
+      setPolishing(false);
+    }
+  };
 
-    setPolishing(false);
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (!nextOpen && (generating || polishing)) {
+      requestController.current?.abort();
+    }
   };
 
   // ── Handle Copy ─────────────────────────────────────
@@ -161,6 +207,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
   const handleDownloadPdf = async () => {
     if (!coverLetter) return;
     setDownloading(true);
+    setDownloadError(null);
     startProgress(92);
     try {
       const res = await generateCoverLetterPdf({
@@ -179,6 +226,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
       downloadBase64File(data, mimeType, filename || "cover-letter.pdf");
     } catch {
       stopProgress(0);
+      setDownloadError(t("coverLetterPdfFailed"));
     } finally {
       setDownloading(false);
     }
@@ -189,10 +237,12 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
     <>
       {/* Button To Open The Modal Section */}
       <Button
+        ref={triggerRef}
         size="sm"
         variant="outline"
-        className="h-8 text-xs gap-1.5 px-2.5 sm:px-3"
-        onClick={generate}
+        className="h-8 gap-1.5 rounded-none px-2.5 text-xs sm:px-3"
+        aria-label={t("coverLetter")}
+        onClick={() => void generate()}
       >
         <LucideFileText className="size-3.5 text-primary shrink-0" />
         <span className={props.compact ? "hidden sm:inline" : undefined}>
@@ -201,8 +251,14 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
       </Button>
 
       {/* Modal Section */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="h-[78dvh]">
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent
+          className="h-[78dvh]"
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            triggerRef.current?.focus();
+          }}
+        >
           {/* Header Section */}
           <DialogHeader className="px-5 pt-5 pb-3 shrink-0 border-b border-border/60">
             <DialogTitle className="flex items-center gap-2 text-base text-left pr-8">
@@ -276,6 +332,12 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
                 {polishError && !polishing && (
                   <p className="text-xs text-destructive shrink-0">
                     {polishError}
+                  </p>
+                )}
+
+                {downloadError && !downloading && (
+                  <p className="text-xs text-destructive shrink-0">
+                    {downloadError}
                   </p>
                 )}
               </>
@@ -388,4 +450,3 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
     </>
   );
 }
-

@@ -31,7 +31,10 @@ describe("UI utility hooks", () => {
       matches: true,
       media: query,
       onchange: null,
-      addEventListener: (_event, listener) => {
+      addEventListener: (
+        _event: string,
+        listener: EventListenerOrEventListenerObject,
+      ) => {
         changeListener = listener as (event: MediaQueryListEvent) => void;
       },
       removeEventListener: remove,
@@ -54,7 +57,10 @@ describe("UI utility hooks", () => {
       matches: false,
       media: "",
       onchange: null,
-      addEventListener: (_event, listener) => {
+      addEventListener: (
+        _event: string,
+        listener: EventListenerOrEventListenerObject,
+      ) => {
         changeListener = listener as () => void;
       },
       removeEventListener: vi.fn(),

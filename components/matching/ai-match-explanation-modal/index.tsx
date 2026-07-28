@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useAiMatchExplanationStore } from "@/stores/apis/matching/ai-match-explanation.store";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +21,26 @@ import { useLocale, useTranslations } from "next-intl";
 import { IAiMatchExplanationModalProps } from "./props";
 import ScoreRing from "./score-ring";
 
+/* ---------------------------------- Helper ----------------------------------- */
+function isMatchExplanation(
+  value: unknown,
+): value is IAiMatchExplanationResponse {
+  if (!value || typeof value !== "object") return false;
+  const data = value as Record<string, unknown>;
+  return (
+    typeof data.score === "number" &&
+    Number.isFinite(data.score) &&
+    data.score >= 0 &&
+    data.score <= 100 &&
+    typeof data.verdict === "string" &&
+    typeof data.explanation === "string" &&
+    Array.isArray(data.strengths) &&
+    data.strengths.every((item) => typeof item === "string") &&
+    Array.isArray(data.gaps) &&
+    data.gaps.every((item) => typeof item === "string")
+  );
+}
+
 export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
   /* --------------------------------- Props -------------------------------- */
   const { eid, cid, companyName, compact } = props;
@@ -34,6 +54,7 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<IAiMatchExplanationResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   /* ---------------------------- API Integration --------------------------- */
   const { fetchMatchExplanation } = useAiMatchExplanationStore();
@@ -46,6 +67,7 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
     setError(null);
     try {
       const res = await fetchMatchExplanation(eid, cid, locale);
+      if (!isMatchExplanation(res)) throw new Error("Invalid response");
       setData(res);
     } catch {
       setError(t("analysisFailed"));
@@ -73,7 +95,7 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
   const verdictColor = (verdict: string) => {
     const v = verdict.toLowerCase();
     if (v.includes("strong"))
-      return "text-green-700 bg-green-100 dark:text-green-400 dark:bg-green-900/30";
+      return "text-green-800 bg-green-100 dark:text-green-300 dark:bg-green-900/30";
     if (v.includes("good"))
       return "text-blue-700 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30";
     if (v.includes("partial"))
@@ -94,9 +116,11 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
     <>
       {/* Trigger Button Section */}
       <Button
+        ref={triggerRef}
         size="sm"
         variant="outline"
-        className="h-8 text-xs gap-1.5 px-2.5 sm:px-3"
+        className="h-8 gap-1.5 rounded-none px-2.5 text-xs sm:px-3"
+        aria-label={t("aiScore")}
         onClick={handleOpen}
       >
         <LucideSparkles className="size-3.5 text-primary shrink-0" />
@@ -107,7 +131,12 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
 
       {/* Dialog Section */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            triggerRef.current?.focus();
+          }}
+        >
           {/* Header Section */}
           <DialogHeader className="px-4 sm:px-5 pt-5 pb-3 shrink-0 border-b border-border/60">
             <DialogTitle className="flex items-center gap-2 text-base text-left sm:text-left pr-8">
@@ -322,4 +351,3 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
     </>
   );
 }
-

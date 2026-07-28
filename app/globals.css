@@ -4,6 +4,9 @@
 
 @layer base {
   :root {
+    --font-ubuntu: "Ubuntu";
+    --font-preahvihear: "Preahvihear";
+
     /* Off-white page bg — pure white cards float above it */
     --background: 220 20% 97%;
     --foreground: 224 14% 10%;

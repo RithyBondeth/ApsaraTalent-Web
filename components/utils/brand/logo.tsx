@@ -53,7 +53,7 @@ export default function LogoComponent({
         fill
         sizes={`${width}px`}
         aria-hidden
-        className="object-contain opacity-100 blur-0 transition-[opacity,transform,filter] duration-500 ease-out dark:scale-[0.98] dark:opacity-0 dark:blur-[2px]"
+        className="pointer-events-none object-contain opacity-100 blur-0 transition-[opacity,transform,filter] duration-500 ease-out dark:scale-[0.98] dark:opacity-0 dark:blur-[2px]"
         priority={priority}
       />
       <Image
@@ -62,7 +62,7 @@ export default function LogoComponent({
         fill
         sizes={`${width}px`}
         aria-hidden
-        className="scale-[1.08] object-contain opacity-0 blur-[2px] transition-[opacity,transform,filter] duration-500 ease-out dark:scale-[1.11] dark:opacity-100 dark:blur-0"
+        className="pointer-events-none scale-[1.08] object-contain opacity-0 blur-[2px] transition-[opacity,transform,filter] duration-500 ease-out dark:scale-[1.11] dark:opacity-100 dark:blur-0"
         priority={priority}
       />
     </span>
