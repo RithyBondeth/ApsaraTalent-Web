@@ -562,12 +562,17 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
         { opacity: 1, y: 0, duration: 0.6 },
         1.3,
       );
-      tl.fromTo(
+      const scrollIndicator = container.querySelector(
         "[data-hero='scroll']",
-        { opacity: 0 },
-        { opacity: 1, duration: 0.5 },
-        1.55,
       );
+      if (scrollIndicator) {
+        tl.fromTo(
+          scrollIndicator,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.5 },
+          1.55,
+        );
+      }
 
       // ── Floating particles — endless gentle drift ──────────
       container
