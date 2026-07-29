@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAiMatchExplanationStore } from "@/stores/apis/matching/ai-match-explanation.store";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,7 +43,7 @@ function isMatchExplanation(
 
 export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
   /* --------------------------------- Props -------------------------------- */
-  const { eid, cid, companyName, compact } = props;
+  const { eid, cid, companyName, compact, autoOpen } = props;
 
   /* --------------------------------- Utils -------------------------------- */
   const t = useTranslations("matching");
@@ -55,9 +55,17 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
   const [data, setData] = useState<IAiMatchExplanationResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const autoOpenRef = useRef<boolean>(autoOpen ?? false);
 
   /* ---------------------------- API Integration --------------------------- */
   const { fetchMatchExplanation } = useAiMatchExplanationStore();
+
+    /* ------------------------------ Effects ------------------------------- */
+  useEffect(() => {
+    if (!autoOpenRef.current) return;
+    autoOpenRef.current = false;
+    triggerRef.current?.click();
+  }, []);
 
   /* -------------------------------- Methods ------------------------------- */
   // ── Handle Fetch Explanation ──────────────────────

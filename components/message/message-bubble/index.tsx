@@ -1,6 +1,6 @@
 import { useChatStore } from "@/stores/features/chat/chat.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useMemo, useRef, useState } from "react";
+import { memo, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -30,7 +30,7 @@ function DeliveryStatusIcon({
   return <Check className="h-3 w-3 text-muted-foreground/60 inline-block" />;
 }
 
-export default function MessageBubble(props: IMessageBubbleProps) {
+function MessageBubble(props: IMessageBubbleProps) {
   /* --------------------------------- Props --------------------------------- */
   const { message, activeChat, isLastSeen, onReply, onEdit } = props;
 
@@ -38,9 +38,10 @@ export default function MessageBubble(props: IMessageBubbleProps) {
   const t = useTranslations("message");
 
   /* ----------------------------- API Integration ---------------------------- */
-  const { reactToMessage, deleteMessage } = useChatStore();
+  const reactToMessage = useChatStore((state) => state.reactToMessage);
+  const deleteMessage = useChatStore((state) => state.deleteMessage);
   const initiateCall = useCallStore((s) => s.initiateCall);
-  const { user: currentUser } = useGetCurrentUserStore();
+  const currentUser = useGetCurrentUserStore((state) => state.user);
 
   /* -------------------------------- All States ------------------------------ */
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -354,3 +355,5 @@ export default function MessageBubble(props: IMessageBubbleProps) {
     </div>
   );
 }
+
+export default memo(MessageBubble);

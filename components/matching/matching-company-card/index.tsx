@@ -26,9 +26,11 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { memo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { translateLocation, getNameInitials } from "@/utils/functions/text";
-import { AiMatchExplanationModal } from "@/components/matching/ai-match-explanation-modal";
-import { AiCoverLetterModal } from "@/components/matching/ai-cover-letter-modal";
-import { AiSkillGapModal } from "@/components/matching/ai-skill-gap-modal";
+import {
+  LazyAiCoverLetterAction,
+  LazyAiMatchExplanationAction,
+  LazyAiSkillGapAction,
+} from "@/components/matching/lazy-ai-actions";
 
 const MatchingCompanyCard = memo(function MatchingCompanyCard(
   props: IMatchingCompanyCardProps,
@@ -124,7 +126,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
         {/* Left Section: AI Actions and Unmatch */}
         <div className="flex items-center gap-1">
           {/* AI Match Explanation Modal Section */}
-          <AiMatchExplanationModal
+          <LazyAiMatchExplanationAction
             eid={props.employeeId}
             cid={props.id}
             companyName={props.name}
@@ -132,7 +134,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
           />
 
           {/* AI Cover Letter Modal Section */}
-          <AiCoverLetterModal
+          <LazyAiCoverLetterAction
             employeeName={props.employeeName}
             employeeJob={props.employeeJob}
             employeeSkills={props.employeeSkills}
@@ -146,7 +148,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
           />
 
           {/* AI Skill Gap Modal Section */}
-          <AiSkillGapModal
+          <LazyAiSkillGapAction
             eid={props.employeeId}
             cid={props.id}
             companyName={props.name}

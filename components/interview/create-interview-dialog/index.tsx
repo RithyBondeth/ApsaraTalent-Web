@@ -19,12 +19,18 @@ import { Separator } from "@/components/ui/separator";
 import { useInterviewStore } from "@/stores/apis/matching/interview.store";
 import { useMediaQuery } from "@/hooks/utils/use-media-query";
 import { LucideCalendarCheck, LucidePlus } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { InterviewFormBody } from "./interview-form-body";
 import { ICreateInterviewDialogProps } from "./props";
 import { IInterviewFormBodyProps } from "./interview-form-body/props";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
+
+const InterviewFormBody = dynamic(
+  () =>
+    import("./interview-form-body").then((module) => module.InterviewFormBody),
+  { ssr: false },
+);
 
 export function CreateInterviewDialog({
   currentId,

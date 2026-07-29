@@ -4,14 +4,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import MatchingCompanyCard from "./matching-company-card";
 import MatchingEmployeeCard from "./matching-employee-card";
 
-vi.mock("@/components/matching/ai-match-explanation-modal", () => ({
-  AiMatchExplanationModal: () => <button>AI score</button>,
-}));
-vi.mock("@/components/matching/ai-cover-letter-modal", () => ({
-  AiCoverLetterModal: () => <button>Cover letter</button>,
-}));
-vi.mock("@/components/matching/ai-skill-gap-modal", () => ({
-  AiSkillGapModal: () => <button>Skill gap</button>,
+vi.mock("@/components/matching/lazy-ai-actions", () => ({
+  LazyAiMatchExplanationAction: () => <button>AI score</button>,
+  LazyAiCoverLetterAction: () => <button>Cover letter</button>,
+  LazyAiSkillGapAction: () => <button>Skill gap</button>,
 }));
 vi.mock("next-intl", () => ({
   useTranslations: (namespace: string) => (key: string, values?: Record<string, unknown>) => {

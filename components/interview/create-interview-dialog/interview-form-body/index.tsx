@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -30,9 +29,15 @@ import {
   LucideTimer,
   LucideUser,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { IInterviewFormBodyProps } from "./props";
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { km, enUS } from "date-fns/locale";
+
+const Calendar = dynamic(
+  () => import("@/components/ui/calendar").then((module) => module.Calendar),
+  { ssr: false },
+);
 
 /* --------------------------------- Helper --------------------------------- */
 function Field({

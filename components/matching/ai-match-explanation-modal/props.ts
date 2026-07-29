@@ -3,4 +3,5 @@ export interface IAiMatchExplanationModalProps {
   cid: string;
   companyName: string;
   compact?: boolean;
+  autoOpen?: boolean;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -64,7 +64,7 @@ function isSkillGapSummary(
 
 export function AiSkillGapModal(props: IAiSkillGapModalProps) {
   /* ---------------------------------- Props ---------------------------------- */
-  const { eid, cid, companyName, compact } = props;
+  const { eid, cid, companyName, compact, autoOpen } = props;
 
   /* ---------------------------------- Utils ---------------------------------- */
   const t = useTranslations("matching");
@@ -78,8 +78,16 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
   const [generating, setGenerating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const autoOpenRef = useRef<boolean>(autoOpen ?? false);
 
   const hasData = matched.length > 0 || missing.length > 0 || summary !== null;
+
+    /* --------------------------------- Effects -------------------------------- */
+  useEffect(() => {
+    if (!autoOpenRef.current) return;
+    autoOpenRef.current = false;
+    triggerRef.current?.click();
+  }, []);
 
   /* ---------------------------------- Methods --------------------------------- */
   // ── Handle Stream Analysis ──────────────────────

@@ -91,7 +91,6 @@ import { ISkill } from "@/utils/interfaces/user/employee.interface";
 import { ISocialLink } from "@/utils/interfaces/user/social.interface";
 import { TPlatform } from "@/utils/types/user/platform.type";
 import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Check,
   ChevronDown,
@@ -132,9 +131,15 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
-import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
+import {
+  Controller,
+  type Resolver,
+  useFieldArray,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 import { PageState } from "@/components/utils/feedback/page-state";
-import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
+import type { TEmployeeProfileForm } from "./validation";
 import {
   addNewEducationSvg,
   addNewExperienceSvg,
@@ -145,6 +150,25 @@ import ProfileCompletionCard from "@/components/profile/profile-completion-card"
 import { EmployeeProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
 import MissingProfileFieldButton from "@/components/profile/missing-profile-field-button";
 import ProfileEditActionBar from "@/components/profile/profile-edit-action-bar";
+
+  /* -------------------------------- Helpers --------------------------------- */
+let employeeProfileResolverPromise:
+  | Promise<Resolver<TEmployeeProfileForm>>
+  | undefined;
+
+const lazyEmployeeProfileResolver: Resolver<TEmployeeProfileForm> = async (
+  ...args
+) => {
+  employeeProfileResolverPromise ??= Promise.all([
+    import("@hookform/resolvers/zod"),
+    import("./validation"),
+  ]).then(
+    ([{ zodResolver }, { employeeFormSchema }]) =>
+      zodResolver(employeeFormSchema) as Resolver<TEmployeeProfileForm>,
+  );
+
+  return (await employeeProfileResolverPromise)(...args);
+};
 
 export default function EmployeeProfilePage() {
   /* ----------------------------------- Utils ---------------------------------- */
@@ -274,7 +298,7 @@ export default function EmployeeProfilePage() {
   /* ------------------------------- Profile Form ------------------------------- */
   // React Hook Form: Employee Profile Schema
   const form = useForm<TEmployeeProfileForm>({
-    resolver: zodResolver(employeeFormSchema),
+    resolver: lazyEmployeeProfileResolver,
     defaultValues: {
       basicInfo: {
         firstname: "",

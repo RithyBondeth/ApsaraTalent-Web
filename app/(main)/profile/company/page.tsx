@@ -85,7 +85,6 @@ import { MAX_IMAGE_SIZE } from "@/utils/constants/config.constant";
 import { IBenefits } from "@/utils/interfaces/user/company.interface";
 import { IValues } from "@/utils/interfaces/user/company.interface";
 import { TPlatform } from "@/utils/types/user/platform.type";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ChevronDown,
   LucideBriefcase,
@@ -114,8 +113,14 @@ import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
-import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
-import { companyFormSchema, TCompanyProfileForm } from "./validation";
+import {
+  Controller,
+  type Resolver,
+  useFieldArray,
+  useForm,
+  useWatch,
+} from "react-hook-form";
+import type { TCompanyProfileForm } from "./validation";
 import { emptySvg } from "@/utils/constants/asset.constant";
 import { getCompanyProfileCompletion } from "@/utils/functions/profile";
 import { CompanyProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
@@ -124,6 +129,26 @@ import ProfileCompletionCard from "@/components/profile/profile-completion-card"
 import ProfileEditActionBar from "@/components/profile/profile-edit-action-bar";
 import MissingProfileFieldButton from "@/components/profile/missing-profile-field-button";
 import { PageState } from "@/components/utils/feedback/page-state";
+
+
+  /* -------------------------------- Helpers --------------------------------- */
+let companyProfileResolverPromise:
+  | Promise<Resolver<TCompanyProfileForm>>
+  | undefined;
+
+const lazyCompanyProfileResolver: Resolver<TCompanyProfileForm> = async (
+  ...args
+) => {
+  companyProfileResolverPromise ??= Promise.all([
+    import("@hookform/resolvers/zod"),
+    import("./validation"),
+  ]).then(
+    ([{ zodResolver }, { companyFormSchema }]) =>
+      zodResolver(companyFormSchema) as Resolver<TCompanyProfileForm>,
+  );
+
+  return (await companyProfileResolverPromise)(...args);
+};
 
 export default function ProfilePage() {
   /* ---------------------------------- Utils ----------------------------------- */
@@ -265,7 +290,7 @@ export default function ProfilePage() {
   /* ------------------------------- Profile Form ------------------------------- */
   // React Hook Form: Company Profile Schema
   const form = useForm<TCompanyProfileForm>({
-    resolver: zodResolver(companyFormSchema),
+    resolver: lazyCompanyProfileResolver,
     defaultValues: {
       basicInfo: {
         name: "",

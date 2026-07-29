@@ -5,11 +5,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { CalendarDays } from "lucide-react";
+import dynamic from "next/dynamic";
 import { Editable } from "./editable";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
 import { useTranslations } from "next-intl";
+
+const Calendar = dynamic(
+  () => import("@/components/ui/calendar").then((module) => module.Calendar),
+  { ssr: false },
+);
 
 export function InlineDateField(props: {
   value: string;

@@ -28,15 +28,8 @@ import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { useTranslations } from "next-intl";
 
 /* ------------------------------------- Handle Lazy Load ------------------------------------- */
-// Lazy-load emoji-mart — ~90KB dataset + picker only needed when user opens the emoji popover
+// Lazy-load emoji picker code until the popover opens Section
 const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });
-// Lazy-load emoji data alongside the picker to avoid blocking initial bundle
-let emojiData: unknown = null;
-if (typeof window !== "undefined") {
-  import("@emoji-mart/data").then((mod) => {
-    emojiData = mod.default;
-  });
-}
 
 export default function ChatInput(props: IChatInputProps) {
   /* ----------------------------------------- Props ----------------------------------------- */
@@ -64,7 +57,9 @@ export default function ChatInput(props: IChatInputProps) {
     return t("messageLabel");
   };
 
-  const buildReplyTo = (target?: IMessage | null): IMessage["replyTo"] | null => {
+  const buildReplyTo = (
+    target?: IMessage | null,
+  ): IMessage["replyTo"] | null => {
     if (!target) return null;
     return {
       id: target.id,
@@ -89,6 +84,7 @@ export default function ChatInput(props: IChatInputProps) {
   const [isSending, setIsSending] = useState<boolean>(false);
   const [pendingFiles, setPendingFiles] = useState<IPendingFile[]>([]);
   const [isEmojiOpen, setEmojiOpen] = useState<boolean>(false);
+  const [emojiData, setEmojiData] = useState<unknown>(null);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -149,6 +145,20 @@ export default function ChatInput(props: IChatInputProps) {
   useEffect(() => {
     if (replyTarget) textareaRef.current?.focus();
   }, [replyTarget]);
+
+  // Load emoji data only when the picker is requested Section
+  useEffect(() => {
+    if (!isEmojiOpen || emojiData) return;
+
+    let active = true;
+    void import("@emoji-mart/data").then((module) => {
+      if (active) setEmojiData(module.default);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [emojiData, isEmojiOpen]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Text Input ─────────────────────────────────────────
@@ -250,9 +260,7 @@ export default function ChatInput(props: IChatInputProps) {
         } catch (err: unknown) {
           if (entry.preview) URL.revokeObjectURL(entry.preview);
           const message =
-            err instanceof Error
-              ? err.message
-              : t("uploadFailed");
+            err instanceof Error ? err.message : t("uploadFailed");
           setPendingFiles((prev) =>
             prev.map((f) =>
               f.id === entry.id
@@ -441,19 +449,29 @@ export default function ChatInput(props: IChatInputProps) {
                   sideOffset={8}
                   className="w-[min(92vw,340px)] max-h-[55vh] overflow-hidden p-0"
                 >
-                  <Picker
-                    data={emojiData}
-                    theme={resolvedTheme === "dark" ? "dark" : "light"}
-                    set="native"
-                    dynamicWidth
-                    previewPosition="none"
-                    skinTonePosition="none"
-                    searchPosition="top"
-                    perLine={7}
-                    onEmojiSelect={(emoji: { native?: string }) =>
-                      insertEmoji(emoji?.native ?? "")
-                    }
-                  />
+                  {emojiData ? (
+                    <Picker
+                      data={emojiData}
+                      theme={resolvedTheme === "dark" ? "dark" : "light"}
+                      set="native"
+                      dynamicWidth
+                      previewPosition="none"
+                      skinTonePosition="none"
+                      searchPosition="top"
+                      perLine={7}
+                      onEmojiSelect={(emoji: { native?: string }) =>
+                        insertEmoji(emoji?.native ?? "")
+                      }
+                    />
+                  ) : (
+                    <div
+                      className="flex h-[360px] items-center justify-center bg-muted/30"
+                      role="status"
+                      aria-label={t("loadingChat")}
+                    >
+                      <span className="size-7 animate-pulse bg-muted-foreground/20" />
+                    </div>
+                  )}
                 </PopoverContent>
               </Popover>
 

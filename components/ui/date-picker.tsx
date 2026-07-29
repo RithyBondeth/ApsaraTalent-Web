@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, type ButtonProps } from "@/components/ui/button";
-import { Calendar, type CalendarProps } from "@/components/ui/calendar";
+import type { CalendarProps } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
@@ -11,8 +11,14 @@ import { cn } from "@/lib/utils";
 import { enUS, km } from "date-fns/locale";
 import { format, isValid } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
+
+const Calendar = dynamic(
+  () => import("@/components/ui/calendar").then((module) => module.Calendar),
+  { ssr: false },
+);
 
 interface DatePickerProps extends Omit<
   ButtonProps,

@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { IInterviewCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { AiInterviewPrepModal } from "@/components/matching/ai-interview-prep-modal";
+import { LazyAiInterviewPrepAction } from "@/components/matching/lazy-ai-actions";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export function InterviewCard({
@@ -114,7 +114,7 @@ export function InterviewCard({
         <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/25 px-4 py-3 sm:px-5">
           {/* AI Practice Questions Section (employees only) */}
           {isEmployee && (
-            <AiInterviewPrepModal
+            <LazyAiInterviewPrepAction
               eid={interview.employee.id}
               cid={interview.company.id}
               companyName={interview.company.name}

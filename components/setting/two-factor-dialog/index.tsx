@@ -25,9 +25,13 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import QRCode from "react-qr-code";
+import dynamic from "next/dynamic";
 import { ITwoFactorDialogProps } from "./props";
 import { OTP_LENGTH } from "@/utils/constants/auth.constant";
+
+const QRCode = dynamic(() => import("react-qr-code"), {
+  ssr: false,
+});
 
 export function TwoFactorDialog({
   open,

@@ -14,7 +14,7 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useChatStore } from "@/stores/features/chat/chat.store";
 import { useCallStore } from "@/stores/features/call/call.store";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import MessageLoadingSkeleton, {
@@ -189,14 +189,28 @@ export default function MessagePageContent() {
   };
 
   // ── Edit Message ─────────────────────────────────────────
-  const handleEditMessage = (messageId: string, newContent: string) => {
-    if (chatId) editMessageAction(messageId, chatId, newContent);
-  };
+  const handleEditMessage = useCallback(
+    (messageId: string, newContent: string) => {
+      if (chatId) editMessageAction(messageId, chatId, newContent);
+    },
+    [chatId, editMessageAction],
+  );
 
   // ── Handle Typing ─────────────────────────────────────────
-  const handleTyping = (typing: boolean) => {
-    if (chatId) setTyping(chatId, typing);
-  };
+  const handleTyping = useCallback(
+    (typing: boolean) => {
+      if (chatId) setTyping(chatId, typing);
+    },
+    [chatId, setTyping],
+  );
+
+  const handleReply = useCallback((message: IMessage) => {
+    setReplyTarget(message);
+  }, []);
+
+  const handleCancelReply = useCallback(() => {
+    setReplyTarget(null);
+  }, []);
 
   // ── Handle Chat Select ─────────────────────────────────────
   const handleChatSelect = (chat: { id: string }) => {
@@ -251,7 +265,7 @@ export default function MessagePageContent() {
           messages={currentMessages}
           activeChat={activeChat}
           isTyping={isTyping[activeChat.id] || false}
-          onReply={(msg) => setReplyTarget(msg)}
+          onReply={handleReply}
           onEdit={handleEditMessage}
         />
       )}
@@ -261,7 +275,7 @@ export default function MessagePageContent() {
         onSendMessage={handleSendMessage}
         onTyping={handleTyping}
         replyTarget={replyTarget}
-        onCancelReply={() => setReplyTarget(null)}
+        onCancelReply={handleCancelReply}
       />
     </div>
   ) : null;

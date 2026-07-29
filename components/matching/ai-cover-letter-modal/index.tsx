@@ -71,6 +71,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const requestController = useRef<AbortController | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const autoOpenRef = useRef<boolean>(props.autoOpen ?? false);
   const {
     progress: dlProgress,
     start: startProgress,
@@ -86,6 +87,13 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
     },
     [],
   );
+
+    /* ------------------------ Effects ------------------------ */
+  useEffect(() => {
+    if (!autoOpenRef.current) return;
+    autoOpenRef.current = false;
+    triggerRef.current?.click();
+  }, []);
 
   /* ------------------------- Methods ------------------------- */
   // ── Handle Generate ───────────────────────────

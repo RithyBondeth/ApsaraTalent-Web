@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { useDownloadProgress } from "@/hooks/utils/use-download-progress";
 import { downloadBase64File } from "@/utils/functions/file";
@@ -32,7 +32,7 @@ import { IAiInterviewPrepModalProps } from "./props";
 
 export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
   /* ---------------------------- Props --------------------------- */
-  const { eid, cid, companyName, interviewTitle } = props;
+  const { eid, cid, companyName, interviewTitle, autoOpen } = props;
 
   /* ---------------------------- Utils --------------------------- */
   const t = useTranslations("matching");
@@ -44,6 +44,8 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
   /** True while the SSE stream is active */
   const [generating, setGenerating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const autoOpenRef = useRef<boolean>(autoOpen ?? false);
 
   const [downloading, setDownloading] = useState<boolean>(false);
   const {
@@ -54,6 +56,13 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
 
   /* ----------------------- API Integration ----------------------- */
   const { generateInterviewPrepPdf } = useInterviewPrepPdfStore();
+
+    /* -------------------------- Effects -------------------------- */
+  useEffect(() => {
+    if (!autoOpenRef.current) return;
+    autoOpenRef.current = false;
+    triggerRef.current?.click();
+  }, []);
 
   /* --------------------------- Methods --------------------------- */
   // ── Handle Stream Questions ──────────────────────
@@ -162,6 +171,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
     <>
       {/* Button To Open Modal Section */}
       <Button
+        ref={triggerRef}
         size="sm"
         variant="outline"
         className="gap-1.5 rounded-none text-xs"

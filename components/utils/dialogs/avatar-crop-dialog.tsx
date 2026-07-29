@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import Cropper from "react-easy-crop";
+import dynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -17,6 +17,10 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+
+const Cropper = dynamic(() => import("react-easy-crop"), {
+  ssr: false,
+});
 
 /* ------------------------------- Helpers ------------------------------ */
 type TCropArea = {

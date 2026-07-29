@@ -3,4 +3,5 @@ export interface IAiSkillGapModalProps {
   cid: string;
   companyName: string;
   compact?: boolean;
+  autoOpen?: boolean;
 }

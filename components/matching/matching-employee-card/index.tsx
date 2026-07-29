@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { AiMatchExplanationModal } from "@/components/matching/ai-match-explanation-modal";
+import { LazyAiMatchExplanationAction } from "@/components/matching/lazy-ai-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
@@ -125,7 +125,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
       <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/25 px-4 py-3 sm:px-5">
         {/* Left Section: AI Actions and Unmatch */}
         <div className="flex items-center gap-1.5">
-          <AiMatchExplanationModal
+          <LazyAiMatchExplanationAction
             eid={props.id}
             cid={props.companyId}
             companyName={props.name}
