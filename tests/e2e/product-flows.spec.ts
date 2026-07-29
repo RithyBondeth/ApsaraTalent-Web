@@ -44,6 +44,36 @@ test("core product pages handle successful empty API responses", async ({ page }
   expect(failures).toEqual([]);
 });
 
+test("search pages recover from malformed paginated API responses", async ({
+  page,
+}) => {
+  const failures = captureRuntimeFailures(page);
+  await mockApi(page, (request) => {
+    const pathname = new URL(request.url()).pathname;
+    if (
+      pathname.includes("/search-employee") ||
+      pathname.includes("/job/search")
+    ) {
+      return { body: [] };
+    }
+    return successfulEmployeeApi(request);
+  });
+
+  await loginEmployee(page, "/search/company");
+  await expect(
+    page.getByText("Invalid employee search response"),
+  ).toBeVisible();
+
+  await page.goto("/search/employee");
+  await expect(page.getByText("Invalid job search response")).toBeVisible();
+  const relevantFailures = failures.filter(
+    (failure) =>
+      !failure.includes("Failed to fetch RSC payload") &&
+      !failure.includes("due to access control checks."),
+  );
+  expect(relevantFailures).toEqual([]);
+});
+
 test("search updates its shareable URL and can clear the keyword", async ({ page }) => {
   await mockApi(page, successfulEmployeeApi);
   await loginEmployee(page, "/search/employee");

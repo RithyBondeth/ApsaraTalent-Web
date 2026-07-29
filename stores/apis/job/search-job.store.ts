@@ -77,6 +77,36 @@ let searchJobAbortController: AbortController | null = null;
 
 const PAGE_SIZE = 20;
 
+function parseSearchJobResponse(value: unknown): TSearchJobPagedResponse {
+  if (
+    !value ||
+    typeof value !== "object" ||
+    !Array.isArray((value as Partial<TSearchJobPagedResponse>).data)
+  ) {
+    throw new Error("Invalid job search response");
+  }
+
+  const response = value as Partial<TSearchJobPagedResponse>;
+  const data = response.data as TSearchJobResponse[];
+
+  return {
+    data,
+    total:
+      typeof response.total === "number" && Number.isFinite(response.total)
+        ? Math.max(0, response.total)
+        : data.length,
+    page:
+      typeof response.page === "number" && response.page > 0
+        ? response.page
+        : 1,
+    pageSize:
+      typeof response.pageSize === "number" && response.pageSize > 0
+        ? response.pageSize
+        : PAGE_SIZE,
+    isUsingFallback: response.isUsingFallback === true,
+  };
+}
+
 // ── Build Query String ──────────────────────────────────────────────
 function buildQueryString(
   query: TSearchJobQueryParams & { page?: number; pageSize?: number },
@@ -142,7 +172,9 @@ export const useSearchJobStore = create<TSearchJobState>((set, get) => ({
       const response = await apiClient.get<TSearchJobPagedResponse>(url, {
         signal: controller.signal,
       });
-      const { data, total, isUsingFallback } = response.data;
+      const { data, total, isUsingFallback } = parseSearchJobResponse(
+        response.data,
+      );
       set({
         jobs: data,
         total,
@@ -193,7 +225,7 @@ export const useSearchJobStore = create<TSearchJobState>((set, get) => ({
       const response = await apiClient.get<TSearchJobPagedResponse>(url, {
         signal: controller.signal,
       });
-      const { data } = response.data;
+      const { data } = parseSearchJobResponse(response.data);
       set((s) => ({
         jobs: [...(s.jobs ?? []), ...data],
         page: nextPage,

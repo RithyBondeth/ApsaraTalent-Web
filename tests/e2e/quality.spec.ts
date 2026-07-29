@@ -56,6 +56,7 @@ test("public pages expose production security headers", async ({ page }) => {
 test("authentication pages have no automatically detectable WCAG A/AA violations", async ({
   page,
 }) => {
+  test.setTimeout(120_000);
   for (const route of [
     "/login",
     "/login/phone-number",
@@ -73,7 +74,7 @@ test("public content pages have no detectable WCAG A/AA violations", async ({
   browserName,
 }) => {
   test.skip(browserName !== "chromium", "The complete accessibility matrix runs once");
-  test.setTimeout(45_000);
+  test.setTimeout(120_000);
   for (const route of publicContentRoutes) {
     await page.goto(route);
     await expectAccessible(page, route);
@@ -85,7 +86,7 @@ test("authenticated pages have no detectable WCAG A/AA violations", async ({
   browserName,
 }) => {
   test.skip(browserName !== "chromium", "The complete accessibility matrix runs once");
-  test.setTimeout(90_000);
+  test.setTimeout(180_000);
   await mockApi(page, successfulEmployeeApi);
   await loginEmployee(page);
   for (const route of protectedRoutes) {

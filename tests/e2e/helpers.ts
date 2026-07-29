@@ -124,6 +124,24 @@ export function successfulEmployeeApi(request: Request): MockApiResult {
       body: { data: [], total: 0, page: 1, pageSize: 20, isUsingFallback: false },
     };
   }
+  if (pathname.includes("/search-employee")) {
+    return {
+      body: { data: [], total: 0, page: 1, pageSize: 20, isUsingFallback: false },
+    };
+  }
+  if (pathname.includes("/match/analytics/")) {
+    return {
+      body: {
+        totalLikesGiven: 4,
+        totalLikesReceived: 3,
+        totalMatches: 2,
+        matchRate: 50,
+        totalFavorites: 1,
+        weeklyActivity: [],
+        recentMatches: [],
+      },
+    };
+  }
   if (pathname.includes("/notification") && pathname.includes("unread")) {
     return { body: { unreadCount: 0 } };
   }

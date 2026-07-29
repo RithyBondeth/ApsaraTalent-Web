@@ -56,4 +56,35 @@ describe("job search store", () => {
       error: "search unavailable",
     });
   });
+
+  it("rejects malformed paginated responses without exposing invalid jobs", async () => {
+    axiosMocks.get.mockResolvedValueOnce({ data: [] });
+
+    await useSearchJobStore.getState().querySearchJobs({ keyword: "designer" });
+
+    expect(useSearchJobStore.getState()).toMatchObject({
+      jobs: null,
+      loading: false,
+      error: "Invalid job search response",
+    });
+  });
+
+  it("keeps the current page when a load-more response is malformed", async () => {
+    useSearchJobStore.setState({
+      jobs: [{ id: "job-1", title: "Designer" }] as never,
+      page: 1,
+      total: 2,
+      error: null,
+    });
+    axiosMocks.get.mockResolvedValueOnce({ data: { unexpected: true } });
+
+    await useSearchJobStore.getState().loadMoreJobs({ keyword: "designer" });
+
+    expect(useSearchJobStore.getState()).toMatchObject({
+      jobs: [{ id: "job-1", title: "Designer" }],
+      page: 1,
+      loadingMore: false,
+      error: null,
+    });
+  });
 });

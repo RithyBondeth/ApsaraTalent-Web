@@ -30,10 +30,10 @@ export function ProfileCompletenessCard({
 
   const textColor =
     percentage >= 80
-      ? "text-emerald-500"
+      ? "text-emerald-700 dark:text-emerald-400"
       : percentage >= 50
-        ? "text-amber-500"
-        : "text-rose-500";
+        ? "text-amber-700 dark:text-amber-400"
+        : "text-rose-700 dark:text-rose-400";
 
   const bgColor =
     percentage >= 80

@@ -14,7 +14,10 @@ export default defineConfig({
   },
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
-  workers: 2,
+  // Keep the production server and three browser engines within a stable
+  // resource envelope. Cross-engine concurrency caused intermittent WebKit
+  // navigation failures on the full suite even though isolated tests passed.
+  workers: 1,
   reporter: process.env.CI
     ? [["github"], ["html", { open: "never" }]]
     : [["list"], ["html", { open: "never" }]],
@@ -50,10 +53,12 @@ export default defineConfig({
     },
     {
       name: "desktop-firefox",
+      workers: 1,
       use: { ...devices["Desktop Firefox"] },
     },
     {
       name: "desktop-webkit",
+      workers: 1,
       use: { ...devices["Desktop Safari"] },
     },
     {

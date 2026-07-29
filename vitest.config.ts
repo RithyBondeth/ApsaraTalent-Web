@@ -37,6 +37,7 @@ export default defineConfig({
         "components/favorite/company-favorite-card/index.tsx",
         "components/favorite/employee-favorite-card/index.tsx",
         "components/matching/ai-cover-letter-modal/index.tsx",
+        "components/matching/ai-interview-prep-modal/index.tsx",
         "components/matching/ai-match-explanation-modal/index.tsx",
         "components/matching/ai-skill-gap-modal/index.tsx",
         "components/matching/matching-company-card/index.tsx",

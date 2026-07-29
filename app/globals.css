@@ -23,7 +23,7 @@
     --muted-foreground: 220 8% 44%;
     --accent: 214 95% 93%;
     --accent-foreground: 224 64% 33%;
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 98%;
     --border: 220 13% 84%;
     --input: 220 13% 84%;
@@ -2455,7 +2455,7 @@ body:has(.auth-scope),
   background: transparent !important;
 }
 .auth-control-trigger[data-placeholder] {
-  color: hsl(var(--muted-foreground) / 0.82) !important;
+  color: hsl(var(--muted-foreground)) !important;
 }
 
 .auth-field-toggle {

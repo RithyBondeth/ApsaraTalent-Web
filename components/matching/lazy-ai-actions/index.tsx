@@ -158,7 +158,7 @@ export function LazyAiSkillGapAction(props: IAiSkillGapModalProps) {
   const t = useTranslations("matching");
 
   /* --------------------------- All States -------------------------- */
-  const [loaded] = useState<boolean>(false);
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   /* --------------------------- Render UI --------------------------- */
   if (loaded) {
@@ -172,6 +172,15 @@ export function LazyAiSkillGapAction(props: IAiSkillGapModalProps) {
       </Suspense>
     );
   }
+
+  return (
+    <LazyActionButton
+      label={t("skillGap")}
+      compact={props.compact}
+      icon={<LucideSparkles className="size-3.5 text-primary shrink-0" />}
+      onClick={() => setLoaded(true)}
+    />
+  );
 }
 
 /* -------------------------------- Lazy Ai Interview Prep Component --------------------------- */

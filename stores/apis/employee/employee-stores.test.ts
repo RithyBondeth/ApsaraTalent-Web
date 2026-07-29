@@ -208,4 +208,39 @@ describe("employee API stores", () => {
     expect(axiosMocks.get).toHaveBeenCalledTimes(2);
     expect(useSearchEmployeeStore.getState()).toMatchObject({ loadingMore: false, error: "search failed" });
   });
+
+  it("rejects malformed paginated search responses without exposing invalid state", async () => {
+    axiosMocks.get.mockResolvedValueOnce({ data: [] });
+
+    await useSearchEmployeeStore
+      .getState()
+      .querySearchEmployee({ keyword: "engineer" });
+
+    expect(useSearchEmployeeStore.getState()).toMatchObject({
+      employees: null,
+      loading: false,
+      error: "Invalid employee search response",
+    });
+  });
+
+  it("keeps existing employees when a load-more response is malformed", async () => {
+    useSearchEmployeeStore.setState({
+      employees: [{ id: "employee-1" }] as never,
+      page: 1,
+      total: 2,
+      error: null,
+    });
+    axiosMocks.get.mockResolvedValueOnce({ data: { unexpected: true } });
+
+    await useSearchEmployeeStore
+      .getState()
+      .loadMoreEmployees({ keyword: "engineer" });
+
+    expect(useSearchEmployeeStore.getState()).toMatchObject({
+      employees: [{ id: "employee-1" }],
+      page: 1,
+      loadingMore: false,
+      error: null,
+    });
+  });
 });
