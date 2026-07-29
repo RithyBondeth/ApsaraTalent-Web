@@ -62,11 +62,6 @@ interface Props {
   initialIsEmployee: boolean;
 }
 
-const fetchInitiated = {
-  companies: false,
-  employees: false,
-};
-
 const FEED_CARD_GRID_CLASS =
   "w-full grid grid-cols-3 gap-4 items-stretch laptop-sm:grid-cols-2 tablet-lg:!grid-cols-1 stagger-list [&>*]:min-w-0 [&>*]:h-full";
 
@@ -245,6 +240,14 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     if (!id) return;
 
     if (recsFetchedForRef.current === id) return;
+    const existingRecommendations = isEmployee
+      ? employeeRecommendations
+      : companyRecommendations;
+    if (existingRecommendations !== null) {
+      recsFetchedForRef.current = id;
+      setRecsHasFetched(true);
+      return;
+    }
     recsFetchedForRef.current = id;
     setRecsHasFetched(false);
 
@@ -256,6 +259,8 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
   }, [
     currentUser,
     isEmployee,
+    employeeRecommendations,
+    companyRecommendations,
     queryEmployeeRecommendations,
     queryCompanyRecommendations,
   ]);
@@ -273,17 +278,24 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     if (!currentUser) return;
 
     if (isEmployee) {
-      if (!fetchInitiated.companies || !companyData) {
-        fetchInitiated.companies = true;
-        queryCompanyRef.current();
+      if (!companyData && !companyLoading && !companyError) {
+        void queryCompanyRef.current();
       }
     } else {
-      if (!fetchInitiated.employees || !employeesData) {
-        fetchInitiated.employees = true;
-        queryEmployeeRef.current();
+      if (!employeesData && !employeeLoading && !employeeError) {
+        void queryEmployeeRef.current();
       }
     }
-  }, [isEmployee, currentUser, companyData, employeesData]);
+  }, [
+    isEmployee,
+    currentUser,
+    companyData,
+    companyLoading,
+    companyError,
+    employeesData,
+    employeeLoading,
+    employeeError,
+  ]);
 
   // Fetch the hidden-id set (both block directions) so blocked profiles are
   // hidden from the feed regardless of who initiated the block.
@@ -684,9 +696,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                   <div className="feed-hero-art-glow" />
                   <Image
                     src={
-                      isEmployee
-                        ? feedEmployeeBannerSvg
-                        : feedCompanyBannerSvg
+                      isEmployee ? feedEmployeeBannerSvg : feedCompanyBannerSvg
                     }
                     alt=""
                     height={260}
@@ -960,9 +970,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
         <PageState
           variant="empty"
           title={
-            isEmployee
-              ? tFeed("companyListEmpty")
-              : tFeed("employeeListEmpty")
+            isEmployee ? tFeed("companyListEmpty") : tFeed("employeeListEmpty")
           }
           image={emptySvg}
           compact

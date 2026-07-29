@@ -29,7 +29,10 @@ describe("configured axios client", () => {
 
     const axiosModule = await import("./axios");
 
-    expect(mocks.create).toHaveBeenCalledWith({ withCredentials: true });
+    expect(mocks.create).toHaveBeenCalledWith({
+      withCredentials: true,
+      timeout: 30_000,
+    });
     expect(axiosModule.default).toBe(mocks.create.mock.results[0].value);
     const interceptor = mocks.use.mock.calls[0][0] as (response: {
       data?: unknown;
@@ -43,7 +46,9 @@ describe("configured axios client", () => {
 
   it("leaves responses without data untouched", async () => {
     await import("./axios");
-    const interceptor = mocks.use.mock.calls[0][0] as (response: object) => object;
+    const interceptor = mocks.use.mock.calls[0][0] as (
+      response: object,
+    ) => object;
     const response = {};
 
     expect(interceptor(response)).toBe(response);

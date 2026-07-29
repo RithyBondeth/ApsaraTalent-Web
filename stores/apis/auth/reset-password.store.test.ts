@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { post } = vi.hoisted(() => ({ post: vi.fn() }));
-vi.mock("axios", () => ({
+vi.mock("@/lib/axios", () => ({
   default: { post, isAxiosError: () => false },
   isAxiosError: () => false,
 }));

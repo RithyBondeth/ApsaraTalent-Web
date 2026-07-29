@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const userMocks = vi.hoisted(() => ({ current: null as unknown }));
@@ -24,7 +24,10 @@ describe("useFetchOnce", () => {
       company: null,
     };
     const { result, rerender } = renderHook(() =>
-      useFetchOnce({ onEmployeeFetch: fetchEmployee, cacheKey: "employee-test" }),
+      useFetchOnce({
+        onEmployeeFetch: fetchEmployee,
+        cacheKey: "employee-test",
+      }),
     );
 
     expect(fetchEmployee).toHaveBeenCalledOnce();
@@ -48,13 +51,23 @@ describe("useFetchOnce", () => {
       company: { id: "company-1" },
     };
     const disabled = renderHook(() =>
-      useFetchOnce({ onCompanyFetch: fetchCompany, enabled: false, cacheKey: "company-disabled" }),
+      useFetchOnce({
+        onCompanyFetch: fetchCompany,
+        enabled: false,
+        cacheKey: "company-disabled",
+      }),
     );
     expect(fetchCompany).not.toHaveBeenCalled();
-    expect(disabled.result.current).toMatchObject({ isCompany: true, companyId: "company-1" });
+    expect(disabled.result.current).toMatchObject({
+      isCompany: true,
+      companyId: "company-1",
+    });
 
     renderHook(() =>
-      useFetchOnce({ onCompanyFetch: fetchCompany, cacheKey: "company-enabled" }),
+      useFetchOnce({
+        onCompanyFetch: fetchCompany,
+        cacheKey: "company-enabled",
+      }),
     );
     expect(fetchCompany).toHaveBeenCalledWith("company-1");
   });
@@ -62,9 +75,48 @@ describe("useFetchOnce", () => {
   it("does not fetch without a role profile", () => {
     const callback = vi.fn();
     const { result } = renderHook(() =>
-      useFetchOnce({ onEmployeeFetch: callback, onCompanyFetch: callback, cacheKey: "empty-user" }),
+      useFetchOnce({
+        onEmployeeFetch: callback,
+        onCompanyFetch: callback,
+        cacheKey: "empty-user",
+      }),
     );
     expect(callback).not.toHaveBeenCalled();
-    expect(result.current).toMatchObject({ isEmployee: false, isCompany: false });
+    expect(result.current).toMatchObject({
+      isEmployee: false,
+      isCompany: false,
+    });
+  });
+
+  it("allows a later mount to retry a rejected request", async () => {
+    const fetchEmployee = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("network unavailable"))
+      .mockResolvedValueOnce(undefined);
+    userMocks.current = {
+      id: "user-retry",
+      role: "employee",
+      employee: { id: "employee-retry" },
+      company: null,
+    };
+
+    const first = renderHook(() =>
+      useFetchOnce({
+        onEmployeeFetch: fetchEmployee,
+        cacheKey: "employee-retry-test",
+      }),
+    );
+    await act(async () => {
+      await Promise.resolve();
+    });
+    first.unmount();
+
+    renderHook(() =>
+      useFetchOnce({
+        onEmployeeFetch: fetchEmployee,
+        cacheKey: "employee-retry-test",
+      }),
+    );
+    expect(fetchEmployee).toHaveBeenCalledTimes(2);
   });
 });

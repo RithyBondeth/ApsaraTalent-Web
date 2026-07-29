@@ -23,15 +23,7 @@ import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
-import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
-import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
-import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
-import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
-import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
-import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useGetEmployeeRecommendationsStore } from "@/stores/apis/recommendation/get-employee-recommendations.store";
-import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/get-company-recommendations.store";
 import { getRememberPreference } from "@/utils/auth/cookie-manager";
 import {
   facebookIcon,
@@ -59,7 +51,7 @@ import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
 } from "@/utils/constants/config.constant";
-import { USER_ROLE, OTP_LENGTH } from "@/utils/constants/auth.constant";
+import { OTP_LENGTH } from "@/utils/constants/auth.constant";
 import {
   InputOTP,
   InputOTPGroup,
@@ -88,34 +80,8 @@ function LoginPage() {
   const [twoFactorInitiated, setTwoFactorInitiated] = useState<boolean>(false);
 
   /* ----------------------------- API Integration ----------------------------- */
-  // Current User, Get All Employees and Companies
+  // Current user
   const { getCurrentUser } = useGetCurrentUserStore();
-  const { queryCompany } = useGetAllCompanyStore();
-  const { queryEmployee } = useGetAllEmployeeStore();
-
-  // User Liked
-  const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore(
-    (s) => s.queryCurrentEmployeeLiked,
-  ); // Companies liked by current employee
-  const queryCurrentCompanyLiked = useGetCurrentCompanyLikedStore(
-    (s) => s.queryCurrentCompanyLiked,
-  ); // Employees liked by current company
-
-  // User Favorited
-  const queryAllEmployeeFavorites = useGetAllEmployeeFavoritesStore(
-    (s) => s.queryAllEmployeeFavorites,
-  ); // Companies favorited by current employee
-  const queryAllCompanyFavorites = useGetAllCompanyFavoritesStore(
-    (s) => s.queryAllCompanyFavorites,
-  ); // Employees favorited by current company
-
-  // Recommendations
-  const queryEmployeeRecommendations = useGetEmployeeRecommendationsStore(
-    (s) => s.queryEmployeeRecommendations,
-  );
-  const queryCompanyRecommendations = useGetCompanyRecommendationsStore(
-    (s) => s.queryCompanyRecommendations,
-  );
 
   // Regular Email-Password Authentication
   const {
@@ -185,53 +151,14 @@ function LoginPage() {
 
   // ── Preload User Data Function ────────────────────────────────
   const preloadUserData = useCallback(async () => {
-    try {
-      // First get current user data
-      await getCurrentUser();
-
-      // Wait a bit for getCurrentUser to complete and update the store
-      await new Promise<void>((resolve) => {
-        setTimeout(async () => {
-          const userData = useGetCurrentUserStore.getState().user;
-
-          if (userData) {
-            if (userData.role === USER_ROLE.EMPLOYEE && userData.employee?.id) {
-              await Promise.all([
-                queryCurrentEmployeeLiked(userData.employee.id),
-                queryAllEmployeeFavorites(userData.employee.id),
-                queryEmployeeRecommendations(userData.employee.id),
-                queryCompany(),
-              ]);
-            } else if (
-              userData.role === USER_ROLE.COMPANY &&
-              userData.company?.id
-            ) {
-              await Promise.all([
-                queryCurrentCompanyLiked(userData.company.id),
-                queryAllCompanyFavorites(userData.company.id),
-                queryCompanyRecommendations(userData.company.id),
-                queryEmployee(),
-              ]);
-            }
-          }
-          resolve();
-        }, 100);
-      });
-    } catch (error) {
-      console.error("Error preloading user data:", error);
-      throw error;
+    await getCurrentUser();
+    const currentUserState = useGetCurrentUserStore.getState();
+    if (!currentUserState.user) {
+      throw new Error(
+        currentUserState.error ?? "Failed to load the current user",
+      );
     }
-  }, [
-    getCurrentUser,
-    queryAllCompanyFavorites,
-    queryAllEmployeeFavorites,
-    queryCurrentCompanyLiked,
-    queryCurrentEmployeeLiked,
-    queryCompanyRecommendations,
-    queryEmployeeRecommendations,
-    queryCompany,
-    queryEmployee,
-  ]);
+  }, [getCurrentUser]);
 
   // ── Email Password Login Function ────────────────────────────
   const onSubmit = async (data: TLoginForm) => {
@@ -305,21 +232,20 @@ function LoginPage() {
     clearTwoFactorPending();
     preloadUserData()
       .then(() => {
+        toast.dismiss();
         toast.success(t("successLoggedIn"), {
           duration: TOAST_DURATION_MS.SHORT,
         });
       })
       .catch(() => {
+        toast.dismiss();
         toast.error(t("loginFailed"), { duration: TOAST_DURATION_MS.SHORT });
       })
       .finally(() => {
-        setTimeout(() => {
-          toast.dismiss();
-          setIsPreloadingData(false);
-          setTwoFactorInitiated(false);
-          setTwoFactorOtp("");
-          router.replace(callbackUrl);
-        }, DEFAULT_REDIRECT_DELAY_MS);
+        setIsPreloadingData(false);
+        setTwoFactorInitiated(false);
+        setTwoFactorOtp("");
+        router.replace(callbackUrl);
       });
   };
 
@@ -362,26 +288,24 @@ function LoginPage() {
     isProcessingRegularLogin.current = true;
     setIsPreloadingData(true);
 
-    // Preload all user data while showing loading message
+    // Resolve the authenticated user before entering the protected app.
     preloadUserData()
       .then(() => {
-        console.log("User data preloaded successfully in login page");
+        toast.dismiss();
         toast.success(t("successLoggedIn"), {
           duration: TOAST_DURATION_MS.SHORT,
         });
       })
       .catch((error) => {
         console.error("Error preloading user data: ", error);
+        toast.dismiss();
         toast.error(String(error), { duration: TOAST_DURATION_MS.SHORT });
       })
       .finally(() => {
-        setTimeout(() => {
-          toast.dismiss();
-          setIsPreloadingData(false);
-          setLoginInitiated(false);
-          isProcessingRegularLogin.current = false;
-          router.replace(callbackUrl);
-        }, DEFAULT_REDIRECT_DELAY_MS);
+        setIsPreloadingData(false);
+        setLoginInitiated(false);
+        isProcessingRegularLogin.current = false;
+        router.replace(callbackUrl);
       });
   }, [
     error,
@@ -439,23 +363,21 @@ function LoginPage() {
       // Preload user data and navigate
       preloadUserData()
         .then(() => {
-          console.log("User data preloaded successfully");
+          toast.dismiss();
           toast.success(t("successLoggedIn"), {
             duration: TOAST_DURATION_MS.SHORT,
           });
         })
         .catch((error) => {
           console.error("Error preloading user data:", error);
+          toast.dismiss();
           toast.error(String(error), { duration: TOAST_DURATION_MS.SHORT });
         })
         .finally(() => {
-          setTimeout(() => {
-            toast.dismiss();
-            setIsPreloadingData(false);
-            setSocialLoginInitiated(false);
-            isProcessingSocialLogin.current = false;
-            router.replace(callbackUrl);
-          }, DEFAULT_REDIRECT_DELAY_MS);
+          setIsPreloadingData(false);
+          setSocialLoginInitiated(false);
+          isProcessingSocialLogin.current = false;
+          router.replace(callbackUrl);
         });
 
       return;
