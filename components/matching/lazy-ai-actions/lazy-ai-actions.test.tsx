@@ -6,7 +6,7 @@ import {
   LazyAiInterviewPrepAction,
   LazyAiMatchExplanationAction,
   LazyAiSkillGapAction,
-} from "./lazy-ai-actions";
+} from "../lazy-ai-actions";
 
 vi.mock("@/components/matching/ai-match-explanation-modal", () => ({
   AiMatchExplanationModal: ({ autoOpen }: { autoOpen?: boolean }) => (
