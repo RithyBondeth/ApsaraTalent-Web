@@ -2,8 +2,8 @@ import { ICareerScope } from "./career.interface";
 import { ISocialLink } from "./social.interface";
 import { TGender } from "@/utils/types/user/gender.type";
 
-export type TWorkMode = "remote" | "on_site" | "hybrid" | "flexible";
-export type TNoticePeriod = "immediate" | "2_weeks" | "1_month";
+type TWorkMode = "remote" | "on_site" | "hybrid" | "flexible";
+type TNoticePeriod = "immediate" | "2_weeks" | "1_month";
 
 export interface IEmployee {
   id: string;
@@ -29,6 +29,7 @@ export interface IEmployee {
   languages?: string[] | null;
   expectedSalaryMin?: number | null;
   expectedSalaryMax?: number | null;
+  isHide?: boolean;
   skills: ISkill[];
   experiences: IExperience[];
   educations: IEducation[];
@@ -50,7 +51,7 @@ export interface IExperience {
   company?: string;
   description: string;
   startDate: string;
-  endDate: string;
+  endDate?: string | null;
 }
 
 export interface IEducation {

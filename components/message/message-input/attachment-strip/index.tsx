@@ -38,7 +38,7 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
           >
             {/* File Preview Section */}
             <div
-              className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden bg-muted border flex items-center justify-center ${
+              className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-none overflow-hidden bg-muted border flex items-center justify-center ${
                 file.status === "error"
                   ? "border-destructive/50"
                   : "border-border/50"
@@ -91,7 +91,7 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
             <button
               type="button"
               onClick={() => onRemoveFile(file.id)}
-              className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-background border border-border shadow-sm flex items-center justify-center hover:bg-muted transition-colors z-20"
+              className="absolute -top-1 -right-1 h-4 w-4 rounded-none bg-background border border-border shadow-sm flex items-center justify-center hover:bg-muted transition-colors z-20"
               aria-label={`Remove ${file.filename}`}
             >
               <X className="h-2 w-2 text-muted-foreground" />
@@ -105,7 +105,7 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
             type="button"
             onClick={onAddMoreFiles}
             disabled={inputDisabled}
-            className="shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-lg border border-dashed border-border/70 bg-muted/30 flex flex-col items-center justify-center gap-0.5 hover:bg-muted/60 hover:border-border transition-colors disabled:opacity-40 disabled:pointer-events-none"
+            className="shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-none border border-dashed border-border/70 bg-muted/30 flex flex-col items-center justify-center gap-0.5 hover:bg-muted/60 hover:border-border transition-colors disabled:opacity-40 disabled:pointer-events-none"
             aria-label="Add more files"
           >
             <Paperclip className="h-4 w-4 text-muted-foreground" />

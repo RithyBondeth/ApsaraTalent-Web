@@ -4,6 +4,19 @@ import ResumeEditorFormPanel from "@/components/resume-builder/editor/form-panel
 import ResumeEditorPreviewPanel from "@/components/resume-builder/editor/preview-panel";
 import TemplateSelector from "@/components/resume-builder/editor/template-selector";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -13,10 +26,15 @@ import { useIsMobile } from "@/hooks/utils/use-mobile";
 import {
   ArrowLeft,
   Download,
+  Eye,
   FileText,
+  LoaderCircle,
+  MoreHorizontal,
+  PencilLine,
   PanelLeftOpen,
   PanelLeftClose,
   RotateCcw,
+  SaveAll,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -40,7 +58,6 @@ import {
   loadResumeDraft,
   normalizeResumePayload,
   removeLegacyResumeDraft,
-  removeResumeDraft,
   resumeSchema,
   saveResumeDraft,
 } from "@/utils/functions/resume/resume-draft";
@@ -58,16 +75,25 @@ export default function ResumeEditorPage() {
 
   /* ----------------------------- API Integration ---------------------------- */
   const { generateResume } = useGenerateResumeStore();
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+  const getCurrentUser = useGetCurrentUserStore(
+    (state) => state.getCurrentUser,
+  );
 
   /* -------------------------------- All States ------------------------------ */
   const { payload, ownerId, clearPayload, setPayload } = useResumeEditStore();
-  const currentUser = useGetCurrentUserStore((state) => state.user);
   const sectionOrder = useResumeCanvasEditorStore(
     (state) => state.sectionOrder,
   );
-
-  // Left panel (form) collapsed state
-  const [formPanelOpen, setFormPanelOpen] = useState<boolean>(false);
+  // Primary Workspace Navigation
+  const [formPanelOpen, setFormPanelOpen] = useState<boolean>(true);
+  const [activeEditorTab, setActiveEditorTab] = useState<
+    "content" | "layout" | "design"
+  >("content");
+  const [mobileWorkspace, setMobileWorkspace] = useState<"edit" | "preview">(
+    "edit",
+  );
+  const [resetDialogOpen, setResetDialogOpen] = useState<boolean>(false);
 
   // Live preview states
   const [previewData, setPreviewData] = useState<IBuildResume>(
@@ -79,9 +105,7 @@ export default function ResumeEditorPage() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const initializedRef = useRef<boolean>(false);
   const [draftReady, setDraftReady] = useState<boolean>(false);
-  const [userStoreHydrated, setUserStoreHydrated] = useState<boolean>(false);
-
-  // Download progress states
+  const [userResolved, setUserResolved] = useState<boolean>(false);
   const [downloading, setDownloading] = useState<boolean>(false);
   const {
     progress: dlProgress,
@@ -96,23 +120,18 @@ export default function ResumeEditorPage() {
     });
   const watchedValues = useWatch({ control }) as IBuildResume;
 
-  /* --------------------------------- Effects --------------------------------- */
-  // Wait for the persisted current-user store before choosing a user-scoped draft.
+  /* ------------------------------ All Effects --------------------------------- */
   useEffect(() => {
-    const persistApi = useGetCurrentUserStore.persist;
-    if (!persistApi) {
-      setUserStoreHydrated(true);
+    if (currentUser) {
+      setUserResolved(true);
       return;
     }
-    if (persistApi.hasHydrated()) {
-      setUserStoreHydrated(true);
-    }
-    return persistApi.onFinishHydration(() => setUserStoreHydrated(true));
-  }, []);
+    void getCurrentUser().finally(() => setUserResolved(true));
+  }, [currentUser, getCurrentUser]);
 
   // Recover and validate a draft exactly once for the authenticated user.
   useEffect(() => {
-    if (!userStoreHydrated || initializedRef.current) return;
+    if (!userResolved || initializedRef.current) return;
     if (!currentUser?.id || !currentUser.employee) {
       router.replace("/resume-builder");
       return;
@@ -185,12 +204,12 @@ export default function ResumeEditorPage() {
     reset,
     router,
     setPayload,
-    userStoreHydrated,
+    userResolved,
   ]);
 
-  // Update left panel (form) collapsed state based on mobile view
+  // Mobile always uses the dedicated Edit/Preview switch instead of a hidden panel.
   useEffect(() => {
-    setFormPanelOpen(!isMobile);
+    if (isMobile) setFormPanelOpen(true);
   }, [isMobile]);
 
   // Section visibility/order is part of the document contract and PDF payload.
@@ -230,6 +249,9 @@ export default function ResumeEditorPage() {
     const validation = resumeSchema.safeParse(raw);
     if (!validation.success) {
       const issue = validation.error.issues[0];
+      setFormPanelOpen(true);
+      setActiveEditorTab("content");
+      setMobileWorkspace("edit");
       toast.error(tRb("validationFailed"), {
         description: issue
           ? tRb("validationDescription")
@@ -274,24 +296,25 @@ export default function ResumeEditorPage() {
 
   // ── Handle Back ─────────────────────────────────────────
   const handleBack = () => {
-    clearPayload();
-    if (currentUser?.id) removeResumeDraft(currentUser.id);
-    removeLegacyResumeDraft();
+    if (currentUser?.id) {
+      const currentDraft = normalizeResumePayload(getValues() as IBuildResume);
+      setPayload(currentDraft, currentUser.id);
+      saveResumeDraft(currentUser.id, currentDraft);
+    }
     router.push("/resume-builder");
   };
 
   // ── Handle Reset ────────────────────────────────────────
   const handleReset = () => {
-    if (confirm(tRb("resetConfirm"))) {
-      reset(payload ?? undefined);
-      useResumeCanvasEditorStore
-        .getState()
-        .setSectionOrder(
-          payload?.sectionOrder ?? [...RESUME_EDITOR_DEFAULT_SECTION_ORDER],
-        );
-      if (payload && currentUser?.id) saveResumeDraft(currentUser.id, payload);
-      toast.success(tRb("resetSuccess"));
-    }
+    reset(payload ?? undefined);
+    useResumeCanvasEditorStore
+      .getState()
+      .setSectionOrder(
+        payload?.sectionOrder ?? [...RESUME_EDITOR_DEFAULT_SECTION_ORDER],
+      );
+    if (payload && currentUser?.id) saveResumeDraft(currentUser.id, payload);
+    setResetDialogOpen(false);
+    toast.success(tRb("resetSuccess"));
   };
 
   // ── AI Optimizer Callbacks ───────────────────────────────
@@ -333,48 +356,37 @@ export default function ResumeEditorPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col h-[calc(100dvh-4rem)] overflow-hidden animate-page-in text-foreground">
-      {/* Top Action Bar Section */}
-      <div className="flex flex-col gap-2 border-b bg-background px-2.5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
-        {/* Left Section: Back + Toggle Form + Title */}
-        <div className="flex w-full flex-wrap items-start gap-2 sm:w-auto sm:items-center sm:gap-3">
+    <div className="resume-editor-shell flex h-[calc(100dvh-4rem)] animate-page-in flex-col overflow-hidden text-foreground">
+      {/* Primary Action Bar Section */}
+      <div className="resume-editor-controls flex flex-col gap-2 border-b border-t-[5px] border-border border-t-foreground bg-card px-3 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-5">
+        {/* Editor Identity and Template Section */}
+        <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
           <Button
             variant="outline"
             size="sm"
             onClick={handleBack}
-            className="gap-1.5 h-8 text-xs"
+            className="h-8 gap-1.5 rounded-none text-xs"
           >
             <ArrowLeft size={14} />
             {tRb("back")}
           </Button>
 
-          {/* Toggle The Form Panel Section */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setFormPanelOpen((v) => !v)}
-            className="gap-1.5 h-8 text-xs"
-            title={formPanelOpen ? tRb("hideFields") : tRb("showFields")}
-          >
-            {formPanelOpen ? (
-              <PanelLeftClose size={14} />
-            ) : (
+          {!formPanelOpen && !isMobile && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setFormPanelOpen(true)}
+              className="hidden h-8 gap-1.5 rounded-none text-xs md:flex"
+              title={tRb("showFields")}
+            >
               <PanelLeftOpen size={14} />
-            )}
-            <span className="hidden sm:inline">
-              {formPanelOpen ? tRb("hideFields") : tRb("showFields")}
-            </span>
-            <span className="sm:hidden">
-              {formPanelOpen ? tRb("hide") : tRb("fields")}
-            </span>
-          </Button>
+              {tRb("showFields")}
+            </Button>
+          )}
 
-          {/* Vertical Separator Section */}
-          <div className="hidden h-6 w-px bg-border sm:block" />
-
-          {/* Resume Title Section */}
-          <div className="flex items-center gap-2">
-            <FileText size={16} className="text-primary shrink-0" />
+          {/* Resume Editor Label Section */}
+          <div className="hidden items-center gap-2 border-l-2 border-foreground pl-3 sm:flex">
+            <FileText size={16} className="shrink-0 text-foreground" />
             <div className="flex flex-col">
               <TypographyLead className="text-[13px] font-bold leading-none">
                 {tRb("resumeEditor")}
@@ -395,29 +407,48 @@ export default function ResumeEditorPage() {
           />
         </div>
 
-        {/* Right Section: Actions */}
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <AiResumeOptimizerDrawer
-            getCurrentValues={() => getValues() as IBuildResume}
-            onApplySummary={handleApplySummary}
-            onApplySkills={handleApplySkills}
-            onApplyExperience={handleApplyExperience}
-          />
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleReset}
-            className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground"
-            title={tRb("reset")}
-          >
-            <RotateCcw size={14} />
-            <span className="hidden lg:inline">{tRb("reset")}</span>
-          </Button>
+        {/* Save State and Primary Actions Section */}
+        <div className="flex w-full items-center justify-end gap-2 md:w-auto">
+          <div className="mr-auto hidden items-center gap-1.5 text-[10px] font-medium text-muted-foreground sm:flex md:mr-1">
+            {previewUpdating ? (
+              <LoaderCircle className="size-3 animate-spin" />
+            ) : (
+              <SaveAll className="size-3.5" />
+            )}
+            {previewUpdating ? tRb("savingChanges") : tRb("savedAutomatically")}
+          </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="size-8 rounded-none"
+                title={tRb("moreActions")}
+              >
+                <MoreHorizontal size={15} />
+                <span className="sr-only">{tRb("moreActions")}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-48 rounded-none border-border p-1"
+            >
+              <DropdownMenuItem
+                onSelect={() => setResetDialogOpen(true)}
+                className="rounded-none text-xs"
+              >
+                <RotateCcw size={14} />
+                {tRb("reset")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button
             onClick={handleDownload}
             disabled={downloading}
             size="sm"
-            className="h-8 text-xs flex-1 shrink-0 justify-center gap-2 sm:w-auto sm:flex-none px-4"
+            className="h-8 flex-1 shrink-0 justify-center gap-2 rounded-none px-4 text-xs sm:w-auto sm:flex-none"
           >
             <Download size={15} />
             {tRb("downloadPdf")}
@@ -425,36 +456,97 @@ export default function ResumeEditorPage() {
         </div>
       </div>
 
-      {/* Split Layout Section */}
-      <div className="flex flex-1 overflow-hidden flex-col lg:flex-row bg-muted/20">
-        {/* Left Section: Form Panel (Collapsible) */}
-        {formPanelOpen && (
-          <div className="w-full shrink-0 flex flex-col border-b bg-background overflow-hidden max-h-[60vh] lg:max-h-none lg:w-[420px] lg:border-b-0 lg:border-r border-border/60 shadow-sm">
-            <div className="shrink-0 px-3 pt-3 pb-1 sm:px-4 sm:pt-4">
-              <TypographyP className="text-[10px] sm:text-xs text-muted-foreground uppercase font-bold tracking-wider">
-                {tRb("editDetails")}
-              </TypographyP>
+      {/* Mobile Workspace Switcher Section */}
+      <div className="grid shrink-0 grid-cols-2 border-b border-border bg-card p-2 md:hidden">
+        <button
+          type="button"
+          aria-pressed={mobileWorkspace === "edit"}
+          onClick={() => setMobileWorkspace("edit")}
+          className={`flex h-9 items-center justify-center gap-2 border text-xs font-bold transition-colors ${
+            mobileWorkspace === "edit"
+              ? "border-foreground bg-foreground text-background"
+              : "border-border bg-background text-muted-foreground"
+          }`}
+        >
+          <PencilLine size={14} />
+          {tRb("mobileEdit")}
+        </button>
+        <button
+          type="button"
+          aria-pressed={mobileWorkspace === "preview"}
+          onClick={() => setMobileWorkspace("preview")}
+          className={`flex h-9 items-center justify-center gap-2 border border-l-0 text-xs font-bold transition-colors ${
+            mobileWorkspace === "preview"
+              ? "border-foreground bg-foreground text-background"
+              : "border-border bg-background text-muted-foreground"
+          }`}
+        >
+          <Eye size={14} />
+          {tRb("preview")}
+        </button>
+      </div>
+
+      {/* Focused Editor Workspace Section */}
+      <div className="flex flex-1 flex-col overflow-hidden bg-muted/20 md:flex-row">
+        {/* Editor Form Section */}
+        {formPanelOpen && (!isMobile || mobileWorkspace === "edit") && (
+          <div className="resume-editor-controls flex w-full flex-1 flex-col overflow-hidden border-b border-border bg-card shadow-[5px_0_0_hsl(var(--foreground)/0.035)] md:w-[380px] md:flex-none md:border-b-0 md:border-r lg:w-[420px] xl:w-[440px]">
+            {/* Form Panel Section  */}
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-3 py-3 sm:px-4">
+              <div className="min-w-0">
+                <TypographyP className="text-xs font-bold uppercase tracking-wider text-foreground">
+                  {tRb("editorPanelTitle")}
+                </TypographyP>
+                <TypographySmall className="mt-0.5 block truncate text-[10px] text-muted-foreground">
+                  {tRb("editDetails")}
+                </TypographySmall>
+              </div>
+
+              <div className="flex shrink-0 items-center gap-1.5">
+                <AiResumeOptimizerDrawer
+                  getCurrentValues={() => getValues() as IBuildResume}
+                  onApplySummary={handleApplySummary}
+                  onApplySkills={handleApplySkills}
+                  onApplyExperience={handleApplyExperience}
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setFormPanelOpen(false)}
+                  className="hidden size-8 rounded-none md:inline-flex"
+                  title={tRb("hideFields")}
+                >
+                  <PanelLeftClose size={14} />
+                  <span className="sr-only">{tRb("hideFields")}</span>
+                </Button>
+              </div>
             </div>
-            <div className="flex-1 overflow-hidden px-3 pb-3 sm:px-4 sm:pb-4">
+
+            {/* Form Editor Section */}
+            <div className="flex-1 overflow-hidden px-3 pb-3 pt-3 sm:px-4 sm:pb-4">
               <ResumeEditorFormPanel
                 register={register}
                 control={control}
                 setValue={setValue}
                 getValues={getValues}
+                activeTab={activeEditorTab}
+                onTabChange={setActiveEditorTab}
               />
             </div>
           </div>
         )}
 
-        {/* Right Section: Editable Canvas (full width when form is hidden) */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <ResumeEditorPreviewPanel
-            data={previewData}
-            setValue={setValue}
-            getValues={getValues}
-            updating={previewUpdating}
-          />
-        </div>
+        {/* Editable Canvas Section */}
+        {(!isMobile || mobileWorkspace === "preview") && (
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <ResumeEditorPreviewPanel
+              data={previewData}
+              setValue={setValue}
+              getValues={getValues}
+              updating={previewUpdating}
+            />
+          </div>
+        )}
       </div>
 
       {/* Download Loading Dialog Section */}
@@ -471,6 +563,48 @@ export default function ResumeEditorPage() {
         ]}
         progress={dlProgress}
       />
+
+      {/* Reset Confirmation Dialog Section */}
+      <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+        <DialogContent className="w-[calc(100%-1.5rem)] max-w-md rounded-none border border-foreground/20 bg-card p-0 shadow-[9px_9px_0_hsl(var(--foreground)/0.12),0_24px_70px_hsl(var(--foreground)/0.18)] sm:rounded-none">
+          <header className="relative overflow-hidden border-b border-foreground bg-foreground p-5 text-background">
+            <div className="profile-detail-hero-grid" aria-hidden />
+            <div className="relative z-[2] flex items-center gap-3 pr-8">
+              <span className="flex size-11 shrink-0 items-center justify-center border border-background/25 bg-background/10">
+                <RotateCcw size={18} />
+              </span>
+              <DialogTitle className="text-xl font-bold tracking-tight sm:text-2xl">
+                {tRb("resetDialogTitle")}
+              </DialogTitle>
+            </div>
+          </header>
+
+          <div className="p-5">
+            <DialogDescription className="border border-border bg-muted/40 p-4 text-sm leading-6 text-muted-foreground">
+              {tRb("resetConfirm")}
+            </DialogDescription>
+            <DialogFooter className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-2 sm:space-x-0">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setResetDialogOpen(false)}
+                className="h-10 w-full rounded-none"
+              >
+                {tRb("cancel")}
+              </Button>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleReset}
+                className="h-10 w-full rounded-none"
+              >
+                <RotateCcw size={14} />
+                {tRb("reset")}
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

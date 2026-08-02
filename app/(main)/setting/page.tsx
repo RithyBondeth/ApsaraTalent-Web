@@ -19,9 +19,8 @@ import { AboutSection } from "@/components/setting/about-section";
 import { ResetPasswordDialog } from "@/components/setting/reset-password-dialog";
 import { TwoFactorDialog } from "@/components/setting/two-factor-dialog";
 import { T2FADialogMode } from "@/components/setting/two-factor-dialog/props";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import SettingLoadingSkeleton from "@/components/setting/skeleton";
+import { LucideSettings2 } from "lucide-react";
 
 export default function SettingPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -133,23 +132,38 @@ export default function SettingPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col gap-8 px-3 py-6 sm:px-5 sm:py-8 animate-page-in">
+    <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-7 px-3 animate-page-in sm:gap-9 sm:px-4 lg:px-5">
       {/* Header Section */}
-      <div className="flex flex-col gap-1">
-        <TypographyH2>{tS("title")}</TypographyH2>
-        <TypographyP className="text-muted-foreground !m-0">
-          {tS("description")}
-        </TypographyP>
+      <header className="relative overflow-hidden border border-border border-t-[5px] border-t-primary bg-card px-5 py-7 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:px-7 sm:py-9">
+        <div className="pointer-events-none absolute -right-10 -top-16 size-52 rotate-12 border-[28px] border-primary/5" />
+        <div className="relative flex items-start gap-4 sm:gap-5">
+          <div className="flex size-11 shrink-0 items-center justify-center bg-primary text-primary-foreground sm:size-12">
+            <LucideSettings2 className="size-5 sm:size-6" />
+          </div>
+          <div className="max-w-2xl">
+            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-primary">
+              Apsara Talent
+            </p>
+            <h1 className="text-3xl font-black tracking-[-0.045em] sm:text-4xl">
+              {tS("title")}
+            </h1>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
+              {tS("description")}
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <div className="grid items-start gap-7 lg:grid-cols-2 lg:gap-8">
+        {/* Appearance Section */}
+        <AppearanceSection theme={theme} onThemeChange={handleThemeChange} />
+
+        {/* Language Section */}
+        <LanguageSection
+          language={language}
+          onLanguageChange={handleLanguageChange}
+        />
       </div>
-
-      {/* Appearance Section */}
-      <AppearanceSection theme={theme} onThemeChange={handleThemeChange} />
-
-      {/* Language Section */}
-      <LanguageSection
-        language={language}
-        onLanguageChange={handleLanguageChange}
-      />
 
       {/* Account Section */}
       <AccountSection
@@ -167,11 +181,13 @@ export default function SettingPage() {
         onToggleTwoFactor={handleToggleTwoFactor}
       />
 
-      {/* Blocked Users Section */}
-      <BlockedUsersSection />
+      <div className="grid items-start gap-7 lg:grid-cols-2 lg:gap-8">
+        {/* Blocked Users Section */}
+        <BlockedUsersSection />
 
-      {/* About Section */}
-      <AboutSection />
+        {/* About Section */}
+        <AboutSection />
+      </div>
 
       {/* Two-Factor Auth Dialog Section */}
       <TwoFactorDialog

@@ -19,12 +19,18 @@ import { Separator } from "@/components/ui/separator";
 import { useInterviewStore } from "@/stores/apis/matching/interview.store";
 import { useMediaQuery } from "@/hooks/utils/use-media-query";
 import { LucideCalendarCheck, LucidePlus } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { InterviewFormBody } from "./interview-form-body";
 import { ICreateInterviewDialogProps } from "./props";
 import { IInterviewFormBodyProps } from "./interview-form-body/props";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
+
+const InterviewFormBody = dynamic(
+  () =>
+    import("./interview-form-body").then((module) => module.InterviewFormBody),
+  { ssr: false },
+);
 
 export function CreateInterviewDialog({
   currentId,
@@ -157,7 +163,7 @@ export function CreateInterviewDialog({
 
   // ── Trigger Button ──────────────────────────────────────────────────
   const trigger = (
-    <Button size="sm">
+    <Button size="sm" className="rounded-none">
       <LucidePlus className="size-4" />
       {t("scheduleInterview")}
     </Button>
@@ -166,8 +172,8 @@ export function CreateInterviewDialog({
   // ── Header Content ──────────────────────────────────────────────────
   const headerContent = (
     <div className="flex items-center gap-3">
-      <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10">
-        <LucideCalendarCheck className="size-5 text-primary" />
+      <div className="flex size-10 items-center justify-center rounded-none bg-foreground text-background">
+        <LucideCalendarCheck className="size-5 text-background" />
       </div>
       <div>
         <p className="text-xs text-muted-foreground mt-0.5">

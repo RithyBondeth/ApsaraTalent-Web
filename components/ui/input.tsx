@@ -8,7 +8,7 @@ type TRHFMessage =
   | FieldError
   | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>;
 
-export interface IInputProps extends Omit<
+interface IInputProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "prefix" | "suffix"
 > {
@@ -19,38 +19,64 @@ export interface IInputProps extends Omit<
 
 const Input = React.forwardRef<HTMLInputElement, IInputProps>(
   ({ className, type, prefix, suffix, validationMessage, ...props }, ref) => {
+    const generatedId = React.useId();
     const message =
       typeof validationMessage === "string"
         ? validationMessage
         : validationMessage?.message;
 
+    const hasError = Boolean(message);
+    const validationMessageId = `${props.id ?? generatedId}-validation`;
+    const describedBy = [
+      props["aria-describedby"],
+      hasError ? validationMessageId : undefined,
+    ]
+      .filter(Boolean)
+      .join(" ") || undefined;
+
     return (
-      <div className="w-full flex flex-col items-start gap-1">
+      <div className="relative w-full flex flex-col items-start gap-1.5">
         <div
+          data-error={hasError}
           className={cn(
-            "flex items-center h-12 w-full rounded-md border border-input bg-background px-3 text-base ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+            "flex items-center h-12 w-full rounded-none border border-input bg-background px-3 text-base transition-[color,border-color,box-shadow] duration-200",
+            "hover:border-foreground/25",
+            "focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/20",
+            "data-[error=true]:border-destructive data-[error=true]:focus-within:border-destructive data-[error=true]:focus-within:ring-destructive/20",
+            "disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
             className,
           )}
         >
           {prefix && (
-            <span className="mr-2 text-muted-foreground">{prefix}</span>
+            <span className="mr-2 text-muted-foreground [&_svg]:size-[18px]">
+              {prefix}
+            </span>
           )}
           <input
             type={type}
             className={cn(
-              "flex-1 bg-transparent outline-none placeholder:text-sm",
+              "flex-1 min-w-0 bg-transparent outline-none placeholder:text-sm placeholder:text-muted-foreground/70",
               props.disabled ? "text-muted-foreground" : "text-foreground",
             )}
             ref={ref}
             {...props}
+            aria-invalid={hasError || props["aria-invalid"]}
+            aria-describedby={describedBy}
           />
           {suffix && (
-            <span className="ml-2 text-muted-foreground">{suffix}</span>
+            <span className="ml-2 text-muted-foreground [&_svg]:size-[18px] [&_svg]:cursor-pointer">
+              {suffix}
+            </span>
           )}
         </div>
 
-        {Boolean(message) && (
-          <TypographySmall className="text-xs text-red-500">
+        {hasError && (
+          <TypographySmall
+            id={validationMessageId}
+            role="alert"
+            className="field-validation-message text-xs text-destructive"
+            title={typeof message === "string" ? message : String(message)}
+          >
             {typeof message === "string" ? message : String(message)}
           </TypographySmall>
         )}

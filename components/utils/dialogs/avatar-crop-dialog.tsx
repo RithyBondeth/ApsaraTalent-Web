@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-
-const Cropper = dynamic(() => import("react-easy-crop"), { ssr: false });
+import dynamic from "next/dynamic";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -16,6 +17,10 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+
+const Cropper = dynamic(() => import("react-easy-crop"), {
+  ssr: false,
+});
 
 /* ------------------------------- Helpers ------------------------------ */
 type TCropArea = {
@@ -45,12 +50,13 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
     image,
     onCropComplete,
     aspect = 1,
-    cropShape = "round",
+    cropShape = "rect",
     fileName = "avatar.jpg",
   } = props;
 
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("common");
+  const tr = useTranslations("resumeBuilder");
 
   /* -------------------------------- All States ------------------------------ */
   const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -58,8 +64,21 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<TCropArea | null>(
     null,
   );
+  const [mediaStatus, setMediaStatus] = useState<
+    "loading" | "ready" | "error"
+  >("loading");
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* /* ------------------------------ All Effects ---------------------------- */
+  useEffect(() => {
+    if (!open) return;
+
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setCroppedAreaPixels(null);
+    setMediaStatus(image ? "loading" : "error");
+  }, [image, open]);
+
+  /* --------------------------------- Methods -------------------------------- */
   // ── Handle Crop Complete ─────────────────────────────────────────
   const handleCropComplete = (_: unknown, croppedPixels: TCropArea): void => {
     setCroppedAreaPixels(croppedPixels);
@@ -71,17 +90,21 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
     crop: TCropArea,
   ): Promise<Blob> {
     const image = new Image();
-    image.src = imageSrc;
-
-    await new Promise((resolve) => (image.onload = resolve));
+    await new Promise<void>((resolve, reject) => {
+      image.onload = () => resolve();
+      image.onerror = () => reject(new Error("The crop image failed to load."));
+      image.src = imageSrc;
+    });
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
+    if (!ctx) throw new Error("The crop canvas is unavailable.");
+
     canvas.width = crop.width;
     canvas.height = crop.height;
 
-    ctx?.drawImage(
+    ctx.drawImage(
       image,
       crop.x,
       crop.y,
@@ -93,36 +116,51 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
       crop.height,
     );
 
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => resolve(blob as Blob), "image/jpeg", 0.9);
+    return new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (blob) {
+          resolve(blob);
+          return;
+        }
+
+        reject(new Error("The cropped image could not be created."));
+      }, "image/jpeg", 0.9);
     });
   }
 
   // ── Confirm Crop ─────────────────────────────────────────────────────
   const confirmCrop = async () => {
-    if (!croppedAreaPixels) return;
+    if (!croppedAreaPixels || mediaStatus !== "ready") return;
 
-    const blob = await getCroppedImage(image, croppedAreaPixels);
+    try {
+      const blob = await getCroppedImage(image, croppedAreaPixels);
 
-    const croppedFile = new File([blob], fileName, {
-      type: "image/jpeg",
-    });
+      const croppedFile = new File([blob], fileName, {
+        type: "image/jpeg",
+      });
 
-    onCropComplete(croppedFile);
-    setOpen(false);
+      onCropComplete(croppedFile);
+      setOpen(false);
+    } catch {
+      setMediaStatus("error");
+      toast.error(tr("imageReadFailed"));
+    }
   };
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg rounded-none sm:rounded-none [&>button]:rounded-none">
         {/* Dialog Header Section: Title */}
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {t("cropImage")}
+          </DialogDescription>
         </DialogHeader>
 
         {/* Image Section */}
-        <div className="relative w-full h-[320px] rounded-md overflow-hidden bg-muted">
+        <div className="relative h-[320px] w-full overflow-hidden border border-border bg-muted">
           {image && (
             <Cropper
               image={image}
@@ -131,6 +169,7 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
               aspect={aspect}
               cropShape={cropShape}
               showGrid={false}
+              onMediaLoaded={() => setMediaStatus("ready")}
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={handleCropComplete}
@@ -142,9 +181,25 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
               keyboardStep={10}
               style={{}}
               classes={{}}
-              mediaProps={{}}
+              mediaProps={{
+                alt: title,
+                onError: () => setMediaStatus("error"),
+              }}
               cropperProps={{}}
             />
+          )}
+
+          {mediaStatus === "loading" && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-muted">
+              <Loader2 className="size-7 animate-spin text-muted-foreground" />
+              <span className="sr-only">{tr("imageReadFailed")}</span>
+            </div>
+          )}
+
+          {mediaStatus === "error" && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-muted px-8 text-center text-sm text-muted-foreground">
+              {tr("imageReadFailed")}
+            </div>
           )}
         </div>
 
@@ -153,10 +208,12 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
           <span className="text-sm text-muted-foreground">{t("zoom")}</span>
 
           <Slider
+            className="[&>span]:rounded-none [&>span>span]:rounded-none"
             value={[zoom]}
             min={1}
             max={3}
             step={0.05}
+            disabled={mediaStatus !== "ready"}
             onValueChange={(value) => setZoom(value[0])}
           />
         </div>
@@ -166,12 +223,18 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
           <Button
             type="button"
             variant="outline"
+            className="rounded-none"
             onClick={() => setOpen(false)}
           >
             {t("cancel")}
           </Button>
 
-          <Button type="button" onClick={confirmCrop}>
+          <Button
+            type="button"
+            className="rounded-none"
+            disabled={mediaStatus !== "ready" || !croppedAreaPixels}
+            onClick={confirmCrop}
+          >
             {t("cropImage")}
           </Button>
         </DialogFooter>

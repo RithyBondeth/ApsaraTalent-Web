@@ -1,13 +1,13 @@
 import { TChatRecordingState } from "@/utils/types/chat/chat.type";
 
-export interface IChatReplyTo {
+interface IChatReplyTo {
   id: string;
   content: string;
   senderName: string;
   isDeleted?: boolean;
 }
 
-export interface IChatUploadedFile {
+interface IChatUploadedFile {
   url: string;
   type: "image" | "document" | "audio";
   filename: string;

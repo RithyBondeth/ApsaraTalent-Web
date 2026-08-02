@@ -6,17 +6,16 @@ import BenefitValueStepForm from "@/components/company/company-signup-form/benef
 import CompanyCareerScopeStepForm from "@/components/company/company-signup-form/career-scope-step";
 import CoverCompanyStepForm from "@/components/company/company-signup-form/cover-step";
 import OpenPositionStepForm from "@/components/company/company-signup-form/open-position-step";
+import { AuthBackButton } from "@/components/auth/auth-back-button";
 import { Button } from "@/components/ui/button";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useCompanySignupStore } from "@/stores/apis/auth/company-signup.store";
 import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
 import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
+import { LucideArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -357,36 +356,18 @@ export default function CompanySignup() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
-      {/* Navigate Back Button Section */}
-      <button
-        type="button"
-        onClick={() => router.replace("/signup")}
-        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
-      >
-        <LucideArrowLeft className="size-4" />
-        {t("backToBasicInfo")}
-      </button>
-
-      {/* Title Section */}
-      <div>
-        <TypographyH2>{t("signupAsCompany")}</TypographyH2>
-        <TypographyMuted className="text-md">
-          {t("companySignupSubtitle")}
-        </TypographyMuted>
-      </div>
-
+    <div className="auth-wizard w-full max-w-4xl mx-auto flex flex-col gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Step Progress Indicator Section */}
-      <div className="w-full overflow-x-auto pb-2 mb-2">
+      <div className="auth-wizard-progress w-full overflow-x-auto border border-border border-t-[5px] border-t-foreground bg-card p-4 shadow-[4px_4px_0_hsl(var(--foreground)/0.05)]">
         <div className="w-full min-w-[280px] flex items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => (
               <div key={st} className="w-full flex items-center">
                 {/* Step Circle Section */}
                 <div
-                  className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-full font-bold transition-all ${
+                  className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-none font-bold transition-all ${
                     step >= st
-                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
+                      ? "bg-primary text-primary-foreground shadow-[2px_2px_0_hsl(var(--foreground)/0.16)]"
                       : "bg-muted text-muted-foreground"
                   }`}
                 >
@@ -394,9 +375,9 @@ export default function CompanySignup() {
                 </div>
                 {/* Line Between Steps Section (Only Render Before Last Step) */}
                 {index < totalSteps - 1 && (
-                  <div className="flex-1 h-1 bg-muted rounded-full relative">
+                  <div className="flex-1 h-1 bg-muted rounded-none relative">
                     <div
-                      className={`absolute top-0 left-0 h-full rounded-full bg-primary transition-all duration-300 ${
+                      className={`absolute top-0 left-0 h-full rounded-none bg-primary transition-all duration-300 ${
                         step > st ? "w-full" : "w-0"
                       }`}
                     />
@@ -410,78 +391,78 @@ export default function CompanySignup() {
 
       {/* Form Section */}
       <FormProvider {...cmpForm}>
-        <form className="w-full" onSubmit={(e) => e.preventDefault()}>
-          {step === 1 && (
-            <BasicInfoStepForm
-              register={register}
-              control={control}
-              errors={errors}
-              setValue={setValue}
-              getValues={getValues}
-            />
-          )}
-          {step === 2 && (
-            <OpenPositionStepForm
-              register={register}
-              getValues={getValues}
-              setValue={setValue}
-              trigger={trigger}
-              errors={errors}
-              control={control}
-            />
-          )}
-          {step === 3 && (
-            <BenefitValueStepForm
-              register={register}
-              getValues={getValues}
-              setValue={setValue}
-              trigger={trigger}
-              errors={errors}
-            />
-          )}
-          {step === 4 && (
-            <AvatarCompanyStepForm
-              register={register}
-              setValue={setValue}
-              getValues={getValues}
-            />
-          )}
-          {step === 5 && (
-            <CoverCompanyStepForm
-              register={register}
-              setValue={setValue}
-              getValues={getValues}
-              errors={errors}
-            />
-          )}
-          {step === 6 && (
-            <CompanyCareerScopeStepForm
-              register={register}
-              getValues={getValues}
-              setValue={setValue}
-              errors={errors}
-            />
-          )}
+        <form
+          className="auth-wizard-form w-full"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <div className="auth-wizard-step">
+            {step === 1 && (
+              <BasicInfoStepForm
+                register={register}
+                control={control}
+                errors={errors}
+                setValue={setValue}
+                getValues={getValues}
+              />
+            )}
+            {step === 2 && (
+              <OpenPositionStepForm
+                register={register}
+                getValues={getValues}
+                setValue={setValue}
+                trigger={trigger}
+                errors={errors}
+                control={control}
+              />
+            )}
+            {step === 3 && (
+              <BenefitValueStepForm
+                register={register}
+                getValues={getValues}
+                setValue={setValue}
+                trigger={trigger}
+                errors={errors}
+              />
+            )}
+            {step === 4 && (
+              <AvatarCompanyStepForm
+                register={register}
+                setValue={setValue}
+                getValues={getValues}
+              />
+            )}
+            {step === 5 && (
+              <CoverCompanyStepForm
+                register={register}
+                setValue={setValue}
+                getValues={getValues}
+                errors={errors}
+              />
+            )}
+            {step === 6 && (
+              <CompanyCareerScopeStepForm
+                register={register}
+                getValues={getValues}
+                setValue={setValue}
+                errors={errors}
+              />
+            )}
+          </div>
 
           {/* Navigation Buttons Section */}
-          <div className="mt-6 mb-4 flex gap-3 sm:justify-between">
-            {step > 1 ? (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={prevStep}
-                className="flex-1 sm:flex-initial sm:min-w-[140px]"
-              >
-                <LucideArrowLeft />
-                {t("back")}
-              </Button>
-            ) : (
-              <div className="hidden sm:block" />
-            )}
+          <div className="auth-wizard-actions auth-action-row mt-5">
+            <AuthBackButton
+              className="w-full"
+              onClick={() =>
+                step > 1 ? prevStep() : router.replace("/signup")
+              }
+            >
+              {t("back")}
+            </AuthBackButton>
 
             <Button
               type="button"
-              className="flex-1 sm:flex-initial sm:min-w-[140px]"
+              className="w-full"
               onClick={nextStep}
               disabled={
                 cmpSignup.loading || uploadAvatar.loading || uploadCover.loading

@@ -8,6 +8,7 @@ import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
   LucideBriefcaseBusiness,
+  LucideBuilding2,
   LucideTrash2,
   Sparkles,
   Loader2,
@@ -69,34 +70,37 @@ export default function EmployeeExperienceForm(
       </div>
 
       {/* Content Section */}
-      <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md bg-card">
+      <div className="grid w-full grid-cols-12 gap-4 border border-border bg-card p-5 tablet-md:grid-cols-1">
         {/* Title Section */}
         <LabelInput
+          className="col-span-7 tablet-md:col-span-1"
           label={t("expTitle")}
           input={
             <Input
               placeholder={t("expTitle")}
               id="title"
               {...register(`experiences.${props.index}.title`)}
-              prefix={<LucideBriefcaseBusiness strokeWidth={"1.3px"} />}
+              prefix={<LucideBriefcaseBusiness />}
               disabled={!props.isEdit}
             />
           }
         />
         <LabelInput
+          className="col-span-5 tablet-md:col-span-1"
           label={t("expCompany")}
           input={
             <Input
               placeholder={t("expCompanyPlaceholder")}
               {...register(`experiences.${props.index}.company`)}
+              prefix={<LucideBuilding2 />}
               disabled={!props.isEdit}
             />
           }
         />
         {/* Description Section */}
-        <div className="w-full flex flex-col items-start gap-1">
+        <div className="col-span-12 flex w-full flex-col items-start gap-1 tablet-md:col-span-1">
           <div className="w-full flex items-center justify-between">
-            <TypographyMuted className="text-xs font-bold text-foreground">
+            <TypographyMuted className="text-xs">
               {t("expDescription")}
             </TypographyMuted>
             {props.isEdit && descValue && (
@@ -130,7 +134,7 @@ export default function EmployeeExperienceForm(
           />
         </div>
         {/* StartDate and EndDate Section */}
-        <div className="w-full flex justify-between items-center gap-5 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
+        <div className="col-span-12 flex w-full items-center justify-between gap-4 tablet-md:col-span-1 tablet-md:flex-col tablet-md:[&>div]:!w-full">
           {/* StartDate Section */}
           <div className="w-1/2 flex flex-col items-start gap-1">
             <TypographyMuted className="text-xs">
@@ -146,6 +150,8 @@ export default function EmployeeExperienceForm(
                     date={field.value}
                     onDateChange={field.onChange}
                     disabled={!props.isEdit}
+                    popoverClassName="profile-overlay profile-calendar-popover"
+                    calendarClassName="profile-calendar"
                   />
                   {fieldState.error && (
                     <TypographyP className="[&:not(:first-child)]:mt-0 text-red-500 text-xs mt-1">
@@ -171,6 +177,8 @@ export default function EmployeeExperienceForm(
                   date={field.value}
                   onDateChange={field.onChange}
                   disabled={!props.isEdit}
+                  popoverClassName="profile-overlay profile-calendar-popover"
+                  calendarClassName="profile-calendar"
                 />
               )}
             />

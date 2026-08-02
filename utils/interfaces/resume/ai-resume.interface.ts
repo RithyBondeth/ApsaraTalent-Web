@@ -11,18 +11,6 @@ export interface IOptimizeResumeResponse {
   suggestedSkills: string[];
 }
 
-export interface IGenerateCoverLetterResponse {
-  coverLetter: string;
-}
-
-export interface IGenerateCoverLetterPdfRequest {
-  employeeName: string;
-  employeeJob?: string;
-  companyName: string;
-  companyIndustry?: string;
-  coverLetterText: string;
-}
-
 export interface IGenerateCoverLetterPdfResponse {
   filename: string;
   mimeType: string;
@@ -43,10 +31,6 @@ export interface IAiInterviewPrepQuestion {
   category: string;
   tip: string;
   tipKm: string;
-}
-
-export interface IAiInterviewPrepResponse {
-  questions: IAiInterviewPrepQuestion[];
 }
 
 export interface ISkillGapMissing {

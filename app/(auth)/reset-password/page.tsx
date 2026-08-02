@@ -1,20 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import AuthShell from "@/components/auth/auth-shell";
+import { AuthField } from "@/components/auth/auth-field";
+import { AuthBackButton } from "@/components/auth/auth-back-button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useResetPasswordStore } from "@/stores/apis/auth/reset-password.store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  LucideEye,
-  LucideEyeClosed,
-  LucideKey,
-  LucideLockKeyhole,
-} from "lucide-react";
+import { LucideKeyRound, LucideLockKeyhole } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -35,9 +31,6 @@ export default function ResetPasswordPage() {
   const tokenFromUrl = searchParams.get("token") ?? "";
 
   /* -------------------------------- All States ------------------------------ */
-  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
-  const [confirmPassVisibility, setConfirmPassVisibility] =
-    useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   /* ----------------------------- API Integration ----------------------------- */
@@ -106,105 +99,83 @@ export default function ResetPasswordPage() {
 
   /* -------------------------------- Render UI --------------------------------- */
   return (
-    <div className="min-h-screen w-full flex tablet-md:flex-col">
-      {/* Left Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-16">
-        <div className="w-full max-w-[440px] flex flex-col items-start gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
-          {/* Icon Badge Section */}
-          <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <LucideKey className="size-7 text-primary" />
+    <AuthShell
+      image={resetPasswordSvg}
+      imageAlt={t("resetPageTitle")}
+      eyebrowKey="resetPanelEyebrow"
+      titleKey="resetPanelTitle"
+      subtitleKey="resetPanelSubtitle"
+    >
+      <div className="auth-stagger flex w-full flex-col gap-7">
+        {/* Icon Badge and Title Section */}
+        <div style={{ "--d": "0ms" } as React.CSSProperties}>
+          <div className="mb-5 grid size-12 place-items-center rounded-none bg-foreground text-background shadow-[3px_3px_0_hsl(var(--foreground)/0.12)]">
+            <LucideKeyRound className="size-5" strokeWidth={1.6} />
           </div>
+          <TypographyH2 className="phone-xl:text-2xl">
+            {t("resetPageTitle")}
+          </TypographyH2>
+          <TypographyMuted className="text-md phone-xl:text-sm">
+            {tokenFromUrl
+              ? t("resetSubtitleWithToken")
+              : t("resetSubtitleWithoutToken")}
+          </TypographyMuted>
+        </div>
 
-          {/* Title Section */}
-          <div className="flex flex-col items-start">
-            <TypographyH2 className="phone-xl:text-2xl">
-              {t("resetPageTitle")}
-            </TypographyH2>
-            <TypographyMuted className="text-md phone-xl:text-sm">
-              {tokenFromUrl
-                ? t("resetSubtitleWithToken")
-                : t("resetSubtitleWithoutToken")}
-            </TypographyMuted>
-          </div>
-
-          {/* Form Section */}
-          <form
-            className="w-full flex flex-col gap-3"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            {/* Token Field Section: Hidden when auto-filled from URL query param */}
-            {!tokenFromUrl && (
-              <Input
-                prefix={<LucideKey />}
-                type="text"
-                placeholder={t("tokenPlaceholder")}
-                {...register("token")}
-                validationMessage={errors.token?.message}
-              />
-            )}
-
-            <Input
-              prefix={<LucideLockKeyhole />}
-              suffix={
-                passwordVisibility ? (
-                  <LucideEyeClosed
-                    onClick={() => setPasswordVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye onClick={() => setPasswordVisibility(true)} />
-                )
+        {/* Form Section */}
+        <form
+          className="w-full flex flex-col gap-4"
+          onSubmit={handleSubmit(onSubmit)}
+          style={{ "--d": "90ms" } as React.CSSProperties}
+        >
+          {/* Token Field Section: Hidden when auto-filled from URL query parameter */}
+          {!tokenFromUrl && (
+            <AuthField
+              label={t("tokenPlaceholder")}
+              type="text"
+              icon={
+                <LucideKeyRound className="size-[18px]" strokeWidth={1.6} />
               }
-              type={passwordVisibility ? "text" : "password"}
-              placeholder={t("newPassword")}
-              {...register("password")}
-              validationMessage={errors.password?.message}
+              error={errors.token?.message}
+              {...register("token")}
             />
-            <Input
-              prefix={<LucideLockKeyhole />}
-              suffix={
-                confirmPassVisibility ? (
-                  <LucideEyeClosed
-                    onClick={() => setConfirmPassVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye onClick={() => setConfirmPassVisibility(true)} />
-                )
-              }
-              type={confirmPassVisibility ? "text" : "password"}
-              placeholder={t("confirmPassword")}
-              {...register("confirmPassword")}
-              validationMessage={errors.confirmPassword?.message}
-            />
-            <Button type="submit" disabled={loading}>
+          )}
+
+          <AuthField
+            label={t("newPassword")}
+            type="password"
+            autoComplete="new-password"
+            icon={
+              <LucideLockKeyhole className="size-[18px]" strokeWidth={1.6} />
+            }
+            error={errors.password?.message}
+            {...register("password")}
+          />
+          <AuthField
+            label={t("confirmPassword")}
+            type="password"
+            autoComplete="new-password"
+            icon={
+              <LucideLockKeyhole className="size-[18px]" strokeWidth={1.6} />
+            }
+            error={errors.confirmPassword?.message}
+            {...register("confirmPassword")}
+          />
+
+          <div className="auth-action-row">
+            <AuthBackButton onClick={() => router.replace("/login")}>
+              {t("back")}
+            </AuthBackButton>
+            <Button
+              type="submit"
+              className="auth-submit h-11"
+              disabled={loading}
+            >
               {loading ? t("resetting") : t("resetPassword")}
             </Button>
-          </form>
-
-          {/* Navigate Back Button Section */}
-          <div className="w-full flex justify-center">
-            <button
-              onClick={() => router.replace("/login")}
-              className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
-            >
-              {`\u2190 ${t("backToLogin")}`}
-            </button>
           </div>
-        </div>
+        </form>
       </div>
-
-      {/* Right Section: Image Poster */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
-        {/* Decorative Circles Section */}
-        <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
-        <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
-
-        <Image
-          src={resetPasswordSvg}
-          alt="reset-password"
-          height={undefined}
-          width={600}
-        />
-      </div>
-    </div>
+    </AuthShell>
   );
 }

@@ -25,9 +25,13 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import QRCode from "react-qr-code";
+import dynamic from "next/dynamic";
 import { ITwoFactorDialogProps } from "./props";
 import { OTP_LENGTH } from "@/utils/constants/auth.constant";
+
+const QRCode = dynamic(() => import("react-qr-code"), {
+  ssr: false,
+});
 
 export function TwoFactorDialog({
   open,
@@ -83,7 +87,7 @@ export function TwoFactorDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="max-w-sm rounded-none border-t-[5px] border-t-primary shadow-[6px_6px_0_hsl(var(--foreground)/0.09)]">
         {/* Dialog Header Section */}
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -117,7 +121,7 @@ export function TwoFactorDialog({
               </div>
             ) : qrCodeUrl ? (
               <>
-                <div className="p-3 bg-white rounded-xl border">
+                <div className="border bg-white p-3">
                   <QRCode value={qrCodeUrl} size={160} />
                 </div>
                 {secret && (
@@ -125,7 +129,7 @@ export function TwoFactorDialog({
                     <TypographyMuted className="text-xs text-center">
                       {t("manualEntry")}
                     </TypographyMuted>
-                    <code className="block text-center text-xs font-mono bg-muted rounded-md px-3 py-2 break-all select-all">
+                    <code className="block select-all break-all bg-muted px-3 py-2 text-center font-mono text-xs">
                       {secret}
                     </code>
                   </div>
@@ -164,11 +168,20 @@ export function TwoFactorDialog({
 
         {/* Dialog Footer Section */}
         <DialogFooter className="gap-2 sm:gap-0">
-          <Button variant="outline" onClick={handleClose} disabled={loading}>
+          <Button
+            variant="outline"
+            className="rounded-none"
+            onClick={handleClose}
+            disabled={loading}
+          >
             {t("cancel")}
           </Button>
           {isEnableFlow && step === 1 ? (
-            <Button onClick={() => setStep(2)} disabled={loading || !qrCodeUrl}>
+            <Button
+              className="rounded-none"
+              onClick={() => setStep(2)}
+              disabled={loading || !qrCodeUrl}
+            >
               {t("next")}
             </Button>
           ) : (
@@ -176,6 +189,7 @@ export function TwoFactorDialog({
               onClick={handleVerify}
               disabled={loading || otp.length < OTP_LENGTH}
               variant={isEnableFlow ? "default" : "destructive"}
+              className="rounded-none"
             >
               {loading && (
                 <LucideLoader2 className="size-4 animate-spin mr-1" />

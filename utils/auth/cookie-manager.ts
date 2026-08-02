@@ -9,15 +9,22 @@ export const setSessionRole = (
 ): void => {
   if (!role) return;
 
+  // Keep production cookies secure on HTTPS while allowing the production
+  // build to run consistently on a local HTTP origin in every browser engine.
+  const secure =
+    typeof window === "undefined"
+      ? COOKIE_CONFIG.SECURE
+      : window.location.protocol === "https:";
+
   setCookie(COOKIE_CONFIG.SESSION_ROLE, role, {
     ...(rememberMe ? { maxAge: COOKIE_CONFIG.PREFERENCE_STORAGE } : {}),
-    secure: COOKIE_CONFIG.SECURE,
+    secure,
     sameSite: COOKIE_CONFIG.SAME_SITE,
     path: COOKIE_CONFIG.PATH,
   });
   setCookie(COOKIE_CONFIG.REMEMBER_PREFERENCE, rememberMe.toString(), {
     maxAge: COOKIE_CONFIG.PREFERENCE_STORAGE,
-    secure: COOKIE_CONFIG.SECURE,
+    secure,
     sameSite: COOKIE_CONFIG.SAME_SITE,
     path: COOKIE_CONFIG.PATH,
   });

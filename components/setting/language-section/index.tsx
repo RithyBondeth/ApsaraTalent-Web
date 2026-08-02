@@ -55,9 +55,9 @@ function LanguageCard(props: ILanguageCardProps) {
     <button
       onClick={onClick}
       className={cn(
-        "relative flex items-center gap-3 px-4 py-3.5 rounded-xl border-2 transition-all duration-200 cursor-pointer w-full text-left",
+        "relative flex w-full cursor-pointer items-center gap-3 border-2 px-4 py-3.5 text-left transition-all duration-200",
         active
-          ? "border-primary bg-primary/5 shadow-[0_0_0_1px_hsl(var(--primary)/0.15)]"
+          ? "border-primary bg-primary/5 shadow-[3px_3px_0_hsl(var(--primary)/0.18)]"
           : "border-border bg-card hover:border-primary/40 hover:bg-accent/50",
       )}
     >
@@ -76,7 +76,7 @@ function LanguageCard(props: ILanguageCardProps) {
 
       {/* Active Checkmark Section */}
       {active && (
-        <span className="flex items-center justify-center size-5 rounded-full bg-primary shrink-0">
+        <span className="flex size-5 shrink-0 items-center justify-center bg-primary">
           <LucideCheck
             className="size-3 text-primary-foreground"
             strokeWidth={3}

@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "../base.api.constant";
 
-export const API_EMP_BASE_URL = `${API_BASE_URL}/user/employee`;
+const API_EMP_BASE_URL = `${API_BASE_URL}/user/employee`;
 
 export const API_GET_ALL_EMP_URL = `${API_EMP_BASE_URL}/all`;
 export const API_GET_ONE_EMP_URL = (employeeID: string) =>

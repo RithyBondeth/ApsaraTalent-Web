@@ -41,10 +41,10 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={props.open} onOpenChange={(isOpen) => props.setOpen(isOpen)}>
-      <DialogContent className="p-0 gap-0 flex flex-col overflow-hidden sm:max-w-lg sm:rounded-xl max-h-[90dvh] tablet-sm:!left-0 tablet-sm:!translate-x-0 tablet-sm:!translate-y-0 tablet-sm:!top-auto tablet-sm:!bottom-0 tablet-sm:!w-full tablet-sm:!max-w-none tablet-sm:rounded-t-2xl tablet-sm:!rounded-b-none tablet-sm:max-h-[92dvh]">
+      <DialogContent className="flex max-h-[90dvh] flex-col gap-0 overflow-hidden rounded-none p-0 sm:max-w-lg sm:rounded-none tablet-sm:!bottom-0 tablet-sm:!left-0 tablet-sm:!top-auto tablet-sm:!w-full tablet-sm:!max-w-none tablet-sm:!translate-x-0 tablet-sm:!translate-y-0 tablet-sm:!rounded-none tablet-sm:max-h-[92dvh] [&>button]:rounded-none">
         {/* Drag Handle Section — Mobile Only */}
         <div className="hidden tablet-sm:flex justify-center pt-3 pb-1 shrink-0">
-          <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+          <div className="h-1 w-10 rounded-none bg-muted-foreground/30" />
         </div>
 
         {/* Gradient Header Section */}
@@ -53,7 +53,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           {/* Avatar Overlapping The Gradient Section */}
           <div className="absolute -bottom-9 left-4">
             <Avatar
-              className="!size-20 ring-4 ring-background shadow-lg"
+              className="!size-20 !rounded-none ring-4 ring-background shadow-lg"
               rounded="md"
             >
               <AvatarImage src={props.avatar!} />
@@ -74,15 +74,15 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           </DialogDescription>
 
           {/* Location, Years of Experience, Availability Section */}
-          <div className="flex flex-wrap gap-1.5 mt-3">
+          <div className="mt-3 flex flex-wrap gap-1.5 [&>span]:rounded-none [&>span>span]:rounded-none">
             {props.location && (
-              <span className="inline-flex items-center gap-1 text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
+              <span className="inline-flex items-center gap-1 rounded-none bg-muted px-2.5 py-1 text-xs text-muted-foreground">
                 <LucideMapPin className="h-3 w-3 shrink-0" />
                 {translateLocation(props.location, tl)}
               </span>
             )}
             {props.yearsOfExperience && (
-              <span className="inline-flex items-center gap-1 text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
+              <span className="inline-flex items-center gap-1 rounded-none bg-muted px-2.5 py-1 text-xs text-muted-foreground">
                 <LucideBriefcase className="h-3 w-3 shrink-0" />
                 {props.yearsOfExperience}
               </span>
@@ -124,7 +124,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                 {props.skills.map((skill) => (
                   <span
                     key={skill.id}
-                    className="text-xs px-2.5 py-1 rounded-full bg-muted text-muted-foreground font-medium hover:bg-muted/80 transition-colors"
+                    className="rounded-none bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/80"
                   >
                     {skill.name}
                   </span>
@@ -143,10 +143,10 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                 {props.educations.map((edu, index) => (
                   <div
                     key={edu.id ?? index}
-                    className="flex gap-3 p-3 rounded-xl bg-muted/50 border border-border/40"
+                    className="flex gap-3 rounded-none border border-border/40 bg-muted/50 p-3"
                   >
                     <div className="shrink-0 mt-0.5">
-                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-none bg-primary/10">
                         <LucideGraduationCap className="h-4 w-4 text-primary" />
                       </div>
                     </div>
@@ -173,7 +173,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
         {/* Sticky CTA Section */}
         <div className="shrink-0 px-4 pb-4 pt-2 border-t border-border/60 bg-background">
           <Link href={`/feed/employee/${props.id}`} className="w-full">
-            <Button className="w-full gap-2">
+            <Button className="w-full gap-2 rounded-none">
               <LucideUser className="h-4 w-4" />
               {t("dialogViewProfile")}
               <LucideExternalLink className="h-3.5 w-3.5 ml-auto opacity-70" />

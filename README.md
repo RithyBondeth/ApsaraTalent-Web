@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Apsara Talent Web
 
-## Getting Started
+The Next.js frontend for Apsara Talent, a Cambodia-focused platform connecting professionals and companies through profiles, matching, messaging, interviews, and AI-assisted resume tools.
 
-First, run the development server:
+## Requirements
+
+- Node.js 20.9 or newer
+- npm 10 or newer
+- A running Apsara Talent API
+
+## Setup
 
 ```bash
+npm ci
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The development server runs at [http://localhost:4000](http://localhost:4000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run check:env
+npm run lint
+npm test
+npm run build
+npm run test:e2e
+```
 
-## Learn More
+`test:e2e` builds and starts the standalone production server unless `E2E_SKIP_BUILD=1` is set.
 
-To learn more about Next.js, take a look at the following resources:
+## Main directories
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `app` — Next.js routes, layouts, and route-level UI
+- `components` — shared and feature components
+- `hooks` — reusable client hooks
+- `stores` — Zustand state and API integrations
+- `utils` — types, validation, constants, and utilities
+- `language` — English and Khmer translations
+- `assets` — source-controlled images imported by the application
+- `public` — files that must be served directly from the site root
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Environment
 
-## Deploy on Vercel
+Copy `.env.example` to `.env.local` and provide the required API, Firebase, and monitoring values. Do not commit local environment files or credentials.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The repository supports Vercel and a standalone Docker image. Production builds use Next.js standalone output.

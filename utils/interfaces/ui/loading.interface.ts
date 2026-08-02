@@ -1,4 +1,4 @@
-export interface ILoadingStep {
+interface ILoadingStep {
   label: string;
   completeAt: number;
 }

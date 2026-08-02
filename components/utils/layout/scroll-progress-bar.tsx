@@ -3,10 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { SCROLL_PROGRESS_GRADIENT } from "@/utils/constants/ui.constant";
+import { useMediaQuery } from "@/hooks/utils/use-media-query";
 
 export function ScrollProgressBar() {
   /* --------------------------------- Utils ---------------------------------- */
   const pathname = usePathname();
+  const prefersReducedMotion = useMediaQuery(
+    "(prefers-reduced-motion: reduce)",
+  );
 
   /* -------------------------------- All States ------------------------------ */
   const [progress, setProgress] = useState<number>(0);
@@ -50,7 +54,10 @@ export function ScrollProgressBar() {
         style={{
           background: SCROLL_PROGRESS_GRADIENT,
           transform: `scaleX(${progress / 100})`,
-          transition: progress === 0 ? "none" : "transform 80ms linear",
+          transition:
+            progress === 0 || prefersReducedMotion
+              ? "none"
+              : "transform 80ms linear",
         }}
       />
     </div>

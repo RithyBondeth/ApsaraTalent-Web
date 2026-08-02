@@ -43,7 +43,7 @@ export function ThemeProviderClient(props: {
       attribute="class"
       defaultTheme={fallbackTheme}
       enableSystem
-      disableTransitionOnChange
+      disableTransitionOnChange={false}
     >
       <ThemeSync theme={activeTheme} />
       {props.children}

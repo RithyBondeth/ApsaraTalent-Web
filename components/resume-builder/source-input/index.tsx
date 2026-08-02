@@ -18,32 +18,32 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <section className="w-full rounded-2xl border border-border/70 bg-card p-5 sm:p-6 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)]">
+    <section className="w-full border border-border border-t-[5px] border-t-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-5">
       <div className="flex flex-col gap-5">
         {/* Header Section */}
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-3">
           {/* Left Section */}
           <div className="flex items-start gap-3">
-            <div className="rounded-xl border border-violet-500/20 bg-violet-500/10 p-2.5">
-              <Sparkles className="size-5 text-violet-500" />
+            <div className="grid size-9 shrink-0 place-items-center border border-foreground bg-foreground text-background">
+              <Sparkles className="size-4" />
             </div>
-            <div>
-              <h2 className="text-base font-semibold text-foreground">
+            <div className="min-w-0">
+              <h2 className="text-base font-black tracking-[-0.02em] text-foreground">
                 {t("pasteInfoTitle")}
               </h2>
-              <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">
                 {t("pasteInfoDescription")}
               </p>
             </div>
           </div>
 
-          {/* Right Section */}
+          {/* Information Source Status Section */}
           <div
             className={cn(
-              "inline-flex w-fit items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium",
+              "inline-flex w-full items-center gap-2 border px-3 py-2 text-xs font-semibold",
               usingPastedInfo
-                ? "border-violet-500/25 bg-violet-500/10 text-violet-600 dark:text-violet-300"
-                : "border-border bg-muted/50 text-muted-foreground",
+                ? "border-foreground bg-foreground text-background"
+                : "border-border bg-muted/35 text-muted-foreground",
             )}
           >
             {usingPastedInfo ? (
@@ -58,13 +58,18 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
         {/* Textarea Section */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-3">
-            <Label htmlFor="resume-source-text">{t("pasteInfoLabel")}</Label>
+            <Label
+              htmlFor="resume-source-text"
+              className="text-[10px] font-black uppercase tracking-[0.12em]"
+            >
+              {t("pasteInfoLabel")}
+            </Label>
             {usingPastedInfo && (
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-7 px-2 text-xs"
+                className="h-7 rounded-none px-2 text-xs"
                 onClick={() => onChange("")}
                 disabled={disabled}
               >
@@ -77,7 +82,7 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
             value={value}
             onChange={(event) => onChange(event.target.value)}
             placeholder={t("pasteInfoPlaceholder")}
-            className="min-h-48 resize-y bg-background/70"
+            className="min-h-56 resize-y rounded-none border-border bg-background text-sm leading-6 focus-visible:ring-1"
             maxLength={maxLength}
             disabled={disabled}
             aria-describedby="resume-source-help"
@@ -85,7 +90,7 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
           {/* Help Section */}
           <div
             id="resume-source-help"
-            className="flex flex-col gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-2 border-t border-border pt-3 text-[11px] leading-4 text-muted-foreground"
           >
             <span className="inline-flex items-center gap-1.5">
               <ShieldCheck className="size-3.5 shrink-0 text-emerald-500" />

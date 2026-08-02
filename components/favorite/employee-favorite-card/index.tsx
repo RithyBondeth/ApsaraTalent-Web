@@ -4,11 +4,11 @@ import {
   getNameInitials,
 } from "@/utils/functions/text";
 import {
-  LucideArrowRight,
   LucideBookmarkX,
   LucideBriefcaseBusiness,
   LucideClock,
   LucideMapPin,
+  MoveUpRight,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
@@ -31,14 +31,14 @@ export default function FavoriteEmployeeCard(
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div
-      className={`w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
+    <article
+      className={`group w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
     >
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
         {/* Avatar Section */}
         <Avatar
           rounded="md"
-          className="size-16 sm:size-20 flex-shrink-0 ring-[2px] ring-border/40"
+          className="size-14 flex-shrink-0 !rounded-none border border-border sm:size-16"
         >
           <AvatarFallback className="text-sm font-semibold">
             {getNameInitials(props.name)}
@@ -51,7 +51,7 @@ export default function FavoriteEmployeeCard(
           {/* Header Section */}
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <h3 className="text-base font-bold leading-tight truncate">
+              <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
                 {props.name}
               </h3>
               <TypographyMuted className="text-sm text-muted-foreground mt-0.5">
@@ -59,7 +59,7 @@ export default function FavoriteEmployeeCard(
               </TypographyMuted>
             </div>
             <span
-              className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${getAvailabilityStyleClass(props.availability)}`}
+              className={`flex-shrink-0 whitespace-nowrap rounded-none border border-current/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
             >
               {availLabel}
             </span>
@@ -75,8 +75,8 @@ export default function FavoriteEmployeeCard(
           {/* Skills Tags Section */}
           {props.skills.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
-              {props.skills.map((skill, index) => (
-                <Tag label={skill} key={index} />
+              {props.skills.slice(0, 6).map((skill, index) => (
+                <Tag label={skill} key={index} neutral className="!rounded-none border border-border hover:shadow-none" />
               ))}
             </div>
           )}
@@ -86,25 +86,28 @@ export default function FavoriteEmployeeCard(
             <MetaChip
               icon={<LucideBriefcaseBusiness />}
               text={props.position}
+              className="rounded-none border border-border bg-muted/45"
             />
             <MetaChip
               icon={<LucideClock />}
               text={t("yrsExp", { years: props.experience })}
+              className="rounded-none border border-border bg-muted/45"
             />
             <MetaChip
               icon={<LucideMapPin />}
               text={translateLocation(props.location, tl)}
+              className="rounded-none border border-border bg-muted/45"
             />
           </div>
         </div>
       </div>
 
       {/* Action Bar Section: View and Remove Buttons */}
-      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
+      <div className="flex items-center justify-between gap-3 border-t border-border bg-muted/25 px-4 py-3 sm:px-5">
         <Button
           variant="outline"
           size="sm"
-          className="text-xs text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
+          className="rounded-none border-destructive/30 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
           onClick={props.onRemoveFromFavorite}
         >
           <LucideBookmarkX className="size-3.5" />
@@ -112,13 +115,13 @@ export default function FavoriteEmployeeCard(
         </Button>
         <Button
           size="sm"
-          className="text-xs"
+          className="rounded-none text-xs"
           onClick={() => router.replace(`/feed/employee/${props.id}`)}
         >
           {t("viewDetail")}
-          <LucideArrowRight className="size-3.5" />
+          <MoveUpRight className="size-3.5" />
         </Button>
       </div>
-    </div>
+    </article>
   );
 }

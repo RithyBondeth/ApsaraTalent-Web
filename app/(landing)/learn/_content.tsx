@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import {
-  LucideArrowLeft,
   LucideBookOpen,
   LucideRocket,
   LucideUsers,
@@ -12,94 +10,16 @@ import {
   LucideLightbulb,
   LucideTarget,
 } from "lucide-react";
-import { TypographyH1 } from "@/components/utils/typography/typography-h1";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import {
+  StaticBullet,
+  StaticCard,
+  StaticPageArtworkSlot,
+  StaticPageShell,
+  StaticSection,
+  StaticStep,
+} from "@/components/static-content/static-page";
 import { useLanguageStore } from "@/stores/languages/language-store";
-
-/* -------------------------- Sub Components -------------------------- */
-function Section({
-  id,
-  icon,
-  title,
-  children,
-}: {
-  id: string;
-  icon: React.ReactNode;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section id={id} className="flex flex-col gap-4 scroll-mt-8">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center size-9 rounded-xl bg-primary/10 border border-primary/20 shrink-0">
-          <span className="text-primary [&>svg]:size-4">{icon}</span>
-        </div>
-        <TypographyH2 className="text-lg font-bold tracking-tight">
-          {title}
-        </TypographyH2>
-      </div>
-      <div className="flex flex-col gap-3 text-sm text-muted-foreground leading-relaxed pl-0">
-        {children}
-      </div>
-    </section>
-  );
-}
-
-function Bullet({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex items-start gap-2">
-      <span className="mt-1.5 size-1.5 rounded-full bg-primary/60 shrink-0" />
-      <span>{children}</span>
-    </li>
-  );
-}
-
-function GuideCard({
-  icon,
-  title,
-  description,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="flex flex-col gap-2 rounded-xl border border-border/60 bg-card/50 p-4 hover:border-primary/30 transition-colors">
-      <div className="flex items-center gap-2.5">
-        <span className="text-primary [&>svg]:size-4">{icon}</span>
-        <span className="text-sm font-semibold">{title}</span>
-      </div>
-      <span className="text-xs text-muted-foreground leading-relaxed">
-        {description}
-      </span>
-    </div>
-  );
-}
-
-function StepCard({
-  step,
-  title,
-  description,
-}: {
-  step: number;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="flex gap-4 items-start">
-      <div className="flex items-center justify-center size-8 rounded-full bg-primary text-primary-foreground text-sm font-bold shrink-0">
-        {step}
-      </div>
-      <div className="flex flex-col gap-1">
-        <span className="text-sm font-semibold">{title}</span>
-        <span className="text-xs text-muted-foreground leading-relaxed">
-          {description}
-        </span>
-      </div>
-    </div>
-  );
-}
 
 /* ----------------------- Content Types & Data ----------------------- */
 type TTocItem = { id: string; label: string };
@@ -388,63 +308,31 @@ export function LearnContent() {
 
   /* --------------------------------- Render UI --------------------------------- */
   return (
-    <div className="min-h-screen bg-background">
-      {/* Top Navigation Section */}
-      <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm">
-        <div className="max-w-5xl mx-auto flex items-center gap-4 px-4 py-3 sm:px-6">
-          <Link
-            href="/"
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <LucideArrowLeft className="size-3.5" />
-            {t.back}
-          </Link>
-          <span className="text-border">|</span>
-          <span className="text-sm font-semibold">{t.pageTitle}</span>
-        </div>
-      </header>
-
-      <div className="max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:flex lg:gap-12">
-        {/* Sticky TOC Sidebar (Desktop) Section */}
-        <aside className="hidden lg:block w-56 shrink-0">
-          <nav className="sticky top-20 flex flex-col gap-2">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-              {t.tocHeading}
-            </span>
-            {t.toc.map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-0.5"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Main Content Section */}
-        <main className="flex-1 flex flex-col gap-10 min-w-0">
-          {/* Hero Header Section */}
-          <div className="flex flex-col gap-4">
-            <TypographyH1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              {t.pageTitle}
-            </TypographyH1>
-            <TypographyP className="text-muted-foreground max-w-2xl">
-              {t.subtitle}
-            </TypographyP>
-          </div>
-
+    <StaticPageShell
+      pageNumber="01"
+      title={t.pageTitle}
+      subtitle={t.subtitle}
+      tocHeading={t.tocHeading}
+      toc={t.toc}
+      icon={<LucideBookOpen />}
+      heroVisual={
+        <StaticPageArtworkSlot
+          icon={<LucideBookOpen />}
+          label={t.pageTitle}
+        />
+      }
+    >
           {/* Getting Started Section */}
-          <Section
+          <StaticSection
             id="getting-started"
+            number="01"
             icon={<LucideRocket />}
             title={t.gettingStartedTitle}
           >
             <TypographyP>{t.gettingStartedIntro}</TypographyP>
             <div className="flex flex-col gap-5 mt-2">
               {t.steps.map((step, i) => (
-                <StepCard
+                <StaticStep
                   key={i}
                   step={i + 1}
                   title={step.title}
@@ -452,51 +340,63 @@ export function LearnContent() {
                 />
               ))}
             </div>
-          </Section>
+          </StaticSection>
 
           {/* For Job Seekers Section */}
-          <Section
+          <StaticSection
             id="for-job-seekers"
+            number="02"
             icon={<LucideUsers />}
             title={t.jobSeekersTitle}
           >
             <TypographyP>{t.jobSeekersIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.jobSeekersBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-          </Section>
+          </StaticSection>
 
           {/* For Employers Section */}
-          <Section
+          <StaticSection
             id="for-employers"
+            number="03"
             icon={<LucideBriefcase />}
             title={t.employersTitle}
           >
             <TypographyP>{t.employersIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.employersBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-          </Section>
+          </StaticSection>
 
           {/* Using AI Features Section */}
-          <Section id="using-ai" icon={<LucideSparkles />} title={t.aiTitle}>
+          <StaticSection
+            id="using-ai"
+            number="04"
+            icon={<LucideSparkles />}
+            title={t.aiTitle}
+          >
             <TypographyP>{t.aiIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.aiBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-          </Section>
+          </StaticSection>
 
           {/* Guides & Tutorials Section */}
-          <Section id="guides" icon={<LucideBookOpen />} title={t.guidesTitle}>
+          <StaticSection
+            id="guides"
+            number="05"
+            icon={<LucideBookOpen />}
+            title={t.guidesTitle}
+          >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
               {t.guides.map((g, i) => (
-                <GuideCard
+                <StaticCard
                   key={i}
                   icon={guideIcons[i]}
                   title={g.title}
@@ -504,9 +404,7 @@ export function LearnContent() {
                 />
               ))}
             </div>
-          </Section>
-        </main>
-      </div>
-    </div>
+          </StaticSection>
+    </StaticPageShell>
   );
 }

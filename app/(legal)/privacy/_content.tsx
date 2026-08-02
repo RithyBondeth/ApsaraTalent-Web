@@ -1,9 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import {
-  LucideArrowLeft,
   LucideCalendar,
   LucideDatabase,
   LucideLock,
@@ -15,14 +13,31 @@ import {
   LucideUser,
   LucideUserCheck,
 } from "lucide-react";
-import { TypographyH1 } from "@/components/utils/typography/typography-h1";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import {
+  StaticBullet,
+  StaticPageShell,
+  StaticSection,
+} from "@/components/static-content/static-page";
 import { privacyBannerSvg } from "@/utils/constants/asset.constant";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
 /* -------------------------- Sub Components -------------------------- */
+const privacySectionNumbers: Record<string, string> = {
+  "information-we-collect": "01",
+  "how-we-use": "02",
+  "how-we-share": "03",
+  "third-party": "04",
+  "data-retention": "05",
+  security: "06",
+  "your-rights": "07",
+  cookies: "08",
+  children: "09",
+  changes: "10",
+  contact: "11",
+};
+
 function Section({
   id,
   icon,
@@ -35,29 +50,19 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="flex flex-col gap-4 scroll-mt-8">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center size-9 rounded-xl bg-primary/10 border border-primary/20 shrink-0">
-          <span className="text-primary [&>svg]:size-4">{icon}</span>
-        </div>
-        <TypographyH2 className="text-lg font-bold tracking-tight">
-          {title}
-        </TypographyH2>
-      </div>
-      <div className="flex flex-col gap-3 text-sm text-muted-foreground leading-relaxed pl-0">
-        {children}
-      </div>
-    </section>
+    <StaticSection
+      id={id}
+      number={privacySectionNumbers[id] ?? "--"}
+      icon={icon}
+      title={title}
+    >
+      {children}
+    </StaticSection>
   );
 }
 
 function Bullet({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex items-start gap-2">
-      <span className="mt-1.5 size-1.5 rounded-full bg-primary/60 shrink-0" />
-      <span>{children}</span>
-    </li>
-  );
+  return <StaticBullet>{children}</StaticBullet>;
 }
 
 /* -------------------------- Content & Data -------------------------- */
@@ -547,116 +552,47 @@ const content = {
 /* -------------------------- Main Component -------------------------- */
 export function PrivacyContent() {
   /* ------------------------------ Utils ----------------------------- */
-  const { language, setLanguage } = useLanguageStore();
+  const { language } = useLanguageStore();
   const c = content[language];
 
   /* --------------------------- Render UI ---------------------------- */
   return (
-    <div className="min-h-screen bg-background animate-page-in">
-      {/* Top Navigation Section */}
-      <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm">
-        <div className="max-w-5xl mx-auto flex items-center gap-4 px-4 py-3 sm:px-6">
-          <Link
-            href="/setting"
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <LucideArrowLeft className="size-4" />
-            {c.back}
-          </Link>
-          <span className="text-border">|</span>
-          <span className="text-sm font-semibold truncate">{c.pageTitle}</span>
-
-          {/* Language Toggle Section */}
-          <div className="ml-auto flex items-center gap-1 rounded-lg border border-border bg-muted/40 p-0.5">
-            <button
-              onClick={() => setLanguage("en")}
-              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
-                language === "en"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => setLanguage("km")}
-              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
-                language === "km"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              ខ្មែរ
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:flex lg:gap-12">
-        {/* Sticky TOC Sidebar Section (Desktop) */}
-        <aside className="hidden lg:block w-56 shrink-0">
-          <div className="sticky top-20 flex flex-col gap-1">
-            <TypographySmall className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-              {c.tocHeading}
-            </TypographySmall>
-            {c.toc.map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                className="text-xs text-muted-foreground hover:text-primary transition-colors py-1 border-l-2 border-transparent hover:border-primary/50 pl-3"
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
-        </aside>
-
-        {/* Main Content Section */}
-        <main className="flex-1 flex flex-col gap-10 min-w-0">
-          {/* Banner Section */}
-          <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
-            {/* Content Section */}
-            <div className="flex flex-col items-start gap-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <LucideCalendar className="size-3.5" />
-                <span>{c.lastUpdated}</span>
-              </div>
-              <TypographyH1 className="text-3xl font-bold tracking-tight">
-                {c.pageTitle}
-              </TypographyH1>
-              <TypographyP className="text-muted-foreground text-sm leading-relaxed max-w-2xl">
-                {language === "en" ? (
-                  <>
-                    At{" "}
-                    <strong className="text-foreground">
-                      {c.introCompany}
-                    </strong>
-                    {", "}
-                    {c.intro.replace("At Apsara Talent, ", "")}
-                  </>
-                ) : (
-                  <>
-                    នៅ{" "}
-                    <strong className="text-foreground">
-                      {c.introCompany}
-                    </strong>{" "}
-                    {c.intro.replace("នៅ Apsara Talent ", "")}
-                  </>
-                )}
-              </TypographyP>
-            </div>
-
-            {/* Banner Image Section */}
-            <Image
-              src={privacyBannerSvg}
-              alt="privacy"
-              height={250}
-              width={350}
-              className="h-auto max-w-[340px] tablet-xl:!w-full hidden sm:block"
-              priority
-            />
-          </div>
-
+    <StaticPageShell
+      pageNumber="05"
+      pageTotal="06"
+      title={c.pageTitle}
+      subtitle={
+        language === "en" ? (
+          <>
+            At <strong className="text-foreground">{c.introCompany}</strong>,{" "}
+            {c.intro.replace("At Apsara Talent, ", "")}
+          </>
+        ) : (
+          <>
+            នៅ <strong className="text-foreground">{c.introCompany}</strong>{" "}
+            {c.intro.replace("នៅ Apsara Talent ", "")}
+          </>
+        )
+      }
+      tocHeading={c.tocHeading}
+      toc={c.toc}
+      icon={<LucideShieldCheck />}
+      meta={
+        <>
+          <LucideCalendar className="size-3.5" />
+          <span>{c.lastUpdated}</span>
+        </>
+      }
+      heroVisual={
+        <Image
+          src={privacyBannerSvg}
+          alt="privacy"
+          height={250}
+          width={350}
+          priority
+        />
+      }
+    >
           {/* 1. Information We Collect Section */}
           <Section
             id="information-we-collect"
@@ -794,7 +730,7 @@ export function PrivacyContent() {
               {c.s7.note}{" "}
               <a
                 href={`mailto:${c.s7.email}`}
-                className="text-primary hover:underline"
+                className="text-primary underline underline-offset-2"
               >
                 {c.s7.email}
               </a>
@@ -832,7 +768,7 @@ export function PrivacyContent() {
           {/* 11. Contact Section */}
           <Section id="contact" icon={<LucideMail />} title={c.s11.title}>
             <TypographyP>{c.s11.intro}</TypographyP>
-            <div className="rounded-xl border border-border bg-muted/30 p-4 flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1.5 border border-border bg-muted/30 p-5">
               <TypographySmall className="font-semibold text-foreground">
                 Apsara Talent
               </TypographySmall>
@@ -840,7 +776,7 @@ export function PrivacyContent() {
                 📧{" "}
                 <a
                   href="mailto:privacy@apsaratalent.com"
-                  className="text-primary hover:underline"
+                  className="text-primary underline underline-offset-2"
                 >
                   privacy@apsaratalent.com
                 </a>
@@ -849,7 +785,7 @@ export function PrivacyContent() {
                 🌐{" "}
                 <a
                   href="https://apsaratalent.com"
-                  className="text-primary hover:underline"
+                  className="text-primary underline underline-offset-2"
                 >
                   apsaratalent.com
                 </a>
@@ -857,8 +793,6 @@ export function PrivacyContent() {
               <TypographyP>📍 {c.s11.address}</TypographyP>
             </div>
           </Section>
-        </main>
-      </div>
-    </div>
+    </StaticPageShell>
   );
 }

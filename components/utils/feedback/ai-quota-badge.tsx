@@ -23,7 +23,7 @@ export function AiQuotaBadge({ className }: { className?: string }) {
     return (
       <div
         className={cn(
-          "h-6 w-36 animate-pulse rounded-full bg-muted",
+          "h-6 w-36 animate-pulse rounded-none bg-muted",
           className,
         )}
       />
@@ -44,18 +44,18 @@ export function AiQuotaBadge({ className }: { className?: string }) {
   const tone =
     remainingRatio > 0.5
       ? {
-          text: "text-emerald-600 dark:text-emerald-400",
+          text: "text-emerald-700 dark:text-emerald-300",
           bar: "bg-emerald-500",
           ring: "border-emerald-500/30 bg-emerald-50 dark:bg-emerald-900/10",
         }
       : remainingRatio > 0.2
         ? {
-            text: "text-amber-600 dark:text-amber-400",
+            text: "text-amber-700 dark:text-amber-300",
             bar: "bg-amber-500",
             ring: "border-amber-500/30 bg-amber-50 dark:bg-amber-900/10",
           }
         : {
-            text: "text-red-600 dark:text-red-400",
+            text: "text-red-700 dark:text-red-300",
             bar: "bg-red-500",
             ring: "border-red-500/30 bg-red-50 dark:bg-red-900/10",
           };
@@ -64,7 +64,7 @@ export function AiQuotaBadge({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-2 rounded-full border px-2.5 py-1",
+        "inline-flex items-center gap-2 rounded-none border px-2.5 py-1",
         tone.ring,
         className,
       )}

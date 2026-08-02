@@ -2,8 +2,18 @@
 
 import { Control, UseFormSetValue, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import { LucideDices, LucidePipette, LucideRotateCcw } from "lucide-react";
+import {
+  ChevronDown,
+  LucideDices,
+  LucidePipette,
+  LucideRotateCcw,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { FieldLabel } from "./field-label";
 import { cn } from "@/lib/utils";
@@ -19,7 +29,6 @@ import {
 import {
   DESIGN_FONTS,
   DESIGN_PALETTES,
-  RESUME_TEMPLATE_THEMES,
 } from "@/utils/constants/resume-theme.constant";
 
 /* --------------------------------- Helpers --------------------------------- */
@@ -48,7 +57,7 @@ function PillGroup<T extends string>({
             type="button"
             onClick={() => onSelect(option)}
             className={cn(
-              "rounded-full border px-2.5 py-1 text-[11px] capitalize transition-colors",
+              "rounded-none border px-2.5 py-1 text-[11px] capitalize transition-colors",
               option === value
                 ? "border-primary bg-primary/10 text-primary font-medium"
                 : "border-border/70 bg-card text-muted-foreground hover:border-border hover:text-foreground",
@@ -59,6 +68,38 @@ function PillGroup<T extends string>({
         ))}
       </div>
     </div>
+  );
+}
+
+function AdvancedDesignSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Collapsible className="border border-border">
+      {/* Collapsible Triggrer Section */}
+      <CollapsibleTrigger className="group flex w-full items-center justify-between gap-3 bg-muted/25 px-3 py-3 text-left transition-colors hover:bg-muted/50">
+        <span>
+          <span className="block text-xs font-bold text-foreground">
+            {title}
+          </span>
+          <span className="mt-0.5 block text-[10px] leading-4 text-muted-foreground">
+            {description}
+          </span>
+        </span>
+        <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+      </CollapsibleTrigger>
+
+      {/* Collapsible Content Section */}
+      <CollapsibleContent className="border-t border-border">
+        <div className="flex flex-col gap-5 p-3">{children}</div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 
@@ -116,7 +157,7 @@ export function DesignTab({
             type="button"
             variant="outline"
             size="sm"
-            className="h-7 gap-1.5 px-2.5 text-xs"
+            className="h-7 gap-1.5 rounded-none px-2.5 text-xs"
             onClick={() => applyDesign(shuffleResumeDesign())}
           >
             <LucideDices size={13} />
@@ -126,7 +167,7 @@ export function DesignTab({
             type="button"
             variant="ghost"
             size="sm"
-            className="h-7 gap-1.5 px-2.5 text-xs text-muted-foreground"
+            className="h-7 gap-1.5 rounded-none px-2.5 text-xs text-muted-foreground"
             disabled={!isCustomized}
             onClick={() => setValue("design", undefined, { shouldDirty: true })}
           >
@@ -160,7 +201,7 @@ export function DesignTab({
                   })
                 }
                 className={cn(
-                  "size-8 rounded-full border transition-all",
+                  "size-8 rounded-none border transition-all",
                   selected
                     ? "ring-2 ring-primary ring-offset-2 ring-offset-background border-transparent scale-105"
                     : "border-border/60 hover:scale-105",
@@ -177,7 +218,7 @@ export function DesignTab({
         <div className="mt-2.5 flex items-center gap-2">
           <label
             className={cn(
-              "relative flex cursor-pointer items-center gap-2 rounded-full border px-2.5 py-1.5 transition-colors",
+              "relative flex cursor-pointer items-center gap-2 rounded-none border px-2.5 py-1.5 transition-colors",
               activeDesign.customAccent
                 ? "border-primary bg-primary/10"
                 : "border-border/70 bg-card hover:border-border",
@@ -205,7 +246,7 @@ export function DesignTab({
             />
             <span
               aria-hidden
-              className="size-4 rounded-full border border-border/60"
+              className="size-4 rounded-none border border-border/60"
               style={{
                 background:
                   activeDesign.customAccent ??
@@ -229,7 +270,7 @@ export function DesignTab({
               type="button"
               variant="ghost"
               size="sm"
-              className="h-7 px-2 text-[11px] text-muted-foreground"
+              className="h-7 rounded-none px-2 text-[11px] text-muted-foreground"
               onClick={() => applyField("customAccent", undefined)}
             >
               {t("designCustomColorClear")}
@@ -251,7 +292,7 @@ export function DesignTab({
                 aria-pressed={selected}
                 onClick={() => applyField("typography", typography)}
                 className={cn(
-                  "flex min-w-[52px] flex-col items-center gap-0.5 rounded-lg border px-2 py-1.5 transition-colors",
+                  "flex min-w-[52px] flex-col items-center gap-0.5 rounded-none border px-2 py-1.5 transition-colors",
                   selected
                     ? "border-primary bg-primary/10"
                     : "border-border/70 bg-card hover:border-border",
@@ -283,113 +324,121 @@ export function DesignTab({
         onSelect={(value) => applyField("density", value)}
       />
 
-      {/* Layout Section */}
-      <PillGroup
-        label={t("designLayout")}
-        options={RESUME_DESIGN_OPTIONS.layout}
-        value={activeDesign.layout}
-        onSelect={(value) => applyField("layout", value)}
-      />
-      {activeDesign.layout !== "single" && (
-        <>
-          <PillGroup
-            label={t("designColumnRatio")}
-            options={RESUME_DESIGN_OPTIONS.columnRatio}
-            value={activeDesign.columnRatio}
-            onSelect={(value) => applyField("columnRatio", value)}
-          />
-          <div>
-            <FieldLabel>{t("designSidebarSections")}</FieldLabel>
-            <div className="flex flex-wrap gap-1.5">
-              {RESUME_DESIGN_OPTIONS.sidebarSections.map((section) => {
-                const selected = activeDesign.sidebarSections.includes(section);
-                return (
-                  <button
-                    key={section}
-                    type="button"
-                    aria-pressed={selected}
-                    onClick={() => toggleSidebarSection(section)}
-                    className={cn(
-                      "rounded-full border px-2.5 py-1 text-[11px] capitalize transition-colors",
-                      selected
-                        ? "border-primary bg-primary/10 text-primary font-medium"
-                        : "border-border/70 bg-card text-muted-foreground hover:border-border hover:text-foreground",
-                    )}
-                  >
-                    {humanize(section)}
-                  </button>
-                );
-              })}
+      {/* Advanced Layout Section */}
+      <AdvancedDesignSection
+        title={t("designAdvancedLayout")}
+        description={t("designAdvancedLayoutDescription")}
+      >
+        <PillGroup
+          label={t("designLayout")}
+          options={RESUME_DESIGN_OPTIONS.layout}
+          value={activeDesign.layout}
+          onSelect={(value) => applyField("layout", value)}
+        />
+        {activeDesign.layout !== "single" && (
+          <>
+            <PillGroup
+              label={t("designColumnRatio")}
+              options={RESUME_DESIGN_OPTIONS.columnRatio}
+              value={activeDesign.columnRatio}
+              onSelect={(value) => applyField("columnRatio", value)}
+            />
+            <div>
+              <FieldLabel>{t("designSidebarSections")}</FieldLabel>
+              <div className="flex flex-wrap gap-1.5">
+                {RESUME_DESIGN_OPTIONS.sidebarSections.map((section) => {
+                  const selected =
+                    activeDesign.sidebarSections.includes(section);
+                  return (
+                    <button
+                      key={section}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => toggleSidebarSection(section)}
+                      className={cn(
+                        "rounded-none border px-2.5 py-1 text-[11px] capitalize transition-colors",
+                        selected
+                          ? "border-primary bg-primary/10 text-primary font-medium"
+                          : "border-border/70 bg-card text-muted-foreground hover:border-border hover:text-foreground",
+                      )}
+                    >
+                      {humanize(section)}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
 
-      {/* Header Section */}
-      <PillGroup
-        label={t("designHeaderLayout")}
-        options={RESUME_DESIGN_OPTIONS.headerLayout}
-        value={activeDesign.headerLayout}
-        onSelect={(value) => applyField("headerLayout", value)}
-      />
-      <PillGroup
-        label={t("designHeaderStyle")}
-        options={RESUME_DESIGN_OPTIONS.headerStyle}
-        value={activeDesign.headerStyle}
-        onSelect={(value) => applyField("headerStyle", value)}
-      />
-      <PillGroup
-        label={t("designAvatarPlacement")}
-        options={RESUME_DESIGN_OPTIONS.avatarPlacement}
-        value={activeDesign.avatarPlacement}
-        onSelect={(value) => applyField("avatarPlacement", value)}
-      />
+        <PillGroup
+          label={t("designHeaderLayout")}
+          options={RESUME_DESIGN_OPTIONS.headerLayout}
+          value={activeDesign.headerLayout}
+          onSelect={(value) => applyField("headerLayout", value)}
+        />
+        <PillGroup
+          label={t("designHeaderStyle")}
+          options={RESUME_DESIGN_OPTIONS.headerStyle}
+          value={activeDesign.headerStyle}
+          onSelect={(value) => applyField("headerStyle", value)}
+        />
+        <PillGroup
+          label={t("designAvatarPlacement")}
+          options={RESUME_DESIGN_OPTIONS.avatarPlacement}
+          value={activeDesign.avatarPlacement}
+          onSelect={(value) => applyField("avatarPlacement", value)}
+        />
+      </AdvancedDesignSection>
 
-      {/* Details Section */}
-      <PillGroup
-        label={t("designSectionStyle")}
-        options={RESUME_DESIGN_OPTIONS.sectionStyle}
-        value={activeDesign.sectionStyle}
-        onSelect={(value) => applyField("sectionStyle", value)}
-      />
-      <PillGroup
-        label={t("designCornerStyle")}
-        options={RESUME_DESIGN_OPTIONS.cornerStyle}
-        value={activeDesign.cornerStyle}
-        onSelect={(value) => applyField("cornerStyle", value)}
-      />
-      <PillGroup
-        label={t("designDecoration")}
-        options={RESUME_DESIGN_OPTIONS.decoration}
-        value={activeDesign.decoration}
-        onSelect={(value) => applyField("decoration", value)}
-      />
-
-      {/* Section Looks Section */}
-      <PillGroup
-        label={t("designExperienceStyle")}
-        options={RESUME_DESIGN_OPTIONS.experienceStyle}
-        value={activeDesign.experienceStyle}
-        onSelect={(value) => applyField("experienceStyle", value)}
-      />
-      <PillGroup
-        label={t("designSkillsStyle")}
-        options={RESUME_DESIGN_OPTIONS.skillsStyle}
-        value={activeDesign.skillsStyle}
-        onSelect={(value) => applyField("skillsStyle", value)}
-      />
-      <PillGroup
-        label={t("designEducationStyle")}
-        options={RESUME_DESIGN_OPTIONS.educationStyle}
-        value={activeDesign.educationStyle}
-        onSelect={(value) => applyField("educationStyle", value)}
-      />
-      <PillGroup
-        label={t("designSummaryStyle")}
-        options={RESUME_DESIGN_OPTIONS.summaryStyle}
-        value={activeDesign.summaryStyle}
-        onSelect={(value) => applyField("summaryStyle", value)}
-      />
+      {/* Advanced Section Styling */}
+      <AdvancedDesignSection
+        title={t("designAdvancedDetails")}
+        description={t("designAdvancedDetailsDescription")}
+      >
+        <PillGroup
+          label={t("designSectionStyle")}
+          options={RESUME_DESIGN_OPTIONS.sectionStyle}
+          value={activeDesign.sectionStyle}
+          onSelect={(value) => applyField("sectionStyle", value)}
+        />
+        <PillGroup
+          label={t("designCornerStyle")}
+          options={RESUME_DESIGN_OPTIONS.cornerStyle}
+          value={activeDesign.cornerStyle}
+          onSelect={(value) => applyField("cornerStyle", value)}
+        />
+        <PillGroup
+          label={t("designDecoration")}
+          options={RESUME_DESIGN_OPTIONS.decoration}
+          value={activeDesign.decoration}
+          onSelect={(value) => applyField("decoration", value)}
+        />
+        <PillGroup
+          label={t("designExperienceStyle")}
+          options={RESUME_DESIGN_OPTIONS.experienceStyle}
+          value={activeDesign.experienceStyle}
+          onSelect={(value) => applyField("experienceStyle", value)}
+        />
+        <PillGroup
+          label={t("designSkillsStyle")}
+          options={RESUME_DESIGN_OPTIONS.skillsStyle}
+          value={activeDesign.skillsStyle}
+          onSelect={(value) => applyField("skillsStyle", value)}
+        />
+        <PillGroup
+          label={t("designEducationStyle")}
+          options={RESUME_DESIGN_OPTIONS.educationStyle}
+          value={activeDesign.educationStyle}
+          onSelect={(value) => applyField("educationStyle", value)}
+        />
+        <PillGroup
+          label={t("designSummaryStyle")}
+          options={RESUME_DESIGN_OPTIONS.summaryStyle}
+          value={activeDesign.summaryStyle}
+          onSelect={(value) => applyField("summaryStyle", value)}
+        />
+      </AdvancedDesignSection>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { PageState } from "@/components/utils/feedback/page-state";
 import {
   Carousel,
   CarouselContent,
@@ -68,6 +68,7 @@ import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import { CompanyDetailPageLoadingSkeleton } from "@/components/company/skeleton";
 import UserModerationMenu from "@/components/moderation/user-moderation-menu";
+import { ProfileDetailHero } from "@/components/feed/detail/profile-detail-hero";
 
 export default function CompanyDetailPage() {
   /* ---------------------------------- Utils ---------------------------------- */
@@ -154,16 +155,6 @@ export default function CompanyDetailPage() {
       return;
     }
     setOpenImagePopup(true);
-  };
-
-  // ── Handle Click Profile Popup ───────────────────────────────────────
-  const handleClickProfilePopup = (e: React.MouseEvent) => {
-    if (ignoreNextClick.current) {
-      ignoreNextClick.current = false;
-      return;
-    }
-    if ((e.target as HTMLElement).closest(".dialog-content")) return;
-    setOpenProfilePopup(true);
   };
 
   // ── Handle Employee Like Company ──────────────────────────────────────
@@ -254,165 +245,137 @@ export default function CompanyDetailPage() {
   /* -------------------------------- Error State -------------------------------- */
   if (fetchError)
     return (
-      <div className="flex h-[60vh] items-center justify-center animate-page-in">
-        <div className="flex flex-col items-center gap-3 text-center">
-          <p className="text-red-500 font-medium">{fetchError}</p>
-          <Button
-            variant="destructive"
-            onClick={() => window.location.reload()}
-          >
-            {tf("retry")}
-          </Button>
-        </div>
+      <div className="animate-page-in">
+        <PageState
+          variant="error"
+          title={fetchError}
+          action={{
+            label: tf("retry"),
+            onClick: () => window.location.reload(),
+          }}
+        />
       </div>
     );
 
   /* ------------------------------ Not Found State ------------------------------ */
   if (!companyData)
     return (
-      <div className="flex h-[60vh] items-center justify-center animate-page-in">
-        <div className="flex flex-col items-center gap-3">
-          <p className="font-medium">{tf("companyNotFound")}</p>
-          <Link href="/feed">
-            <Button variant="outline">{tf("backToFeed")}</Button>
-          </Link>
-        </div>
+      <div className="animate-page-in">
+        <PageState
+          variant="empty"
+          title={tf("companyNotFound")}
+          action={{ label: tf("backToFeed"), href: "/feed" }}
+        />
       </div>
     );
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col gap-5 animate-page-in tablet-sm:pb-24">
+    <div className="profile-detail-page mx-auto flex w-full max-w-7xl flex-col gap-4 animate-page-in sm:gap-5 tablet-sm:pb-28">
       {effectPortal}
       {/* Back Navigation Header Section */}
-      <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm -mx-4 sm:-mx-6 px-4 sm:px-6">
-        <div className="flex items-center gap-4 py-3 min-w-0">
+      <header className="sticky top-0 z-30 -mx-3 border-b border-border bg-background/95 px-3 backdrop-blur-xl sm:-mx-4 sm:px-4 lg:-mx-5 lg:px-5">
+        <div className="mx-auto flex h-16 max-w-7xl min-w-0 items-center gap-3">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            className="flex h-10 shrink-0 items-center gap-2 border border-border bg-card px-3 text-sm font-semibold text-muted-foreground transition-[border-color,background-color,color,transform] hover:border-foreground/35 hover:bg-muted/60 hover:text-foreground active:translate-y-px"
           >
             <LucideArrowLeft className="size-4" />
-            {tf("back")}
+            <span className="hidden sm:inline">{tf("back")}</span>
           </button>
-          <span className="text-border shrink-0">|</span>
-          <span className="text-sm font-semibold truncate flex-1 min-w-0">
-            {companyData.name || tf("companyDetail")}
-          </span>
+          <div className="min-w-0 flex-1 border-l border-border pl-3">
+            <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+              {tf("companyDetail")}
+            </p>
+            <p className="truncate text-sm font-semibold">
+              {companyData.name || tf("companyDetail")}
+            </p>
+          </div>
           <UserModerationMenu
             targetId={companyData.id}
             targetName={companyData.name || tf("companyDetail")}
+            variant="editorial"
+            triggerClassName="size-10 rounded-none border border-border bg-card hover:border-foreground/35"
           />
         </div>
       </header>
 
       {/* Hero Card Section */}
-      <DetailCard>
-        {/* Cover Section */}
-        <div
-          className={`h-44 sm:h-56 rounded-t-2xl bg-cover bg-center bg-no-repeat ${
-            !companyData.cover
-              ? "bg-gradient-to-br from-primary/30 via-primary/10 to-muted"
-              : ""
-          }`}
-          style={
-            companyData.cover
-              ? { backgroundImage: `url(${companyData.cover})` }
-              : {}
-          }
-        />
-
-        {/* Identity Section */}
-        <div className="px-4 sm:px-6 pb-5">
-          <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
-            {/* Avatar Section */}
-            <Avatar
-              className="size-20 sm:size-24 -mt-10 sm:-mt-12 ring-[3px] ring-card shadow-xl flex-shrink-0 cursor-pointer"
-              rounded="md"
-              onClick={(e) => {
-                if (companyData.avatar) handleClickProfilePopup(e);
-              }}
-            >
-              <AvatarImage src={companyData.avatar ?? ""} />
-              <AvatarFallback className="uppercase text-xl font-bold">
-                {companyData.name ? (
-                  getNameInitials(companyData.name)
-                ) : (
-                  <User />
-                )}
-              </AvatarFallback>
-            </Avatar>
-
-            {/* Information Section: Name, Industry, Location, Company Size, Founded Year */}
-            <div className="flex-1 min-w-0 pt-2 tablet-md:text-center tablet-md:pt-0 tablet-md:mt-1">
-              <h1 className="text-xl sm:text-2xl font-bold leading-tight">
-                {companyData.name}
-              </h1>
-              <p className="text-muted-foreground text-sm mt-0.5">
-                {companyData.industry}
-              </p>
-              <div className="flex flex-wrap gap-2 mt-3 tablet-md:justify-center">
-                {companyData.industry && (
-                  <MetaChip
-                    icon={<LucideBuilding />}
-                    text={companyData.industry}
-                  />
-                )}
-                {companyData.location && (
-                  <MetaChip
-                    icon={<LucideMapPinned />}
-                    text={translateLocation(companyData.location, tl)}
-                  />
-                )}
-                {companyData.companySize && (
-                  <MetaChip
-                    icon={<LucideUsers />}
-                    text={tf("dialogEmployeesCount", {
-                      count: companyData.companySize,
-                    })}
-                  />
-                )}
-                {companyData.foundedYear && (
-                  <MetaChip
-                    icon={<LucideCalendarDays />}
-                    text={tf("established", { year: companyData.foundedYear })}
-                  />
-                )}
-              </div>
-            </div>
-
-            {/* Desktop Action Buttons Section */}
-            <div className="flex gap-2 flex-shrink-0 pt-2 tablet-md:hidden">
-              {!isFav && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAddToFavorite}
-                  disabled={favDisabled}
-                >
-                  <LucideBookmark className="size-4" /> {tf("save")}
-                </Button>
-              )}
-              <Button size="sm" onClick={handleLike} disabled={likeDisabled}>
-                <LucideHeartHandshake className="size-4" /> {tf("like")}
+      <ProfileDetailHero
+        kind="company"
+        eyebrow={tf("companyDetail")}
+        name={companyData.name || tf("companyDetail")}
+        headline={companyData.industry}
+        avatar={companyData.avatar}
+        cover={companyData.cover}
+        fallback={
+          companyData.name ? getNameInitials(companyData.name) : <User />
+        }
+        onAvatarClick={() => setOpenProfilePopup(true)}
+        meta={
+          <>
+            {companyData.industry && (
+              <MetaChip icon={<LucideBuilding />} text={companyData.industry} />
+            )}
+            {companyData.location && (
+              <MetaChip
+                icon={<LucideMapPinned />}
+                text={translateLocation(companyData.location, tl)}
+              />
+            )}
+            {companyData.companySize && (
+              <MetaChip
+                icon={<LucideUsers />}
+                text={tf("dialogEmployeesCount", {
+                  count: companyData.companySize,
+                })}
+              />
+            )}
+            {companyData.foundedYear && (
+              <MetaChip
+                icon={<LucideCalendarDays />}
+                text={tf("established", { year: companyData.foundedYear })}
+              />
+            )}
+          </>
+        }
+        actions={
+          <>
+            {!isFav && (
+              <Button
+                variant="outline"
+                onClick={handleAddToFavorite}
+                disabled={favDisabled}
+                className="min-w-24"
+              >
+                <LucideBookmark className="size-4" /> {tf("save")}
               </Button>
-            </div>
-          </div>
-        </div>
-      </DetailCard>
+            )}
+            <Button
+              onClick={handleLike}
+              disabled={likeDisabled}
+              className="min-w-24"
+            >
+              <LucideHeartHandshake className="size-4" /> {tf("like")}
+            </Button>
+          </>
+        }
+      />
 
       {/* Content Grid Section */}
-      <div className="flex items-start gap-5 tablet-lg:flex-col">
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-5">
         {/* Left Section */}
-        <div className="flex-1 min-w-0 flex flex-col gap-5">
+        <div className="flex min-w-0 flex-col gap-4 sm:gap-5">
           {/* About Section */}
           {companyData.description && (
-            <DetailCard className="p-5 sm:p-6">
+            <DetailCard className="profile-detail-company-about p-5 sm:p-7">
               <SectionTitle
                 icon={<LucideInfo />}
                 title={tf("dialogAboutCompany", { name: companyData.name })}
+                variant="detail"
               />
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
                 {companyData.description}
               </p>
             </DetailCard>
@@ -421,32 +384,44 @@ export default function CompanyDetailPage() {
           {/* Open Positions Section */}
           {companyData.openPositions &&
             companyData.openPositions.length > 0 && (
-              <DetailCard className="p-5 sm:p-6">
+              <DetailCard className="profile-detail-company-positions p-5 sm:p-6">
                 <SectionTitle
                   icon={<LucideBriefcaseBusiness />}
                   title={tf("openPositions")}
+                  variant="detail"
+                  action={
+                    <span className="flex size-8 items-center justify-center border border-foreground bg-foreground text-xs font-bold text-background">
+                      {companyData.openPositions.length}
+                    </span>
+                  }
                 />
                 <div className="flex flex-col gap-4">
                   {companyData.openPositions.map((item) => (
                     <div
                       key={item.id}
-                      className="rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:shadow-sm transition-all duration-200"
+                      className="profile-detail-position-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-[4px_4px_0_hsl(var(--foreground)/0.06)] sm:p-5"
                     >
                       {/* Position Header Section */}
                       <div className="flex items-start justify-between gap-3 tablet-md:flex-col">
                         <div className="space-y-2">
-                          <p className="font-semibold text-sm">{item.title}</p>
+                          <p className="text-lg font-bold tracking-tight sm:text-xl">
+                            {item.title}
+                          </p>
                           <div className="flex flex-wrap gap-1.5">
                             {item.type && (
                               <Tag
                                 icon={<LucideAlarmClock />}
                                 label={item.type}
+                                neutral
+                                className="!rounded-none border border-border"
                               />
                             )}
                             {item.experience && (
                               <Tag
                                 icon={<LucideUser />}
                                 label={item.experience}
+                                neutral
+                                className="!rounded-none border border-border"
                               />
                             )}
                           </div>
@@ -502,7 +477,12 @@ export default function CompanyDetailPage() {
                               </p>
                               <div className="flex flex-wrap gap-1.5">
                                 {item.skills.map((s) => (
-                                  <Tag key={s} label={s} />
+                                  <Tag
+                                    key={s}
+                                    label={s}
+                                    neutral
+                                    className="!rounded-none border border-border"
+                                  />
                                 ))}
                               </div>
                             </div>
@@ -527,16 +507,21 @@ export default function CompanyDetailPage() {
 
           {/* Career Scope Section */}
           {companyData.careerScopes && companyData.careerScopes.length > 0 && (
-            <DetailCard className="p-5 sm:p-6">
+            <DetailCard className="profile-detail-company-scope p-5 sm:p-6">
               <SectionTitle
                 icon={<LucideCompass />}
                 title={tf("careerScope")}
+                variant="detail"
               />
               <div className="flex flex-wrap gap-2">
                 {companyData.careerScopes.map((career, i) => (
                   <HoverCard key={i}>
                     <HoverCardTrigger>
-                      <Tag label={career.name} />
+                      <Tag
+                        label={career.name}
+                        neutral
+                        className="!rounded-none border border-border"
+                      />
                     </HoverCardTrigger>
                     <HoverCardContent>
                       <TypographySmall>
@@ -551,21 +536,22 @@ export default function CompanyDetailPage() {
 
           {/* Company Images Section */}
           {companyData.images && companyData.images.length > 0 && (
-            <DetailCard className="p-5 sm:p-6">
+            <DetailCard className="profile-detail-company-gallery p-5 sm:p-6">
               <SectionTitle
                 icon={<LucideCamera />}
                 title={tf("lifeAt", { name: companyData.name })}
+                variant="detail"
               />
               <Carousel className="w-full">
                 <CarouselContent>
                   {companyData.images.map((item: IImage) => (
-                    <CarouselItem key={item.id} className="max-w-[260px]">
+                    <CarouselItem key={item.id} className="max-w-[320px]">
                       <div
                         onClick={() => {
                           handleClickImagePopup();
                           setCurrentCompanyImage(item.image);
                         }}
-                        className="h-44 rounded-xl my-1 ml-1 bg-cover bg-center bg-muted cursor-pointer hover:opacity-90 hover:scale-[1.01] transition-all duration-200"
+                        className="my-1 ml-1 h-52 cursor-pointer border border-border bg-muted bg-cover bg-center transition-[border-color,filter,transform] duration-200 hover:border-foreground/30 hover:brightness-95"
                         style={{ backgroundImage: `url(${item.image})` }}
                       />
                     </CarouselItem>
@@ -579,12 +565,13 @@ export default function CompanyDetailPage() {
         </div>
 
         {/* Right Section: Sidebar */}
-        <div className="w-72 flex flex-col gap-5 tablet-lg:w-full">
+        <aside className="flex min-w-0 flex-col gap-4 sm:gap-5 lg:sticky lg:top-20">
           {/* Company Information Section */}
-          <DetailCard className="p-5">
+          <DetailCard className="profile-detail-company-information p-5">
             <SectionTitle
               icon={<LucideBuilding2 />}
               title={tf("companyInformation")}
+              variant="detail"
             />
             <div className="space-y-3.5">
               {[
@@ -649,6 +636,7 @@ export default function CompanyDetailPage() {
               <SectionTitle
                 icon={<LucideStar />}
                 title={tf("cultureAndBenefits")}
+                variant="detail"
               />
               <div className="space-y-4">
                 {companyData.values.length > 0 && (
@@ -660,7 +648,7 @@ export default function CompanyDetailPage() {
                       {companyData.values.map((v) => (
                         <div
                           key={v.id}
-                          className="flex items-center gap-2 text-sm text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-950/40 px-3 py-2 rounded-lg"
+                          className="flex items-center gap-2 border border-green-700/15 bg-green-50 px-3 py-2 text-sm text-green-700 dark:bg-green-950/40 dark:text-green-300"
                         >
                           <LucideCircleCheck className="size-4 flex-shrink-0" />
                           {v.label}
@@ -678,7 +666,7 @@ export default function CompanyDetailPage() {
                       {companyData.benefits.map((b: IBenefits) => (
                         <div
                           key={b.id}
-                          className="flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 px-3 py-2 rounded-lg"
+                          className="flex items-center gap-2 border border-blue-700/15 bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
                         >
                           <LucideCircleCheck className="size-4 flex-shrink-0" />
                           {b.label}
@@ -694,7 +682,11 @@ export default function CompanyDetailPage() {
           {/* Social Section */}
           {companyData.socials && companyData.socials.length > 0 && (
             <DetailCard className="p-5">
-              <SectionTitle icon={<LucideGlobe />} title={tf("socialLinks")} />
+              <SectionTitle
+                icon={<LucideGlobe />}
+                title={tf("socialLinks")}
+                variant="detail"
+              />
               <div className="flex flex-wrap gap-2">
                 {companyData.socials.map((s: ISocialLink) => (
                   <Link
@@ -702,7 +694,7 @@ export default function CompanyDetailPage() {
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-muted hover:bg-muted/80 rounded-full text-xs font-medium transition-colors"
+                    className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-semibold transition-colors hover:border-foreground/30 hover:bg-muted"
                   >
                     {getSocialPlatformTypeIcon(s.platform as TPlatform)}
                     {s.platform}
@@ -711,11 +703,11 @@ export default function CompanyDetailPage() {
               </div>
             </DetailCard>
           )}
-        </div>
+        </aside>
       </div>
 
       {/* Mobile Sticky Action Bar Section */}
-      <div className="hidden tablet-md:flex fixed bottom-0 left-0 right-0 z-20 gap-3 px-4 py-3 bg-background/95 backdrop-blur-sm border-t border-border [&>button]:flex-1">
+      <div className="fixed bottom-0 left-0 right-0 z-30 hidden gap-2 border-t border-border bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-xl [&>button]:flex-1 [&>button]:rounded-none tablet-md:flex">
         {!isFav && (
           <Button
             variant="outline"

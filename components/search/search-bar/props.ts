@@ -11,7 +11,7 @@ export type TSearchBarProps<T extends FieldValues> = {
   register: UseFormRegister<T>;
   setValue: UseFormSetValue<T>;
   errors?: FieldErrors<T>;
-  initialLocation?: TLocations;
-  initialJobType?: TAvailability;
+  initialLocation?: TLocations | "all";
+  initialJobType?: TAvailability | "all";
   isEmployee: boolean;
 };

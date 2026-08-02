@@ -121,11 +121,12 @@ export function OnboardingFlow() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Card Container Section */}
-        <div className="relative flex flex-col gap-4 rounded-2xl border border-border/60 bg-card p-5 shadow-[0_20px_60px_hsl(var(--foreground)/0.18)]">
+        <div className="relative flex flex-col gap-4 rounded-none border border-border border-t-[5px] border-t-foreground bg-card p-5 shadow-[6px_6px_0_hsl(var(--foreground)/0.12)]">
           {/* Close Button Section */}
           <button
             onClick={dismiss}
-            className="absolute right-3 top-3 flex size-6 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            aria-label="Close onboarding"
+            className="absolute right-3 top-3 flex size-6 items-center justify-center rounded-none text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <LucideX className="size-3.5" />
           </button>
@@ -134,7 +135,7 @@ export function OnboardingFlow() {
           <div className={cn("flex items-start gap-4")}>
             <div
               className={cn(
-                "flex size-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-foreground",
+                "flex size-14 shrink-0 items-center justify-center rounded-none border border-border bg-gradient-to-br text-foreground",
                 currentStep.accent,
               )}
             >
@@ -158,8 +159,10 @@ export function OnboardingFlow() {
                 <button
                   key={i}
                   onClick={() => setStep(i)}
+                  aria-label={`Go to onboarding step ${i + 1}`}
+                  aria-current={i === step ? "step" : undefined}
                   className={cn(
-                    "rounded-full transition-all duration-200",
+                    "rounded-none transition-all duration-200",
                     i === step
                       ? "w-5 h-2 bg-foreground"
                       : "w-2 h-2 bg-border hover:bg-muted-foreground/50",
@@ -172,7 +175,7 @@ export function OnboardingFlow() {
             <Button
               size="sm"
               onClick={next}
-              className="h-8 px-4 rounded-full text-xs gap-1.5"
+              className="h-8 px-4 rounded-none text-xs gap-1.5"
             >
               {step < STEPS.length - 1 ? (
                 <>

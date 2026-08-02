@@ -24,7 +24,10 @@ export function AboutSection() {
         icon={<LucideInfo />}
         label={t("version")}
         value={
-          <Badge variant="secondary" className="text-[10px] font-mono">
+          <Badge
+            variant="secondary"
+            className="rounded-none text-[10px] font-mono"
+          >
             v1.0.0
           </Badge>
         }

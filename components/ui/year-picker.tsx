@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
@@ -18,6 +18,7 @@ interface YearPickerProps {
   disabled?: boolean;
   fromYear?: number;
   toYear?: number;
+  popoverClassName?: string;
 }
 
 const YEARS_PER_PAGE = 12;
@@ -30,6 +31,7 @@ export function YearPicker({
   disabled = false,
   fromYear = 1950,
   toYear = new Date().getFullYear() + 10,
+  popoverClassName,
 }: YearPickerProps) {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(() => {
@@ -59,7 +61,7 @@ export function YearPicker({
           variant="outline"
           disabled={disabled}
           className={cn(
-            "w-full justify-between border rounded-md px-4 py-6 text-left text-muted-foreground bg-primary-foreground",
+            "w-full justify-between border rounded-none px-4 py-6 text-left text-muted-foreground bg-primary-foreground",
             disabled && "opacity-50 cursor-not-allowed",
             className,
           )}
@@ -72,7 +74,11 @@ export function YearPicker({
           <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-3" align="start">
+      <PopoverContent
+        className={cn("w-auto p-3", popoverClassName)}
+        align="start"
+        sideOffset={8}
+      >
         {/* Navigation */}
         <div className="flex items-center justify-between mb-2">
           <Button

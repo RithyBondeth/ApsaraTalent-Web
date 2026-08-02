@@ -1,6 +1,9 @@
 import * as z from "zod";
 
-export const makePhoneLoginSchema = (m: { phoneInvalid: string }) =>
+export const makePhoneLoginSchema = (m: {
+  phoneRequired: string;
+  phoneInvalid: string;
+}) =>
   z.object({
     phone: z.preprocess(
       (value) => {
@@ -10,9 +13,9 @@ export const makePhoneLoginSchema = (m: { phoneInvalid: string }) =>
         return typeof value === "string" ? value.trim() : value;
       },
       z
-        .string()
-        .regex(/^(\+855|0)[0-9]{8,9}$/, { message: m.phoneInvalid })
-        .optional(),
+        .string({ required_error: m.phoneRequired })
+        .min(1, { message: m.phoneRequired })
+        .regex(/^(\+855|0)[0-9]{8,9}$/, { message: m.phoneInvalid }),
     ),
     rememberMe: z.boolean().optional(),
   });

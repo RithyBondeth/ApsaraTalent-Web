@@ -30,16 +30,16 @@ export default function LandingMarquee() {
         <div key={key} className="flex items-center">
           <span
             className={cn(
-              "px-6 sm:px-10 text-2xl sm:text-4xl md:text-5xl font-extrabold uppercase tracking-tight whitespace-nowrap",
+              "px-6 text-2xl font-semibold uppercase tracking-[-0.03em] whitespace-nowrap sm:px-10 sm:text-4xl md:text-5xl",
               index % 2 === 0
-                ? "text-amber-600/90 dark:text-amber-400/90"
-                : "text-stroke-amber",
+                ? "text-white/90"
+                : "text-stroke-neutral",
             )}
           >
             {t(key)}
           </span>
-          <span className="text-xl sm:text-2xl text-amber-500/60 dark:text-amber-400/50 select-none">
-            ✦
+          <span className="select-none text-xl text-white/25 sm:text-2xl">
+            ·
           </span>
         </div>
       ))}
@@ -48,9 +48,9 @@ export default function LandingMarquee() {
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <section className="relative py-10 sm:py-14 overflow-hidden">
+    <section className="relative overflow-hidden border-b border-border bg-background py-10 sm:py-14">
       {/* Velocity-Reactive Ribbon Section */}
-      <div className="rotate-[-1.5deg] scale-[1.02] border-y border-amber-500/15 bg-amber-500/[0.04] py-5 sm:py-7 dark:border-amber-400/10 dark:bg-amber-400/[0.04]">
+      <div className="rotate-[-1deg] scale-[1.02] border-y border-white/10 bg-[hsl(var(--auth-paper))] py-5 sm:py-7">
         <div ref={trackRef} className="flex w-max">
           {renderRow(false)}
           {renderRow(true)}

@@ -27,6 +27,12 @@ interface CreatableComboboxProps {
   placeholder?: string;
   emptyText?: string;
   disabled?: boolean;
+  icon?: React.ReactNode;
+  required?: boolean;
+  contentClassName?: string;
+  triggerClassName?: string;
+  triggerId?: string;
+  ariaLabel?: string;
 }
 
 export function CreatableCombobox({
@@ -36,6 +42,12 @@ export function CreatableCombobox({
   placeholder = "Select or type...",
   emptyText = "Type to create...",
   disabled = false,
+  icon,
+  required = false,
+  contentClassName,
+  triggerClassName,
+  triggerId,
+  ariaLabel,
 }: CreatableComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
@@ -47,28 +59,51 @@ export function CreatableCombobox({
       open={disabled ? false : open}
       onOpenChange={disabled ? undefined : setOpen}
     >
+      {/* Combobox Trigger Section */}
       <PopoverTrigger asChild>
         <Button
+          id={triggerId}
           type="button"
           variant="outline"
           role="combobox"
+          aria-label={ariaLabel ?? placeholder}
           aria-expanded={open}
+          aria-required={required}
           disabled={disabled}
-          className="w-full justify-between h-12 text-muted-foreground font-normal overflow-hidden"
+          className={cn(
+            "h-12 w-full justify-between overflow-hidden text-muted-foreground font-normal",
+            triggerClassName,
+          )}
         >
-          <span className="truncate">
-            {selectedOption ? selectedOption.label : value || placeholder}
+          <span className="flex min-w-0 items-center gap-2">
+            {icon && (
+              <span className="shrink-0 text-muted-foreground [&_svg]:size-[18px]">
+                {icon}
+              </span>
+            )}
+            <span className="truncate">
+              {selectedOption ? selectedOption.label : value || placeholder}
+            </span>
           </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+
+      {/* Combobox Options Section */}
+      <PopoverContent
+        align="start"
+        className={cn(
+          "w-[var(--radix-popover-trigger-width)] p-0",
+          contentClassName,
+        )}
+      >
         <Command>
           <CommandInput
             placeholder={placeholder}
             onValueChange={setInputValue}
           />
           <CommandList>
+            {/* Empty and Create Option Section */}
             <CommandEmpty>
               <div className="flex flex-col items-center gap-2 px-2 py-4">
                 <TypographyMuted className="text-sm text-muted-foreground">
@@ -90,6 +125,8 @@ export function CreatableCombobox({
                 )}
               </div>
             </CommandEmpty>
+
+            {/* Existing Options Section */}
             <CommandGroup>
               {options.map((option) => (
                 <CommandItem

@@ -1,15 +1,10 @@
 "use client";
 
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { TypographyH3 } from "@/components/utils/typography/typography-h3";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import Image from "next/image";
 import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
@@ -23,6 +18,8 @@ import { FavoriteLoadingSkeleton } from "@/components/favorite/skeleton";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
+import { Bookmark, Building2, Users } from "lucide-react";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 interface Props {
   initialIsEmployee: boolean;
@@ -155,9 +152,11 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
           await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
             employeeID,
           );
-        } catch {
+        } catch (error) {
           const err =
-            employeeFavCompanyStore.empFavError || t("failedToRemoveFavorite");
+            (error instanceof Error && error.message) ||
+            employeeFavCompanyStore.empFavError ||
+            t("failedToRemoveFavorite");
           toast.error(err);
         }
       });
@@ -190,9 +189,11 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
           decrementCmpFavCount();
           toast.success(t("removedFromFavorites", { name: employeeName }));
           await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
-        } catch {
+        } catch (error) {
           const err =
-            companyFavEmployeeStore.cmpFavError || t("failedToRemoveFavorite");
+            (error instanceof Error && error.message) ||
+            companyFavEmployeeStore.cmpFavError ||
+            t("failedToRemoveFavorite");
           toast.error(err);
         }
       });
@@ -230,96 +231,115 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
 
   if (apiError)
     return (
-      <div className="w-full px-2.5 sm:px-5 py-10 flex flex-col items-center justify-center gap-3">
-        <div className="rounded-2xl border border-destructive/30 bg-destructive/5 px-6 py-8 text-center max-w-md w-full">
-          <TypographyP className="text-sm font-medium text-destructive">
-            {apiError}
-          </TypographyP>
-        </div>
+      <div className="mx-auto flex w-full max-w-[1500px] items-center justify-center px-3 py-10 sm:px-4 lg:px-5">
+        <PageState
+          variant="error"
+          title={apiError}
+          compact
+          action={{
+            label: tFav("retry"),
+            onClick: () => {
+              if (isEmployee && currentUser?.employee?.id) {
+                void queryAllEmployeeFavorites(currentUser.employee.id);
+              } else if (currentUser?.company?.id) {
+                void queryAllCompanyFavorites(currentUser.company.id);
+              }
+            },
+          }}
+        />
       </div>
     );
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col px-2.5 sm:px-5 animate-page-in">
+    <div className="favorite-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 animate-page-in sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
-      {/* Desktop Banner Section 1050px */}
-      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
-        <div className="flex flex-col items-start gap-3">
-          <TypographyH2 className="leading-relaxed">
+      <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
+        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
+          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            <span className="h-px w-7 bg-primary" />
+            {tFav("savedFavorites")}
+          </div>
+          <div className="max-w-3xl">
+            <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.05] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl">
             {tFav("bannerTitle")}
-          </TypographyH2>
-          <TypographyH4 className="leading-relaxed">
-            {tFav("bannerSubtitle1")}
-          </TypographyH4>
-          <TypographyH4 className="leading-relaxed">
-            {tFav("bannerSubtitle2")}
-          </TypographyH4>
-          <TypographyMuted className="leading-relaxed">
+            </h1>
+            <p className="mt-4 max-w-[60ch] text-sm leading-6 text-muted-foreground sm:text-base">
+              {tFav("bannerSubtitle1")} {tFav("bannerSubtitle2")}
+            </p>
+          </div>
+          <p className="max-w-[70ch] border-l-2 border-foreground pl-3 text-xs leading-5 text-muted-foreground">
             {tFav("bannerMuted")}
-          </TypographyMuted>
-        </div>
-        {mounted && (
-          <Image
-            src={favoriteBannerSvg}
-            alt="favorites"
-            height={250}
-            width={350}
-            className="h-auto max-w-[340px] shrink-0"
-            priority
-          />
-        )}
-      </div>
-
-      {/* Tablet Banner Section 651px–1050px */}
-      <div className="hidden tablet-xl:flex tablet-md:!hidden w-full items-center justify-between gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5 overflow-hidden">
-        <div className="flex-1 min-w-0 flex flex-col gap-2">
-          <TypographyH3 className="!leading-snug">
-            {tFav("bannerTitle")}
-          </TypographyH3>
-          <TypographyMuted className="!leading-snug">
-            {tFav("bannerSubtitle1")}
-          </TypographyMuted>
-          <TypographyMuted className="!leading-snug">
-            {tFav("bannerSubtitle2")}
-          </TypographyMuted>
-        </div>
-        {mounted && (
-          <Image
-            src={favoriteBannerSvg}
-            alt="favorites"
-            width={160}
-            height={160}
-            className="shrink-0 h-auto object-contain"
-            priority
-          />
-        )}
-      </div>
-
-      {/* Mobile Banner Section ≤650px */}
-      <div className="hidden tablet-md:flex w-full items-center gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-3 overflow-hidden">
-        <div className="flex-1 min-w-0 flex flex-col gap-1">
-          <h2 className="font-bold text-sm leading-snug text-foreground">
-            {tFav("bannerTitle")}
-          </h2>
-          <p className="text-xs text-muted-foreground leading-snug line-clamp-2">
-            {tFav("bannerSubtitle1")}
           </p>
         </div>
-        {mounted && (
-          <Image
-            src={favoriteBannerSvg}
-            alt="favorites"
-            width={88}
-            height={88}
-            className="flex-shrink-0 object-contain"
-            priority
-          />
-        )}
-      </div>
+
+        <div className="feed-hero-visual">
+          <div aria-hidden className="feed-hero-visual-grid" />
+          <div className="feed-hero-network-chip">
+            <span className="feed-hero-network-icon" aria-hidden>
+              <Bookmark />
+            </span>
+            <span>{tFav("savedFavorites")}</span>
+            <span aria-hidden className="feed-hero-network-status" />
+          </div>
+          <div aria-hidden className="feed-hero-art-stage">
+            <span className="feed-hero-node feed-hero-node-one" />
+            <span className="feed-hero-node feed-hero-node-two" />
+            <span className="feed-hero-node feed-hero-node-three" />
+            <div className="feed-hero-art-frame">
+              <div className="feed-hero-art-grid" />
+              <div className="feed-hero-art-glow" />
+              <Image
+                src={favoriteBannerSvg}
+                alt=""
+                height={260}
+                width={360}
+                className="feed-hero-artwork"
+                priority
+              />
+              <span className="feed-hero-corner feed-hero-corner-nw" />
+              <span className="feed-hero-corner feed-hero-corner-ne" />
+              <span className="feed-hero-corner feed-hero-corner-sw" />
+              <span className="feed-hero-corner feed-hero-corner-se" />
+            </div>
+          </div>
+          <div aria-hidden className="feed-hero-signal-bars">
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+        </div>
+      </section>
 
       {/* Favorite Card List Section */}
-      <div className="mt-5 flex flex-col items-start gap-3 stagger-list">
+      <section className="flex w-full flex-col gap-5">
+        <div className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+              01
+            </span>
+            <div>
+              <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">
+                {tFav("savedFavorites")}
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {isEmployee
+                  ? `${filteredEmployeeFavorites?.length ?? 0} ${tFav("companiesSaved")}`
+                  : `${filteredCompanyFavorites?.length ?? 0} ${tFav("talentSaved")}`}
+              </p>
+            </div>
+          </div>
+          <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
+            {isEmployee ? (
+              <Building2 className="size-4" />
+            ) : (
+              <Users className="size-4" />
+            )}
+          </div>
+        </div>
+
+        <div className="flex w-full flex-col items-start gap-3 stagger-list">
         {isEmployee &&
         filteredEmployeeFavorites &&
         filteredEmployeeFavorites.length > 0 ? (
@@ -380,20 +400,20 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
           ))
         ) : (
           /* Empty Favorite List */
-          <div className="w-full flex flex-col items-center justify-center my-16">
-            <Image
-              src={emptySvg}
-              alt="empty"
-              height={200}
-              width={200}
-              className="animate-float"
-            />
-            <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-              {tFav("emptyList")}
-            </TypographyP>
-          </div>
+          <PageState
+            variant="empty"
+            title={tFav("emptyList")}
+            image={emptySvg}
+            compact
+            className="my-6 sm:my-8"
+            action={{
+              label: tFav("explore"),
+              href: isEmployee ? "/search/company" : "/search/employee",
+            }}
+          />
         )}
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

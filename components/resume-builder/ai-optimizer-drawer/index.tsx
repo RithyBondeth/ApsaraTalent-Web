@@ -219,7 +219,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
         variant="outline"
         size="sm"
         onClick={() => void analyze()}
-        className="h-8 text-xs gap-1.5"
+        className="h-8 gap-1.5 rounded-none text-xs"
         title={t("aiOptimizerTitle")}
       >
         <LucideSparkles size={14} className="text-primary" />
@@ -237,7 +237,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
       >
         <SheetContent
           side="right"
-          className="w-full sm:max-w-md flex flex-col gap-0 p-0"
+          className="w-full sm:max-w-md flex flex-col gap-0 p-0 border-l-[5px] border-l-foreground"
         >
           {/* Header Section */}
           <SheetHeader className="px-5 py-4 border-b">
@@ -259,14 +259,14 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
             {/* Full Skeleton Section (Generating With No Data Yet) */}
             {generating && !data?.overallFeedback && (
               <div className="flex flex-col gap-3 pt-2">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-5/6" />
-                <Skeleton className="h-4 w-4/6" />
+                <Skeleton className="h-4 w-full rounded-none" />
+                <Skeleton className="h-4 w-5/6 rounded-none" />
+                <Skeleton className="h-4 w-4/6 rounded-none" />
                 <div className="h-px bg-border my-2" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-4 w-full rounded-none" />
+                <Skeleton className="h-4 w-3/4 rounded-none" />
+                <Skeleton className="h-4 w-full rounded-none" />
+                <Skeleton className="h-4 w-2/3 rounded-none" />
               </div>
             )}
 
@@ -280,7 +280,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
               <>
                 {/* Overall Feedback Section */}
                 {data.overallFeedback && (
-                  <div className="rounded-xl bg-muted/50 border border-border/60 p-4 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
+                  <div className="rounded-none bg-muted/50 border border-border border-l-[5px] border-l-foreground p-4 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
                       {t("overallFeedback")}
                     </p>
@@ -306,7 +306,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-6 text-[11px] px-2"
+                          className="h-6 text-[11px] px-2 rounded-none"
                           onClick={handleApplySummary}
                           disabled={generating}
                         >
@@ -314,7 +314,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                         </Button>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed bg-muted/30 rounded-lg p-3 border border-border/40">
+                    <p className="text-sm text-muted-foreground leading-relaxed bg-muted/30 rounded-none p-3 border border-border border-l-[4px] border-l-primary">
                       {data.suggestedSummary}
                     </p>
                   </div>
@@ -357,7 +357,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                       ))}
                       {/* Pulsing Placeholder While Generating Skills Section */}
                       {generating && data.suggestedSkills.length < 6 && (
-                        <Skeleton className="h-5 w-20 rounded-full" />
+                        <Skeleton className="h-5 w-20 rounded-none" />
                       )}
                     </div>
                   </div>
@@ -372,7 +372,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                     {data.experienceSuggestions.map((s) => (
                       <div
                         key={s.index}
-                        className="flex flex-col gap-2 rounded-xl border border-border/60 p-3 bg-muted/20 animate-in fade-in-0 slide-in-from-bottom-1 duration-200"
+                        className="flex flex-col gap-2 rounded-none border border-border border-l-[5px] border-l-foreground p-3 bg-muted/20 animate-in fade-in-0 slide-in-from-bottom-1 duration-200"
                       >
                         <div className="flex items-center justify-between">
                           <p className="text-xs font-medium text-foreground">
@@ -416,10 +416,10 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
 
                     {/* Skeleton For Next EXP Block While Still Streaming Section */}
                     {generating && (
-                      <div className="flex flex-col gap-2 rounded-xl border border-border/60 p-3 bg-muted/20">
-                        <Skeleton className="h-3 w-24" />
-                        <Skeleton className="h-3 w-full" />
-                        <Skeleton className="h-3 w-5/6" />
+                      <div className="flex flex-col gap-2 rounded-none border border-border border-l-[5px] border-l-foreground p-3 bg-muted/20">
+                        <Skeleton className="h-3 w-24 rounded-none" />
+                        <Skeleton className="h-3 w-full rounded-none" />
+                        <Skeleton className="h-3 w-5/6 rounded-none" />
                       </div>
                     )}
                   </div>
@@ -447,5 +447,3 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
     </>
   );
 }
-
-export default AiResumeOptimizerDrawer;

@@ -17,7 +17,6 @@ import {
 } from "@/utils/types/resume/resume.type";
 import { TemplateCardSkeleton } from "@/components/resume-builder/skeleton";
 import { useTranslations } from "next-intl";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   normalizeResumePayload,
   removeLegacyResumeDraft,
@@ -25,7 +24,6 @@ import {
   resumeSchema,
   saveResumeDraft,
 } from "@/utils/functions/resume/resume-draft";
-import { Button } from "@/components/ui/button";
 import { prepareResumeAvatar } from "@/utils/functions/resume/prepare-resume-avatar";
 import { useGenerateAiResumeStore } from "@/stores/apis/resume/generate-ai-resume.store";
 import { toast } from "sonner";
@@ -35,19 +33,20 @@ import {
   RESUME_SOURCE_MAX_LENGTH,
   RESUME_TEMPLATE_LABEL_KEYS,
 } from "@/utils/constants/resume.constant";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 /* --------------------------------- Helper ---------------------------------- */
 /** Numbered step header shared by each stage of the builder flow */
 function StepHeader({ number, title }: { number: string; title: string }) {
   return (
-    <div className="w-full flex items-center gap-3">
-      <div className="flex size-7 shrink-0 items-center justify-center rounded-full border border-primary/25 bg-primary/10 text-primary text-xs font-bold">
+    <div className="flex w-full items-center gap-3">
+      <div className="flex size-8 shrink-0 items-center justify-center border border-foreground bg-foreground text-xs font-black text-background shadow-[3px_3px_0_hsl(var(--foreground)/0.12)]">
         {number}
       </div>
-      <span className="text-sm font-semibold text-foreground/90 shrink-0">
+      <span className="shrink-0 text-xs font-black uppercase tracking-[0.14em] text-foreground">
         {title}
       </span>
-      <div className="flex-1 h-px bg-border/60" />
+      <div className="h-px flex-1 bg-border" />
     </div>
   );
 }
@@ -169,81 +168,92 @@ export default function ResumeBuilder() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-6 px-2.5 pb-4 sm:px-5 lg:px-8 animate-page-in">
+    <div className="resume-builder-editorial mx-auto flex w-full max-w-[1500px] animate-page-in flex-col items-start gap-6 px-3 pb-8 sm:px-4 lg:px-5">
       {/* Banner Section */}
       <ResumeBuilderBanner />
 
-      {/* Step 1: Template Selection Section */}
-      <div className="w-full flex flex-col gap-3">
-        <StepHeader number="1" title={t("chooseTemplate")} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {templatesLoading || (templateData === null && !templatesError) ? (
-            Array.from({ length: 6 }, (_, i) => (
-              <TemplateCardSkeleton key={i} />
-            ))
-          ) : templatesError ? (
-            <div className="col-span-full flex flex-col items-center justify-center py-12 gap-3">
-              <TypographyP className="text-sm text-destructive text-center">
-                {templatesError}
-              </TypographyP>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => void queryAllTemplates()}
-              >
-                {t("retry")}
-              </Button>
-            </div>
-          ) : templateData && templateData.length > 0 ? (
-            templateData.map((resume) => {
-              if (!isResumeTemplateKey(resume.templateKey)) return null;
-              const templateKey = resume.templateKey;
-              const isSelected = selectedTemplate === templateKey;
-              return (
-                <TemplateCard
-                  key={resume.id}
-                  templateKey={templateKey}
-                  image={resume.image}
-                  title={t(RESUME_TEMPLATE_LABEL_KEYS[templateKey])}
-                  description={resume.description}
-                  onUseTemplate={() => handleSelectTemplate(templateKey)}
-                  selected={isSelected}
-                />
-              );
-            })
-          ) : (
-            <div className="col-span-full flex flex-col items-center justify-center py-12 gap-2">
-              <TypographyP className="text-sm text-muted-foreground">
-                {t("noTemplatesAvailable")}
-              </TypographyP>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Builder Workspace Section */}
+      <div className="grid w-full items-start gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+        {/* Step 1: Template Selection Section */}
+        <section className="flex min-w-0 flex-col gap-4">
+          <StepHeader number="1" title={t("chooseTemplate")} />
 
-      {/* Step 2: Information Source Section */}
-      <div className="w-full flex flex-col gap-3">
-        <StepHeader number="2" title={t("pasteInfoTitle")} />
-        <ResumeSourceInput
-          value={sourceText}
-          onChange={setSourceText}
-          disabled={preparingResume}
-          maxLength={RESUME_SOURCE_MAX_LENGTH}
-        />
-      </div>
+          {/* Template Grid Section */}
+          <div className="resume-template-strip grid auto-cols-[82vw] grid-flow-col gap-4 overflow-x-auto pb-3 sm:auto-cols-auto sm:grid-flow-row sm:grid-cols-2 sm:overflow-visible sm:pb-0 lg:grid-cols-3 xl:grid-cols-2 min-[1400px]:grid-cols-3">
+            {templatesLoading || (templateData === null && !templatesError) ? (
+              Array.from({ length: 6 }, (_, i) => (
+                <TemplateCardSkeleton key={i} />
+              ))
+            ) : templatesError ? (
+              <PageState
+                variant="error"
+                title={templatesError}
+                description={t("templatesErrorDescription")}
+                compact
+                className="col-span-full"
+                action={{
+                  label: t("retry"),
+                  onClick: () => void queryAllTemplates(),
+                }}
+              />
+            ) : templateData && templateData.length > 0 ? (
+              templateData.map((resume) => {
+                if (!isResumeTemplateKey(resume.templateKey)) return null;
+                const templateKey = resume.templateKey;
+                const isSelected = selectedTemplate === templateKey;
+                return (
+                  <TemplateCard
+                    key={resume.id}
+                    templateKey={templateKey}
+                    image={resume.image}
+                    title={t(RESUME_TEMPLATE_LABEL_KEYS[templateKey])}
+                    description={resume.description}
+                    onUseTemplate={() => handleSelectTemplate(templateKey)}
+                    selected={isSelected}
+                  />
+                );
+              })
+            ) : (
+              <PageState
+                variant="empty"
+                title={t("noTemplatesTitle")}
+                description={t("noTemplatesAvailable")}
+                compact
+                className="col-span-full"
+                action={{
+                  label: t("retry"),
+                  onClick: () => void queryAllTemplates(),
+                }}
+              />
+            )}
+          </div>
+        </section>
 
-      {/* Sticky Generate Bar Section */}
-      <ResumeBuilderGenerate
-        disabled={!selectedTemplate || preparingResume}
-        loading={preparingResume}
-        onGenerateClick={() => void handleGenerate()}
-        selectedTemplate={selectedTemplate}
-        selectedTemplateLabel={
-          selectedTemplate
-            ? t(RESUME_TEMPLATE_LABEL_KEYS[selectedTemplate])
-            : null
-        }
-      />
+        {/* Builder Information Rail Section */}
+        <aside className="flex min-w-0 flex-col gap-4">
+          {/* Step 2: Information Source Section */}
+          <StepHeader number="2" title={t("pasteInfoTitle")} />
+          <ResumeSourceInput
+            value={sourceText}
+            onChange={setSourceText}
+            disabled={preparingResume}
+            maxLength={RESUME_SOURCE_MAX_LENGTH}
+          />
+
+          {/* Generate Action Section */}
+          <ResumeBuilderGenerate
+            disabled={!selectedTemplate || preparingResume}
+            loading={preparingResume}
+            onGenerateClick={() => void handleGenerate()}
+            selectedTemplate={selectedTemplate}
+            selectedTemplateLabel={
+              selectedTemplate
+                ? t(RESUME_TEMPLATE_LABEL_KEYS[selectedTemplate])
+                : null
+            }
+          />
+        </aside>
+      </div>
     </div>
   );
 }

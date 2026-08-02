@@ -37,10 +37,10 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
-      <DialogContent className="p-0 gap-0 flex flex-col overflow-hidden sm:max-w-lg sm:rounded-xl max-h-[90dvh] tablet-sm:!left-0 tablet-sm:!translate-x-0 tablet-sm:!translate-y-0 tablet-sm:!top-auto tablet-sm:!bottom-0 tablet-sm:!w-full tablet-sm:!max-w-none tablet-sm:rounded-t-2xl tablet-sm:!rounded-b-none tablet-sm:max-h-[92dvh]">
+      <DialogContent className="flex max-h-[90dvh] flex-col gap-0 overflow-hidden rounded-none p-0 sm:max-w-lg sm:rounded-none tablet-sm:!bottom-0 tablet-sm:!left-0 tablet-sm:!top-auto tablet-sm:!w-full tablet-sm:!max-w-none tablet-sm:!translate-x-0 tablet-sm:!translate-y-0 tablet-sm:!rounded-none tablet-sm:max-h-[92dvh] [&>button]:rounded-none">
         {/* Drag Handle Section — Mobile Only */}
         <div className="hidden tablet-sm:flex justify-center pt-3 pb-1 shrink-0">
-          <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+          <div className="h-1 w-10 rounded-none bg-muted-foreground/30" />
         </div>
 
         {/* Cover Banner Section */}
@@ -60,7 +60,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           {/* Avatar Overlapping The Cover Section */}
           <div className="absolute -bottom-9 left-4">
             <Avatar
-              className="!size-20 ring-4 ring-background shadow-lg"
+              className="!size-20 !rounded-none ring-4 ring-background shadow-lg"
               rounded="md"
             >
               <AvatarImage src={props.avatar!} />
@@ -82,19 +82,19 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
 
           <div className="flex flex-wrap gap-1.5 mt-3">
             {props.location && (
-              <span className="inline-flex items-center gap-1 text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
+              <span className="inline-flex items-center gap-1 rounded-none bg-muted px-2.5 py-1 text-xs text-muted-foreground">
                 <LucideMapPin className="h-3 w-3 shrink-0" />
                 {translateLocation(props.location, tl)}
               </span>
             )}
             {props.companySize && (
-              <span className="inline-flex items-center gap-1 text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
+              <span className="inline-flex items-center gap-1 rounded-none bg-muted px-2.5 py-1 text-xs text-muted-foreground">
                 <LucideUsers className="h-3 w-3 shrink-0" />
                 {t("dialogEmployeesCount", { count: props.companySize })}
               </span>
             )}
             {props.foundedYear && (
-              <span className="inline-flex items-center gap-1 text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
+              <span className="inline-flex items-center gap-1 rounded-none bg-muted px-2.5 py-1 text-xs text-muted-foreground">
                 <LucideBuilding className="h-3 w-3 shrink-0" />
                 {t("established", { year: props.foundedYear })}
               </span>
@@ -133,7 +133,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                 {props.benefits.map((benefit, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-medium"
+                    className="inline-flex items-center gap-1.5 rounded-none bg-blue-50 px-2.5 py-1.5 text-xs font-medium text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
                   >
                     <LucideCircleCheck className="h-3.5 w-3.5 shrink-0" />
                     {benefit.label}
@@ -153,7 +153,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                 {props.values.map((value, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-full bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-300 font-medium"
+                    className="inline-flex items-center gap-1.5 rounded-none bg-green-50 px-2.5 py-1.5 text-xs font-medium text-green-700 dark:bg-green-950/40 dark:text-green-300"
                   >
                     <LucideCircleCheck className="h-3.5 w-3.5 shrink-0" />
                     {value.label}
@@ -167,7 +167,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
         {/* Sticky CTA Section */}
         <div className="shrink-0 px-4 pb-4 pt-2 border-t border-border/60 bg-background">
           <Link href={`/feed/company/${props.id}`} className="w-full">
-            <Button className="w-full gap-2">
+            <Button className="w-full gap-2 rounded-none">
               <LucideBuilding2 className="h-4 w-4" />
               {t("dialogViewCompany")}
               <LucideExternalLink className="h-3.5 w-3.5 ml-auto opacity-70" />

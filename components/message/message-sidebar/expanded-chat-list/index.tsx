@@ -4,9 +4,9 @@ import { Check, CheckCheck, Users } from "lucide-react";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { IChatListProps } from "../props";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { messageSvg } from "@/utils/constants/asset.constant";
 import { getNameInitials } from "@/utils/functions/text";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 export default function ExpandedChatList(props: IChatListProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -18,23 +18,20 @@ export default function ExpandedChatList(props: IChatListProps) {
   /* ------------------------------ Empty State ------------------------------ */
   if (!chats || chats.length === 0)
     return (
-      <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
-        <Image
-          src={messageSvg}
-          alt="No conversations"
-          height={300}
-          width={300}
-          className="animate-float"
-        />
-        <TypographyMuted className="text-sm text-muted-foreground">
-          {t("noConversations")}
-        </TypographyMuted>
-      </div>
+      <PageState
+        variant="empty"
+        title={t("noConversations")}
+        description={t("noConversationsDescription")}
+        image={messageSvg}
+        compact
+        className="m-3 w-auto shadow-none"
+        action={{ label: t("discoverMatches"), href: "/matching" }}
+      />
     );
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="py-1">
+    <div>
       {/* Chats List Section */}
       {chats.map((chat) => {
         const isLastFromMe = chat.lastMessageSenderId === currentUserId;
@@ -45,22 +42,24 @@ export default function ExpandedChatList(props: IChatListProps) {
           <button
             key={chat.id}
             className={cn(
-              "w-full flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 text-left transition-colors",
-              "hover:bg-muted/50 active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
-              isActive && "bg-muted/60",
+              "w-full flex items-center gap-3 px-3 md:px-4 py-3 text-left transition-colors border-b border-border border-l-[4px]",
+              "hover:bg-muted/40 active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+              isActive
+                ? "bg-primary/5 border-l-primary"
+                : "border-l-transparent",
             )}
             onClick={() => onChatSelect(chat)}
           >
             {/* Avatar + Online Dot Section */}
             <div className="relative shrink-0">
               {chat.isGroup ? (
-                <div className="h-11 w-11 md:h-12 md:w-12 bg-muted rounded-full flex items-center justify-center border border-border">
+                <div className="h-11 w-11 md:h-12 md:w-12 bg-muted rounded-none flex items-center justify-center border border-border">
                   <Users className="h-5 w-5 text-muted-foreground" />
                 </div>
               ) : (
-                <Avatar className="h-11 w-11 md:h-12 md:w-12">
+                <Avatar className="h-11 w-11 md:h-12 md:w-12 rounded-none border border-border">
                   <AvatarImage src={chat.avatar} alt={chat.name} />
-                  <AvatarFallback className="text-sm font-medium">
+                  <AvatarFallback className="text-sm font-medium rounded-none">
                     {getNameInitials(chat.name)}
                   </AvatarFallback>
                 </Avatar>
@@ -118,7 +117,7 @@ export default function ExpandedChatList(props: IChatListProps) {
 
                 {/* Unread Count Badge Section */}
                 {chat.unread ? (
-                  <span className="shrink-0 h-5 min-w-5 px-1 rounded-full bg-green-500 text-white text-[11px] font-semibold flex items-center justify-center leading-none">
+                  <span className="shrink-0 h-5 min-w-5 px-1 rounded-none bg-primary text-primary-foreground text-[11px] font-semibold flex items-center justify-center leading-none">
                     {chat.unread > 99 ? "99+" : chat.unread}
                   </span>
                 ) : null}

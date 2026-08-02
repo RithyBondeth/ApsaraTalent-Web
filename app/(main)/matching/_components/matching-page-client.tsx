@@ -2,11 +2,6 @@
 
 import MatchingCompanyCard from "@/components/matching/matching-company-card";
 import MatchingEmployeeCard from "@/components/matching/matching-employee-card";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { TypographyH3 } from "@/components/utils/typography/typography-h3";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
@@ -20,13 +15,14 @@ import { useInitiateChatStore } from "@/stores/apis/chat/initiate-chat.store";
 import { useChatStore } from "@/stores/features/chat/chat.store";
 import { markUnmatchInitiated } from "@/stores/features/chat/socket-listeners";
 import { MatchingLoadingSkeleton } from "@/components/matching/skeleton";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import Link from "next/link";
 import { emptySvg, matchingBannerSvg } from "@/utils/constants/asset.constant";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { CountUp } from "@/components/utils/animations/count-up";
+import { Building2, Handshake, Users } from "lucide-react";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 interface Props {
   initialIsEmployee: boolean;
@@ -42,6 +38,8 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
   // Track which card is in a loading state to prevent double-clicks
   const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
   const [unmatchingId, setUnmatchingId] = useState<string | null>(null);
+  const chatInFlightRef = useRef<boolean>(false);
+  const unmatchInFlightRef = useRef<boolean>(false);
 
   /* ----------------------------- API Integration ---------------------------- */
   const getCurrentEmpStore = useGetCurrentEmployeeMatchingStore();
@@ -113,9 +111,10 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
   // ── Chat Handler ─────────────────────────────────────────
   const handleChatNow = useCallback(
     async (senderId: string, receiverId: string) => {
-      if (!currentUser || chatLoadingId) return;
+      if (!currentUser || chatInFlightRef.current) return;
       if (senderId === receiverId) return;
 
+      chatInFlightRef.current = true;
       setChatLoadingId(receiverId);
       try {
         const initateChatData = await initiateChat(senderId, receiverId);
@@ -123,21 +122,23 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
       } catch (err) {
         console.error("Failed to initiate chat:", err);
       } finally {
+        chatInFlightRef.current = false;
         setChatLoadingId(null);
       }
     },
-    [currentUser, chatLoadingId, initiateChat, router],
+    [currentUser, initiateChat, router],
   );
 
   // ── Unmatch Handler ──────────────────────────────────────────
   const handleUnmatch = useCallback(
     async (otherId: string) => {
-      if (unmatchingId) return;
+      if (unmatchInFlightRef.current) return;
       const employeeId = isEmployee
         ? (currentUser?.employee?.id ?? "")
         : otherId;
       const companyId = isEmployee ? otherId : (currentUser?.company?.id ?? "");
 
+      unmatchInFlightRef.current = true;
       setUnmatchingId(otherId);
 
       /* 
@@ -158,6 +159,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
       removeInterviewsByPartnerId(otherId);
 
       await unmatch(employeeId, companyId, isEmployee);
+      unmatchInFlightRef.current = false;
       setUnmatchingId(null);
 
       // Read fresh state directly from the store after await (avoids stale closure)
@@ -192,7 +194,6 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
       }
     },
     [
-      unmatchingId,
       isEmployee,
       currentUser,
       unmatch,
@@ -207,6 +208,39 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
   );
 
   /* ------------------------------- Loading State ----------------------------- */
+  const matchingError = isEmployee
+    ? getCurrentEmpStore.error
+    : getCurrentCmpStore.error;
+  const matchingUserId = isEmployee
+    ? currentUser?.employee?.id
+    : currentUser?.company?.id;
+
+  if (mounted && currentUser && matchingError)
+    return (
+      <div className="mx-auto w-full max-w-[1500px] px-3 py-10 sm:px-4 lg:px-5">
+        <PageState
+          variant="error"
+          title={matchingError}
+          description={t("loadErrorDescription")}
+          action={
+            matchingUserId
+              ? {
+                  label: t("retry"),
+                  onClick: () =>
+                    isEmployee
+                      ? getCurrentEmpStore.queryCurrentEmployeeMatching(
+                          matchingUserId,
+                        )
+                      : getCurrentCmpStore.queryCurrentCompanyMatching(
+                          matchingUserId,
+                        ),
+                }
+              : undefined
+          }
+        />
+      </div>
+    );
+
   const isLoadingForEmployee =
     isEmployee &&
     (getCurrentEmpStore.loading ||
@@ -223,105 +257,102 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
   if (isLoading)
     return <MatchingLoadingSkeleton isEmployee={initialIsEmployee} />;
 
+  const matchCount = isEmployee
+    ? (getCurrentEmpStore.currentEmployeeMatching?.length ?? 0)
+    : (getCurrentCmpStore.currentCompanyMatching?.length ?? 0);
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col gap-5 px-2.5 sm:px-5 animate-page-in">
+    <div className="matching-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 animate-page-in sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
-      {/* Desktop Banner Section 1050px */}
-      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
-        <div className="flex flex-col items-start gap-3">
-          <TypographyH2 className="leading-relaxed">
-            {t("bannerTitle")}
-          </TypographyH2>
-          <TypographyH4 className="leading-relaxed">
-            {t("bannerSubtitle1")}
-          </TypographyH4>
-          <TypographyH4 className="leading-relaxed">
-            {t("bannerSubtitle2")}
-          </TypographyH4>
-          <TypographyMuted className="leading-relaxed">
+      <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
+        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
+          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            <span className="h-px w-7 bg-primary" />
+            {t("matchNetwork")}
+          </div>
+          <div className="max-w-3xl">
+            <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.05] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl">
+              {t("bannerTitle")}
+            </h1>
+            <p className="mt-4 max-w-[60ch] text-sm leading-6 text-muted-foreground sm:text-base">
+              {t("bannerSubtitle1")} {t("bannerSubtitle2")}
+            </p>
+          </div>
+          <p className="max-w-[70ch] border-l-2 border-foreground pl-3 text-xs leading-5 text-muted-foreground">
             {t("bannerMuted")}
-          </TypographyMuted>
-        </div>
-        {mounted && (
-          <Image
-            src={matchingBannerSvg}
-            alt="matching"
-            height={250}
-            width={350}
-            className="h-auto max-w-[340px] shrink-0"
-            priority
-          />
-        )}
-      </div>
-
-      {/* Tablet Banner Section 651px–1050px */}
-      <div className="hidden tablet-xl:flex tablet-md:!hidden w-full items-center justify-between gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5 overflow-hidden">
-        <div className="flex-1 min-w-0 flex flex-col gap-2">
-          <TypographyH3 className="!leading-snug">
-            {t("bannerTitle")}
-          </TypographyH3>
-          <TypographyMuted className="!leading-snug">
-            {t("bannerSubtitle1")}
-          </TypographyMuted>
-          <TypographyMuted className="!leading-snug">
-            {t("bannerSubtitle2")}
-          </TypographyMuted>
-        </div>
-        {mounted && (
-          <Image
-            src={matchingBannerSvg}
-            alt="matching"
-            width={160}
-            height={160}
-            className="shrink-0 h-auto object-contain"
-            priority
-          />
-        )}
-      </div>
-
-      {/* Mobile Banner Section ≤650px */}
-      <div className="hidden tablet-md:flex w-full items-center gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-3 overflow-hidden">
-        <div className="flex-1 min-w-0 flex flex-col gap-1">
-          <h2 className="font-bold text-sm leading-snug text-foreground">
-            {t("bannerTitle")}
-          </h2>
-          <p className="text-xs text-muted-foreground leading-snug line-clamp-2">
-            {t("bannerSubtitle1")}
           </p>
         </div>
-        {mounted && (
-          <Image
-            src={matchingBannerSvg}
-            alt="matching"
-            width={88}
-            height={88}
-            className="flex-shrink-0 object-contain"
-            priority
-          />
-        )}
-      </div>
 
-      {/* Match Count Header Section */}
-      {(() => {
-        const count = isEmployee
-          ? (getCurrentEmpStore.currentEmployeeMatching?.length ?? 0)
-          : (getCurrentCmpStore.currentCompanyMatching?.length ?? 0);
-        if (count === 0) return null;
-        return (
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold tabular-nums">
-              <CountUp to={count} duration={900} />
+        <div className="feed-hero-visual">
+          <div aria-hidden className="feed-hero-visual-grid" />
+          <div className="feed-hero-network-chip">
+            <span className="feed-hero-network-icon" aria-hidden>
+              <Handshake />
             </span>
-            <span className="text-sm text-muted-foreground font-medium">
-              {t("matchesCount", { count })}
-            </span>
+            <span>{t("matchNetwork")}</span>
+            <span aria-hidden className="feed-hero-network-status" />
           </div>
-        );
-      })()}
+          <div aria-hidden className="feed-hero-art-stage">
+            <span className="feed-hero-node feed-hero-node-one" />
+            <span className="feed-hero-node feed-hero-node-two" />
+            <span className="feed-hero-node feed-hero-node-three" />
+            <div className="feed-hero-art-frame">
+              <div className="feed-hero-art-grid" />
+              <div className="feed-hero-art-glow" />
+              <Image
+                src={matchingBannerSvg}
+                alt=""
+                height={260}
+                width={360}
+                className="feed-hero-artwork"
+                priority
+              />
+              <span className="feed-hero-corner feed-hero-corner-nw" />
+              <span className="feed-hero-corner feed-hero-corner-ne" />
+              <span className="feed-hero-corner feed-hero-corner-sw" />
+              <span className="feed-hero-corner feed-hero-corner-se" />
+            </div>
+          </div>
+          <div aria-hidden className="feed-hero-signal-bars">
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+        </div>
+      </section>
 
-      {/* Matching Card List Section */}
-      <div className="w-full flex flex-col items-start gap-3 stagger-list">
+      {/* Matches Section */}
+      <section className="flex w-full flex-col gap-5">
+        <div className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+              01
+            </span>
+            <div>
+              <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">
+                {t("yourMatches")}
+              </h2>
+              <p className="mt-1 text-xs font-medium text-muted-foreground">
+                <span className="tabular-nums">
+                  <CountUp to={matchCount} duration={900} />
+                </span>{" "}
+                {t("connections")}
+              </p>
+            </div>
+          </div>
+          <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
+            {isEmployee ? (
+              <Building2 className="size-4" />
+            ) : (
+              <Users className="size-4" />
+            )}
+          </div>
+        </div>
+
+        {/* Matching Card List Section */}
+        <div className="flex w-full flex-col items-start gap-3 stagger-list">
         {getCurrentEmpStore.currentEmployeeMatching &&
         getCurrentEmpStore.currentEmployeeMatching.length > 0 ? (
           getCurrentEmpStore.currentEmployeeMatching.map((cmp) => (
@@ -389,26 +420,17 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
           ))
         ) : (
           /* Empty Matching List Section */
-          <div className="w-full flex flex-col items-center justify-center gap-4 my-16">
-            <Image
-              src={emptySvg}
-              alt="empty"
-              height={200}
-              width={200}
-              className="animate-float"
-            />
-            <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-              {t("emptyList")}
-            </TypographyP>
-            <Link
-              href="/feed"
-              className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2 text-xs font-semibold text-background shadow-sm transition-all hover:opacity-85 active:scale-95"
-            >
-              {t("goToFeed")}
-            </Link>
-          </div>
+          <PageState
+            variant="empty"
+            title={t("emptyList")}
+            image={emptySvg}
+            compact
+            className="my-6 sm:my-8"
+            action={{ label: t("goToFeed"), href: "/feed" }}
+          />
         )}
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

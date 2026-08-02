@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +25,7 @@ import { useLocale, useTranslations } from "next-intl";
 import MissingCard from "./missing-card";
 import { IAiSkillGapModalProps } from "./props";
 
-/* ---------------------------------- Helper ----------------------------------- */
+/* ---------------------------------- Helpers ----------------------------------- */
 const GAP_COLOR: Record<string, string> = {
   none: "border-green-500/30 bg-green-50 dark:bg-green-900/10 text-green-800 dark:text-green-300",
   small:
@@ -36,9 +36,35 @@ const GAP_COLOR: Record<string, string> = {
     "border-red-500/30 bg-red-50 dark:bg-red-900/10 text-red-800 dark:text-red-300",
 };
 
+function isMissingSkill(
+  value: Record<string, unknown>,
+): value is Record<string, unknown> & ISkillGapMissing {
+  return (
+    value.t === "missing" &&
+    typeof value.skill === "string" &&
+    ["high", "medium", "low"].includes(String(value.criticality)) &&
+    Array.isArray(value.positions) &&
+    value.positions.every((position) => typeof position === "string") &&
+    typeof value.tip === "string"
+  );
+}
+
+function isSkillGapSummary(
+  value: Record<string, unknown>,
+): value is Record<string, unknown> & ISkillGapSummary {
+  return (
+    value.t === "summary" &&
+    ["none", "small", "moderate", "large"].includes(String(value.overallGap)) &&
+    typeof value.estimatedWeeks === "number" &&
+    Number.isFinite(value.estimatedWeeks) &&
+    value.estimatedWeeks >= 0 &&
+    typeof value.topPriority === "string"
+  );
+}
+
 export function AiSkillGapModal(props: IAiSkillGapModalProps) {
   /* ---------------------------------- Props ---------------------------------- */
-  const { eid, cid, companyName, compact } = props;
+  const { eid, cid, companyName, compact, autoOpen } = props;
 
   /* ---------------------------------- Utils ---------------------------------- */
   const t = useTranslations("matching");
@@ -51,8 +77,17 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
   const [summary, setSummary] = useState<ISkillGapSummary | null>(null);
   const [generating, setGenerating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const autoOpenRef = useRef<boolean>(autoOpen ?? false);
 
   const hasData = matched.length > 0 || missing.length > 0 || summary !== null;
+
+    /* --------------------------------- Effects -------------------------------- */
+  useEffect(() => {
+    if (!autoOpenRef.current) return;
+    autoOpenRef.current = false;
+    triggerRef.current?.click();
+  }, []);
 
   /* ---------------------------------- Methods --------------------------------- */
   // ── Handle Stream Analysis ──────────────────────
@@ -76,11 +111,11 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
         if (obj.t === "matched" && typeof obj.skill === "string") {
           receivedMatched.push(obj.skill);
           flushSync(() => setMatched([...receivedMatched]));
-        } else if (obj.t === "missing" && typeof obj.skill === "string") {
-          receivedMissing.push(obj as unknown as ISkillGapMissing);
+        } else if (isMissingSkill(obj)) {
+          receivedMissing.push(obj);
           flushSync(() => setMissing([...receivedMissing]));
-        } else if (obj.t === "summary") {
-          flushSync(() => setSummary(obj as unknown as ISkillGapSummary));
+        } else if (isSkillGapSummary(obj)) {
+          flushSync(() => setSummary(obj));
         }
       } catch {
         // Incomplete JSON fragment — wait for more chunks
@@ -147,9 +182,11 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
     <>
       {/* Trigger Button Section */}
       <Button
+        ref={triggerRef}
         size="sm"
         variant="outline"
-        className="h-8 text-xs gap-1.5 px-2.5 sm:px-3"
+        className="h-8 gap-1.5 rounded-none px-2.5 text-xs sm:px-3"
+        aria-label={t("skillGap")}
         onClick={handleOpen}
       >
         <LucideTarget className="size-3.5 text-primary shrink-0" />
@@ -160,12 +197,18 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
 
       {/* Dialog Section */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-2xl flex flex-col p-0 gap-0">
+        <DialogContent
+          className="sm:max-w-2xl flex flex-col p-0 gap-0 rounded-none border-t-[5px] border-t-foreground shadow-[6px_6px_0_hsl(var(--foreground)/0.1)]"
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            triggerRef.current?.focus();
+          }}
+        >
           {/* Header Section */}
           <DialogHeader className="shrink-0 px-5 pt-5 pb-4 border-b border-border/60">
             <div className="flex items-center gap-3 pr-8">
-              <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                <LucideTarget className="size-5 text-primary" />
+              <div className="size-9 rounded-none bg-foreground flex items-center justify-center shrink-0">
+                <LucideTarget className="size-5 text-background" />
               </div>
               <div className="min-w-0 flex-1">
                 <DialogTitle className="text-base font-semibold leading-tight text-left truncate">
@@ -173,7 +216,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
                 </DialogTitle>
               </div>
               {missing.length > 0 && (
-                <span className="shrink-0 text-xs font-medium bg-muted text-muted-foreground px-2.5 py-1 rounded-full">
+                <span className="shrink-0 text-xs font-medium bg-muted text-muted-foreground px-2.5 py-1 rounded-none border border-border">
                   {generating
                     ? t("skillGapBadge", { count: missing.length }) + "…"
                     : t("skillGapBadge", { count: missing.length })}
@@ -194,17 +237,17 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
                 {[...Array(3)].map((_, i) => (
                   <div
                     key={i}
-                    className="rounded-2xl border border-border/60 bg-card px-4 py-4 space-y-2.5"
+                    className="rounded-none border border-border border-l-[5px] border-l-foreground bg-card px-4 py-4 space-y-2.5"
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <Skeleton className="h-4 w-32 rounded" />
-                      <Skeleton className="h-5 w-20 rounded-full" />
+                      <Skeleton className="h-4 w-32 rounded-none" />
+                      <Skeleton className="h-5 w-20 rounded-none" />
                     </div>
-                    <Skeleton className="h-3 w-48 rounded" />
-                    <div className="rounded-xl bg-primary/5 border border-primary/10 px-3 py-2.5 space-y-1.5">
-                      <Skeleton className="h-2.5 w-16 rounded" />
+                    <Skeleton className="h-3 w-48 rounded-none" />
+                    <div className="rounded-none bg-primary/5 border border-primary/10 border-l-[4px] border-l-primary px-3 py-2.5 space-y-1.5">
+                      <Skeleton className="h-2.5 w-16 rounded-none" />
                       <Skeleton
-                        className={`h-3 rounded ${i % 2 === 0 ? "w-full" : "w-4/5"}`}
+                        className={`h-3 rounded-none ${i % 2 === 0 ? "w-full" : "w-4/5"}`}
                       />
                     </div>
                   </div>
@@ -215,7 +258,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
             {/* Error State Section (No Data and Not Generating) */}
             {error && !generating && !hasData && (
               <div className="flex flex-col items-center gap-4 py-16 text-center">
-                <div className="size-14 rounded-2xl bg-destructive/10 flex items-center justify-center">
+                <div className="size-14 rounded-none border border-destructive/20 bg-destructive/10 flex items-center justify-center">
                   <LucideAlertCircle className="size-7 text-destructive/70" />
                 </div>
                 <div>
@@ -229,7 +272,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="gap-1.5"
+                  className="gap-1.5 rounded-none"
                   onClick={handleRegenerate}
                 >
                   <LucideRotateCcw className="size-3.5" />
@@ -248,7 +291,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
                   {matched.map((skill) => (
                     <span
                       key={skill}
-                      className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 animate-in fade-in-0 duration-200"
+                      className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-none border border-green-200 bg-green-100 text-green-700 dark:border-green-800 dark:bg-green-900/40 dark:text-green-300 animate-in fade-in-0 duration-200"
                     >
                       <LucideCheckCircle2 className="size-3 shrink-0" />
                       {skill}
@@ -281,7 +324,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
             {/* Summary Box Section */}
             {summary && (
               <div
-                className={`rounded-2xl border px-4 py-4 ${gapStyle} animate-in fade-in-0 slide-in-from-bottom-2 duration-300`}
+                className={`rounded-none border border-l-[5px] px-4 py-4 ${gapStyle} animate-in fade-in-0 slide-in-from-bottom-2 duration-300`}
               >
                 <p className="text-[11px] font-bold uppercase tracking-wider mb-1.5 opacity-70">
                   {t("skillGapSummary")}
@@ -305,12 +348,12 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
           {!error && (
             <div className="shrink-0 px-5 py-4 border-t border-border/60 bg-muted/20 flex items-center justify-end gap-3">
               {generating && !hasData ? (
-                <Skeleton className="h-9 w-36 rounded-lg" />
+                <Skeleton className="h-9 w-36 rounded-none" />
               ) : (
                 <Button
                   size="sm"
                   variant="outline"
-                  className="gap-1.5"
+                  className="gap-1.5 rounded-none"
                   onClick={handleRegenerate}
                   disabled={generating}
                 >
@@ -325,5 +368,3 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
     </>
   );
 }
-
-export default AiSkillGapModal;

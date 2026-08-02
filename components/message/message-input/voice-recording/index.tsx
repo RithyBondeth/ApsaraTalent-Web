@@ -24,7 +24,7 @@ export function VoiceRecordingUI(props: IVoiceRecordingUIProps) {
         type="button"
         onClick={handleCancelRecording}
         disabled={isUploading}
-        className="shrink-0 h-8 w-8 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+        className="shrink-0 h-8 w-8 flex items-center justify-center rounded-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
         aria-label="Cancel recording"
       >
         <X className="h-4 w-4" />
@@ -47,7 +47,7 @@ export function VoiceRecordingUI(props: IVoiceRecordingUIProps) {
         type="button"
         onClick={handleStopRecording}
         disabled={isUploading}
-        className="shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-60 disabled:pointer-events-none"
+        className="shrink-0 h-8 w-8 flex items-center justify-center rounded-none bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-60 disabled:pointer-events-none"
         aria-label={isUploading ? "Uploading…" : "Stop and send voice message"}
       >
         {isUploading ? (

@@ -132,7 +132,7 @@ export default function EducationStepForm({
       {/* Education Form Section */}
       {fields.map((field, index) => (
         <div
-          className="relative flex flex-col items-start gap-3 w-full border border-muted-foreground/10 rounded-xl bg-muted p-5"
+          className="relative flex flex-col items-start gap-3 w-full border border-border border-l-[5px] border-l-foreground rounded-none bg-muted p-5"
           key={field.id}
         >
           {/* Header Without Remove Button Section */}

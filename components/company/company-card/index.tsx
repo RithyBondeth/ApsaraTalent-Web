@@ -65,9 +65,9 @@ export default function CompanyCard(props: ICompanyCardProps) {
   if (isGrid) {
     return (
       <>
-        <div className="group relative h-full w-full flex flex-col rounded-2xl border border-border/70 bg-card overflow-hidden cursor-pointer shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] hover:border-primary/25 active:scale-[0.98] active:shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] active:translate-y-0">
+        <div className="group relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-none border border-border/70 bg-card shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1.5 hover:border-primary/25 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] active:translate-y-0 active:scale-[0.98] active:shadow-[0_2px_8px_hsl(var(--foreground)/0.05)]">
           {/* Cover Banner Section */}
-          <div className="relative h-28 tablet-md:h-12 w-full shrink-0 bg-gradient-to-br from-primary/20 via-primary/10 to-muted/40 overflow-hidden">
+          <div className="relative h-32 w-full shrink-0 overflow-hidden bg-gradient-to-br from-muted via-background to-muted/40 tablet-md:h-24">
             {props.cover && (
               <Image
                 src={props.cover}
@@ -83,7 +83,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 size="icon"
                 variant="ghost"
                 aria-label="Like"
-                className="size-8 rounded-full bg-background/70 backdrop-blur-sm text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all duration-200"
+                className="size-8 rounded-none border border-border/70 bg-background/90 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-foreground hover:text-background"
                 onClick={props.onLikeClick}
                 disabled={props.onLikeClickDisable}
               >
@@ -97,7 +97,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 size="icon"
                 variant="ghost"
                 aria-label="Quick view"
-                className="size-8 rounded-full bg-background/70 backdrop-blur-sm text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+                className="size-8 rounded-none border border-border/70 bg-background/90 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-foreground hover:text-background"
                 onClick={handleClickDialog}
               >
                 <LucideEye className="!size-4" />
@@ -106,12 +106,12 @@ export default function CompanyCard(props: ICompanyCardProps) {
           </div>
 
           {/* Avatar and Identity Section */}
-          <div className="flex items-end justify-between gap-3 px-4 -mt-6 tablet-md:-mt-4 z-10">
+          <div className="z-10 -mt-7 flex items-end justify-between gap-3 px-4 tablet-md:-mt-6">
             <CachedAvatar
               src={props.avatar}
               alt={props.name}
-              className="size-14 tablet-md:size-10 shrink-0 ring-2 ring-card shadow-md"
-              rounded="md"
+              className="size-16 shrink-0 border-4 border-card shadow-none tablet-md:size-14"
+              rounded="none"
               onClick={props.onProfileImageClick}
               preload={true}
               showLoadingState={true}
@@ -121,10 +121,10 @@ export default function CompanyCard(props: ICompanyCardProps) {
           </div>
 
           {/* Main Content Section */}
-          <div className="flex flex-1 flex-col gap-2 tablet-md:gap-1.5 px-4 pt-2 pb-3">
+          <div className="flex flex-1 flex-col gap-3 px-4 pb-4 pt-3 tablet-md:gap-2.5">
             {/* Name and Meta Section */}
             <div className="flex flex-col gap-1">
-              <TypographyP className="!m-0 font-semibold text-sm leading-tight">
+              <TypographyP className="!m-0 text-base font-black leading-tight tracking-[-0.02em]">
                 {props.name}
               </TypographyP>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
@@ -171,7 +171,12 @@ export default function CompanyCard(props: ICompanyCardProps) {
                   {props.openPositions
                     .slice(0, 3)
                     .map((item: IJobPosition, index) => (
-                      <Tag key={index} label={item.title} />
+                      <Tag
+                        key={index}
+                        label={item.title}
+                        neutral
+                        className="!rounded-none border border-border hover:shadow-none"
+                      />
                     ))}
                   {props.openPositions.length > 3 && (
                     <span className="text-[11px] text-muted-foreground self-center font-medium">
@@ -188,7 +193,12 @@ export default function CompanyCard(props: ICompanyCardProps) {
             {props.benefits && props.benefits.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {props.benefits.slice(0, 3).map((b, i) => (
-                  <Tag key={i} label={b.label} />
+                  <Tag
+                    key={i}
+                    label={b.label}
+                    neutral
+                    className="!rounded-none border border-border hover:shadow-none"
+                  />
                 ))}
                 {props.benefits.length > 3 && (
                   <span className="text-[11px] text-muted-foreground self-center font-medium">
@@ -200,10 +210,10 @@ export default function CompanyCard(props: ICompanyCardProps) {
           </div>
 
           {/* Footer Section */}
-          <div className=" flex items-center justify-end gap-2 px-4 pb-3 pt-3 border-t border-border/50">
+          <div className="flex items-center justify-end gap-2 border-t border-border px-4 py-3">
             {!props.hideSaveButton && (
               <Button
-                className="text-xs h-7 px-3 rounded-full"
+                className="h-8 rounded-none px-3 text-xs"
                 variant="outline"
                 size="sm"
                 onClick={props.onSaveClick}
@@ -219,7 +229,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             )}
             {props.viewHref ? (
               <Button
-                className="text-xs h-7 px-3 rounded-full"
+                className="h-8 rounded-none px-3 text-xs"
                 size="sm"
                 asChild
               >
@@ -230,7 +240,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
               </Button>
             ) : (
               <Button
-                className="text-xs h-7 px-3 rounded-full"
+                className="h-8 rounded-none px-3 text-xs"
                 size="sm"
                 onClick={props.onViewClick}
               >
@@ -241,6 +251,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
           </div>
         </div>
 
+        {/* Company Dialog Section */}
         <CompanyDialog
           open={openCompanyDialog}
           setOpen={setOpenCompanyDialog}
@@ -252,7 +263,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
 
   // ── Default Variant Section ───────────────────────────────────────────────
   return (
-    <div className="h-fit w-full flex flex-col items-start gap-4 rounded-2xl border border-border/70 bg-card p-4 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_12px_36px_hsl(var(--foreground)/0.11)] hover:border-primary/25">
+    <div className="h-fit w-full flex flex-col items-start gap-4 rounded-none border border-border border-t-[5px] border-t-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] hover:border-foreground/40">
       {/* Main Content Section */}
       <div className="w-full flex flex-wrap items-start justify-between gap-3">
         {/* Header Section: Avatar + Info + Actions */}
@@ -261,7 +272,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             src={props.avatar}
             alt={props.name}
             className="size-20 laptop-sm:size-16"
-            rounded="md"
+            rounded="none"
             onClick={props.onProfileImageClick}
             preload={true}
             showLoadingState={true}
@@ -287,14 +298,14 @@ export default function CompanyCard(props: ICompanyCardProps) {
         <div className="flex items-center gap-1 shrink-0">
           <Button
             aria-label="Quick view"
-            className="size-10 sm:size-12 rounded-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95"
+            className="size-10 sm:size-12 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95"
             onClick={handleClickDialog}
           >
             <LucideEye className="!size-5 sm:!size-6 transition-all duration-300 ease-in-out" />
           </Button>
           <Button
             aria-label="Like"
-            className="size-10 sm:size-12 rounded-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95"
+            className="size-10 sm:size-12 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
           >
@@ -351,7 +362,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
       <div className="w-full flex items-center justify-end gap-2 sm:gap-3 tablet-lg:justify-stretch tablet-lg:[&>button]:flex-1 phone-xl:justify-stretch phone-xl:[&>button]:flex-1">
         {!props.hideSaveButton && (
           <Button
-            className="text-xs"
+            className="text-xs rounded-none"
             variant="outline"
             onClick={props.onSaveClick}
           >
@@ -359,7 +370,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             <LucideBookmark />
           </Button>
         )}
-        <Button className="text-xs" onClick={props.onViewClick}>
+        <Button className="text-xs rounded-none" onClick={props.onViewClick}>
           {t("view")}
           <LucideCircleArrowRight />
         </Button>

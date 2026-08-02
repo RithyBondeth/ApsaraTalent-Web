@@ -11,6 +11,7 @@ import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { SettingWrapper } from "../setting-wrapper";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 export function BlockedUsersSection() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -23,6 +24,7 @@ export function BlockedUsersSection() {
     loadingBlocked,
     blockedLoaded,
     blocking,
+    error,
     getBlockedUsers,
     unblockUser,
   } = useModerationStore();
@@ -53,27 +55,40 @@ export function BlockedUsersSection() {
     >
       <div className="flex flex-col">
         {/* Loading Section */}
-        {!blockedLoaded && loadingBlocked ? (
-          <div className="px-4 py-6">
+        {loadingBlocked ? (
+          <div className="border-l-[4px] border-l-muted-foreground/25 px-5 py-7">
             <TypographyMuted className="text-xs">
               {tS("loading")}
             </TypographyMuted>
           </div>
+        ) : error ? (
+          <PageState
+            variant="error"
+            title={error}
+            description={tS("blockedUsersLoadErrorDescription")}
+            compact
+            className="min-h-0 border-x-0 border-b-0 py-7 shadow-none"
+            action={{
+              label: tS("retry"),
+              onClick: () => void getBlockedUsers(),
+            }}
+          />
         ) : blockedUsers.length === 0 ? (
-          <div className="px-4 py-6">
-            <TypographyMuted className="text-xs">
-              {tS("noBlockedUsers")}
-            </TypographyMuted>
-          </div>
+          <PageState
+            variant="empty"
+            title={tS("noBlockedUsers")}
+            compact
+            className="min-h-0 border-x-0 border-b-0 py-7 shadow-none"
+          />
         ) : (
           /* ── Blocked Users List Section ────────────────────── */
           blockedUsers.map((u, index) => (
             <div key={u.id}>
-              <div className="flex items-center justify-between gap-3 px-4 py-3">
+              <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-5">
                 <div className="flex items-center gap-3 min-w-0">
-                  <Avatar className="h-9 w-9 shrink-0">
+                  <Avatar className="h-9 w-9 shrink-0 rounded-none border border-border">
                     <AvatarImage src={u.avatar ?? ""} alt={u.name} />
-                    <AvatarFallback className="text-xs font-medium">
+                    <AvatarFallback className="rounded-none text-xs font-bold">
                       {getNameInitials(u.name)}
                     </AvatarFallback>
                   </Avatar>
@@ -86,7 +101,7 @@ export function BlockedUsersSection() {
                   size="sm"
                   disabled={blocking}
                   onClick={() => handleUnblock(u.id, u.name)}
-                  className="shrink-0 text-xs h-8"
+                  className="h-8 shrink-0 rounded-none text-xs"
                 >
                   {tM("unblock")}
                 </Button>

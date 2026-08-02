@@ -50,21 +50,24 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
         const requestBody: Record<string, unknown> = {};
 
         // Basic fields
-        if (body.email) requestBody.email = body.email;
-        if (body.firstname) requestBody.firstname = body.firstname;
-        if (body.lastname) requestBody.lastname = body.lastname;
+        if (body.email !== undefined) requestBody.email = body.email;
+        if (body.firstname !== undefined)
+          requestBody.firstname = body.firstname;
+        if (body.lastname !== undefined) requestBody.lastname = body.lastname;
         if (body.dob !== undefined) requestBody.dob = body.dob;
-        if (body.username) requestBody.username = body.username;
-        if (body.gender) requestBody.gender = body.gender;
+        if (body.username !== undefined) requestBody.username = body.username;
+        if (body.gender !== undefined) requestBody.gender = body.gender;
 
-        if (body.job) requestBody.job = body.job;
+        if (body.job !== undefined) requestBody.job = body.job;
         if (body.yearsOfExperience !== undefined)
           requestBody.yearsOfExperience = body.yearsOfExperience;
 
-        if (body.availability) requestBody.availability = body.availability;
-        if (body.description) requestBody.description = body.description;
-        if (body.location) requestBody.location = body.location;
-        if (body.phone) requestBody.phone = body.phone;
+        if (body.availability !== undefined)
+          requestBody.availability = body.availability;
+        if (body.description !== undefined)
+          requestBody.description = body.description;
+        if (body.location !== undefined) requestBody.location = body.location;
+        if (body.phone !== undefined) requestBody.phone = body.phone;
 
         if (body.workMode !== undefined) requestBody.workMode = body.workMode;
         if (body.noticePeriod !== undefined)
@@ -79,6 +82,7 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
           requestBody.expectedSalaryMin = body.expectedSalaryMin;
         if (body.expectedSalaryMax !== undefined)
           requestBody.expectedSalaryMax = body.expectedSalaryMax;
+        if (body.isHide !== undefined) requestBody.isHide = body.isHide;
 
         // If you store these in IEmployee
         if (body.avatar) requestBody.avatar = body.avatar;
@@ -128,7 +132,7 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
             company: exp.company,
             description: exp.description,
             startDate: exp.startDate, // should be ISO string or Date -> axios will serialize
-            endDate: exp.endDate ?? null,
+            ...(exp.endDate ? { endDate: exp.endDate } : {}),
           }));
         }
 

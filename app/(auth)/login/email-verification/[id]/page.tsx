@@ -1,13 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import AuthShell from "@/components/auth/auth-shell";
+import { AuthBackButton } from "@/components/auth/auth-back-button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useVerifyEmailStore } from "@/stores/apis/auth/verify-email.store";
-import { LucideMail } from "lucide-react";
+import { LucideMailCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { emailVerificationSvg } from "@/utils/constants/asset.constant";
@@ -59,55 +60,45 @@ export default function EmailVerificationPage() {
 
   /* ------------------------------ Render UI ------------------------------ */
   return (
-    <div className="min-h-screen w-full flex tablet-md:flex-col">
-      {/* Left Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-16">
-        <div className="w-full max-w-[440px] flex flex-col items-start gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
-          {/* Icon Badge Section */}
-          <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <LucideMail className="size-7 text-primary" />
+    <AuthShell
+      image={emailVerificationSvg}
+      imageAlt={t("emailVerificationTitle")}
+      eyebrowKey="verifyPanelEyebrow"
+      titleKey="verifyPanelTitle"
+      subtitleKey="verifyPanelSubtitle"
+    >
+      <div className="auth-stagger flex w-full flex-col gap-7">
+        {/* Icon Badge and Title Section */}
+        <div style={{ "--d": "0ms" } as React.CSSProperties}>
+          <div className="mb-5 grid size-12 place-items-center rounded-none bg-foreground text-background shadow-[3px_3px_0_hsl(var(--foreground)/0.12)]">
+            <LucideMailCheck className="size-5" strokeWidth={1.6} />
           </div>
+          <TypographyH2 className="tablet-sm:text-2xl">
+            {t("emailVerificationTitle")}
+          </TypographyH2>
+          <TypographyMuted className="text-md tablet-sm:text-sm">
+            {t("emailVerificationSubtitle")}
+          </TypographyMuted>
+        </div>
 
-          {/* Title Section */}
-          <div className="flex flex-col items-start">
-            <TypographyH2 className="tablet-sm:text-2xl">
-              {t("emailVerificationTitle")}
-            </TypographyH2>
-            <TypographyMuted className="text-md tablet-sm:text-sm">
-              {t("emailVerificationSubtitle")}
-            </TypographyMuted>
-          </div>
-
-          {/* Button Section */}
-          <Button className="w-full" onClick={() => handleVerifyEmail()}>
-            <LucideMail />
-            {t("verify")}
-          </Button>
-
-          {/* Back to Login Link */}
+        {/* Actions Section */}
+        <div
+          className="auth-action-row"
+          style={{ "--d": "90ms" } as React.CSSProperties}
+        >
+          <AuthBackButton onClick={() => router.replace("/login")}>
+            {t("back")}
+          </AuthBackButton>
           <Button
-            variant="link"
-            className="w-fit mx-auto"
-            onClick={() => router.replace("/login")}
+            className="auth-submit h-11 w-full"
+            onClick={() => handleVerifyEmail()}
+            disabled={loading}
           >
-            {t("backToLogin")}
+            <LucideMailCheck />
+            {t("verify")}
           </Button>
         </div>
       </div>
-
-      {/* Right Section: Image Poster Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
-        {/* Decorative Circles Section */}
-        <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
-        <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
-
-        <Image
-          src={emailVerificationSvg}
-          alt="email-verification"
-          height={undefined}
-          width={600}
-        />
-      </div>
-    </div>
+    </AuthShell>
   );
 }

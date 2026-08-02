@@ -18,7 +18,6 @@ export const setPendingOffer = (offer: RTCSessionDescriptionInit | null) => {
   _pendingOffer = offer;
 };
 
-export const getPendingIceCandidates = () => _pendingRemoteIceCandidates;
 export const clearPendingIceCandidates = () => {
   _pendingRemoteIceCandidates = [];
 };

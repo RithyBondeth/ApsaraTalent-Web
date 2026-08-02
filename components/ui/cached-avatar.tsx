@@ -2,12 +2,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import React from "react";
 
-export interface CachedAvatarProps {
+interface CachedAvatarProps {
   src?: string | null;
   alt?: string;
   fallback?: string;
   className?: string;
-  rounded?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "full";
+  rounded?: "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "full";
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
   onClick?: (e: React.MouseEvent) => void;
   children?: React.ReactNode;
@@ -25,6 +25,7 @@ const sizeClasses = {
 };
 
 const roundedClasses = {
+  none: "rounded-none",
   sm: "rounded-sm",
   md: "rounded-md",
   lg: "rounded-lg",
@@ -37,7 +38,7 @@ const roundedClasses = {
 /**
  * Optimized Avatar component with image caching
  */
-export function CachedAvatar({
+function CachedAvatar({
   src,
   alt = "Avatar",
   className,

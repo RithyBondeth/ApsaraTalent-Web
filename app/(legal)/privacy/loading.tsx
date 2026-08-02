@@ -1,5 +1,5 @@
 import StaticContentLoadingSkeleton from "@/components/static-content/skeleton";
 
 export default function PrivacyLoading() {
-  return <StaticContentLoadingSkeleton />;
+  return <StaticContentLoadingSkeleton sectionCount={11} hasMeta />;
 }

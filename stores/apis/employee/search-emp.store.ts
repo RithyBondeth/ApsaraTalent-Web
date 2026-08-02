@@ -50,6 +50,38 @@ let searchEmpAbortController: AbortController | null = null;
 
 const PAGE_SIZE = 20;
 
+function parseSearchEmployeeResponse(
+  value: unknown,
+): TSearchEmployeePagedResponse {
+  if (
+    !value ||
+    typeof value !== "object" ||
+    !Array.isArray((value as Partial<TSearchEmployeePagedResponse>).data)
+  ) {
+    throw new Error("Invalid employee search response");
+  }
+
+  const response = value as Partial<TSearchEmployeePagedResponse>;
+  const data = response.data as IEmployee[];
+
+  return {
+    data,
+    total:
+      typeof response.total === "number" && Number.isFinite(response.total)
+        ? Math.max(0, response.total)
+        : data.length,
+    page:
+      typeof response.page === "number" && response.page > 0
+        ? response.page
+        : 1,
+    pageSize:
+      typeof response.pageSize === "number" && response.pageSize > 0
+        ? response.pageSize
+        : PAGE_SIZE,
+    isUsingFallback: response.isUsingFallback === true,
+  };
+}
+
 // ── Build Query String ──────────────────────────────────────────────
 function buildQueryString(
   query: TSearchEmpQueryParams & { page?: number; pageSize?: number },
@@ -118,7 +150,8 @@ export const useSearchEmployeeStore = create<TSearchEmployeeState>(
             signal: controller.signal,
           },
         );
-        const { data, total, isUsingFallback } = response.data;
+        const { data, total, isUsingFallback } =
+          parseSearchEmployeeResponse(response.data);
         set({
           employees: data,
           total,
@@ -173,7 +206,7 @@ export const useSearchEmployeeStore = create<TSearchEmployeeState>(
             signal: controller.signal,
           },
         );
-        const { data } = response.data;
+        const { data } = parseSearchEmployeeResponse(response.data);
         set((s) => ({
           employees: [...(s.employees ?? []), ...data],
           page: nextPage,

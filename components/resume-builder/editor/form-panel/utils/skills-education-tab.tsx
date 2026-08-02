@@ -128,7 +128,7 @@ export function SkillsEducationTab({
           {skills.map((skill, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1 bg-primary/10 text-primary text-[11px] px-2 py-0.5 rounded-full border border-primary/20"
+              className="inline-flex items-center gap-1 bg-primary/10 text-primary text-[11px] px-2 py-0.5 rounded-none border border-primary/20"
             >
               {skill}
               <button
@@ -219,7 +219,7 @@ export function SkillsEducationTab({
           {careerScopes.map((scope, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 text-[11px] px-2 py-0.5 rounded-full border border-emerald-200/50 dark:border-emerald-800/50"
+              className="inline-flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 text-[11px] px-2 py-0.5 rounded-none border border-emerald-200/50 dark:border-emerald-800/50"
             >
               {scope}
               <button

@@ -62,14 +62,17 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
         const requestBody: Record<string, unknown> = {};
 
         // Basic fields
-        if (body.email) requestBody.email = body.email;
-        if (body.name) requestBody.name = body.name;
-        if (body.description) requestBody.description = body.description;
-        if (body.phone) requestBody.phone = body.phone;
-        if (body.industry) requestBody.industry = body.industry;
-        if (body.location) requestBody.location = body.location;
-        if (body.companySize) requestBody.companySize = body.companySize;
-        if (body.foundedYear) requestBody.foundedYear = body.foundedYear;
+        if (body.email !== undefined) requestBody.email = body.email;
+        if (body.name !== undefined) requestBody.name = body.name;
+        if (body.description !== undefined)
+          requestBody.description = body.description;
+        if (body.phone !== undefined) requestBody.phone = body.phone;
+        if (body.industry !== undefined) requestBody.industry = body.industry;
+        if (body.location !== undefined) requestBody.location = body.location;
+        if (body.companySize !== undefined)
+          requestBody.companySize = body.companySize;
+        if (body.foundedYear !== undefined)
+          requestBody.foundedYear = body.foundedYear;
         if (body.websiteUrl !== undefined)
           requestBody.websiteUrl = body.websiteUrl;
         if (body.companyType !== undefined)
@@ -97,7 +100,7 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
             workMode: job.workMode ?? null,
             location: job.location ?? null,
             openingsCount: job.openingsCount ?? null,
-            expireDate: job.deadlineDate,
+            expireDate: job.deadlineDate ?? null,
             skillsRequired: Array.isArray(job.skills)
               ? job.skills.join(", ")
               : job.skills || "",

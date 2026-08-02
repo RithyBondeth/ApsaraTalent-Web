@@ -28,15 +28,8 @@ import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { useTranslations } from "next-intl";
 
 /* ------------------------------------- Handle Lazy Load ------------------------------------- */
-// Lazy-load emoji-mart — ~90KB dataset + picker only needed when user opens the emoji popover
+// Lazy-load emoji picker code until the popover opens Section
 const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });
-// Lazy-load emoji data alongside the picker to avoid blocking initial bundle
-let emojiData: unknown = null;
-if (typeof window !== "undefined") {
-  import("@emoji-mart/data").then((mod) => {
-    emojiData = mod.default;
-  });
-}
 
 export default function ChatInput(props: IChatInputProps) {
   /* ----------------------------------------- Props ----------------------------------------- */
@@ -64,7 +57,9 @@ export default function ChatInput(props: IChatInputProps) {
     return t("messageLabel");
   };
 
-  const buildReplyTo = (target?: IMessage | null): IMessage["replyTo"] | null => {
+  const buildReplyTo = (
+    target?: IMessage | null,
+  ): IMessage["replyTo"] | null => {
     if (!target) return null;
     return {
       id: target.id,
@@ -89,6 +84,7 @@ export default function ChatInput(props: IChatInputProps) {
   const [isSending, setIsSending] = useState<boolean>(false);
   const [pendingFiles, setPendingFiles] = useState<IPendingFile[]>([]);
   const [isEmojiOpen, setEmojiOpen] = useState<boolean>(false);
+  const [emojiData, setEmojiData] = useState<unknown>(null);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -149,6 +145,20 @@ export default function ChatInput(props: IChatInputProps) {
   useEffect(() => {
     if (replyTarget) textareaRef.current?.focus();
   }, [replyTarget]);
+
+  // Load emoji data only when the picker is requested Section
+  useEffect(() => {
+    if (!isEmojiOpen || emojiData) return;
+
+    let active = true;
+    void import("@emoji-mart/data").then((module) => {
+      if (active) setEmojiData(module.default);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [emojiData, isEmojiOpen]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Text Input ─────────────────────────────────────────
@@ -250,9 +260,7 @@ export default function ChatInput(props: IChatInputProps) {
         } catch (err: unknown) {
           if (entry.preview) URL.revokeObjectURL(entry.preview);
           const message =
-            err instanceof Error
-              ? err.message
-              : t("uploadFailed");
+            err instanceof Error ? err.message : t("uploadFailed");
           setPendingFiles((prev) =>
             prev.map((f) =>
               f.id === entry.id
@@ -356,7 +364,7 @@ export default function ChatInput(props: IChatInputProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="px-2.5 py-2 md:px-4 md:py-3 bg-background border-t shrink-0 [padding-bottom:calc(env(safe-area-inset-bottom)+0.5rem)] md:[padding-bottom:0.75rem]">
+    <div className="px-2.5 py-2.5 md:px-5 md:py-3 bg-card border-t border-border shrink-0 [padding-bottom:calc(env(safe-area-inset-bottom)+0.5rem)] md:[padding-bottom:0.75rem]">
       {/* Reply Preview Bar Section */}
       {replyTarget && (
         <MessageReplyPreview
@@ -380,7 +388,7 @@ export default function ChatInput(props: IChatInputProps) {
         />
 
         {/* Input Pill Section */}
-        <div className="flex-1 rounded-2xl border border-border bg-muted/30 focus-within:border-primary/40 focus-within:bg-background transition-colors overflow-hidden">
+        <div className="flex-1 rounded-none border border-border border-l-[4px] border-l-foreground bg-muted/20 focus-within:border-primary focus-within:border-l-primary focus-within:bg-background transition-colors overflow-hidden shadow-[3px_3px_0_hsl(var(--foreground)/0.04)]">
           {/* Attachment Thumbnail Strip Section (inside the pill, above the textarea) */}
           {hasAnyFiles && (
             <MessageAttachmentStrip
@@ -429,7 +437,7 @@ export default function ChatInput(props: IChatInputProps) {
                   <button
                     type="button"
                     disabled={inputDisabled}
-                    className="shrink-0 h-8 w-8 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                    className="shrink-0 h-8 w-8 flex items-center justify-center rounded-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
                     aria-label="Emoji"
                   >
                     <SmilePlus className="h-4 w-4" />
@@ -441,19 +449,29 @@ export default function ChatInput(props: IChatInputProps) {
                   sideOffset={8}
                   className="w-[min(92vw,340px)] max-h-[55vh] overflow-hidden p-0"
                 >
-                  <Picker
-                    data={emojiData}
-                    theme={resolvedTheme === "dark" ? "dark" : "light"}
-                    set="native"
-                    dynamicWidth
-                    previewPosition="none"
-                    skinTonePosition="none"
-                    searchPosition="top"
-                    perLine={7}
-                    onEmojiSelect={(emoji: { native?: string }) =>
-                      insertEmoji(emoji?.native ?? "")
-                    }
-                  />
+                  {emojiData ? (
+                    <Picker
+                      data={emojiData}
+                      theme={resolvedTheme === "dark" ? "dark" : "light"}
+                      set="native"
+                      dynamicWidth
+                      previewPosition="none"
+                      skinTonePosition="none"
+                      searchPosition="top"
+                      perLine={7}
+                      onEmojiSelect={(emoji: { native?: string }) =>
+                        insertEmoji(emoji?.native ?? "")
+                      }
+                    />
+                  ) : (
+                    <div
+                      className="flex h-[360px] items-center justify-center bg-muted/30"
+                      role="status"
+                      aria-label={t("loadingChat")}
+                    >
+                      <span className="size-7 animate-pulse bg-muted-foreground/20" />
+                    </div>
+                  )}
                 </PopoverContent>
               </Popover>
 
@@ -462,7 +480,7 @@ export default function ChatInput(props: IChatInputProps) {
                 type="button"
                 disabled={inputDisabled || atFileLimit}
                 onClick={openFilePicker}
-                className="shrink-0 h-8 w-8 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                className="shrink-0 h-8 w-8 flex items-center justify-center rounded-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
                 aria-label={
                   atFileLimit
                     ? t("maxFilesReached", { max: CHAT_MAX_FILES })
@@ -482,7 +500,7 @@ export default function ChatInput(props: IChatInputProps) {
                 type="button"
                 disabled={inputDisabled}
                 onClick={startRecording}
-                className="shrink-0 h-8 w-8 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                className="shrink-0 h-8 w-8 flex items-center justify-center rounded-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
                 aria-label="Record voice message"
               >
                 <Mic className="h-4 w-4" />
@@ -497,7 +515,7 @@ export default function ChatInput(props: IChatInputProps) {
             variant="default"
             onClick={handleSend}
             disabled={sendDisabled}
-            className="shrink-0 h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0 font-medium"
+            className="shrink-0 h-9 w-9 sm:h-10 sm:w-10 rounded-none p-0 font-medium shadow-[3px_3px_0_hsl(var(--foreground)/0.12)]"
             aria-label="Send message"
           >
             <LucideSendHorizonal className="h-4 w-4" />

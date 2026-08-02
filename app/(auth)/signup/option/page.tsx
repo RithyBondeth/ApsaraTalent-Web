@@ -2,6 +2,8 @@
 
 import SmartResumeUpload from "@/components/employee/employee-signup-form/smart-resume-upload";
 import { Button } from "@/components/ui/button";
+import { AuthSelect } from "@/components/auth/auth-select";
+import { AuthBackButton } from "@/components/auth/auth-back-button";
 import {
   Dialog,
   DialogContent,
@@ -9,14 +11,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import ErrorMessage from "@/components/utils/feedback/error-message";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
@@ -29,7 +23,7 @@ import { userRoleConstant } from "@/utils/constants/ui.constant";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { TUserRole } from "@/utils/types/auth/role.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideArrowLeft, LucideArrowRight, LucideUsers } from "lucide-react";
+import { LucideArrowRight, LucideUsers } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -111,10 +105,10 @@ export default function SingUpOption() {
 
   /* ---------------------------------------- Render UI ---------------------------------------- */
   return (
-    <div className="w-full max-w-[500px] mx-auto flex flex-col items-start gap-6 py-8 tablet-lg:py-4">
+    <div className="w-full max-w-[540px] mx-auto flex flex-col items-start gap-6 border border-border border-t-[5px] border-t-foreground bg-card p-6 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-8 tablet-lg:my-4">
       {/* Icon Badge Section */}
-      <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-        <LucideUsers className="size-6 text-primary" />
+      <div className="size-14 rounded-none bg-foreground flex items-center justify-center">
+        <LucideUsers className="size-6 text-background" />
       </div>
 
       {/* Title Section */}
@@ -123,46 +117,44 @@ export default function SingUpOption() {
       {/* Subtitle Section */}
       <TypographyMuted>{t("signupOptionSubtitle")}</TypographyMuted>
 
-      <form className="w-full flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="w-full flex flex-col gap-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         {/* Role Selection Section */}
         <div className="w-full flex flex-col items-start">
           <Controller
             name="selectedRole"
             control={control}
             render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value || ""}>
-                <SelectTrigger className="h-12 text-muted-foreground">
-                  <SelectValue placeholder={t("signupOptionPlaceholder")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {userRoleConstant.map((role) => (
-                    <SelectItem key={role.id} value={role.value}>
-                      {role.value === USER_ROLE.EMPLOYEE
-                        ? t("signupOptionRoleEmployee")
-                        : t("signupOptionRoleCompany")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <AuthSelect
+                label={t("signupOptionPlaceholder")}
+                value={field.value || ""}
+                onValueChange={field.onChange}
+                icon={<LucideUsers className="size-[18px]" strokeWidth={1.6} />}
+                options={userRoleConstant.map((role) => ({
+                  value: role.value,
+                  label:
+                    role.value === USER_ROLE.EMPLOYEE
+                      ? t("signupOptionRoleEmployee")
+                      : t("signupOptionRoleCompany"),
+                }))}
+                error={
+                  errors.selectedRole
+                    ? t("signupOptionRoleRequired")
+                    : undefined
+                }
+              />
             )}
           />
-          <ErrorMessage className="mb-3 mt-1">
-            {errors.selectedRole ? t("signupOptionRoleRequired") : null}
-          </ErrorMessage>
         </div>
 
         {/* Navigate Back Button Section */}
-        <div className="w-full flex items-center gap-3">
-          <Button
-            className="flex-1"
-            variant="outline"
-            type="button"
-            onClick={() => router.replace("/login")}
-          >
-            <LucideArrowLeft />
+        <div className="auth-action-row w-full">
+          <AuthBackButton onClick={() => router.replace("/login")}>
             {t("back")}
-          </Button>
-          <Button className="flex-1" type="submit">
+          </AuthBackButton>
+          <Button className="auth-submit" type="submit">
             {t("next")}
             <LucideArrowRight />
           </Button>
@@ -183,7 +175,7 @@ export default function SingUpOption() {
           if (!open) goToSignup();
         }}
       >
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg rounded-none border-t-[5px] border-t-foreground shadow-[6px_6px_0_hsl(var(--foreground)/0.1)]">
           <div className="px-6 pt-6 pb-5 flex flex-col gap-5">
             {/* Header Section */}
             <DialogHeader>
@@ -202,7 +194,7 @@ export default function SingUpOption() {
             <Button
               type="button"
               variant="ghost"
-              className="w-full text-muted-foreground hover:text-foreground text-sm"
+              className="w-full rounded-none text-muted-foreground hover:text-foreground text-sm"
               onClick={goToSignup}
             >
               {t("smartUploadDialogSkip")}

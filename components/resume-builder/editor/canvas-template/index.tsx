@@ -16,10 +16,7 @@ import {
 } from "@dnd-kit/sortable";
 import { X } from "lucide-react";
 import { SectionWrapper } from "../section-wrapper";
-import {
-  IBuildResume,
-  TResumeContentSection,
-} from "@/utils/interfaces/resume/resume.interface";
+import { TResumeContentSection } from "@/utils/interfaces/resume/resume.interface";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 import { ICanvasTemplateProps } from "./props";
 import { Editable } from "./utils/editable";
@@ -28,15 +25,18 @@ import { GhostAddButton } from "./utils/ghost-add-button";
 import { AvatarField } from "./utils/avatar-field";
 import { ExperienceEntry } from "./utils/experience-entry";
 import { SkillChips } from "./utils/skill-chip";
-import { Path, PathValue } from "react-hook-form";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
 import { ResumeTemplateThemeContext } from "@/hooks/resume/use-resume-template-theme";
-import { RESUME_TEMPLATE_THEMES } from "@/utils/constants/resume-theme.constant";
 import {
   resolveResumeLayoutBlueprint,
   resolveResumeTemplateTheme,
 } from "@/utils/functions/resume/resume-theme";
 import { useTranslations } from "next-intl";
+import {
+  formatSocialPlatformLabel,
+  normalizeSocialLinkUrl,
+} from "@/utils/functions/url/social-link";
+import { getYearsExperienceSuffix } from "@/utils/functions/resume/format-resume-meta";
 
 /* ---------------------------------- Helper --------------------------------- */
 /**
@@ -63,14 +63,18 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
   } = data;
   const theme = resolveResumeTemplateTheme(data.template, data.design);
   const t = useTranslations("resumeBuilder");
+  const socialLinks = Object.entries(personalInfo.socials ?? {}).filter(
+    ([, url]) => Boolean(url?.trim()),
+  );
+  const yearsExperienceSuffix = yearsOfExperience
+    ? getYearsExperienceSuffix(yearsOfExperience, t("yearsExperienceSuffix"))
+    : "";
+  const { sectionOrder } = useResumeCanvasEditorStore();
 
   /* -------------------------------- All States ------------------------------ */
   const [educationLines, setEducationLinesState] = useState<string[]>(() =>
     parseEducationLines(education),
   );
-
-  /* ----------------------------- API Integration ---------------------------- */
-  const { sectionOrder } = useResumeCanvasEditorStore();
 
   /* PointerSensor with distance constraint so a click doesn't start a drag */
   const sensors = useSensors(
@@ -600,8 +604,8 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
                       onCommit={(v) =>
                         setValue("yearsOfExperience", v, { shouldDirty: true })
                       }
-                    />{" "}
-                    {t("yearsExperienceSuffix")}
+                    />
+                    {yearsExperienceSuffix ? ` ${yearsExperienceSuffix}` : ""}
                   </span>
                 )}
                 {availability && (
@@ -626,35 +630,58 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
             )}
 
             {/* Social Links Section */}
-            {personalInfo.socials &&
-              Object.keys(personalInfo.socials).length > 0 && (
-                <div style={{ marginTop: 6 }}>
-                  {Object.entries(personalInfo.socials).map(([key, url]) => {
-                    const socialPath =
-                      `personalInfo.socials.${key}` as Path<IBuildResume>;
+            {socialLinks.length > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "4px 12px",
+                  marginTop: 6,
+                }}
+              >
+                {socialLinks.map(([platform, url]) => {
+                  const label = formatSocialPlatformLabel(platform);
+                  const href = normalizeSocialLinkUrl(url);
 
-                    return (
-                      <span key={key} style={{ marginRight: 10, fontSize: 11 }}>
-                        <span style={{ color: theme.headerText, opacity: 0.7 }}>
-                          {key.charAt(0).toUpperCase() + key.slice(1)}:
-                        </span>{" "}
-                        <Editable
-                          value={url || ""}
-                          placeholder={`https://${key}.com/...`}
-                          onCommit={(v) =>
-                            setValue(
-                              socialPath,
-                              v as PathValue<IBuildResume, typeof socialPath>,
-                              { shouldDirty: true },
-                            )
-                          }
-                          style={{ color: theme.headerText }}
-                        />
+                  return href ? (
+                    <a
+                      key={platform}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={href}
+                      onPointerDown={(event) => event.stopPropagation()}
+                      style={{
+                        alignItems: "center",
+                        color: theme.headerText,
+                        display: "inline-flex",
+                        fontSize: 11,
+                        fontWeight: 600,
+                        gap: 3,
+                        textDecoration: "underline",
+                        textUnderlineOffset: 2,
+                      }}
+                    >
+                      <span>{label}</span>
+                      <span aria-hidden="true" style={{ fontSize: 9 }}>
+                        ↗
                       </span>
-                    );
-                  })}
-                </div>
-              )}
+                    </a>
+                  ) : (
+                    <span
+                      key={platform}
+                      style={{
+                        color: theme.headerText,
+                        fontSize: 11,
+                        opacity: 0.7,
+                      }}
+                    >
+                      {label}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </SectionWrapper>
 

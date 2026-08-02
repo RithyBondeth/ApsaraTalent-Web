@@ -1,7 +1,7 @@
 import { ICareerScope } from "./career.interface";
 import { ISocialLink } from "./social.interface";
 
-export type TCompanyType =
+type TCompanyType =
   | "startup"
   | "sme"
   | "enterprise"
@@ -43,7 +43,7 @@ export interface IValues {
   label: string;
 }
 
-export type TJobWorkMode = "remote" | "on_site" | "hybrid" | "flexible";
+type TJobWorkMode = "remote" | "on_site" | "hybrid" | "flexible";
 
 export interface IJobPosition {
   id?: string;
@@ -61,7 +61,7 @@ export interface IJobPosition {
   education: string;
   skills: string[];
   postedDate?: string;
-  deadlineDate: string;
+  deadlineDate?: string | null;
 }
 
 export interface IImage {

@@ -14,11 +14,9 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useChatStore } from "@/stores/features/chat/chat.store";
 import { useCallStore } from "@/stores/features/call/call.store";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ImperativePanelHandle } from "react-resizable-panels";
-import { TypographyP } from "@/components/utils/typography/typography-p";
-import Image from "next/image";
 import MessageLoadingSkeleton, {
   MessagePaneSkeleton,
   MessageThreadSkeleton,
@@ -27,6 +25,7 @@ import { messageEmptySvg } from "@/utils/constants/asset.constant";
 import { CHAT_LOADING_TIMEOUT_MS } from "@/utils/constants/chat.constant";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { useTranslations } from "next-intl";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 export default function MessagePageContent() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -190,14 +189,28 @@ export default function MessagePageContent() {
   };
 
   // ── Edit Message ─────────────────────────────────────────
-  const handleEditMessage = (messageId: string, newContent: string) => {
-    if (chatId) editMessageAction(messageId, chatId, newContent);
-  };
+  const handleEditMessage = useCallback(
+    (messageId: string, newContent: string) => {
+      if (chatId) editMessageAction(messageId, chatId, newContent);
+    },
+    [chatId, editMessageAction],
+  );
 
   // ── Handle Typing ─────────────────────────────────────────
-  const handleTyping = (typing: boolean) => {
-    if (chatId) setTyping(chatId, typing);
-  };
+  const handleTyping = useCallback(
+    (typing: boolean) => {
+      if (chatId) setTyping(chatId, typing);
+    },
+    [chatId, setTyping],
+  );
+
+  const handleReply = useCallback((message: IMessage) => {
+    setReplyTarget(message);
+  }, []);
+
+  const handleCancelReply = useCallback(() => {
+    setReplyTarget(null);
+  }, []);
 
   // ── Handle Chat Select ─────────────────────────────────────
   const handleChatSelect = (chat: { id: string }) => {
@@ -216,10 +229,25 @@ export default function MessagePageContent() {
 
   if (isLoading) return <MessageLoadingSkeleton />;
 
+  if (loadingTimedOut && (!isConnected || !isChatsLoaded))
+    return (
+      <div className="mx-auto flex h-full w-full max-w-[1500px] items-center px-3 sm:px-4 lg:px-5">
+        <PageState
+          variant="error"
+          title={t("connectionError")}
+          description={t("connectionErrorDescription")}
+          action={{
+            label: t("retry"),
+            onClick: () => window.location.reload(),
+          }}
+        />
+      </div>
+    );
+
   /* -------------------------------- Render UI -------------------------------- */
   // Chat View Section
   const chatView = activeChat ? (
-    <div className="flex flex-col h-full min-h-0 min-w-0">
+    <div className="flex flex-col h-full min-h-0 min-w-0 bg-card">
       {/* Chat Header Section */}
       <ChatHeader
         chat={activeChat}
@@ -237,7 +265,7 @@ export default function MessagePageContent() {
           messages={currentMessages}
           activeChat={activeChat}
           isTyping={isTyping[activeChat.id] || false}
-          onReply={(msg) => setReplyTarget(msg)}
+          onReply={handleReply}
           onEdit={handleEditMessage}
         />
       )}
@@ -247,31 +275,26 @@ export default function MessagePageContent() {
         onSendMessage={handleSendMessage}
         onTyping={handleTyping}
         replyTarget={replyTarget}
-        onCancelReply={() => setReplyTarget(null)}
+        onCancelReply={handleCancelReply}
       />
     </div>
   ) : null;
 
   // Desktop Empty State View Section
   const desktopEmptyStateView = (
-    <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/5">
-      <div className="w-full flex flex-col items-center justify-center my-16">
-        <Image
-          src={messageEmptySvg}
-          alt="Message"
-          height={300}
-          width={300}
-          className="animate-float"
-        />
-        <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-          {t("selectConversation")}
-        </TypographyP>
-      </div>
+    <div className="flex flex-1 items-center bg-muted/10 p-8">
+      <PageState
+        variant="empty"
+        title={t("selectConversationTitle")}
+        description={t("selectConversation")}
+        image={messageEmptySvg}
+        compact
+      />
     </div>
   );
 
   return (
-    <div className="w-full h-[calc(100dvh-4rem)] md:h-full min-h-0 flex bg-background overflow-hidden relative animate-page-in">
+    <div className="message-editorial mx-auto w-full max-w-[1500px] h-full min-h-0 flex bg-card overflow-hidden relative animate-page-in border border-border border-t-[5px] border-t-primary shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
       {/* Call Overlay + Incoming Modal Section */}
       <CallOrchestrator />
 

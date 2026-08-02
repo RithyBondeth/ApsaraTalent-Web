@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -30,9 +29,15 @@ import {
   LucideTimer,
   LucideUser,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { IInterviewFormBodyProps } from "./props";
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { km, enUS } from "date-fns/locale";
+
+const Calendar = dynamic(
+  () => import("@/components/ui/calendar").then((module) => module.Calendar),
+  { ssr: false },
+);
 
 /* --------------------------------- Helper --------------------------------- */
 function Field({
@@ -146,7 +151,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
               </SelectContent>
             </Select>
           ) : (
-            <TypographyMuted className="rounded-lg bg-muted/50 px-3 py-2.5 text-sm">
+            <TypographyMuted className="rounded-none border-l-[4px] border-l-foreground bg-muted/50 px-3 py-2.5 text-sm">
               {t("noMatchedEmployees")}
             </TypographyMuted>
           )}
@@ -237,7 +242,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
             </Field>
 
             <Field label={t("duration")} icon={<LucideTimer />}>
-              <div className="flex items-center h-10 rounded-md border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-background">
+              <div className="flex items-center h-10 rounded-none border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-background">
                 <input
                   type="number"
                   min={5}
@@ -287,7 +292,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
         </div>
 
         {error && (
-          <p className="rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <p className="rounded-none border border-destructive/20 border-l-[4px] border-l-destructive bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {error}
           </p>
         )}

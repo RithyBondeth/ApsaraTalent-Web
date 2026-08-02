@@ -32,22 +32,24 @@ export default function CollapsedChatList(props: IChatListProps) {
               <TooltipTrigger asChild>
                 <button
                   className={cn(
-                    "relative p-1.5 rounded-xl transition-all w-full flex justify-center",
+                    "relative p-1.5 rounded-none transition-all w-full flex justify-center border-l-[3px]",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    isActive ? "bg-muted" : "hover:bg-muted/60 active:bg-muted",
+                    isActive
+                      ? "bg-primary/5 border-l-primary"
+                      : "hover:bg-muted/60 active:bg-muted border-l-transparent",
                   )}
                   onClick={() => onChatSelect(chat)}
                   aria-label={chat.name}
                 >
                   {chat.isGroup ? (
-                    <div className="h-10 w-10 bg-muted rounded-full flex items-center justify-center border border-border">
+                    <div className="h-10 w-10 bg-muted rounded-none flex items-center justify-center border border-border">
                       <Users className="h-5 w-5 text-muted-foreground" />
                     </div>
                   ) : (
                     /* Avatar Section */
-                    <Avatar className="h-10 w-10">
+                    <Avatar className="h-10 w-10 rounded-none border border-border">
                       <AvatarImage src={chat.avatar} alt={chat.name} />
-                      <AvatarFallback className="text-xs font-medium">
+                      <AvatarFallback className="text-xs font-medium rounded-none">
                         {getNameInitials(chat.name)}
                       </AvatarFallback>
                     </Avatar>
@@ -55,7 +57,7 @@ export default function CollapsedChatList(props: IChatListProps) {
 
                   {/* Unread Badge Section */}
                   {chat.unread ? (
-                    <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-0.5 rounded-full bg-green-500 text-white text-[9px] font-semibold flex items-center justify-center">
+                    <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-0.5 rounded-none bg-primary text-primary-foreground text-[9px] font-semibold flex items-center justify-center">
                       {chat.unread > 9 ? "9+" : chat.unread}
                     </span>
                   ) : isUnread ? (

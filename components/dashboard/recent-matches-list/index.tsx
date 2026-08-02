@@ -20,8 +20,14 @@ export function RecentMatchesList({
   /* --------------------------- Empty List State --------------------------- */
   if (!matches || matches.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-8 text-center">
-        <Handshake className="h-10 w-10 text-muted-foreground/30 mb-3" />
+      <div
+        role="status"
+        aria-live="polite"
+        className="flex flex-col items-center justify-center border border-dashed border-border bg-muted/20 px-5 py-8 text-center"
+      >
+        <span className="mb-3 grid size-11 place-items-center bg-primary/10 text-primary">
+          <Handshake className="size-5" aria-hidden />
+        </span>
         <TypographyMuted className="text-sm text-muted-foreground">
           {t("noMatchesYet", {
             role: isEmployee ? t("company") : t("candidate"),
@@ -33,17 +39,17 @@ export function RecentMatchesList({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
       {matches.map((match) => (
         <div
           key={match.id}
-          className="flex items-center gap-3 rounded-xl border border-border/50 bg-accent/30 p-3 transition-colors hover:bg-accent/60"
+          className="flex items-center gap-3 border border-border border-l-[3px] border-l-foreground bg-muted/25 p-3 transition-all hover:-translate-y-0.5 hover:bg-muted/45"
         >
           {/* Avatar Section */}
           <CachedAvatar
             src={match.avatar}
             alt={match.name}
-            className="size-10 shrink-0 ring-1 ring-border"
+            className="size-10 shrink-0 !rounded-none border border-border"
             rounded="md"
             preload={true}
             showLoadingState={true}

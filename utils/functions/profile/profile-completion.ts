@@ -39,51 +39,55 @@ function calculateCompletion(fields: IFieldCheck[]): IProfileCompletionResult {
 
 /* --------------------------------- Methods ---------------------------------- */
 /**
- * Employee profile completion — 16 weighted fields totaling 100%
- *
- * Core identity:   First Name (4) + Last Name (4) + Profile Photo (8) + Username (4) = 20%
- * Professional:    Job Title (8) + Bio (8) + Location (4) + Years of Exp (4) + Availability (4) = 28%
- * Skills & Edu:    Skills (8) + Experience (8) + Education (8) + Career Scopes (4) = 28%
- * Documents:       Resume (8) + Cover Letter (6) = 14%
- * Social:          Social Links (4) + Phone (4) = 8%
- * Bonus:           (not counted, only tracked)
- *
- * Total = 100%  (round-safe with Math.round)
+ * Employee profile completion uses 27 weighted fields totaling 100%.
+ * Keep the weights and the boundary tests in sync when fields change.
  */
 export function getEmployeeProfileCompletion(
   employee: IEmployee,
 ): IProfileCompletionResult {
   const fields: IFieldCheck[] = [
-    // Core identity — 20%
     {
       label: "firstName",
-      weight: 4,
+      weight: 3,
       isFilled: isStringFilled(employee.firstname),
     },
     {
       label: "lastName",
-      weight: 4,
+      weight: 3,
       isFilled: isStringFilled(employee.lastname),
     },
     {
+      label: "dateOfBirth",
+      weight: 3,
+      isFilled: isStringFilled(employee.dob),
+    },
+    {
+      label: "gender",
+      weight: 2,
+      isFilled: isStringFilled(employee.gender),
+    },
+    {
       label: "profilePhoto",
-      weight: 8,
+      weight: 6,
       isFilled: isStringFilled(employee.avatar),
     },
     {
       label: "username",
-      weight: 4,
+      weight: 3,
       isFilled: isStringFilled(employee.username),
     },
-
-    // Professional — 28%
-    { label: "jobTitle", weight: 8, isFilled: isStringFilled(employee.job) },
-    { label: "bio", weight: 8, isFilled: isStringFilled(employee.description) },
     {
-      label: "location",
+      label: "email",
       weight: 4,
-      isFilled: isStringFilled(employee.location),
+      isFilled: isStringFilled(employee.email),
     },
+    {
+      label: "phoneNumber",
+      weight: 4,
+      isFilled: isStringFilled(employee.phone),
+    },
+
+    { label: "jobTitle", weight: 6, isFilled: isStringFilled(employee.job) },
     {
       label: "yearsOfExperience",
       weight: 4,
@@ -94,17 +98,61 @@ export function getEmployeeProfileCompletion(
       weight: 4,
       isFilled: isStringFilled(employee.availability),
     },
+    {
+      label: "bio",
+      weight: 6,
+      isFilled: isStringFilled(employee.description),
+    },
+    {
+      label: "location",
+      weight: 4,
+      isFilled: isStringFilled(employee.location),
+    },
+    {
+      label: "workMode",
+      weight: 3,
+      isFilled: isStringFilled(employee.workMode),
+    },
+    {
+      label: "noticePeriod",
+      weight: 3,
+      isFilled: isStringFilled(employee.noticePeriod),
+    },
+    {
+      label: "portfolioUrl",
+      weight: 3,
+      isFilled: isStringFilled(employee.portfolioUrl),
+    },
+    {
+      label: "linkedinUrl",
+      weight: 3,
+      isFilled: isStringFilled(employee.linkedinUrl),
+    },
+    {
+      label: "languages",
+      weight: 4,
+      isFilled: isArrayFilled(employee.languages ?? undefined),
+    },
+    {
+      label: "minimumSalary",
+      weight: 2,
+      isFilled: isNumberFilled(employee.expectedSalaryMin ?? undefined),
+    },
+    {
+      label: "maximumSalary",
+      weight: 2,
+      isFilled: isNumberFilled(employee.expectedSalaryMax ?? undefined),
+    },
 
-    // Skills & Education — 28%
-    { label: "skills", weight: 8, isFilled: isArrayFilled(employee.skills) },
+    { label: "skills", weight: 6, isFilled: isArrayFilled(employee.skills) },
     {
       label: "experience",
-      weight: 8,
+      weight: 6,
       isFilled: isArrayFilled(employee.experiences),
     },
     {
       label: "education",
-      weight: 8,
+      weight: 6,
       isFilled: isArrayFilled(employee.educations),
     },
     {
@@ -112,25 +160,16 @@ export function getEmployeeProfileCompletion(
       weight: 4,
       isFilled: isArrayFilled(employee.careerScopes),
     },
-
-    // Documents — 14%
-    { label: "resume", weight: 8, isFilled: isStringFilled(employee.resume) },
-    {
-      label: "coverLetter",
-      weight: 6,
-      isFilled: isStringFilled(employee.coverLetter),
-    },
-
-    // Social & Contact — 10%
-    {
-      label: "phoneNumber",
-      weight: 5,
-      isFilled: isStringFilled(employee.phone),
-    },
     {
       label: "socialLinks",
-      weight: 5,
+      weight: 3,
       isFilled: isArrayFilled(employee.socials),
+    },
+    { label: "resume", weight: 2, isFilled: isStringFilled(employee.resume) },
+    {
+      label: "coverLetter",
+      weight: 1,
+      isFilled: isStringFilled(employee.coverLetter),
     },
   ];
 
@@ -138,22 +177,13 @@ export function getEmployeeProfileCompletion(
 }
 
 /**
- * Company profile completion — 16 weighted fields totaling 100%
- *
- * Core identity:   Name (5) + Industry (5) + Profile Photo (10) + Cover (4) = 24%
- * Details:         Description (12) + Location (5) + Phone (4) + Size (4) + Founded (4) = 29%
- * Offerings:       Open Positions (15) + Benefits (5) + Values (5) = 25%
- * Discovery:       Career Scopes (5) + Social Links (4) + Company Images (8) = 17%
- * Availability:    Available Times (5) = 5%
- * Bonus:           Email (not counted, only tracked)
- *
- * Total = 100%
+ * Company profile completion uses 18 weighted fields totaling 100%.
+ * Keep the weights and the boundary tests in sync when fields change.
  */
 export function getCompanyProfileCompletion(
   company: ICompany,
 ): IProfileCompletionResult {
   const fields: IFieldCheck[] = [
-    // Core identity — 24%
     {
       label: "companyName",
       weight: 5,
@@ -161,24 +191,23 @@ export function getCompanyProfileCompletion(
     },
     {
       label: "industry",
-      weight: 5,
+      weight: 4,
       isFilled: isStringFilled(company.industry),
     },
     {
       label: "profilePhoto",
-      weight: 10,
+      weight: 7,
       isFilled: isStringFilled(company.avatar),
     },
     {
       label: "coverImage",
-      weight: 4,
+      weight: 5,
       isFilled: isStringFilled(company.cover),
     },
 
-    // Details — 29%
     {
       label: "description",
-      weight: 12,
+      weight: 8,
       isFilled: isStringFilled(company.description),
     },
     {
@@ -198,41 +227,47 @@ export function getCompanyProfileCompletion(
     },
     {
       label: "foundedYear",
-      weight: 4,
+      weight: 3,
       isFilled: isNumberFilled(company.foundedYear),
     },
+    {
+      label: "email",
+      weight: 4,
+      isFilled: isStringFilled(company.email),
+    },
+    {
+      label: "websiteUrl",
+      weight: 4,
+      isFilled: isStringFilled(company.websiteUrl),
+    },
+    {
+      label: "companyType",
+      weight: 3,
+      isFilled: isStringFilled(company.companyType),
+    },
 
-    // Offerings — 25%
     {
       label: "openPositions",
-      weight: 15,
+      weight: 14,
       isFilled: isArrayFilled(company.openPositions),
     },
     { label: "benefits", weight: 5, isFilled: isArrayFilled(company.benefits) },
     { label: "values", weight: 5, isFilled: isArrayFilled(company.values) },
 
-    // Discovery — 17%
     {
       label: "careerScopes",
-      weight: 5,
+      weight: 6,
       isFilled: isArrayFilled(company.careerScopes),
     },
     {
       label: "socialLinks",
-      weight: 4,
+      weight: 7,
       isFilled: isArrayFilled(company.socials),
     },
     {
       label: "companyImages",
-      weight: 8,
+      weight: 7,
       isFilled: isArrayFilled(company.images),
-    },
-
-    // Availability — 5%
-    {
-      label: "availableTimes",
-      weight: 5,
-      isFilled: isArrayFilled(company.availableTimes),
     },
   ];
 

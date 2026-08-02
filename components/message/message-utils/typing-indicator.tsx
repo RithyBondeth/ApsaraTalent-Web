@@ -21,15 +21,15 @@ export function ChatTypingIndicator(props: { activeChat: IChatPreview }) {
       <div className="flex flex-col items-start gap-1">
         {/* Avatar Section */}
         <div className="flex items-start justify-center gap-2">
-          <Avatar className="h-7 w-7">
+          <Avatar className="h-7 w-7 rounded-none border border-border">
             <AvatarImage src={avatar} alt={name} />
-            <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+            <AvatarFallback className="text-xs rounded-none">{initials}</AvatarFallback>
           </Avatar>
           <TypographyMuted>{name}</TypographyMuted>
         </div>
 
         {/* Typing Animation Section */}
-        <div className="bg-background text-foreground rounded-lg rounded-tl-none shadow-sm px-4 py-3 flex items-center gap-1">
+        <div className="bg-card text-foreground rounded-none border border-border border-l-[4px] border-l-foreground shadow-[3px_3px_0_hsl(var(--foreground)/0.05)] px-4 py-3 flex items-center gap-1">
           <style>{CHAT_TYPING_INDICATOR_STYLES}</style>
           <span className="typing-dot w-2 h-2 rounded-full bg-primary inline-block" />
           <span className="typing-dot w-2 h-2 rounded-full bg-primary inline-block" />

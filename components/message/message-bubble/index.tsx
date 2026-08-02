@@ -1,6 +1,6 @@
 import { useChatStore } from "@/stores/features/chat/chat.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useMemo, useRef, useState } from "react";
+import { memo, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -30,7 +30,7 @@ function DeliveryStatusIcon({
   return <Check className="h-3 w-3 text-muted-foreground/60 inline-block" />;
 }
 
-export default function MessageBubble(props: IMessageBubbleProps) {
+function MessageBubble(props: IMessageBubbleProps) {
   /* --------------------------------- Props --------------------------------- */
   const { message, activeChat, isLastSeen, onReply, onEdit } = props;
 
@@ -38,9 +38,10 @@ export default function MessageBubble(props: IMessageBubbleProps) {
   const t = useTranslations("message");
 
   /* ----------------------------- API Integration ---------------------------- */
-  const { reactToMessage, deleteMessage } = useChatStore();
+  const reactToMessage = useChatStore((state) => state.reactToMessage);
+  const deleteMessage = useChatStore((state) => state.deleteMessage);
   const initiateCall = useCallStore((s) => s.initiateCall);
-  const { user: currentUser } = useGetCurrentUserStore();
+  const currentUser = useGetCurrentUserStore((state) => state.user);
 
   /* -------------------------------- All States ------------------------------ */
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -127,16 +128,16 @@ export default function MessageBubble(props: IMessageBubbleProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`mb-3 max-w-[85%] sm:max-w-[75%] md:max-w-[70%] group ${
+      className={`mb-4 max-w-[88%] sm:max-w-[76%] md:max-w-[70%] group ${
         message.isMe ? "ml-auto" : ""
       }`}
     >
       {/* Sender Label Section (Partner Message Only) */}
       {!message.isMe && (
         <div className="flex items-center mb-1">
-          <Avatar className="h-6 w-6 mr-2">
+          <Avatar className="h-6 w-6 mr-2 rounded-none border border-border">
             {activeChat.isGroup ? (
-              <AvatarFallback>
+              <AvatarFallback className="rounded-none">
                 {message.senderId
                   .split(" ")
                   .map((n) => n[0])
@@ -145,7 +146,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
             ) : (
               <>
                 <AvatarImage src={activeChat.avatar} alt={activeChat.name} />
-                <AvatarFallback>
+                <AvatarFallback className="rounded-none">
                   {activeChat.name
                     .split(" ")
                     .map((n) => n[0])
@@ -167,16 +168,16 @@ export default function MessageBubble(props: IMessageBubbleProps) {
         {/* Message Bubble Section */}
         <div className="relative" onClick={toggleDeliveryTime}>
           <div
-            className={`rounded-2xl text-sm transition-all ${
+            className={`rounded-none border text-sm transition-all shadow-[3px_3px_0_hsl(var(--foreground)/0.05)] ${
               message.isMe
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-foreground"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-card text-foreground border-border border-l-[4px] border-l-foreground"
             } ${message.isDeleted ? "px-3 py-2 opacity-60" : "p-3"}`}
           >
             {/* Reply / Quote block Section */}
             {message.replyTo && !message.isDeleted && (
               <div
-                className={`mb-2 pl-2 border-l-2 text-xs opacity-80 rounded-sm py-0.5 ${
+                className={`mb-2 pl-2 border-l-2 text-xs opacity-80 rounded-none py-0.5 ${
                   message.isMe
                     ? "border-primary-foreground/60 text-primary-foreground/80"
                     : "border-primary text-muted-foreground"
@@ -210,7 +211,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                 <Button
                   variant={message.isMe ? "secondary" : "default"}
                   size="sm"
-                  className="w-full"
+                  className="w-full rounded-none"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleCallAgain();
@@ -233,7 +234,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                     }
                     if (e.key === "Escape") cancelEditing();
                   }}
-                  className="text-sm resize-none min-h-[40px] max-h-[200px] py-1.5 px-2
+                  className="text-sm resize-none rounded-none min-h-[40px] max-h-[200px] py-1.5 px-2
                     bg-transparent border-primary-foreground/30 text-primary-foreground
                     placeholder:text-primary-foreground/50 focus-visible:ring-primary-foreground/50"
                   rows={1}
@@ -243,7 +244,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10"
+                    className="h-6 w-6 rounded-none text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10"
                     onClick={cancelEditing}
                     aria-label="Cancel edit"
                   >
@@ -253,7 +254,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10"
+                    className="h-6 w-6 rounded-none text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10"
                     onClick={confirmEdit}
                     aria-label="Confirm edit"
                   >
@@ -339,9 +340,9 @@ export default function MessageBubble(props: IMessageBubbleProps) {
       {/* "Seen" Avatar Indicator (Last Read Message) Section */}
       {isLastSeen && (
         <div className="flex items-center justify-end gap-1 mt-0.5">
-          <Avatar className="h-4 w-4">
+          <Avatar className="h-4 w-4 rounded-none">
             <AvatarImage src={activeChat.avatar} alt={activeChat.name} />
-            <AvatarFallback className="text-[8px]">
+            <AvatarFallback className="text-[8px] rounded-none">
               {activeChat.name
                 .split(" ")
                 .map((n) => n[0])
@@ -354,3 +355,5 @@ export default function MessageBubble(props: IMessageBubbleProps) {
     </div>
   );
 }
+
+export default memo(MessageBubble);

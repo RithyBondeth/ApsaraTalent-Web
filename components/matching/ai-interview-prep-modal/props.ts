@@ -3,4 +3,5 @@ export interface IAiInterviewPrepModalProps {
   cid: string;
   companyName: string;
   interviewTitle?: string;
+  autoOpen?: boolean;
 }

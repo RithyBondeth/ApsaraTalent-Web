@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/utils/use-media-query";
 
 /**
  * Fades children in on mount — use this to wrap real content that replaces
@@ -16,12 +17,22 @@ export function FadeIn(props: {
   /* ---------------------------------- Props --------------------------------- */
   const { children, className, delay = 0, duration = 300 } = props;
 
+  /* ---------------------------------- Utils --------------------------------- */
+  const prefersReducedMotion = useMediaQuery(
+    "(prefers-reduced-motion: reduce)",
+  );
+
   /* -------------------------------- All States -------------------------------- */
   const [visible, setVisible] = useState(false);
   const rafRef = useRef<number | null>(null);
 
   /* --------------------------------- Effects -------------------------------- */
   useEffect(() => {
+    if (prefersReducedMotion) {
+      setVisible(true);
+      return;
+    }
+
     const timer = setTimeout(() => {
       rafRef.current = requestAnimationFrame(() => setVisible(true));
     }, delay);
@@ -29,14 +40,14 @@ export function FadeIn(props: {
       clearTimeout(timer);
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
-  }, [delay]);
+  }, [delay, prefersReducedMotion]);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       className={cn("transition-opacity", className)}
       style={{
-        transitionDuration: `${duration}ms`,
+        transitionDuration: prefersReducedMotion ? "0ms" : `${duration}ms`,
         opacity: visible ? 1 : 0,
       }}
     >

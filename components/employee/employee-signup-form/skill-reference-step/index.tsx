@@ -131,7 +131,7 @@ export default function SkillReferenceStepForm({
             return (
               <div
                 key={index}
-                className={`flex items-center ${bg} pr-2 rounded-2xl`}
+                className={`flex items-center ${bg} pr-2 rounded-none border border-border`}
               >
                 <Tag label={skill} />
                 <LucideXCircle
@@ -176,14 +176,14 @@ export default function SkillReferenceStepForm({
       {/* References Section */}
       <div className="w-full flex flex-col items-start gap-3">
         <TypographyH4>{t("empReferenceTitle")}</TypographyH4>
-        <div className="w-full flex items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+        <div className="field-row w-full">
           {/* Resume Section */}
           {resumeFile ? (
             <div className="flex flex-col items-start gap-2">
               <TypographyMuted className="text-xs">
                 {t("empReferenceResume")}
               </TypographyMuted>
-              <div className="w-full flex justify-between items-center p-3 rounded-md bg-muted">
+              <div className="w-full flex justify-between items-center p-3 rounded-none border border-border border-l-[4px] border-l-foreground bg-muted">
                 <TypographyMuted className="truncate pr-2">
                   {resumeFile.name.trim()}
                 </TypographyMuted>
@@ -227,7 +227,7 @@ export default function SkillReferenceStepForm({
               <TypographyMuted className="text-xs">
                 {t("empReferenceCoverLetter")}
               </TypographyMuted>
-              <div className="w-full flex justify-between items-center p-3 rounded-md bg-muted">
+              <div className="w-full flex justify-between items-center p-3 rounded-none border border-border border-l-[4px] border-l-foreground bg-muted">
                 <TypographyMuted className="truncate pr-2">
                   {coverLetterFile.name.trim()}
                 </TypographyMuted>

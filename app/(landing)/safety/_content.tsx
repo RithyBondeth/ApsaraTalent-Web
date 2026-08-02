@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import {
-  LucideArrowLeft,
   LucideShieldCheck,
   LucideLock,
   LucideEye,
@@ -11,49 +9,15 @@ import {
   LucideServer,
   LucideCheckCircle,
 } from "lucide-react";
-import { TypographyH1 } from "@/components/utils/typography/typography-h1";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
+import {
+  StaticBullet,
+  StaticNote,
+  StaticPageArtworkSlot,
+  StaticPageShell,
+  StaticSection,
+} from "@/components/static-content/static-page";
 import { useLanguageStore } from "@/stores/languages/language-store";
-
-/* -------------------------- Sub Components -------------------------- */
-function Section({
-  id,
-  icon,
-  title,
-  children,
-}: {
-  id: string;
-  icon: React.ReactNode;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section id={id} className="flex flex-col gap-4 scroll-mt-8">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center size-9 rounded-xl bg-primary/10 border border-primary/20 shrink-0">
-          <span className="text-primary [&>svg]:size-4">{icon}</span>
-        </div>
-        <TypographyH2 className="text-lg font-bold tracking-tight">
-          {title}
-        </TypographyH2>
-      </div>
-      <div className="flex flex-col gap-3 text-sm text-muted-foreground leading-relaxed pl-0">
-        {children}
-      </div>
-    </section>
-  );
-}
-
-function Bullet({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex items-start gap-2">
-      <span className="mt-1.5 size-1.5 rounded-full bg-primary/60 shrink-0" />
-      <span>{children}</span>
-    </li>
-  );
-}
 
 /* ----------------------- Content Types & Data ----------------------- */
 type TTocItem = { id: string; label: string };
@@ -284,136 +248,112 @@ export function SafetyContent() {
 
   /* ----------------------------- Render UI -------------------------- */
   return (
-    <div className="min-h-screen bg-background">
-      {/* Top Navigation Section */}
-      <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm">
-        <div className="max-w-5xl mx-auto flex items-center gap-4 px-4 py-3 sm:px-6">
-          <Link
-            href="/"
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <LucideArrowLeft className="size-3.5" />
-            {t.back}
-          </Link>
-          <span className="text-border">|</span>
-          <span className="text-sm font-semibold">{t.pageTitle}</span>
-        </div>
-      </header>
-
-      <div className="max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:flex lg:gap-12">
-        {/* Sticky TOC Sidebar (Desktop) Section */}
-        <aside className="hidden lg:block w-56 shrink-0">
-          <nav className="sticky top-20 flex flex-col gap-2">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-              {t.tocHeading}
-            </span>
-            {t.toc.map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-0.5"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Main Content Section */}
-        <main className="flex-1 flex flex-col gap-10 min-w-0">
-          {/* Hero Header Section */}
-          <div className="flex flex-col gap-4">
-            <TypographyH1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              {t.pageTitle}
-            </TypographyH1>
-            <TypographyP className="text-muted-foreground max-w-2xl">
-              {t.subtitle}
-            </TypographyP>
-          </div>
-
+    <StaticPageShell
+      pageNumber="03"
+      title={t.pageTitle}
+      subtitle={t.subtitle}
+      tocHeading={t.tocHeading}
+      toc={t.toc}
+      icon={<LucideShieldCheck />}
+      heroVisual={
+        <StaticPageArtworkSlot
+          icon={<LucideShieldCheck />}
+          label={t.pageTitle}
+        />
+      }
+    >
           {/* Our Commitment Section */}
-          <Section
+          <StaticSection
             id="commitment"
+            number="01"
             icon={<LucideShieldCheck />}
             title={t.commitmentTitle}
           >
             <TypographyP>{t.commitmentIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.commitmentBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-          </Section>
+          </StaticSection>
 
           {/* Data Protection Section */}
-          <Section
+          <StaticSection
             id="data-protection"
+            number="02"
             icon={<LucideServer />}
             title={t.dataTitle}
           >
             <TypographyP>{t.dataIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.dataBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-          </Section>
+          </StaticSection>
 
           {/* Privacy Controls Section */}
-          <Section id="privacy" icon={<LucideEye />} title={t.privacyTitle}>
+          <StaticSection
+            id="privacy"
+            number="03"
+            icon={<LucideEye />}
+            title={t.privacyTitle}
+          >
             <TypographyP>{t.privacyIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.privacyBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-          </Section>
+          </StaticSection>
 
           {/* Identity Verification Section */}
-          <Section
+          <StaticSection
             id="identity"
+            number="04"
             icon={<LucideUserCheck />}
             title={t.identityTitle}
           >
             <TypographyP>{t.identityIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.identityBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-          </Section>
+          </StaticSection>
 
           {/* Reporting & Moderation Section */}
-          <Section
+          <StaticSection
             id="reporting"
+            number="05"
             icon={<LucideAlertTriangle />}
             title={t.reportingTitle}
           >
             <TypographyP>{t.reportingIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.reportingBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-          </Section>
+          </StaticSection>
 
           {/* AI Safety Section */}
-          <Section id="ai-safety" icon={<LucideLock />} title={t.aiSafetyTitle}>
+          <StaticSection
+            id="ai-safety"
+            number="06"
+            icon={<LucideLock />}
+            title={t.aiSafetyTitle}
+          >
             <TypographyP>{t.aiSafetyIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.aiSafetyBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-            <div className="mt-2 flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3">
-              <LucideCheckCircle className="size-4 text-emerald-500 shrink-0" />
-              <TypographySmall className="text-emerald-600 dark:text-emerald-400 font-medium">
-                {t.aiSafetyNote}
-              </TypographySmall>
-            </div>
-          </Section>
-        </main>
-      </div>
-    </div>
+            <StaticNote icon={<LucideCheckCircle />}>
+              {t.aiSafetyNote}
+            </StaticNote>
+          </StaticSection>
+    </StaticPageShell>
   );
 }

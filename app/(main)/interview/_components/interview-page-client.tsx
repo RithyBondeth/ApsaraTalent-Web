@@ -2,10 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographyH3 } from "@/components/utils/typography/typography-h3";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 import { useInterviewStore } from "@/stores/apis/matching/interview.store";
@@ -17,7 +13,8 @@ import { CreateInterviewDialog } from "@/components/interview/create-interview-d
 import { emptySvg, interviewBannerSvg } from "@/utils/constants/asset.constant";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import Image from "next/image";
-import { TypographyP } from "@/components/utils/typography/typography-p";
+import { CalendarCheck2 } from "lucide-react";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 interface Props {
   initialIsEmployee: boolean;
@@ -109,140 +106,151 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col gap-4 px-2.5 sm:px-5 animate-page-in">
+    <div className="interview-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 animate-page-in sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
-      {/* Desktop Banner Section 1050px */}
-      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
-        <div className="flex flex-col items-start gap-3">
-          <TypographyH2 className="leading-relaxed">
-            {isEmployee ? t("bannerTitleEmployee") : t("bannerTitleCompany")}
-          </TypographyH2>
-          <TypographyH4 className="leading-relaxed">
-            {isEmployee
-              ? t("bannerSubtitle1Employee")
-              : t("bannerSubtitle1Company")}
-          </TypographyH4>
-          <TypographyH4 className="leading-relaxed">
-            {isEmployee
-              ? t("bannerSubtitle2Employee")
-              : t("bannerSubtitle2Company")}
-          </TypographyH4>
-          <TypographyMuted className="leading-relaxed">
+      <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
+        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
+          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            <span className="h-px w-7 bg-primary" />
+            {t("interviewDesk")}
+          </div>
+          <div className="max-w-3xl">
+            <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.05] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl">
+              {isEmployee ? t("bannerTitleEmployee") : t("bannerTitleCompany")}
+            </h1>
+            <p className="mt-4 max-w-[60ch] text-sm leading-6 text-muted-foreground sm:text-base">
+              {isEmployee
+                ? t("bannerSubtitle1Employee")
+                : t("bannerSubtitle1Company")}{" "}
+              {isEmployee
+                ? t("bannerSubtitle2Employee")
+                : t("bannerSubtitle2Company")}
+            </p>
+          </div>
+          <p className="max-w-[70ch] border-l-2 border-foreground pl-3 text-xs leading-5 text-muted-foreground">
             {isEmployee ? t("bannerMutedEmployee") : t("bannerMutedCompany")}
-          </TypographyMuted>
-        </div>
-        {mounted && (
-          <Image
-            src={interviewBannerSvg}
-            alt="interview"
-            height={250}
-            width={350}
-            className="h-auto max-w-[340px] shrink-0"
-            priority
-          />
-        )}
-      </div>
-
-      {/* Tablet Banner Section 651px–1050px */}
-      <div className="hidden tablet-xl:flex tablet-md:!hidden w-full items-center justify-between gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5 overflow-hidden">
-        <div className="flex-1 min-w-0 flex flex-col gap-2">
-          <TypographyH3 className="!leading-snug">
-            {isEmployee ? t("bannerTitleEmployee") : t("bannerTitleCompany")}
-          </TypographyH3>
-          <TypographyMuted className="!leading-snug">
-            {isEmployee
-              ? t("bannerSubtitle1Employee")
-              : t("bannerSubtitle1Company")}
-          </TypographyMuted>
-          <TypographyMuted className="!leading-snug">
-            {isEmployee
-              ? t("bannerSubtitle2Employee")
-              : t("bannerSubtitle2Company")}
-          </TypographyMuted>
-        </div>
-        {mounted && (
-          <Image
-            src={interviewBannerSvg}
-            alt="interview"
-            width={160}
-            height={160}
-            className="shrink-0 h-auto object-contain"
-            priority
-          />
-        )}
-      </div>
-
-      {/* Mobile Banner Section ≤650px */}
-      <div className="hidden tablet-md:flex w-full items-center gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-3 overflow-hidden">
-        <div className="flex-1 min-w-0 flex flex-col gap-1">
-          <h2 className="font-bold text-sm leading-snug text-foreground">
-            {isEmployee ? t("bannerTitleEmployee") : t("bannerTitleCompany")}
-          </h2>
-          <p className="text-xs text-muted-foreground leading-snug line-clamp-2">
-            {isEmployee
-              ? t("bannerSubtitle1Employee")
-              : t("bannerSubtitle1Company")}
           </p>
         </div>
-        {mounted && (
-          <Image
-            src={interviewBannerSvg}
-            alt="interview"
-            width={88}
-            height={88}
-            className="flex-shrink-0 object-contain"
-            priority
-          />
-        )}
-      </div>
+
+        <div className="feed-hero-visual">
+          <div aria-hidden className="feed-hero-visual-grid" />
+          <div className="feed-hero-network-chip">
+            <span className="feed-hero-network-icon" aria-hidden>
+              <CalendarCheck2 />
+            </span>
+            <span>{t("interviewDesk")}</span>
+            <span aria-hidden className="feed-hero-network-status" />
+          </div>
+          <div aria-hidden className="feed-hero-art-stage">
+            <span className="feed-hero-node feed-hero-node-one" />
+            <span className="feed-hero-node feed-hero-node-two" />
+            <span className="feed-hero-node feed-hero-node-three" />
+            <div className="feed-hero-art-frame">
+              <div className="feed-hero-art-grid" />
+              <div className="feed-hero-art-glow" />
+              <Image
+                src={interviewBannerSvg}
+                alt=""
+                height={260}
+                width={360}
+                className="feed-hero-artwork"
+                priority
+              />
+              <span className="feed-hero-corner feed-hero-corner-nw" />
+              <span className="feed-hero-corner feed-hero-corner-ne" />
+              <span className="feed-hero-corner feed-hero-corner-sw" />
+              <span className="feed-hero-corner feed-hero-corner-se" />
+            </div>
+          </div>
+          <div aria-hidden className="feed-hero-signal-bars">
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+        </div>
+      </section>
 
       {/* Error Banner Section */}
-      {error && (
-        <div className="text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg px-4 py-3">
+      {error && interviews.length > 0 && (
+        <div className="w-full border border-destructive/20 border-l-[5px] border-l-destructive bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
         </div>
       )}
 
-      {/* Create Interview Action Section (Company Only) */}
-      {isCompany && currentId && (
-        <div className="flex items-center justify-end">
-          <CreateInterviewDialog
-            currentId={currentId}
-            currentCompanyMatching={currentCompanyMatching}
-            initialEmployeeId={initialEmployeeId}
-          />
-        </div>
-      )}
-
-      {/* Interview List Section */}
-      {interviews.length > 0 ? (
-        <div className="flex flex-col gap-3 stagger-list">
-          {interviews.map((interview) => (
-            <InterviewCard
-              key={interview.id}
-              interview={interview}
-              isEmployee={isEmployee}
-              isUpdating={updatingId === interview.id}
-              onAccept={handleAccept}
-              onDecline={handleDecline}
+      {/* Interview Schedule Section */}
+      <section className="flex w-full flex-col gap-5">
+        <div className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+              01
+            </span>
+            <div>
+              <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">
+                {t("scheduledInterviews")}
+              </h2>
+              <p className="mt-1 text-xs font-medium text-muted-foreground">
+                {t("scheduledCount", { count: interviews.length })}
+              </p>
+            </div>
+          </div>
+          {isCompany && currentId ? (
+            <CreateInterviewDialog
+              currentId={currentId}
+              currentCompanyMatching={currentCompanyMatching}
+              initialEmployeeId={initialEmployeeId}
             />
-          ))}
+          ) : (
+            <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
+              <CalendarCheck2 className="size-4" />
+            </div>
+          )}
         </div>
-      ) : (
-        /* Interview Empty State Section */
-        <div className="w-full flex flex-col items-center justify-center my-16">
-          <Image
-            src={emptySvg}
-            alt="empty"
-            height={200}
-            width={200}
-            className="animate-float"
+
+        {/* Interview List Section */}
+        {error && interviews.length === 0 ? (
+          <PageState
+            variant="error"
+            title={error}
+            compact
+            className="my-6 sm:my-8"
+            action={
+              currentId && currentUser?.role
+                ? {
+                    label: t("retry"),
+                    onClick: () => queryInterviews(currentId, currentUser.role),
+                  }
+                : undefined
+            }
           />
-          <TypographyP className="!m-0 text-sm font-medium text-muted-foreground text-center">
-            {isEmployee ? t("noInterviewsEmployee") : t("noInterviewsCompany")}
-          </TypographyP>
-        </div>
-      )}
+        ) : interviews.length > 0 ? (
+          <div className="flex w-full flex-col gap-3 stagger-list">
+            {interviews.map((interview) => (
+              <InterviewCard
+                key={interview.id}
+                interview={interview}
+                isEmployee={isEmployee}
+                isUpdating={updatingId === interview.id}
+                onAccept={handleAccept}
+                onDecline={handleDecline}
+              />
+            ))}
+          </div>
+        ) : (
+          /* Interview Empty State Section */
+          <PageState
+            variant="empty"
+            title={
+              isEmployee
+                ? t("noInterviewsEmployee")
+                : t("noInterviewsCompany")
+            }
+            image={emptySvg}
+            compact
+            className="my-6 sm:my-8"
+          />
+        )}
+      </section>
     </div>
   );
 }

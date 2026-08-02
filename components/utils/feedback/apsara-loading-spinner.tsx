@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useMediaQuery } from "@/hooks/utils/use-media-query";
 
 /* ----------------------------------- Helper ---------------------------------- */
 interface IApsaraLoadingProps {
@@ -19,6 +20,11 @@ export default function ApsaraLoadingSpinner(props: IApsaraLoadingProps) {
     onComplete,
   } = props;
 
+  /* ---------------------------------- Utils ---------------------------------- */
+  const prefersReducedMotion = useMediaQuery(
+    "(prefers-reduced-motion: reduce)",
+  );
+
   /* -------------------------------- All States ------------------------------ */
   const [isAnimating, setIsAnimating] = useState<boolean>(true);
   const [progress, setProgress] = useState<number>(0);
@@ -26,6 +32,21 @@ export default function ApsaraLoadingSpinner(props: IApsaraLoadingProps) {
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     let animationId: number;
+    let completionTimer: ReturnType<typeof setTimeout> | null = null;
+    let restartTimer: ReturnType<typeof setTimeout> | null = null;
+
+    if (prefersReducedMotion) {
+      setIsAnimating(loop);
+      setProgress(loop ? 0.5 : 1);
+      if (!loop && onComplete) {
+        completionTimer = setTimeout(onComplete, duration);
+      }
+      return () => {
+        if (completionTimer) clearTimeout(completionTimer);
+      };
+    }
+
+    setIsAnimating(true);
 
     const startAnimation = () => {
       const startTime = Date.now();
@@ -42,8 +63,8 @@ export default function ApsaraLoadingSpinner(props: IApsaraLoadingProps) {
           onComplete?.();
 
           if (loop) {
-            // Brief pause before restarting
-            setTimeout(() => {
+            // Brief pause before restarting Section
+            restartTimer = setTimeout(() => {
               setProgress(0);
               startAnimation();
             }, 300);
@@ -62,8 +83,10 @@ export default function ApsaraLoadingSpinner(props: IApsaraLoadingProps) {
       if (animationId) {
         cancelAnimationFrame(animationId);
       }
+      if (completionTimer) clearTimeout(completionTimer);
+      if (restartTimer) clearTimeout(restartTimer);
     };
-  }, [duration, loop, onComplete]);
+  }, [duration, loop, onComplete, prefersReducedMotion]);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -163,7 +186,9 @@ export default function ApsaraLoadingSpinner(props: IApsaraLoadingProps) {
               transition: "opacity 0.3s ease",
             }}
           >
-            Loading... {Math.round(progress * 100)}%
+            {prefersReducedMotion
+              ? "Loading..."
+              : `Loading... ${Math.round(progress * 100)}%`}
           </text>
         </g>
       </svg>

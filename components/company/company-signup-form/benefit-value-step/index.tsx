@@ -122,7 +122,7 @@ export default function BenefitValueStepForm({
   return (
     <div className="w-full flex flex-col items-start gap-5">
       {/* Benefit Section */}
-      <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5">
+      <div className="w-full bg-card rounded-none border border-border border-l-[5px] border-l-foreground shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] p-5 sm:p-6 flex flex-col items-start gap-5">
         <div className="w-full">
           <SectionTitle
             icon={<LucideCircleCheck />}
@@ -135,7 +135,7 @@ export default function BenefitValueStepForm({
             {benefits.length > 0 ? (
               benefits.map((benefit) => (
                 <div
-                  className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
+                  className="flex items-center gap-2 px-3 py-2 rounded-none border border-border bg-muted cursor-pointer [&>div>p]:text-xs"
                   key={benefit}
                 >
                   <IconLabel
@@ -206,7 +206,7 @@ export default function BenefitValueStepForm({
       </div>
 
       {/* Value Section */}
-      <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5">
+      <div className="w-full bg-card rounded-none border border-border border-l-[5px] border-l-foreground shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] p-5 sm:p-6 flex flex-col items-start gap-5">
         <div className="w-full">
           <SectionTitle icon={<LucideZap />} title={t("cmpValueTitle")} />
         </div>
@@ -216,7 +216,7 @@ export default function BenefitValueStepForm({
             {values.length > 0 ? (
               values.map((value) => (
                 <div
-                  className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
+                  className="flex items-center gap-2 px-3 py-2 rounded-none border border-border bg-muted cursor-pointer [&>div>p]:text-xs"
                   key={value}
                 >
                   <IconLabel

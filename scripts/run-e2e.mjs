@@ -6,6 +6,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const distDir = process.env.NEXT_DIST_DIR ?? ".next-e2e";
 const port = 14000;
 const baseUrl = `http://127.0.0.1:${port}`;
 let runtimeDir;
@@ -69,6 +70,7 @@ try {
     await run("npm", ["run", "build"], {
       env: {
         ...process.env,
+        NEXT_DIST_DIR: distDir,
         NEXT_PUBLIC_API_URL: "http://127.0.0.1:13000",
         SENTRY_AUTH_TOKEN: "",
         SENTRY_ORG: "",
@@ -78,7 +80,7 @@ try {
     });
   }
 
-  const standalone = join(root, ".next/standalone");
+  const standalone = join(root, distDir, "standalone");
   assert(
     existsSync(join(standalone, "server.js")),
     "Standalone build missing. Run npm run build first.",
@@ -86,7 +88,7 @@ try {
 
   runtimeDir = await mkdtemp(join(tmpdir(), "apsara-web-e2e-"));
   await cp(standalone, runtimeDir, { recursive: true });
-  await cp(join(root, ".next/static"), join(runtimeDir, ".next/static"), {
+  await cp(join(root, distDir, "static"), join(runtimeDir, distDir, "static"), {
     recursive: true,
   });
   if (existsSync(join(root, "public"))) {
@@ -130,16 +132,139 @@ try {
     "Landing page did not return HTML",
   );
 
-  const protectedPage = await fetch(`${baseUrl}/profile/employee`, {
+  const expectedSecurityHeaders = {
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "referrer-policy": "strict-origin-when-cross-origin",
+  };
+  for (const [header, expected] of Object.entries(expectedSecurityHeaders)) {
+    assert(
+      landing.headers.get(header) === expected,
+      `Landing page ${header} header is missing or invalid`,
+    );
+  }
+
+  const publicRoutes = [
+    "/product",
+    "/learn",
+    "/safety",
+    "/support",
+    "/privacy",
+    "/terms",
+    "/login",
+    "/login/phone-number",
+    "/login/phone-number/phone-otp",
+    "/login/email-verification/smoke-test-id",
+    "/forgot-password",
+    "/reset-password",
+    "/signup",
+    "/signup/option",
+    "/signup/employee",
+    "/signup/company",
+  ];
+  for (const route of publicRoutes) {
+    const response = await fetch(`${baseUrl}${route}`);
+    assert(response.status === 200, `${route} returned ${response.status}`);
+    assert(
+      (response.headers.get("content-type") ?? "").includes("text/html"),
+      `${route} did not return HTML`,
+    );
+  }
+
+  const icon = await fetch(`${baseUrl}/icon.svg`);
+  assert(icon.status === 200, `/icon.svg returned ${icon.status}`);
+  assert(
+    (icon.headers.get("content-type") ?? "").includes("image/svg+xml"),
+    "/icon.svg did not return SVG content",
+  );
+
+  const notFound = await fetch(`${baseUrl}/this-route-must-not-exist`);
+  assert(notFound.status === 404, `Unknown route returned ${notFound.status}`);
+
+  const protectedRoutes = [
+    "/dashboard",
+    "/favorite",
+    "/feed",
+    "/interview",
+    "/matching",
+    "/message",
+    "/notification",
+    "/profile/company",
+    "/profile/employee",
+    "/resume-builder",
+    "/resume-builder/edit",
+    "/search/company",
+    "/search/employee",
+    "/setting",
+  ];
+  for (const route of protectedRoutes) {
+    const response = await fetch(`${baseUrl}${route}`, { redirect: "manual" });
+    assert(
+      [307, 308].includes(response.status),
+      `${route} returned ${response.status} instead of redirecting`,
+    );
+    const location = response.headers.get("location") ?? "";
+    assert(location.includes("/login?callbackUrl="), `${route} did not redirect to login`);
+    assert(
+      decodeURIComponent(location).includes(`callbackUrl=${route}`),
+      `${route} did not preserve its callback URL`,
+    );
+  }
+
+  const employeeCookie = "auth-session-role=employee";
+  for (const route of protectedRoutes) {
+    const response = await fetch(`${baseUrl}${route}`, {
+      headers: { cookie: employeeCookie },
+      redirect: "manual",
+    });
+    assert(
+      response.status === 200,
+      `Authenticated ${route} returned ${response.status}`,
+    );
+    assert(
+      (response.headers.get("content-type") ?? "").includes("text/html"),
+      `Authenticated ${route} did not return HTML`,
+    );
+  }
+
+  for (const route of ["/", "/login", "/signup/company"]) {
+    const response = await fetch(`${baseUrl}${route}`, {
+      headers: { cookie: employeeCookie },
+      redirect: "manual",
+    });
+    assert(
+      [307, 308].includes(response.status),
+      `Authenticated ${route} did not redirect away from guest access`,
+    );
+    assert(
+      new URL(response.headers.get("location"), baseUrl).pathname === "/feed",
+      `Authenticated ${route} did not redirect to the feed`,
+    );
+  }
+
+  for (const route of ["/", "/dashboard", "/profile/employee"]) {
+    const response = await fetch(`${baseUrl}${route}`, {
+      headers: { cookie: "auth-session-role=none" },
+      redirect: "manual",
+    });
+    assert(
+      [307, 308].includes(response.status),
+      `Unassigned-role ${route} did not redirect to onboarding`,
+    );
+    assert(
+      new URL(response.headers.get("location"), baseUrl).pathname ===
+        "/signup/option",
+      `Unassigned-role ${route} did not redirect to role selection`,
+    );
+  }
+
+  const onboarding = await fetch(`${baseUrl}/signup/option`, {
+    headers: { cookie: "auth-session-role=none" },
     redirect: "manual",
   });
   assert(
-    [307, 308].includes(protectedPage.status),
-    `Protected page returned ${protectedPage.status}`,
-  );
-  assert(
-    protectedPage.headers.get("location")?.includes("/login?callbackUrl="),
-    "Protected page did not redirect to login",
+    onboarding.status === 200,
+    `Unassigned-role onboarding returned ${onboarding.status}`,
   );
 
   const logout = await fetch(`${baseUrl}/api/auth/logout`, { method: "POST" });
@@ -153,9 +278,17 @@ try {
     logoutCookies.toLowerCase().includes("httponly"),
     "Auth cookie is not HTTP-only",
   );
+  assert(
+    logoutCookies.includes("refresh-token="),
+    "Logout did not clear refresh token",
+  );
+  assert(
+    logoutCookies.toLowerCase().includes("samesite=strict"),
+    "Logout auth cookies are missing SameSite=strict",
+  );
 
   process.stdout.write(
-    "Web e2e passed: health, landing, auth redirect, logout cookies, standalone runtime\n",
+    `Web e2e passed: health, ${publicRoutes.length + 1} public pages, ${protectedRoutes.length} protected redirects, ${protectedRoutes.length} authenticated pages, auth/onboarding redirects, security headers, static assets, 404, logout cookies, standalone runtime\n`,
   );
 } catch (error) {
   exitCode = 1;

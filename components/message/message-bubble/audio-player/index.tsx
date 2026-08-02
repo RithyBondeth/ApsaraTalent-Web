@@ -104,7 +104,7 @@ export function AudioPlayer(props: IAudioPlayerProps) {
       <button
         type="button"
         onClick={handlePlaybackToggle}
-        className={`shrink-0 h-8 w-8 flex items-center justify-center rounded-full transition-colors ${buttonClass}`}
+        className={`shrink-0 h-8 w-8 flex items-center justify-center rounded-none transition-colors ${buttonClass}`}
         aria-label={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (

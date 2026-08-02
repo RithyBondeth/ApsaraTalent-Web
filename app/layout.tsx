@@ -3,22 +3,10 @@ import { LanguageProvider } from "@/components/utils/languages/language-provider
 import { ThemeProvider } from "@/components/utils/themes/theme-provider";
 import { TitleSync } from "@/components/utils/seo/title-sync";
 import type { Metadata } from "next";
-import { Koh_Santepheap, Roboto_Slab } from "next/font/google";
+import "@fontsource/preahvihear/khmer-400.css";
+import "@fontsource/ubuntu/latin-400.css";
+import "@fontsource/ubuntu/latin-700.css";
 import "./globals.css";
-
-const robotoSlab = Roboto_Slab({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  display: "swap",
-  variable: "--font-roboto-slab",
-});
-
-const kohSantepheap = Koh_Santepheap({
-  subsets: ["khmer"],
-  weight: ["400", "700"],
-  display: "swap",
-  variable: "--font-koh-santepheap",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -41,21 +29,23 @@ export default function RootLayout({
     /*---------------------------------- Main Layout ----------------------------------*/
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
-        className={`${robotoSlab.variable} ${kohSantepheap.variable} antialiased`}
+        className="antialiased"
         style={{
-          fontFamily: "var(--font-roboto-slab), var(--font-koh-santepheap), sans-serif",
+          fontFamily: "var(--font-ubuntu), var(--font-preahvihear), sans-serif",
         }}
         suppressHydrationWarning
       >
         {/* Language Provider Section */}
         <LanguageProvider>
           {/* Theme Provider Section */}
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            {children}
+            {/* Toast Container Section */}
+            <Toaster />
+          </ThemeProvider>
         </LanguageProvider>
         {/* Title Section: Sync document.title on client-side language toggle */}
         <TitleSync />
-        {/* Toast Container Section */}
-        <Toaster />
       </body>
     </html>
   );

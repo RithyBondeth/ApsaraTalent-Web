@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import {
-  LucideArrowLeft,
   LucideHelpCircle,
   LucideMessageCircle,
   LucideMail,
@@ -11,97 +9,44 @@ import {
   LucideUsers,
   LucideChevronDown,
 } from "lucide-react";
-import { TypographyH1 } from "@/components/utils/typography/typography-h1";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import {
+  StaticBullet,
+  StaticCard,
+  StaticPageArtworkSlot,
+  StaticPageShell,
+  StaticSection,
+} from "@/components/static-content/static-page";
 import { useLanguageStore } from "@/stores/languages/language-store";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-
-/* -------------------------- Sub Components -------------------------- */
-function Section({
-  id,
-  icon,
-  title,
-  children,
-}: {
-  id: string;
-  icon: React.ReactNode;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section id={id} className="flex flex-col gap-4 scroll-mt-8">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center size-9 rounded-xl bg-primary/10 border border-primary/20 shrink-0">
-          <span className="text-primary [&>svg]:size-4">{icon}</span>
-        </div>
-        <TypographyH2 className="text-lg font-bold tracking-tight">
-          {title}
-        </TypographyH2>
-      </div>
-      <div className="flex flex-col gap-3 text-sm text-muted-foreground leading-relaxed pl-0">
-        {children}
-      </div>
-    </section>
-  );
-}
-
-function Bullet({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex items-start gap-2">
-      <span className="mt-1.5 size-1.5 rounded-full bg-primary/60 shrink-0" />
-      <span>{children}</span>
-    </li>
-  );
-}
+import { useId, useState } from "react";
 
 function FaqItem({ question, answer }: { question: string; answer: string }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const answerId = useId();
+
   return (
-    <div className="border border-border/60 rounded-xl overflow-hidden">
+    <div
+      className="static-page-faq border-t border-border last:border-b"
+      data-open={open}
+    >
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full px-4 py-3 text-left text-sm font-medium hover:bg-muted/50 transition-colors"
+        aria-expanded={open}
+        aria-controls={answerId}
+        className="group flex w-full items-center justify-between gap-4 py-5 text-left text-sm font-semibold text-foreground transition-colors hover:text-muted-foreground"
       >
         <span>{question}</span>
         <LucideChevronDown
-          className={cn(
-            "size-4 text-muted-foreground transition-transform shrink-0 ml-2",
-            open && "rotate-180",
-          )}
+          className="static-page-faq-chevron size-4 shrink-0 text-muted-foreground transition-transform duration-300"
         />
       </button>
-      {open && (
-        <div className="px-4 pb-3 text-xs text-muted-foreground leading-relaxed border-t border-border/40 pt-3">
-          {answer}
+      <div id={answerId} className="static-page-faq-answer">
+        <div className="overflow-hidden">
+          <p className="border-t border-border/60 pb-5 pt-4 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+            {answer}
+          </p>
         </div>
-      )}
-    </div>
-  );
-}
-
-function ContactCard({
-  icon,
-  title,
-  description,
-  action,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  action: string;
-}) {
-  return (
-    <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/50 p-5">
-      <div className="flex items-center gap-2.5">
-        <span className="text-primary [&>svg]:size-4">{icon}</span>
-        <span className="text-sm font-semibold">{title}</span>
       </div>
-      <span className="text-xs text-muted-foreground leading-relaxed">
-        {description}
-      </span>
-      <span className="text-xs font-medium text-primary">{action}</span>
     </div>
   );
 }
@@ -379,122 +324,104 @@ export function SupportContent() {
 
   /* ---------------------------- Render UI --------------------------- */
   return (
-    <div className="min-h-screen bg-background">
-      {/* Top Navigation Section */}
-      <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm">
-        <div className="max-w-5xl mx-auto flex items-center gap-4 px-4 py-3 sm:px-6">
-          <Link
-            href="/"
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <LucideArrowLeft className="size-3.5" />
-            {t.back}
-          </Link>
-          <span className="text-border">|</span>
-          <span className="text-sm font-semibold">{t.pageTitle}</span>
-        </div>
-      </header>
-
-      <div className="max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:flex lg:gap-12">
-        {/* Sticky TOC Sidebar (Desktop) Section */}
-        <aside className="hidden lg:block w-56 shrink-0">
-          <nav className="sticky top-20 flex flex-col gap-2">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-              {t.tocHeading}
-            </span>
-            {t.toc.map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-0.5"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Main Content Section */}
-        <main className="flex-1 flex flex-col gap-10 min-w-0">
-          {/* Hero Header Section */}
-          <div className="flex flex-col gap-4">
-            <TypographyH1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              {t.pageTitle}
-            </TypographyH1>
-            <TypographyP className="text-muted-foreground max-w-2xl">
-              {t.subtitle}
-            </TypographyP>
-          </div>
-
+    <StaticPageShell
+      pageNumber="04"
+      title={t.pageTitle}
+      subtitle={t.subtitle}
+      tocHeading={t.tocHeading}
+      toc={t.toc}
+      icon={<LucideHelpCircle />}
+      heroVisual={
+        <StaticPageArtworkSlot
+          icon={<LucideHelpCircle />}
+          label={t.pageTitle}
+        />
+      }
+    >
           {/* FAQ Section */}
-          <Section id="faq" icon={<LucideHelpCircle />} title={t.faqTitle}>
+          <StaticSection
+            id="faq"
+            number="01"
+            icon={<LucideHelpCircle />}
+            title={t.faqTitle}
+          >
             <TypographyP>{t.faqIntro}</TypographyP>
             <div className="flex flex-col gap-2 mt-1">
               {t.faqs.map((faq, i) => (
                 <FaqItem key={i} question={faq.q} answer={faq.a} />
               ))}
             </div>
-          </Section>
+          </StaticSection>
 
           {/* Contact Us Section */}
-          <Section id="contact" icon={<LucideMail />} title={t.contactTitle}>
+          <StaticSection
+            id="contact"
+            number="02"
+            icon={<LucideMail />}
+            title={t.contactTitle}
+          >
             <TypographyP>{t.contactIntro}</TypographyP>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-1">
               {t.contacts.map((c, i) => (
-                <ContactCard
+                <StaticCard
                   key={i}
                   icon={contactIcons[i]}
                   title={c.title}
                   description={c.description}
-                  action={c.action}
+                  footer={
+                    <span className="text-xs font-semibold text-foreground">
+                      {c.action}
+                    </span>
+                  }
                 />
               ))}
             </div>
-          </Section>
+          </StaticSection>
 
           {/* Mobile App Support Section */}
-          <Section
+          <StaticSection
             id="mobile-support"
+            number="03"
             icon={<LucideSmartphone />}
             title={t.mobileTitle}
           >
             <TypographyP>{t.mobileIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.mobileBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-          </Section>
+          </StaticSection>
 
           {/* Community Section */}
-          <Section
+          <StaticSection
             id="community"
+            number="04"
             icon={<LucideUsers />}
             title={t.communityTitle}
           >
             <TypographyP>{t.communityIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.communityBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-          </Section>
+          </StaticSection>
 
           {/* Resources Section */}
-          <Section
+          <StaticSection
             id="resources"
+            number="05"
             icon={<LucideBookOpen />}
             title={t.resourcesTitle}
           >
             <TypographyP>{t.resourcesIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.resourcesBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-          </Section>
-        </main>
-      </div>
-    </div>
+          </StaticSection>
+    </StaticPageShell>
   );
 }

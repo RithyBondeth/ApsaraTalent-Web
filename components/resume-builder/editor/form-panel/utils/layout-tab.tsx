@@ -47,7 +47,7 @@ function SectionItem({
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center justify-between p-3 rounded-lg border bg-card transition-colors ${
+      className={`flex items-center justify-between border bg-card p-3 transition-colors ${
         !isVisible ? "opacity-60 bg-muted/30" : "shadow-sm"
       }`}
     >
@@ -181,7 +181,7 @@ export function LayoutTab() {
       </DndContext>
 
       {/* Pro Tip Section */}
-      <div className="rounded-xl bg-primary/5 border border-primary/10 p-4">
+      <div className="border border-primary/10 bg-primary/5 p-4">
         <h5 className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
           {t("proTip")}
         </h5>

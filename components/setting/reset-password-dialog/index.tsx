@@ -24,10 +24,10 @@ export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm rounded-2xl">
+      <DialogContent className="max-w-sm rounded-none border-t-[5px] border-t-primary shadow-[6px_6px_0_hsl(var(--foreground)/0.09)]">
         <DialogHeader>
           {/* Reset Password Icon Header Section */}
-          <div className="mx-auto mb-2 flex items-center justify-center size-14 rounded-2xl bg-primary/10 border border-primary/20">
+          <div className="mx-auto mb-2 flex size-14 items-center justify-center border border-primary/25 bg-primary/10">
             <LucideKeyRound className="size-6 text-primary" />
           </div>
 
@@ -48,7 +48,7 @@ export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
         <DialogFooter className="flex-col gap-2 sm:flex-col">
           {sent ? (
             <Button
-              className="w-full rounded-xl"
+              className="w-full rounded-none"
               onClick={() => onOpenChange(false)}
             >
               {t("done")}
@@ -56,7 +56,7 @@ export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
           ) : (
             <>
               <Button
-                className="w-full rounded-xl"
+                className="w-full rounded-none"
                 onClick={onSendReset}
                 disabled={sending}
               >
@@ -64,7 +64,7 @@ export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
               </Button>
               <Button
                 variant="outline"
-                className="w-full rounded-xl"
+                className="w-full rounded-none"
                 onClick={() => onOpenChange(false)}
                 disabled={sending}
               >

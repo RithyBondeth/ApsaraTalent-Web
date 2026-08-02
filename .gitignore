@@ -15,6 +15,7 @@
 
 # next.js
 /.next/
+/.next-e2e/
 /out/
 
 # production
@@ -52,3 +53,5 @@ docker-compose.yml
 .cursor
 CLAUDE.md
 GEMINI.md
+playwright-report/
+test-results/

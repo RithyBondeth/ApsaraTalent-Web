@@ -41,7 +41,7 @@ export function SectionWrapper(props: ISectionWrapperProps) {
         setSelectedSection(sectionId);
       }}
       className={[
-        "relative group/section rounded-sm transition-all duration-150",
+        "relative group/section rounded-none transition-all duration-150",
         isSelected
           ? "ring-2 ring-blue-500 ring-offset-2"
           : "ring-0 hover:ring-1 hover:ring-blue-300/60 hover:ring-offset-1",

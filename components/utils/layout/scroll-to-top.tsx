@@ -3,8 +3,14 @@
 import { useEffect, useState } from "react";
 import { LucideArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/utils/use-media-query";
 
 export function ScrollToTop() {
+  /* ---------------------------------- Utils --------------------------------- */
+  const prefersReducedMotion = useMediaQuery(
+    "(prefers-reduced-motion: reduce)",
+  );
+
   /* ------------------------------- All States ------------------------------- */
   const [visible, setVisible] = useState<boolean>(false);
 
@@ -17,7 +23,11 @@ export function ScrollToTop() {
 
   /* --------------------------------- Methods -------------------------------- */
   // ── Handle Click ─────────────────────────
-  const handleClick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const handleClick = () =>
+    window.scrollTo({
+      top: 0,
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -30,6 +40,7 @@ export function ScrollToTop() {
         "bg-foreground text-background shadow-[0_4px_20px_hsl(var(--foreground)/0.25)]",
         "transition-all duration-300 ease-out",
         "hover:scale-110 hover:shadow-[0_6px_28px_hsl(var(--foreground)/0.35)] active:scale-95",
+        "motion-reduce:transform-none motion-reduce:transition-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100",
         visible
           ? "translate-y-0 opacity-100"
           : "pointer-events-none translate-y-4 opacity-0",

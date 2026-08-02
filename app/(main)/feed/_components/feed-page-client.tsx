@@ -2,11 +2,7 @@
 
 import EmployeeCardSkeleton from "@/components/employee/skeleton";
 import ImagePopup from "@/components/utils/data-display/image-popup";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographyH3 } from "@/components/utils/typography/typography-h3";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -56,9 +52,9 @@ import {
 import { MemoCompanyFeedCard } from "@/components/feed/memo-company-feed-card";
 import { MemoEmployeeFeedCard } from "@/components/feed/memo-employee-feed-card";
 import { useFeedActionEffect } from "@/components/utils/effects/feed-action-effect";
+import { PageState } from "@/components/utils/feedback/page-state";
 import { FadeIn } from "@/components/utils/layout/fade-in";
 import { OnboardingFlow } from "@/components/utils/onboarding/onboarding-flow";
-import Link from "next/link";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 
@@ -66,13 +62,8 @@ interface Props {
   initialIsEmployee: boolean;
 }
 
-const fetchInitiated = {
-  companies: false,
-  employees: false,
-};
-
 const FEED_CARD_GRID_CLASS =
-  "w-full pt-2 grid grid-cols-3 gap-4 items-stretch laptop-sm:grid-cols-2 tablet-lg:!grid-cols-1 stagger-list [&>*]:min-w-0 [&>*]:h-full";
+  "w-full grid grid-cols-3 gap-4 items-stretch laptop-sm:grid-cols-2 tablet-lg:!grid-cols-1 stagger-list [&>*]:min-w-0 [&>*]:h-full";
 
 export default function FeedPageClient({ initialIsEmployee }: Props) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -119,11 +110,13 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
   // All Company Data APIs
   const companyData = useGetAllCompanyStore((s) => s.companyData);
   const companyLoading = useGetAllCompanyStore((s) => s.loading);
+  const companyError = useGetAllCompanyStore((s) => s.error);
   const queryCompany = useGetAllCompanyStore((s) => s.queryCompany);
 
   // All Employee Data APIs
   const employeesData = useGetAllEmployeeStore((s) => s.employeesData);
   const employeeLoading = useGetAllEmployeeStore((s) => s.loading);
+  const employeeError = useGetAllEmployeeStore((s) => s.error);
   const queryEmployee = useGetAllEmployeeStore((s) => s.queryEmployee);
 
   // All Employee Liked APIs
@@ -247,6 +240,14 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     if (!id) return;
 
     if (recsFetchedForRef.current === id) return;
+    const existingRecommendations = isEmployee
+      ? employeeRecommendations
+      : companyRecommendations;
+    if (existingRecommendations !== null) {
+      recsFetchedForRef.current = id;
+      setRecsHasFetched(true);
+      return;
+    }
     recsFetchedForRef.current = id;
     setRecsHasFetched(false);
 
@@ -258,6 +259,8 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
   }, [
     currentUser,
     isEmployee,
+    employeeRecommendations,
+    companyRecommendations,
     queryEmployeeRecommendations,
     queryCompanyRecommendations,
   ]);
@@ -275,17 +278,24 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     if (!currentUser) return;
 
     if (isEmployee) {
-      if (!fetchInitiated.companies || !companyData) {
-        fetchInitiated.companies = true;
-        queryCompanyRef.current();
+      if (!companyData && !companyLoading && !companyError) {
+        void queryCompanyRef.current();
       }
     } else {
-      if (!fetchInitiated.employees || !employeesData) {
-        fetchInitiated.employees = true;
-        queryEmployeeRef.current();
+      if (!employeesData && !employeeLoading && !employeeError) {
+        void queryEmployeeRef.current();
       }
     }
-  }, [isEmployee, currentUser, companyData, employeesData]);
+  }, [
+    isEmployee,
+    currentUser,
+    companyData,
+    companyLoading,
+    companyError,
+    employeesData,
+    employeeLoading,
+    employeeError,
+  ]);
 
   // Fetch the hidden-id set (both block directions) so blocked profiles are
   // hidden from the feed regardless of who initiated the block.
@@ -617,161 +627,98 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     !recsHasFetched ||
     (isEmployee && (companyLoading || currentEmployeeLikedLoading)) ||
     (!isEmployee && (employeeLoading || currentCompanyLikedLoading));
+  const feedError = isEmployee ? companyError : employeeError;
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-4 sm:gap-5 animate-page-in">
+    <div className="feed-scope w-full flex flex-col items-start gap-7 sm:gap-9 animate-page-in">
       {effectPortal}
-      {/* First-Time User Onboarding Flow */}
+      {/* First-Time User Onboarding Flow Section */}
       <OnboardingFlow />
-      {/* Header Section */}
+      {/* Feed Banner Section */}
       {isLoading ? (
         <FeedBannerSkeleton />
       ) : (
         <FadeIn className="w-full">
-          {isEmployee ? (
-            <>
-              {/* Desktop Banner Section 1050px */}
-              <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
-                <div className="flex flex-col items-start gap-3">
-                  <TypographyH2 className="!leading-relaxed text-2xl sm:text-4xl">
-                    {tFeed("employeeBannerTitle")}
-                  </TypographyH2>
-                  <TypographyH4 className="!leading-relaxed">
-                    {tFeed("employeeBannerSubtitle1")}
-                  </TypographyH4>
-                  <TypographyH4 className="!leading-relaxed">
-                    {tFeed("employeeBannerSubtitle2")}
-                  </TypographyH4>
-                  <TypographyMuted className="!leading-relaxed">
-                    {tFeed("employeeBannerMuted")}
-                  </TypographyMuted>
-                </div>
-                <Image
-                  src={feedEmployeeBannerSvg}
-                  alt="feed"
-                  height={300}
-                  width={400}
-                  className="h-auto max-w-[360px] shrink-0"
-                  priority
-                />
+          {/* Feed Banner Content Section */}
+          <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
+            <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
+              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                <span className="h-px w-7 bg-primary" />
+                {isEmployee ? tFeed("allCompanies") : tFeed("allTalent")}
               </div>
 
-              {/* Tablet Banner Section 651px–1050px */}
-              <div className="hidden tablet-xl:flex tablet-md:!hidden w-full items-center justify-between gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5 overflow-hidden">
-                <div className="flex-1 min-w-0 flex flex-col gap-2">
-                  <TypographyH3 className="!leading-snug">
-                    {tFeed("employeeBannerTitle")}
-                  </TypographyH3>
-                  <TypographyMuted className="!leading-snug">
-                    {tFeed("employeeBannerSubtitle1")}
-                  </TypographyMuted>
-                  <TypographyMuted className="!leading-snug">
-                    {tFeed("employeeBannerSubtitle2")}
-                  </TypographyMuted>
-                </div>
-                <Image
-                  src={feedEmployeeBannerSvg}
-                  alt="feed"
-                  width={160}
-                  height={160}
-                  className="shrink-0 h-auto object-contain"
-                  priority
-                />
+              <div className="max-w-3xl">
+                <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.05] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl">
+                  {isEmployee
+                    ? tFeed("employeeBannerTitle")
+                    : tFeed("companyBannerTitle")}
+                </h1>
+                <p className="mt-4 max-w-[60ch] text-sm leading-6 text-muted-foreground sm:text-base">
+                  {isEmployee
+                    ? tFeed("employeeBannerSubtitle1")
+                    : tFeed("companyBannerSubtitle1")}{" "}
+                  {isEmployee
+                    ? tFeed("employeeBannerSubtitle2")
+                    : tFeed("companyBannerSubtitle2")}
+                </p>
               </div>
 
-              {/* Mobile Banner Section ≤650px */}
-              <div className="hidden tablet-md:flex w-full items-center gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-3 overflow-hidden">
-                <div className="flex-1 min-w-0 flex flex-col gap-1">
-                  <h2 className="font-bold text-sm leading-snug text-foreground">
-                    {tFeed("employeeBannerTitle")}
-                  </h2>
-                  <p className="text-xs text-muted-foreground leading-snug line-clamp-2">
-                    {tFeed("employeeBannerSubtitle1")}
-                  </p>
-                </div>
-                <Image
-                  src={feedEmployeeBannerSvg}
-                  alt="feed"
-                  width={88}
-                  height={88}
-                  className="flex-shrink-0 object-contain"
-                  priority
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              {/* Desktop Banner Section 1050px */}
-              <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
-                <div className="flex flex-col items-start gap-3">
-                  <TypographyH2 className="!leading-relaxed text-2xl sm:text-4xl">
-                    {tFeed("companyBannerTitle")}
-                  </TypographyH2>
-                  <TypographyH4 className="!leading-relaxed">
-                    {tFeed("companyBannerSubtitle1")}
-                  </TypographyH4>
-                  <TypographyH4 className="!leading-relaxed">
-                    {tFeed("companyBannerSubtitle2")}
-                  </TypographyH4>
-                  <TypographyMuted className="!leading-relaxed">
-                    {tFeed("companyBannerMuted")}
-                  </TypographyMuted>
-                </div>
-                <Image
-                  src={feedCompanyBannerSvg}
-                  alt="feed"
-                  height={250}
-                  width={350}
-                  className="h-auto max-w-[340px] shrink-0"
-                  priority
-                />
+              <p className="max-w-[70ch] border-l-2 border-foreground pl-3 text-xs leading-5 text-muted-foreground">
+                {isEmployee
+                  ? tFeed("employeeBannerMuted")
+                  : tFeed("companyBannerMuted")}
+              </p>
+            </div>
+
+            <div className="feed-hero-visual">
+              <div aria-hidden className="feed-hero-visual-grid" />
+
+              <div className="feed-hero-network-chip">
+                <span className="feed-hero-network-icon" aria-hidden>
+                  {isEmployee ? <Building2 /> : <Users />}
+                </span>
+                <span>
+                  {isEmployee
+                    ? tFeed("companyNetwork")
+                    : tFeed("talentNetwork")}
+                </span>
+                <span aria-hidden className="feed-hero-network-status" />
               </div>
 
-              {/* Tablet Banner Section 651px–1050px */}
-              <div className="hidden tablet-xl:flex tablet-md:!hidden w-full items-center justify-between gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5 overflow-hidden">
-                <div className="flex-1 min-w-0 flex flex-col gap-2">
-                  <TypographyH3 className="!leading-snug">
-                    {tFeed("companyBannerTitle")}
-                  </TypographyH3>
-                  <TypographyMuted className="!leading-snug">
-                    {tFeed("companyBannerSubtitle1")}
-                  </TypographyMuted>
-                  <TypographyMuted className="!leading-snug">
-                    {tFeed("companyBannerSubtitle2")}
-                  </TypographyMuted>
+              <div aria-hidden className="feed-hero-art-stage">
+                <span className="feed-hero-node feed-hero-node-one" />
+                <span className="feed-hero-node feed-hero-node-two" />
+                <span className="feed-hero-node feed-hero-node-three" />
+
+                <div className="feed-hero-art-frame">
+                  <div className="feed-hero-art-grid" />
+                  <div className="feed-hero-art-glow" />
+                  <Image
+                    src={
+                      isEmployee ? feedEmployeeBannerSvg : feedCompanyBannerSvg
+                    }
+                    alt=""
+                    height={260}
+                    width={360}
+                    className="feed-hero-artwork"
+                    priority
+                  />
+                  <span className="feed-hero-corner feed-hero-corner-nw" />
+                  <span className="feed-hero-corner feed-hero-corner-ne" />
+                  <span className="feed-hero-corner feed-hero-corner-sw" />
+                  <span className="feed-hero-corner feed-hero-corner-se" />
                 </div>
-                <Image
-                  src={feedCompanyBannerSvg}
-                  alt="feed"
-                  width={160}
-                  height={160}
-                  className="shrink-0 h-auto object-contain"
-                  priority
-                />
               </div>
 
-              {/* Mobile Banner Section ≤650px */}
-              <div className="hidden tablet-md:flex w-full items-center gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-3 overflow-hidden">
-                <div className="flex-1 min-w-0 flex flex-col gap-1">
-                  <h2 className="font-bold text-sm leading-snug text-foreground">
-                    {tFeed("companyBannerTitle")}
-                  </h2>
-                  <p className="text-xs text-muted-foreground leading-snug line-clamp-2">
-                    {tFeed("companyBannerSubtitle1")}
-                  </p>
-                </div>
-                <Image
-                  src={feedCompanyBannerSvg}
-                  alt="feed"
-                  width={88}
-                  height={88}
-                  className="flex-shrink-0 object-contain"
-                  priority
-                />
+              <div aria-hidden className="feed-hero-signal-bars">
+                <span />
+                <span />
+                <span />
+                <span />
               </div>
-            </>
-          )}
+            </div>
+          </section>
         </FadeIn>
       )}
 
@@ -792,26 +739,33 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
 
           if (recsLoading) {
             return (
-              <div className="w-full flex flex-col gap-3">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  <TypographyH4>{tFeed("recommendedForYou")}</TypographyH4>
+              <div className="w-full flex flex-col gap-5 border-y border-border py-6">
+                <div className="flex items-end justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+                      01
+                    </span>
+                    <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">
+                      {tFeed("recommendedForYou")}
+                    </h2>
+                  </div>
+                  <Sparkles className="size-5 text-foreground" />
                 </div>
                 <div className={FEED_CARD_GRID_CLASS}>
                   {Array.from({ length: 3 }).map((_, i) =>
                     isEmployee ? (
                       <div key={i} className="flex h-full flex-col">
                         <div className="flex items-center gap-1 mb-1.5 px-1">
-                          <Skeleton className="size-3 rounded" />
-                          <Skeleton className="h-2.5 w-16 rounded" />
+                          <Skeleton className="size-3 rounded-none" />
+                          <Skeleton className="h-2.5 w-16 rounded-none" />
                         </div>
                         <CompanyCardSkeleton />
                       </div>
                     ) : (
                       <div key={i} className="flex h-full flex-col">
                         <div className="flex items-center gap-1 mb-1.5 px-1">
-                          <Skeleton className="size-3 rounded" />
-                          <Skeleton className="h-2.5 w-16 rounded" />
+                          <Skeleton className="size-3 rounded-none" />
+                          <Skeleton className="h-2.5 w-16 rounded-none" />
                         </div>
                         <EmployeeCardSkeleton />
                       </div>
@@ -834,8 +788,10 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
               : queryCompanyRecommendations;
 
             return (
-              <div className="w-full flex items-center gap-3">
-                <Sparkles className="h-5 w-5 text-muted-foreground" />
+              <div className="w-full flex items-center gap-3 border-y border-border py-5">
+                <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+                  01
+                </span>
                 <TypographyMuted>{tFeed("recommendedForYou")}</TypographyMuted>
                 {retryId && (
                   <button
@@ -844,7 +800,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                       setRecsHasFetched(false);
                       retryFn(retryId).finally(() => setRecsHasFetched(true));
                     }}
-                    className="text-xs text-primary underline underline-offset-2 hover:opacity-70 transition-opacity"
+                    className="border-b border-foreground text-xs font-semibold text-foreground transition-opacity hover:opacity-60"
                   >
                     {tFeed("retry")}
                   </button>
@@ -856,10 +812,17 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
           if (!recs || recs.length === 0) return null;
 
           return (
-            <FadeIn className="w-full flex flex-col gap-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-primary" />
-                <TypographyH4>{tFeed("recommendedForYou")}</TypographyH4>
+            <FadeIn className="w-full flex flex-col gap-5 border-y border-border py-6">
+              <div className="flex items-end justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+                    01
+                  </span>
+                  <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">
+                    {tFeed("recommendedForYou")}
+                  </h2>
+                </div>
+                <Sparkles className="size-5 text-foreground" />
               </div>
               <div className={FEED_CARD_GRID_CLASS}>
                 {isEmployee
@@ -909,18 +872,22 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       {isLoading ? (
         <FeedDividerSkeleton />
       ) : (
-        <FadeIn className="w-full flex items-center gap-4">
-          <div className="flex items-center gap-2 shrink-0 bg-card border border-border/70 rounded-full px-3 py-1.5 shadow-[0_1px_4px_hsl(var(--foreground)/0.06)]">
-            {isEmployee ? (
-              <Building2 className="h-4 w-4 text-primary" />
-            ) : (
-              <Users className="h-4 w-4 text-primary" />
-            )}
-            <span className="text-sm font-semibold text-foreground/80">
-              {isEmployee ? tFeed("allCompanies") : tFeed("allTalent")}
+        <FadeIn className="w-full flex items-end justify-between gap-4 border-b border-border pb-4">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+              02
             </span>
+            <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">
+              {isEmployee ? tFeed("allCompanies") : tFeed("allTalent")}
+            </h2>
           </div>
-          <div className="flex-1 h-px bg-border/60" />
+          <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
+            {isEmployee ? (
+              <Building2 className="size-4" />
+            ) : (
+              <Users className="size-4" />
+            )}
+          </div>
         </FadeIn>
       )}
 
@@ -983,30 +950,38 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
               )}
       </div>
 
+      {/* Error State Section */}
+      {!isLoading && feedError && (
+        <PageState
+          variant="error"
+          title={feedError}
+          description={tFeed("loadErrorDescription")}
+          compact
+          className="my-6 sm:my-8"
+          action={{
+            label: tFeed("retry"),
+            onClick: isEmployee ? queryCompany : queryEmployee,
+          }}
+        />
+      )}
+
       {/* Empty List Section */}
-      {!isLoading && allUsers.length === 0 && (
-        <div className="w-full flex flex-col items-center justify-center gap-4 my-16">
-          <Image
-            src={emptySvg}
-            alt="empty"
-            height={200}
-            width={200}
-            className="animate-float"
-          />
-          <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-            {isEmployee
-              ? tFeed("companyListEmpty")
-              : tFeed("employeeListEmpty")}
-          </TypographyP>
-          <Link
-            href={isEmployee ? "/search/company" : "/search/employee"}
-            className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2 text-xs font-semibold text-background shadow-sm transition-all hover:opacity-85 active:scale-95"
-          >
-            {isEmployee
+      {!isLoading && !feedError && allUsers.length === 0 && (
+        <PageState
+          variant="empty"
+          title={
+            isEmployee ? tFeed("companyListEmpty") : tFeed("employeeListEmpty")
+          }
+          image={emptySvg}
+          compact
+          className="my-6 sm:my-8"
+          action={{
+            label: isEmployee
               ? tFeed("exploreAllCompanies")
-              : tFeed("exploreAllTalent")}
-          </Link>
-        </div>
+              : tFeed("exploreAllTalent"),
+            href: isEmployee ? "/search/company" : "/search/employee",
+          }}
+        />
       )}
 
       {/* Infinite Scroll Sentinel Section: Triggers revealing the next batch of already-loaded cards */}

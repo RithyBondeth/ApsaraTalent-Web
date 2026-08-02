@@ -2,7 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
+import AuthShell from "@/components/auth/auth-shell";
+import { AuthField } from "@/components/auth/auth-field";
+import { AuthBackButton } from "@/components/auth/auth-back-button";
 import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -11,7 +13,6 @@ import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-sign
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucidePhone } from "lucide-react";
 import { toast } from "sonner";
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
@@ -42,7 +43,11 @@ export default function PhoneNumberPage() {
   /* --------------------- React Hook Form: Phone OTP Form -------------------- */
   // ── Define Schema For Phone OTP Form ────────────────────────
   const phoneLoginSchema = useMemo(
-    () => makePhoneLoginSchema({ phoneInvalid: tv("phoneInvalid") }),
+    () =>
+      makePhoneLoginSchema({
+        phoneRequired: tv("phoneRequired"),
+        phoneInvalid: tv("phoneInvalid"),
+      }),
     [tv],
   );
 
@@ -116,78 +121,72 @@ export default function PhoneNumberPage() {
     t,
   ]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    /* -------------------------------- Render UI -------------------------------- */
-    <div className="min-h-screen w-full flex tablet-md:flex-col">
-      {/* Left Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-12">
-        <div className="w-full max-w-[440px] flex flex-col gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
-          {/* Logo Section */}
-          <LogoComponent className="!h-12 w-auto self-start" />
-
-          {/* Title Section */}
-          <div className="flex flex-col items-start">
-            <TypographyH2 className="phone-xl:text-xl">
-              {t("phoneLoginTitle")}
-            </TypographyH2>
-            <TypographyMuted className="text-md phone-xl:text-sm">
-              {t("phoneLoginSubtitle")}
-            </TypographyMuted>
-          </div>
-
-          {/* Form Section */}
-          <form
-            action=""
-            className="flex flex-col items-stretch gap-3"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <Input
-              prefix={<LucidePhone />}
-              type="number"
-              placeholder={t("phoneNumber")}
-              {...register("phone")}
-              validationMessage={errors.phone?.message}
-            />
-            <div className="flex items-center gap-1">
-              <Controller
-                name="rememberMe"
-                control={control}
-                defaultValue={false}
-                render={({ field }) => (
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                )}
-              />
-              <TypographyMuted className="text-xs">
-                {t("rememberMeLabel")}
-              </TypographyMuted>
-            </div>
-            <Button>{t("loginButton")}</Button>
-          </form>
-
-          {/* Navigate Back Button Section */}
-          <button
-            onClick={() => router.replace("/login")}
-            className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
-          >
-            {t("backToEmailLogin")}
-          </button>
+    <AuthShell
+      image={phoneNumberSvg}
+      imageAlt={t("phoneLoginTitle")}
+      eyebrowKey="phonePanelEyebrow"
+      titleKey="phonePanelTitle"
+      subtitleKey="phonePanelSubtitle"
+    >
+      <div className="auth-stagger flex w-full flex-col gap-7">
+        {/* Logo and Title Section */}
+        <div style={{ "--d": "0ms" } as React.CSSProperties}>
+          <LogoComponent className="!h-16 w-auto self-start" priority />
+          <TypographyH2 className="mt-5 phone-xl:text-xl">
+            {t("phoneLoginTitle")}
+          </TypographyH2>
+          <TypographyMuted className="text-md phone-xl:text-sm">
+            {t("phoneLoginSubtitle")}
+          </TypographyMuted>
         </div>
-      </div>
 
-      {/* Right Section: Image Poster */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
-        <Image
-          src={phoneNumberSvg}
-          alt="phone-number"
-          height={undefined}
-          width={600}
-        />
-        <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
-        <div className="absolute -bottom-10 -left-10 size-48 rounded-full bg-white/5" />
+        {/* Form Section */}
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={handleSubmit(onSubmit)}
+          style={{ "--d": "90ms" } as React.CSSProperties}
+        >
+          <AuthField
+            label={`${t("phoneNumber")} *`}
+            type="tel"
+            inputMode="numeric"
+            aria-required="true"
+            icon={<LucidePhone className="size-[18px]" strokeWidth={1.6} />}
+            error={errors.phone?.message}
+            {...register("phone")}
+          />
+          <label className="flex items-center gap-2 cursor-pointer">
+            <Controller
+              name="rememberMe"
+              control={control}
+              defaultValue={false}
+              render={({ field }) => (
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
+            <TypographyMuted className="text-xs">
+              {t("rememberMeLabel")}
+            </TypographyMuted>
+          </label>
+          <div className="auth-action-row">
+            <AuthBackButton onClick={() => router.replace("/login")}>
+              {t("back")}
+            </AuthBackButton>
+            <Button
+              type="submit"
+              className="auth-submit h-11"
+              disabled={loading}
+            >
+              {t("loginButton")}
+            </Button>
+          </div>
+        </form>
       </div>
-    </div>
+    </AuthShell>
   );
 }

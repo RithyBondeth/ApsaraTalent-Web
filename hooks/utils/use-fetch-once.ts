@@ -22,8 +22,8 @@ import { useEffect, useMemo, useRef } from "react";
 
 /* ----------------------------------- Types ---------------------------------- */
 interface UseFetchOnceOptions {
-  onEmployeeFetch?: (employeeId: string) => void;
-  onCompanyFetch?: (companyId: string) => void;
+  onEmployeeFetch?: (employeeId: string) => void | Promise<unknown>;
+  onCompanyFetch?: (companyId: string) => void | Promise<unknown>;
   enabled?: boolean;
   cacheKey?: string;
 }
@@ -111,18 +111,33 @@ export function useFetchOnce(
       return;
     }
 
-    cacheEntry.add(userData.currentUserId);
-
+    let request: void | Promise<unknown> = undefined;
+    let invoked = false;
     if (
       userData.isEmployee &&
       userData.employeeId &&
       onEmployeeFetchRef.current
     ) {
-      onEmployeeFetchRef.current(userData.employeeId);
+      invoked = true;
+      request = onEmployeeFetchRef.current(userData.employeeId);
     }
 
     if (userData.isCompany && userData.companyId && onCompanyFetchRef.current) {
-      onCompanyFetchRef.current(userData.companyId);
+      invoked = true;
+      request = onCompanyFetchRef.current(userData.companyId);
+    }
+
+    // Do not mark a missing callback as fetched. If an async callback rejects,
+    // allow a later mount to retry instead of permanently suppressing it.
+    if (!invoked) {
+      return;
+    }
+
+    cacheEntry.add(userData.currentUserId);
+    if (request !== undefined) {
+      void Promise.resolve(request).catch(() => {
+        cacheEntry.delete(userData.currentUserId!);
+      });
     }
   }, [
     cacheEntry,

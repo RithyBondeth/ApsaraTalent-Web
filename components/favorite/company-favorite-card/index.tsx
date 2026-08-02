@@ -1,12 +1,12 @@
 import MetaChip from "@/components/utils/data-display/meta-chip";
 import {
-  LucideArrowRight,
   LucideBookmarkX,
   LucideBriefcaseBusiness,
   LucideBuilding,
   LucideClock,
   LucideMapPin,
   LucideUsers,
+  MoveUpRight,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
@@ -25,14 +25,14 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div
-      className={`w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
+    <article
+      className={`group w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
     >
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
         {/* Avatar Section: Company Avatar */}
         <Avatar
           rounded="md"
-          className="size-16 sm:size-20 flex-shrink-0 ring-[2px] ring-border/40"
+          className="size-14 flex-shrink-0 !rounded-none border border-border sm:size-16"
         >
           <AvatarFallback className="text-sm font-semibold">
             {getNameInitials(props.name)}
@@ -44,7 +44,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
         <div className="flex-1 min-w-0 flex flex-col gap-3">
           {/* Header Section: Company Name, Industry, Founded Year */}
           <div>
-            <h3 className="text-base font-bold leading-tight truncate">
+              <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
               {props.name}
             </h3>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
@@ -69,8 +69,8 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
           {/* OpenPositions Tags Section: OpenPosition Title Tags */}
           {props.openPosition.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
-              {props.openPosition.map((op) => (
-                <Tag label={op.title} key={op.id} />
+              {props.openPosition.slice(0, 6).map((op) => (
+                <Tag label={op.title} key={op.id} neutral className="!rounded-none border border-border hover:shadow-none" />
               ))}
             </div>
           )}
@@ -80,25 +80,28 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
             <MetaChip
               icon={<LucideUsers />}
               text={t("memberCount", { count: props.companySize })}
+              className="rounded-none border border-border bg-muted/45"
             />
             <MetaChip
               icon={<LucideBriefcaseBusiness />}
               text={t("positionCount", { count: props.openPosition.length })}
+              className="rounded-none border border-border bg-muted/45"
             />
             <MetaChip
               icon={<LucideMapPin />}
               text={translateLocation(props.location, tl)}
+              className="rounded-none border border-border bg-muted/45"
             />
           </div>
         </div>
       </div>
 
       {/* Action Bar Section: Remove and View Detail */}
-      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
+      <div className="flex items-center justify-between gap-3 border-t border-border bg-muted/25 px-4 py-3 sm:px-5">
         <Button
           variant="outline"
           size="sm"
-          className="text-xs text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
+          className="rounded-none border-destructive/30 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
           onClick={props.onRemoveFromFavorite}
         >
           <LucideBookmarkX className="size-3.5" />
@@ -106,13 +109,13 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
         </Button>
         <Button
           size="sm"
-          className="text-xs"
+          className="rounded-none text-xs"
           onClick={() => router.replace(`/feed/company/${props.id}`)}
         >
           {t("viewDetail")}
-          <LucideArrowRight className="size-3.5" />
+          <MoveUpRight className="size-3.5" />
         </Button>
       </div>
-    </div>
+    </article>
   );
 }

@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { IInterviewCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { AiInterviewPrepModal } from "@/components/matching/ai-interview-prep-modal";
+import { LazyAiInterviewPrepAction } from "@/components/matching/lazy-ai-actions";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export function InterviewCard({
@@ -52,12 +52,12 @@ export function InterviewCard({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
-      <div className="p-4 sm:p-5 flex flex-col gap-3">
+    <article className="group w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+      <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Row Section */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h3 className="text-base font-bold leading-tight truncate">
+            <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
               {interview.title}
             </h3>
             <TypographyMuted className="text-sm text-muted-foreground mt-0.5">
@@ -66,7 +66,7 @@ export function InterviewCard({
           </div>
           <Badge
             variant="outline"
-            className={`text-[11px] font-semibold whitespace-nowrap ${getStatusBadgeStyleClass(interview.status)}`}
+            className={`flex-shrink-0 whitespace-nowrap rounded-none border-current/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getStatusBadgeStyleClass(interview.status)}`}
           >
             {t(`status.${interview.status}`)}
           </Badge>
@@ -80,17 +80,17 @@ export function InterviewCard({
         )}
 
         {/* ScheduleAt, Duration, Location, MeetingLink Section */}
-        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5 bg-muted/70 px-3 py-1.5 rounded-full">
+        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5 border border-border bg-muted/45 px-3 py-1.5">
             <LucideCalendarCheck className="size-3.5" />
             {formatShortDate(interview.scheduledAt)}
           </span>
-          <span className="inline-flex items-center gap-1.5 bg-muted/70 px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 border border-border bg-muted/45 px-3 py-1.5">
             <LucideClock className="size-3.5" />
             {interview.durationMinutes} min
           </span>
           {interview.location && (
-            <span className="inline-flex items-center gap-1.5 bg-muted/70 px-3 py-1.5 rounded-full">
+            <span className="inline-flex items-center gap-1.5 border border-border bg-muted/45 px-3 py-1.5">
               <LucideMapPin className="size-3.5" />
               {interview.location}
             </span>
@@ -100,7 +100,7 @@ export function InterviewCard({
               href={interview.meetingLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 bg-muted/70 px-3 py-1.5 rounded-full hover:bg-primary/10 transition-colors"
+              className="inline-flex items-center gap-1.5 border border-border bg-muted/45 px-3 py-1.5 transition-colors hover:bg-primary/10"
             >
               <LucideLink className="size-3.5" />
               {t("joinMeeting")}
@@ -111,10 +111,10 @@ export function InterviewCard({
 
       {/* Action Bar Section: Practice Questions (employee only) + Accept/Decline (pending only) */}
       {(isEmployee || showActions) && (
-        <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/25 px-4 py-3 sm:px-5">
           {/* AI Practice Questions Section (employees only) */}
           {isEmployee && (
-            <AiInterviewPrepModal
+            <LazyAiInterviewPrepAction
               eid={interview.employee.id}
               cid={interview.company.id}
               companyName={interview.company.name}
@@ -130,7 +130,7 @@ export function InterviewCard({
               <Button
                 size="sm"
                 variant="outline"
-                className="text-xs text-destructive hover:bg-destructive/10"
+                className="rounded-none text-xs text-destructive hover:bg-destructive/10"
                 disabled={isUpdating}
                 onClick={() => {
                   setPendingAction("decline");
@@ -146,7 +146,7 @@ export function InterviewCard({
               </Button>
               <Button
                 size="sm"
-                className="text-xs"
+                className="rounded-none text-xs"
                 disabled={isUpdating}
                 onClick={() => {
                   setPendingAction("accept");
@@ -164,6 +164,6 @@ export function InterviewCard({
           )}
         </div>
       )}
-    </div>
+    </article>
   );
 }

@@ -1,15 +1,16 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
+/* -------------------------------- Navbar User Menu Skeleton -------------------------------- */
 export function NavbarUserMenuSkeleton() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-border/50 bg-card/60 px-2 py-1.5">
-      <Skeleton className="h-7 w-7 shrink-0 rounded-full" />
-      <div className="flex flex-col gap-1">
-        <Skeleton className="h-3 w-20 rounded sm:w-28" />
-        <Skeleton className="h-2.5 w-12 rounded sm:w-16" />
+    <div className="flex h-11 items-center gap-2 border border-border bg-card/60 px-2">
+      <Skeleton className="h-7 w-7 shrink-0 rounded-none" />
+      <div className="hidden flex-col gap-1 sm:flex">
+        <Skeleton className="h-3 w-20 rounded-none sm:w-24" />
+        <Skeleton className="h-2.5 w-12 rounded-none sm:w-14" />
       </div>
-      <Skeleton className="h-3 w-3 shrink-0 rounded" />
+      <Skeleton className="hidden h-3 w-3 shrink-0 rounded-none sm:block" />
     </div>
   );
 }

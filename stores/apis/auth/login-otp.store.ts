@@ -1,6 +1,6 @@
 import { API_AUTH_LOGIN_OTP_URL } from "@/utils/constants/apis/auth.api.constant";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */
@@ -24,7 +24,7 @@ export const useLoginOTPStore = create<TLoginOTPState>((set) => ({
   message: null,
   isSuccess: false,
   loginOtp: async (phone: string) => {
-    set({ loading: true, error: null });
+    set({ loading: true, error: null, isSuccess: false });
 
     try {
       const response = await axios.post<TLoginOTPResponse>(
@@ -44,7 +44,12 @@ export const useLoginOTPStore = create<TLoginOTPState>((set) => ({
         "An error occurred while sending otp.",
       );
 
-      set({ loading: false, error: errorMessage, message: errorMessage });
+      set({
+        loading: false,
+        error: errorMessage,
+        message: errorMessage,
+        isSuccess: false,
+      });
     }
   },
 }));

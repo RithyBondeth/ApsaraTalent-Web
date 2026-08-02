@@ -63,7 +63,7 @@ export const useModerationStore = create<TModerationState>((set) => ({
   },
 
   getBlockedUsers: async () => {
-    set({ loadingBlocked: true });
+    set({ loadingBlocked: true, error: null });
     try {
       const res = await apiClient.get<TBlockedUser[]>(API_LIST_BLOCKED_URL);
       set({

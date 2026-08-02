@@ -22,7 +22,7 @@ export function MessageReplyPreview(props: IMessageReplyPreviewProps) {
   return (
     <div className="mb-2 flex items-start gap-2 px-1">
       {/* Reply Preview Section */}
-      <div className="flex-1 border-l-2 border-primary pl-2 pr-1 py-0.5 rounded-sm bg-muted/40">
+      <div className="flex-1 border-l-[4px] border-primary pl-3 pr-2 py-1.5 rounded-none bg-muted/40">
         {/* Reply Sender Section */}
         <TypographyP className="[&:not(:first-child)]:mt-0 text-xs font-semibold text-primary leading-tight">
           {replySenderLabel}
@@ -40,7 +40,7 @@ export function MessageReplyPreview(props: IMessageReplyPreviewProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="h-6 w-6 shrink-0 text-muted-foreground hover:text-foreground"
+        className="h-6 w-6 shrink-0 rounded-none text-muted-foreground hover:text-foreground"
         onClick={onCancelReply}
         aria-label="Cancel reply"
       >
