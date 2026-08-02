@@ -1,10 +1,10 @@
 import { spawn } from "node:child_process";
 import { cp, mkdir, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
+import { ROOT as root, resolveDistDir } from "./resolve-e2e-dist.mjs";
 
-const root = resolve(import.meta.dirname, "..");
-const distDir = process.env.NEXT_DIST_DIR ?? ".next-e2e";
+const distDir = resolveDistDir();
 const standalone = join(root, distDir, "standalone");
 const serverEntry = join(standalone, "server.js");
 

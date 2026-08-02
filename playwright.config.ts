@@ -38,7 +38,7 @@ export default defineConfig({
         reuseExistingServer: !process.env.CI,
         timeout: 180_000,
         env: {
-          NEXT_DIST_DIR: ".next-e2e",
+          ...(shouldBuild ? { NEXT_DIST_DIR: ".next-e2e" } : {}),
           NEXT_PUBLIC_API_URL: "http://127.0.0.1:13000",
           NEXT_TELEMETRY_DISABLED: "1",
           SENTRY_DSN: "",
