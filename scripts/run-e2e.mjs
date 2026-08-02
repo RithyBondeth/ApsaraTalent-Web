@@ -4,9 +4,9 @@ import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { ROOT as root, resolveDistDir } from "./resolve-e2e-dist.mjs";
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const distDir = process.env.NEXT_DIST_DIR ?? ".next-e2e";
+const distDir = resolveDistDir();
 const port = 14000;
 const baseUrl = `http://127.0.0.1:${port}`;
 let runtimeDir;
