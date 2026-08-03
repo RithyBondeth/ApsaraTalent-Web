@@ -10,15 +10,30 @@ const baseUrl = new URL(
 );
 const healthUrl = new URL("/health", baseUrl);
 const deadline = Date.now() + timeoutMs;
+const automationBypassSecret =
+  process.env.VERCEL_AUTOMATION_BYPASS_SECRET?.trim();
 let lastFailure = "No request attempted";
 
 while (Date.now() < deadline) {
   try {
     const response = await fetch(healthUrl, {
-      headers: { "user-agent": "apsaratalent-deploy-verifier/1.0" },
+      headers: {
+        "user-agent": "apsaratalent-deploy-verifier/1.0",
+        ...(automationBypassSecret
+          ? { "x-vercel-protection-bypass": automationBypassSecret }
+          : {}),
+      },
       signal: AbortSignal.timeout(10_000),
     });
-    const body = await response.json();
+    const responseText = await response.text();
+    let body;
+    try {
+      body = JSON.parse(responseText);
+    } catch {
+      lastFailure = `HTTP ${response.status}: expected JSON, received ${response.headers.get("content-type") || "unknown content type"}`;
+      await new Promise((resolve) => setTimeout(resolve, 5_000));
+      continue;
+    }
     if (
       response.ok &&
       body.status === "ok" &&

@@ -31,4 +31,5 @@ jobs:
       - name: Verify deployed health endpoint
         env:
           DEPLOYMENT_URL: ${{ github.event.deployment_status.environment_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: node scripts/verify-deployment.mjs "$DEPLOYMENT_URL"
