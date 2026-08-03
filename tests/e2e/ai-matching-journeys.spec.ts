@@ -246,7 +246,10 @@ test.describe("AI matching journeys", () => {
     await expect(
       page.getByText("Your product experience aligns well with this team."),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Close" }).click();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Close", exact: true })
+      .click();
     await page.getByRole("button", { name: "AI Score" }).click();
     await expect(page.getByText("Strong match")).toBeVisible();
     expect(state.explanationCalls).toBe(1);
@@ -335,7 +338,10 @@ test.describe("AI matching journeys", () => {
 
     await page.getByRole("button", { name: "Cover Letter" }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
-    await page.getByRole("button", { name: "Close" }).click();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Close", exact: true })
+      .click();
     await expect(page.getByRole("dialog")).not.toBeVisible();
     await page.waitForTimeout(1100);
     await expect(
