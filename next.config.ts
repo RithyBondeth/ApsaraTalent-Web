@@ -7,6 +7,15 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiOrigin = (() => {
+  if (!apiUrl) return null;
+  try {
+    return new URL(apiUrl).origin;
+  } catch {
+    return null;
+  }
+})();
+
 const apiImagePattern = (() => {
   if (!apiUrl) return null;
   try {
@@ -22,7 +31,39 @@ const apiImagePattern = (() => {
   }
 })();
 
+const connectSources = [
+  "'self'",
+  "https://*.sentry.io",
+  "https://*.ingest.sentry.io",
+  ...(apiOrigin
+    ? [apiOrigin, apiOrigin.replace(/^http/, "ws")]
+    : []),
+  ...(process.env.NODE_ENV === "production" ? [] : ["ws:", "wss:"]),
+];
+
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'none'",
+  "form-action 'self'",
+  `script-src 'self' 'unsafe-inline'${
+    process.env.NODE_ENV === "production" ? "" : " 'unsafe-eval'"
+  }`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' blob: data: https:",
+  "font-src 'self' data:",
+  `connect-src ${connectSources.join(" ")}`,
+  "media-src 'self' blob:",
+  "worker-src 'self' blob:",
+  "manifest-src 'self'",
+  ...(process.env.NODE_ENV === "production"
+    ? ["upgrade-insecure-requests"]
+    : []),
+].join("; ");
+
 const securityHeaders = [
+  { key: "Content-Security-Policy", value: contentSecurityPolicy },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },

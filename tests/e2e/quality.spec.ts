@@ -47,6 +47,10 @@ async function expectAccessible(page: import("@playwright/test").Page, route: st
 
 test("public pages expose production security headers", async ({ page }) => {
   const response = await page.goto("/login");
+  const contentSecurityPolicy = response?.headers()["content-security-policy"];
+  expect(contentSecurityPolicy).toContain("default-src 'self'");
+  expect(contentSecurityPolicy).toContain("object-src 'none'");
+  expect(contentSecurityPolicy).toContain("frame-ancestors 'none'");
   expect(response?.headers()["x-content-type-options"]).toBe("nosniff");
   expect(response?.headers()["x-frame-options"]).toBe("DENY");
   expect(response?.headers()["referrer-policy"]).toBe("strict-origin-when-cross-origin");
