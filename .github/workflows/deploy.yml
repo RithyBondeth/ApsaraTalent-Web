@@ -39,7 +39,7 @@ jobs:
             -e 'sk-[A-Za-z0-9]{20,}' \
             -e 'AKIA[0-9A-Z]{16}' \
             -e '-----BEGIN [A-Z ]*PRIVATE KEY-----' \
-            -e '(postgres(ql)?|mysql|mongodb(\+srv)?|redis|rediss|amqps?)://[^[:space:]"'"']+:[^[:space:]"'"']+@' \
+            -e "(postgres(ql)?|mysql|mongodb(\\+srv)?|redis|rediss|amqps?)://[^[:space:]\"']+:[^[:space:]\"']+@" \
             -- ':!package-lock.json' ':!.env.production'; then
             echo "::error::Possible hard-coded credential above. Move it to a secret store."
             exit 1
@@ -90,7 +90,7 @@ jobs:
         run: npm ci
 
       - name: Validate repository environments
-        run: npm run check:env
+        run: npm run check:env -- production
 
       - name: Run lint
         run: npm run lint
