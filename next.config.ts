@@ -57,9 +57,6 @@ const contentSecurityPolicy = [
   "media-src 'self' blob:",
   "worker-src 'self' blob:",
   "manifest-src 'self'",
-  ...(process.env.NODE_ENV === "production"
-    ? ["upgrade-insecure-requests"]
-    : []),
 ].join("; ");
 
 const securityHeaders = [
