@@ -2,8 +2,7 @@ import { spawn } from "node:child_process";
 import { cp, mkdtemp, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { ROOT as root, resolveDistDir } from "./resolve-e2e-dist.mjs";
 
 const distDir = resolveDistDir();
