@@ -1,4 +1,8 @@
 import * as Sentry from "@sentry/nextjs";
+import {
+  parseSentrySampleRate,
+  sanitizeSentryEvent,
+} from "./sentry.shared.config";
 
 // Browser-side Sentry init. Uses the public DSN so it is available client-side.
 // No-op when NEXT_PUBLIC_SENTRY_DSN is unset.
@@ -21,8 +25,10 @@ if (dsn) {
     // doesn't describe the target; falls back to NODE_ENV.
     environment:
       process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || process.env.NODE_ENV,
-    tracesSampleRate:
-      Number(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE) || 0.1,
+    tracesSampleRate: parseSentrySampleRate(
+      process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE,
+    ),
+    beforeSend: sanitizeSentryEvent,
     // Known browser noise that would otherwise drown real issues. API
     // outages are still caught server-side and by the API's own Sentry.
     ignoreErrors: [

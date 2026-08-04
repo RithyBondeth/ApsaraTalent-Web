@@ -1,0 +1,35 @@
+name: Verify Vercel deployment
+
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-deployment-${{ github.event.deployment.id }}
+  cancel-in-progress: true
+
+jobs:
+  health:
+    name: Deployment health
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      startsWith(github.event.deployment_status.environment_url, 'https://')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.deployment.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Verify deployed health endpoint
+        env:
+          DEPLOYMENT_URL: ${{ github.event.deployment_status.environment_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node scripts/verify-deployment.mjs "$DEPLOYMENT_URL"
