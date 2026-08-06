@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/nextjs";
 import {
+  makeTracesSampler,
   parseSentrySampleRate,
   sanitizeSentryEvent,
 } from "./sentry.shared.config";
@@ -18,13 +19,7 @@ if (dsn) {
     // target; falls back to NODE_ENV.
     environment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV,
     beforeSend: sanitizeSentryEvent,
-    // Sample traces, but never for infra noise: /health (Docker healthchecks)
-    // and /monitoring (the Sentry tunnel itself) fire constantly.
-    tracesSampler: ({ name, parentSampled }) => {
-      if (name.includes("/health") || name.includes("/monitoring")) return 0;
-      // Honor the upstream decision within a distributed trace.
-      if (typeof parentSampled === "boolean") return parentSampled;
-      return tracesSampleRate;
-    },
+    // Filters the same infra noise as the client and edge runtimes.
+    tracesSampler: makeTracesSampler(tracesSampleRate),
   });
 }
