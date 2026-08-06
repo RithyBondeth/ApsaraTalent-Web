@@ -1,4 +1,10 @@
-name: Verify web
+name: Verify and deploy web
+
+# Production is deployed from this workflow, not by Vercel's Git integration.
+# `git.deploymentEnabled.main = false` in vercel.json turns off the automatic
+# push-to-main deploy, so the `deploy` job below is the only path to production
+# and every check above it is a real gate. Preview deploys for other branches
+# still come from the Git integration and are verified by verify-deployment.yml.
 
 on:
   push:
@@ -22,12 +28,18 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # NEXT_PUBLIC_* is public by definition — it ships in the client bundle.
+      # The two SENTRY_* names are the server-side twins of NEXT_PUBLIC_ values
+      # already in this file: an environment label and a trace sample rate.
+      # Neither is a credential. Anything else server-side belongs in the
+      # platform's own environment configuration, not in a tracked file.
       - name: Reject server secrets in the tracked production environment
         shell: bash
         run: |
-          invalid=$(grep -Ev '^(#|[[:space:]]*$|NEXT_PUBLIC_[A-Z0-9_]+=|SENTRY_ENVIRONMENT=)' .env.production | grep -E '^[A-Z][A-Z0-9_]*=' || true)
+          allowed='^(#|[[:space:]]*$|NEXT_PUBLIC_[A-Z0-9_]+=|SENTRY_ENVIRONMENT=|SENTRY_TRACES_SAMPLE_RATE=)'
+          invalid=$(grep -Ev "$allowed" .env.production | grep -E '^[A-Z][A-Z0-9_]*=' || true)
           if [[ -n "$invalid" ]]; then
-            echo "::error::.env.production may contain public NEXT_PUBLIC_* values and SENTRY_ENVIRONMENT only."
+            echo "::error::.env.production may contain NEXT_PUBLIC_*, SENTRY_ENVIRONMENT and SENTRY_TRACES_SAMPLE_RATE only."
             echo "$invalid" | sed 's/=.*$/=[redacted]/'
             exit 1
           fi
@@ -169,3 +181,103 @@ jobs:
           path: test-results
           if-no-files-found: ignore
           retention-days: 7
+
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: [security, dependencies, lint, test, build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      PRODUCTION_WEB_URL: ${{ vars.PRODUCTION_WEB_URL }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Require deployment credentials
+        shell: bash
+        run: |
+          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::$name is required to deploy to production."
+              exit 1
+            fi
+          done
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install pinned Vercel CLI
+        run: npm install --global vercel@58.7.1
+
+      # Pulls the project's own production environment variables. Vercel project
+      # settings stay the source of truth for runtime config; CI only supplies
+      # the build-time Sentry credentials below.
+      - name: Pull production environment
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build production bundle
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+          SENTRY_RELEASE: ${{ github.sha }}
+
+      # --prebuilt ships the artifact built and verified above. Without it Vercel
+      # rebuilds from source and the thing tested is not the thing served.
+      - name: Deploy prebuilt bundle
+        id: deploy
+        shell: bash
+        run: |
+          # The CLI writes progress to stderr and the deployment URL to stdout;
+          # take the last line so a stray stdout notice cannot become the URL.
+          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" | tail -n1)
+          if [[ ! "$url" =~ ^https:// ]]; then
+            echo "::error::Expected a deployment URL, got: $url"
+            exit 1
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployed $url"
+
+      - name: Verify the new deployment
+        env:
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node scripts/verify-deployment.mjs "${{ steps.deploy.outputs.url }}"
+
+      # The deployment URL can be healthy while the production alias still points
+      # somewhere else. Users hit the alias, so that is what has to be green.
+      - name: Verify the production domain
+        if: env.PRODUCTION_WEB_URL != ''
+        env:
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node scripts/verify-deployment.mjs "$PRODUCTION_WEB_URL"
+
+      # Vercel deployments are immutable, so rollback is an alias switch back to
+      # the previous production deployment — fast, and safe to automate. It is
+      # NOT safe if this release shipped a breaking API contract; see
+      # ../ApsaraTalent-Api/docs/RUNBOOK.md §5 before assuming this is enough.
+      - name: Roll back to the previous production deployment
+        if: failure() && steps.deploy.outcome == 'success'
+        shell: bash
+        run: |
+          echo "::warning::Verification failed. Rolling back to the previous production deployment."
+          if vercel rollback --yes --timeout 5m --token="$VERCEL_TOKEN"; then
+            {
+              echo "### ↩️ Rolled back"
+              echo ""
+              echo "\`${{ steps.deploy.outputs.url }}\` failed verification and the"
+              echo "production alias was returned to the previous deployment."
+              echo ""
+              echo "Confirm in the Vercel dashboard before standing down."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::error::Automatic rollback FAILED. Use Instant Rollback in the Vercel dashboard now."
+            exit 1
+          fi

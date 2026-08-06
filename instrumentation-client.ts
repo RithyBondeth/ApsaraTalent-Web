@@ -1,11 +1,22 @@
+/**
+ * Browser-side Sentry init.
+ *
+ * Next.js (15.3+) loads this file itself, so it works under BOTH webpack and
+ * Turbopack. The old `sentry.client.config.ts` was injected only by Sentry's
+ * webpack plugin, which `next dev --turbopack` never runs — which silently
+ * disabled all browser error reporting in development.
+ *
+ * Uses the public DSN so it is available client-side. No-op when
+ * NEXT_PUBLIC_SENTRY_DSN is unset.
+ */
 import * as Sentry from "@sentry/nextjs";
+
 import {
+  makeTracesSampler,
   parseSentrySampleRate,
   sanitizeSentryEvent,
 } from "./sentry.shared.config";
 
-// Browser-side Sentry init. Uses the public DSN so it is available client-side.
-// No-op when NEXT_PUBLIC_SENTRY_DSN is unset.
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
 // Session Replay: no recording of normal sessions by default; capture the
@@ -25,8 +36,9 @@ if (dsn) {
     // doesn't describe the target; falls back to NODE_ENV.
     environment:
       process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || process.env.NODE_ENV,
-    tracesSampleRate: parseSentrySampleRate(
-      process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE,
+    // Filters the same infra noise as the server and edge runtimes.
+    tracesSampler: makeTracesSampler(
+      parseSentrySampleRate(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE),
     ),
     beforeSend: sanitizeSentryEvent,
     // Known browser noise that would otherwise drown real issues. API
@@ -56,3 +68,6 @@ if (dsn) {
       : 1,
   });
 }
+
+// Instruments client-side navigations so route changes appear in traces.
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

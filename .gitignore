@@ -54,3 +54,10 @@ CLAUDE.md
 GEMINI.md
 playwright-report/
 test-results/
+
+# Catch-all for env files. Must come before the negations below: gitignore
+# applies the LAST matching pattern, so a blanket .env* placed after them
+# would silently re-ignore the two files we intend to track.
+.env*
+!.env.production
+!.env.example
