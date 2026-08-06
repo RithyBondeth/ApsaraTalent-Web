@@ -28,12 +28,18 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # NEXT_PUBLIC_* is public by definition — it ships in the client bundle.
+      # The two SENTRY_* names are the server-side twins of NEXT_PUBLIC_ values
+      # already in this file: an environment label and a trace sample rate.
+      # Neither is a credential. Anything else server-side belongs in the
+      # platform's own environment configuration, not in a tracked file.
       - name: Reject server secrets in the tracked production environment
         shell: bash
         run: |
-          invalid=$(grep -Ev '^(#|[[:space:]]*$|NEXT_PUBLIC_[A-Z0-9_]+=|SENTRY_ENVIRONMENT=)' .env.production | grep -E '^[A-Z][A-Z0-9_]*=' || true)
+          allowed='^(#|[[:space:]]*$|NEXT_PUBLIC_[A-Z0-9_]+=|SENTRY_ENVIRONMENT=|SENTRY_TRACES_SAMPLE_RATE=)'
+          invalid=$(grep -Ev "$allowed" .env.production | grep -E '^[A-Z][A-Z0-9_]*=' || true)
           if [[ -n "$invalid" ]]; then
-            echo "::error::.env.production may contain public NEXT_PUBLIC_* values and SENTRY_ENVIRONMENT only."
+            echo "::error::.env.production may contain NEXT_PUBLIC_*, SENTRY_ENVIRONMENT and SENTRY_TRACES_SAMPLE_RATE only."
             echo "$invalid" | sed 's/=.*$/=[redacted]/'
             exit 1
           fi
