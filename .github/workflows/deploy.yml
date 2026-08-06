@@ -199,7 +199,10 @@ jobs:
       - name: Require deployment credentials
         shell: bash
         run: |
-          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+          # PRODUCTION_WEB_URL is required, not optional: it is the origin the
+          # release is verified against. Without it a deploy cannot be proven,
+          # and an unprovable deploy is what let a broken release look fine.
+          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID PRODUCTION_WEB_URL; do
             if [[ -z "${!name}" ]]; then
               echo "::error::$name is required to deploy to production."
               exit 1
@@ -246,18 +249,24 @@ jobs:
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "Deployed $url"
 
-      - name: Verify the new deployment
-        env:
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-        run: node scripts/verify-deployment.mjs "${{ steps.deploy.outputs.url }}"
-
-      # The deployment URL can be healthy while the production alias still points
-      # somewhere else. Users hit the alias, so that is what has to be green.
+      # The production alias is the gate, because it is what users actually hit.
+      # EXPECTED_RELEASE makes this prove the NEW build is serving: a healthy
+      # response from the previous deployment would otherwise pass.
       - name: Verify the production domain
-        if: env.PRODUCTION_WEB_URL != ''
+        env:
+          EXPECTED_RELEASE: ${{ github.sha }}
+        run: node scripts/verify-deployment.mjs "$PRODUCTION_WEB_URL"
+
+      # Best-effort only. Deployment URLs sit behind Deployment Protection,
+      # which serves an HTML login page instead of the app, so this cannot be a
+      # gate — it failed the first real release for exactly that reason while
+      # the alias above was healthy the whole time.
+      - name: Probe the deployment URL directly
+        continue-on-error: true
         env:
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-        run: node scripts/verify-deployment.mjs "$PRODUCTION_WEB_URL"
+          DEPLOY_VERIFY_TIMEOUT_MS: "30000"
+        run: node scripts/verify-deployment.mjs "${{ steps.deploy.outputs.url }}"
 
       # Vercel deployments are immutable, so rollback is an alias switch back to
       # the previous production deployment — fast, and safe to automate. It is
@@ -266,18 +275,34 @@ jobs:
       - name: Roll back to the previous production deployment
         if: failure() && steps.deploy.outcome == 'success'
         shell: bash
+        env:
+          # Proves the alias moved OFF this release. `vercel rollback` has been
+          # observed exiting 0 without changing anything, and a rollback that
+          # reports success without acting is worse than none — you stand down
+          # believing production was reverted.
+          REJECTED_RELEASE: ${{ github.sha }}
         run: |
           echo "::warning::Verification failed. Rolling back to the previous production deployment."
-          if vercel rollback --yes --timeout 5m --token="$VERCEL_TOKEN"; then
+          rollback_ok=0
+          vercel rollback --yes --timeout 5m --token="$VERCEL_TOKEN" || rollback_ok=$?
+
+          if node scripts/verify-deployment.mjs "$PRODUCTION_WEB_URL"; then
             {
               echo "### ↩️ Rolled back"
               echo ""
-              echo "\`${{ steps.deploy.outputs.url }}\` failed verification and the"
-              echo "production alias was returned to the previous deployment."
-              echo ""
-              echo "Confirm in the Vercel dashboard before standing down."
+              echo "\`${{ steps.deploy.outputs.url }}\` failed verification. The"
+              echo "production alias no longer serves \`${{ github.sha }}\` and the"
+              echo "origin is healthy."
             } >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "::error::Automatic rollback FAILED. Use Instant Rollback in the Vercel dashboard now."
+            {
+              echo "### 🚨 Rollback did NOT take effect"
+              echo ""
+              echo "\`vercel rollback\` exited \`${rollback_ok}\`, but the production"
+              echo "domain is still serving \`${{ github.sha }}\` or is unhealthy."
+              echo ""
+              echo "**Use Instant Rollback in the Vercel dashboard now.**"
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::Rollback did not take effect. Use Instant Rollback in the Vercel dashboard now."
             exit 1
           fi
