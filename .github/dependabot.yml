@@ -10,6 +10,20 @@ updates:
       timezone: Asia/Phnom_Penh
     open-pull-requests-limit: 5
     groups:
+      # `react` is pinned to an exact version, so a lone react-dom bump produces
+      # an unbuildable PR: react-dom 19 wants `react: ^19` as a peer and
+      # Dependabot cannot lift the pin on its own (this is what #108 was).
+      # Listed first because a dependency joins the first group it matches.
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+        update-types:
+          - major
+          - minor
+          - patch
       npm-minor-and-patch:
         patterns:
           - "*"
@@ -41,6 +55,13 @@ updates:
       time: "10:00"
       timezone: Asia/Phnom_Penh
     open-pull-requests-limit: 2
+    # Nothing in CI builds this Dockerfile, so a green PR here proves nothing
+    # about the image. Stay on the Node LTS line that `.nvmrc` pins; moving
+    # majors is a deliberate change to .nvmrc + Dockerfile + engines together.
+    ignore:
+      - dependency-name: "node"
+        update-types:
+          - version-update:semver-major
     groups:
       docker-base-images:
         patterns:
