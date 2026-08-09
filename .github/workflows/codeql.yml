@@ -1,0 +1,68 @@
+name: CodeQL
+
+# Until now nothing in this repository read the application's own code. The
+# checks that exist are real but all of them look elsewhere: `npm audit` reads
+# the dependency tree, the secret policy greps for credential shapes, lint and
+# typecheck enforce style and types, and Playwright drives the UI. None of them
+# can see an XSS sink, an open redirect, or a token reaching a log.
+#
+# That matters more here than in the API repository, which has had this since
+# the start. This is where middleware.ts decides who is authenticated, where the
+# route handlers under app/**/route.ts run server-side, and where access tokens
+# are held and attached to requests. It is also the half of the system exposed
+# directly to a browser.
+#
+# The `actions` language is included for the same reason as in the API: the
+# deploy workflow holds VERCEL_TOKEN and SENTRY_AUTH_TOKEN, and nothing else
+# reviews it for injection through untrusted inputs.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Monday 03:30 UTC == 10:30 Asia/Phnom_Penh. Half an hour after the API's
+    # scan so the two do not contend, and alongside the Dependabot window.
+    # The scheduled run is the point: it catches advisories published after a
+    # commit landed, which a push-triggered scan never sees.
+    - cron: '30 3 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  analyze:
+    name: Analyze ${{ matrix.language }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      # Required to publish results to the repository's Security tab.
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript, actions]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
+        with:
+          languages: ${{ matrix.language }}
+          # `security-extended` over the default set. Dial back to `security`
+          # if the first run is noisier than it is useful.
+          queries: security-extended
+
+      # No build step. javascript-typescript is analysed from source, so Next.js
+      # never has to compile for this — which is also why it costs minutes
+      # rather than blocking on the build job.
+      - name: Analyze
+        uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
+        with:
+          category: /language:${{ matrix.language }}
