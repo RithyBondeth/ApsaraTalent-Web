@@ -16,6 +16,14 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # eslint-config-next major must move with `next` itself. Offered on its
+      # own (PR #122: 15.5.22 -> 16.3.0 against next@15) it only fails config
+      # validation, which is not fixable from our side. Drop this entry as part
+      # of the Next 16 upgrade.
+      - dependency-name: eslint-config-next
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: github-actions
     directory: /
