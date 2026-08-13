@@ -21,9 +21,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       {...props}
-      theme={
-        (props.theme ?? resolvedTheme ?? theme) as ToasterProps["theme"]
-      }
+      theme={(props.theme ?? resolvedTheme ?? theme) as ToasterProps["theme"]}
       position={props.position ?? "bottom-right"}
       expand={props.expand ?? true}
       visibleToasts={props.visibleToasts ?? 4}
@@ -36,17 +34,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
       mobileOffset={props.mobileOffset ?? 12}
       swipeDirections={props.swipeDirections ?? ["right", "bottom"]}
       containerAriaLabel={props.containerAriaLabel ?? "Notifications"}
-      className={["apsara-toaster", props.className]
-        .filter(Boolean)
-        .join(" ")}
+      className={["apsara-toaster", props.className].filter(Boolean).join(" ")}
       icons={{
-        success: (
-          <CircleCheck aria-hidden className={statusIconClassName} />
-        ),
+        success: <CircleCheck aria-hidden className={statusIconClassName} />,
         info: <Info aria-hidden className={statusIconClassName} />,
-        warning: (
-          <TriangleAlert aria-hidden className={statusIconClassName} />
-        ),
+        warning: <TriangleAlert aria-hidden className={statusIconClassName} />,
         error: <OctagonX aria-hidden className={statusIconClassName} />,
         loading: (
           <LoaderCircle
@@ -58,8 +50,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         ...props.icons,
       }}
       style={{
-        fontFamily:
-          "var(--font-ubuntu), var(--font-preahvihear), sans-serif",
+        fontFamily: "var(--font-ubuntu), var(--font-preahvihear), sans-serif",
         ...props.style,
       }}
       toastOptions={{

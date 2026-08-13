@@ -79,7 +79,7 @@ export function LoadingActionButton(
       aria-label={label}
       disabled
     >
-      <LucideLoader2 className="size-3.5 animate-spin text-primary shrink-0" />
+      <LucideLoader2 className="size-3.5 shrink-0 animate-spin text-primary" />
       <span className={compact ? "hidden sm:inline" : undefined}>{label}</span>
     </Button>
   );
@@ -112,7 +112,7 @@ export function LazyAiMatchExplanationAction(
     <LazyActionButton
       label={t("aiScore")}
       compact={props.compact}
-      icon={<LucideSparkles className="size-3.5 text-primary shrink-0" />}
+      icon={<LucideSparkles className="size-3.5 shrink-0 text-primary" />}
       onClick={() => setLoaded(true)}
     />
   );
@@ -146,7 +146,7 @@ export function LazyAiCoverLetterAction(props: IAiCoverLetterModalProps) {
     <LazyActionButton
       label={t("coverLetter")}
       compact={props.compact}
-      icon={<LucideFileText className="size-3.5 text-primary shrink-0" />}
+      icon={<LucideFileText className="size-3.5 shrink-0 text-primary" />}
       onClick={() => setLoaded(true)}
     />
   );
@@ -177,7 +177,7 @@ export function LazyAiSkillGapAction(props: IAiSkillGapModalProps) {
     <LazyActionButton
       label={t("skillGap")}
       compact={props.compact}
-      icon={<LucideSparkles className="size-3.5 text-primary shrink-0" />}
+      icon={<LucideSparkles className="size-3.5 shrink-0 text-primary" />}
       onClick={() => setLoaded(true)}
     />
   );

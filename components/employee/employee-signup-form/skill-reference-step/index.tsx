@@ -102,10 +102,10 @@ export default function SkillReferenceStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-8">
+    <div className="flex w-full flex-col items-start gap-8">
       {/* Skills Section */}
-      <div className="w-full flex flex-col items-start gap-3">
-        <div className="w-full flex items-center justify-between">
+      <div className="flex w-full flex-col items-start gap-3">
+        <div className="flex w-full items-center justify-between">
           <TypographyH4>{t("empSkillTitle")}</TypographyH4>
           {jobTitle && (
             <Button
@@ -114,7 +114,7 @@ export default function SkillReferenceStepForm({
               size="sm"
               onClick={handleSuggest}
               disabled={isRefining}
-              className="h-7 px-2 text-[10px] gap-1 text-primary hover:text-primary hover:bg-primary/5 border border-primary/20"
+              className="h-7 gap-1 border border-primary/20 px-2 text-[10px] text-primary hover:bg-primary/5 hover:text-primary"
             >
               {isRefining ? (
                 <Loader2 size={12} className="animate-spin" />
@@ -131,11 +131,11 @@ export default function SkillReferenceStepForm({
             return (
               <div
                 key={index}
-                className={`flex items-center ${bg} pr-2 rounded-none border border-border`}
+                className={`flex items-center ${bg} rounded-none border border-border pr-2`}
               >
                 <Tag label={skill} />
                 <LucideXCircle
-                  className="text-muted-foreground cursor-pointer text-red-500"
+                  className="cursor-pointer text-muted-foreground text-red-500"
                   width={"18px"}
                   onClick={() => removeSkill(skill)}
                 />
@@ -152,7 +152,7 @@ export default function SkillReferenceStepForm({
               <LucidePlus />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+          <PopoverContent className="flex w-[var(--radix-popper-anchor-width)] flex-col items-end gap-3 p-5">
             <Input
               placeholder={t("empSkillPlaceholder")}
               value={skillInput}
@@ -174,7 +174,7 @@ export default function SkillReferenceStepForm({
       </div>
 
       {/* References Section */}
-      <div className="w-full flex flex-col items-start gap-3">
+      <div className="flex w-full flex-col items-start gap-3">
         <TypographyH4>{t("empReferenceTitle")}</TypographyH4>
         <div className="field-row w-full">
           {/* Resume Section */}
@@ -183,13 +183,13 @@ export default function SkillReferenceStepForm({
               <TypographyMuted className="text-xs">
                 {t("empReferenceResume")}
               </TypographyMuted>
-              <div className="w-full flex justify-between items-center p-3 rounded-none border border-border border-l-[4px] border-l-foreground bg-muted">
+              <div className="flex w-full items-center justify-between rounded-none border border-l-[4px] border-border border-l-foreground bg-muted p-3">
                 <TypographyMuted className="truncate pr-2">
                   {resumeFile.name.trim()}
                 </TypographyMuted>
                 <LucideXCircle
                   strokeWidth="1.3px"
-                  className="text-muted-foreground cursor-pointer shrink-0"
+                  className="shrink-0 cursor-pointer text-muted-foreground"
                   onClick={() =>
                     setValue?.("skillAndReference.resume", undefined, {
                       shouldValidate: true,
@@ -227,13 +227,13 @@ export default function SkillReferenceStepForm({
               <TypographyMuted className="text-xs">
                 {t("empReferenceCoverLetter")}
               </TypographyMuted>
-              <div className="w-full flex justify-between items-center p-3 rounded-none border border-border border-l-[4px] border-l-foreground bg-muted">
+              <div className="flex w-full items-center justify-between rounded-none border border-l-[4px] border-border border-l-foreground bg-muted p-3">
                 <TypographyMuted className="truncate pr-2">
                   {coverLetterFile.name.trim()}
                 </TypographyMuted>
                 <LucideXCircle
                   strokeWidth="1.3px"
-                  className="text-muted-foreground cursor-pointer shrink-0"
+                  className="shrink-0 cursor-pointer text-muted-foreground"
                   onClick={() =>
                     setValue?.("skillAndReference.coverLetter", undefined, {
                       shouldValidate: true,

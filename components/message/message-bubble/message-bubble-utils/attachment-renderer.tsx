@@ -40,14 +40,14 @@ export default function AttachmentRender(props: {
         href={fullUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="block mt-1"
+        className="mt-1 block"
       >
         <Image
           src={fullUrl}
           alt={filename || "Image attachment"}
           width={960}
           height={720}
-          className="max-w-full rounded-none max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity border border-current/15"
+          className="border-current/15 max-h-64 max-w-full cursor-pointer rounded-none border object-cover transition-opacity hover:opacity-90"
           unoptimized
         />
       </a>
@@ -57,7 +57,7 @@ export default function AttachmentRender(props: {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`mt-2 rounded-none border overflow-hidden ${
+      className={`mt-2 overflow-hidden rounded-none border ${
         isMe
           ? "border-primary-foreground/20 bg-primary-foreground/10"
           : "border-border bg-background"
@@ -72,7 +72,7 @@ export default function AttachmentRender(props: {
         />
         <div className="min-w-0">
           <TypographyP
-            className={`[&:not(:first-child)]:mt-0 text-sm font-medium truncate leading-tight ${
+            className={`truncate text-sm font-medium leading-tight [&:not(:first-child)]:mt-0 ${
               isMe ? "text-primary-foreground" : "text-foreground"
             }`}
           >
@@ -80,7 +80,7 @@ export default function AttachmentRender(props: {
           </TypographyP>
           {fileSize && (
             <TypographyMuted
-              className={`text-xs mt-0.5 ${
+              className={`mt-0.5 text-xs ${
                 isMe ? "text-primary-foreground/60" : "text-muted-foreground"
               }`}
             >
@@ -95,7 +95,7 @@ export default function AttachmentRender(props: {
         <a
           href={fullUrl}
           download={filename}
-          className={`flex-1 h-8 flex items-center justify-center gap-1.5 rounded-none border text-xs font-medium transition-colors ${
+          className={`flex h-8 flex-1 items-center justify-center gap-1.5 rounded-none border text-xs font-medium transition-colors ${
             isMe
               ? "border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
               : "border-border text-foreground hover:bg-muted"
@@ -109,7 +109,7 @@ export default function AttachmentRender(props: {
           href={fullUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex-1 h-8 flex items-center justify-center gap-1.5 rounded-none border text-xs font-medium transition-colors ${
+          className={`flex h-8 flex-1 items-center justify-center gap-1.5 rounded-none border text-xs font-medium transition-colors ${
             isMe
               ? "border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
               : "border-border text-foreground hover:bg-muted"

@@ -263,10 +263,10 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="matching-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 animate-page-in sm:gap-9 sm:px-4 lg:px-5">
+    <div className="matching-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
       <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
-        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
+        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6 sm:px-9 sm:py-10">
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
             <span className="h-px w-7 bg-primary" />
             {t("matchNetwork")}
@@ -352,83 +352,83 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
         </div>
 
         {/* Matching Card List Section */}
-        <div className="flex w-full flex-col items-start gap-3 stagger-list">
-        {getCurrentEmpStore.currentEmployeeMatching &&
-        getCurrentEmpStore.currentEmployeeMatching.length > 0 ? (
-          getCurrentEmpStore.currentEmployeeMatching.map((cmp) => (
-            /* Matching Company Card */
-            <MatchingCompanyCard
-              key={cmp.id}
-              id={cmp.id}
-              name={cmp.name}
-              avatar={cmp.avatar ?? ""}
-              industry={cmp.industry}
-              description={cmp.description}
-              companySize={cmp.companySize}
-              foundedYear={cmp.foundedYear}
-              openPosition={cmp.openPositions}
-              location={cmp.location}
-              onChatNowClick={() => handleChatNow(senderId, cmp.id)}
-              onScheduleClick={() => router.push(`/interview?with=${cmp.id}`)}
-              onUnmatch={() => handleUnmatch(cmp.id)}
-              isChatLoading={chatLoadingId === cmp.id}
-              isUnmatching={unmatchingId === cmp.id}
-              employeeId={currentUser?.employee?.id ?? ""}
-              employeeName={
-                [
-                  currentUser?.employee?.firstname,
-                  currentUser?.employee?.lastname,
-                ]
-                  .filter(Boolean)
-                  .join(" ") ||
-                currentUser?.employee?.username ||
-                ""
-              }
-              employeeJob={currentUser?.employee?.job}
-              employeeSkills={(currentUser?.employee?.skills ?? []).map(
-                (s) => s.name,
-              )}
-              employeeExperience={currentUser?.employee?.yearsOfExperience}
-              employeeDescription={currentUser?.employee?.description}
-              skillScore={cmp.skillScore}
+        <div className="stagger-list flex w-full flex-col items-start gap-3">
+          {getCurrentEmpStore.currentEmployeeMatching &&
+          getCurrentEmpStore.currentEmployeeMatching.length > 0 ? (
+            getCurrentEmpStore.currentEmployeeMatching.map((cmp) => (
+              /* Matching Company Card */
+              <MatchingCompanyCard
+                key={cmp.id}
+                id={cmp.id}
+                name={cmp.name}
+                avatar={cmp.avatar ?? ""}
+                industry={cmp.industry}
+                description={cmp.description}
+                companySize={cmp.companySize}
+                foundedYear={cmp.foundedYear}
+                openPosition={cmp.openPositions}
+                location={cmp.location}
+                onChatNowClick={() => handleChatNow(senderId, cmp.id)}
+                onScheduleClick={() => router.push(`/interview?with=${cmp.id}`)}
+                onUnmatch={() => handleUnmatch(cmp.id)}
+                isChatLoading={chatLoadingId === cmp.id}
+                isUnmatching={unmatchingId === cmp.id}
+                employeeId={currentUser?.employee?.id ?? ""}
+                employeeName={
+                  [
+                    currentUser?.employee?.firstname,
+                    currentUser?.employee?.lastname,
+                  ]
+                    .filter(Boolean)
+                    .join(" ") ||
+                  currentUser?.employee?.username ||
+                  ""
+                }
+                employeeJob={currentUser?.employee?.job}
+                employeeSkills={(currentUser?.employee?.skills ?? []).map(
+                  (s) => s.name,
+                )}
+                employeeExperience={currentUser?.employee?.yearsOfExperience}
+                employeeDescription={currentUser?.employee?.description}
+                skillScore={cmp.skillScore}
+              />
+            ))
+          ) : getCurrentCmpStore.currentCompanyMatching &&
+            getCurrentCmpStore.currentCompanyMatching.length > 0 ? (
+            getCurrentCmpStore.currentCompanyMatching.map((emp) => (
+              /* Matching Employee Card */
+              <MatchingEmployeeCard
+                key={emp.id}
+                id={emp.id}
+                name={`${emp.firstname} ${emp.lastname}`}
+                username={emp.username ?? ""}
+                avatar={emp.avatar ?? ""}
+                description={emp.description}
+                position={emp.job}
+                experience={emp.yearsOfExperience}
+                availability={emp.availability}
+                location={emp.location ?? ""}
+                skills={emp.skills.map((skill) => skill.name)}
+                onChatNowClick={() => handleChatNow(senderId, emp.id)}
+                onScheduleClick={() => router.push(`/interview?with=${emp.id}`)}
+                onUnmatch={() => handleUnmatch(emp.id)}
+                isChatLoading={chatLoadingId === emp.id}
+                isUnmatching={unmatchingId === emp.id}
+                companyId={currentUser?.company?.id ?? ""}
+                skillScore={emp.skillScore}
+              />
+            ))
+          ) : (
+            /* Empty Matching List Section */
+            <PageState
+              variant="empty"
+              title={t("emptyList")}
+              image={emptySvg}
+              compact
+              className="my-6 sm:my-8"
+              action={{ label: t("goToFeed"), href: "/feed" }}
             />
-          ))
-        ) : getCurrentCmpStore.currentCompanyMatching &&
-          getCurrentCmpStore.currentCompanyMatching.length > 0 ? (
-          getCurrentCmpStore.currentCompanyMatching.map((emp) => (
-            /* Matching Employee Card */
-            <MatchingEmployeeCard
-              key={emp.id}
-              id={emp.id}
-              name={`${emp.firstname} ${emp.lastname}`}
-              username={emp.username ?? ""}
-              avatar={emp.avatar ?? ""}
-              description={emp.description}
-              position={emp.job}
-              experience={emp.yearsOfExperience}
-              availability={emp.availability}
-              location={emp.location ?? ""}
-              skills={emp.skills.map((skill) => skill.name)}
-              onChatNowClick={() => handleChatNow(senderId, emp.id)}
-              onScheduleClick={() => router.push(`/interview?with=${emp.id}`)}
-              onUnmatch={() => handleUnmatch(emp.id)}
-              isChatLoading={chatLoadingId === emp.id}
-              isUnmatching={unmatchingId === emp.id}
-              companyId={currentUser?.company?.id ?? ""}
-              skillScore={emp.skillScore}
-            />
-          ))
-        ) : (
-          /* Empty Matching List Section */
-          <PageState
-            variant="empty"
-            title={t("emptyList")}
-            image={emptySvg}
-            compact
-            className="my-6 sm:my-8"
-            action={{ label: t("goToFeed"), href: "/feed" }}
-          />
-        )}
+          )}
         </div>
       </section>
     </div>

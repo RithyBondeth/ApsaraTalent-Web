@@ -66,7 +66,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
             </div>
 
             {/* Employee Identity Section */}
-            <div className="relative z-[2] mt-auto flex items-end gap-4 sm:gap-5 tablet-sm:flex-col tablet-sm:items-start">
+            <div className="relative z-[2] mt-auto flex items-end gap-4 tablet-sm:flex-col tablet-sm:items-start sm:gap-5">
               <div className="[&>span]:size-24 sm:[&>span]:size-28">
                 {profileAvatar}
               </div>
@@ -162,7 +162,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
       {/* Company Metadata Rail Section */}
       <div className="relative grid gap-5 px-4 pb-5 sm:px-6 sm:pb-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-end">
         {/* Company Avatar Section */}
-        <div className="-mt-12 [&>span]:size-24 sm:-mt-14 sm:[&>span]:size-28">
+        <div className="-mt-12 sm:-mt-14 [&>span]:size-24 sm:[&>span]:size-28">
           {profileAvatar}
         </div>
 

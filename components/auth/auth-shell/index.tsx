@@ -48,7 +48,7 @@ export default function AuthShell(props: IAuthShellProps) {
         eyebrowKey={eyebrowKey}
         titleKey={titleKey}
         subtitleKey={subtitleKey}
-        className="lg:sticky lg:top-0 lg:h-screen lg:self-start lg:basis-[46%] lg:max-w-[760px]"
+        className="lg:sticky lg:top-0 lg:h-screen lg:max-w-[760px] lg:basis-[46%] lg:self-start"
       />
     </div>
   );

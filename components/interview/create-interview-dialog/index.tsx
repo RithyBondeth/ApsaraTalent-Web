@@ -176,7 +176,7 @@ export function CreateInterviewDialog({
         <LucideCalendarCheck className="size-5 text-background" />
       </div>
       <div>
-        <p className="text-xs text-muted-foreground mt-0.5">
+        <p className="mt-0.5 text-xs text-muted-foreground">
           {t("scheduleDescription")}
         </p>
       </div>

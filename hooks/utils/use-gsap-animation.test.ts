@@ -10,7 +10,10 @@ const gsapMocks = vi.hoisted(() => {
     kill: vi.fn(),
   };
   const timeline = { fromTo: vi.fn(), to: vi.fn() };
-  const mediaContexts: Array<{ add: ReturnType<typeof vi.fn>; revert: ReturnType<typeof vi.fn> }> = [];
+  const mediaContexts: Array<{
+    add: ReturnType<typeof vi.fn>;
+    revert: ReturnType<typeof vi.fn>;
+  }> = [];
   const matchMedia = vi.fn(() => {
     const context = {
       add: vi.fn((_query: string, callback: () => unknown) => callback()),
@@ -33,7 +36,9 @@ const gsapMocks = vi.hoisted(() => {
     utils: {
       toArray: (values: ArrayLike<Element>) => Array.from(values),
       random: vi.fn((min: number) => min),
-      clamp: vi.fn((min: number, max: number, value: number) => Math.min(max, Math.max(min, value))),
+      clamp: vi.fn((min: number, max: number, value: number) =>
+        Math.min(max, Math.max(min, value)),
+      ),
     },
     scrollCreate: vi.fn(() => ({ kill: vi.fn(), getVelocity: () => 100 })),
   };
@@ -110,11 +115,15 @@ describe("GSAP animation hooks", () => {
     expect(gsapMocks.matchMedia).toHaveBeenCalled();
     expect(gsapMocks.fromTo).toHaveBeenCalled();
     expect(gsapMocks.quickTo).toHaveBeenCalled();
-    expect(view.container.querySelectorAll(".gsap-unit").length).toBeGreaterThan(0);
+    expect(
+      view.container.querySelectorAll(".gsap-unit").length,
+    ).toBeGreaterThan(0);
 
     const contexts = [...gsapMocks.mediaContexts];
     view.unmount();
-    expect(contexts.every((context) => context.revert.mock.calls.length === 1)).toBe(true);
+    expect(
+      contexts.every((context) => context.revert.mock.calls.length === 1),
+    ).toBe(true);
   });
 
   it("initializes hero, marquee, and scroll-progress animations", () => {

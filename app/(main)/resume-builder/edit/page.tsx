@@ -54,7 +54,15 @@ import { AiResumeOptimizerDrawer } from "@/components/resume-builder/ai-optimize
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 import { ResumeEditorLoadingSkeleton } from "@/components/resume-builder/skeleton";
-import { loadResumeDraft, matchesResumeOwnerName, normalizeResumePayload, prepareResumeAvatar, removeLegacyResumeDraft, resumeSchema, saveResumeDraft } from "@/utils/functions/resume";
+import {
+  loadResumeDraft,
+  matchesResumeOwnerName,
+  normalizeResumePayload,
+  prepareResumeAvatar,
+  removeLegacyResumeDraft,
+  resumeSchema,
+  saveResumeDraft,
+} from "@/utils/functions/resume";
 
 export default function ResumeEditorPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -346,7 +354,7 @@ export default function ResumeEditorPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="resume-editor-shell flex h-[calc(100dvh-4rem)] animate-page-in flex-col overflow-hidden text-foreground">
+    <div className="resume-editor-shell animate-page-in flex h-[calc(100dvh-4rem)] flex-col overflow-hidden text-foreground">
       {/* Primary Action Bar Section */}
       <div className="resume-editor-controls flex flex-col gap-2 border-b border-t-[5px] border-border border-t-foreground bg-card px-3 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-5">
         {/* Editor Identity and Template Section */}
@@ -381,7 +389,7 @@ export default function ResumeEditorPage() {
               <TypographyLead className="text-[13px] font-bold leading-none">
                 {tRb("resumeEditor")}
               </TypographyLead>
-              <TypographySmall className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-tight font-medium">
+              <TypographySmall className="mt-0.5 text-[10px] font-medium uppercase tracking-tight text-muted-foreground">
                 {tRb("templateLabel")}
               </TypographySmall>
             </div>

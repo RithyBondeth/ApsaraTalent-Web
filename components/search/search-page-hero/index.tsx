@@ -6,7 +6,7 @@ export default function SearchPageHero(props: ISearchPageHeroProps) {
   return (
     <section className="flex min-h-[300px] w-full flex-row overflow-hidden border border-border bg-card">
       {/* Search Introduction and Controls Section */}
-      <div className="flex w-3/5 min-w-0 flex-none flex-col justify-between gap-7 px-6 py-7 sm:px-8 sm:py-9 tablet-md:gap-4 tablet-md:px-4 tablet-md:py-5">
+      <div className="flex w-3/5 min-w-0 flex-none flex-col justify-between gap-7 px-6 py-7 tablet-md:gap-4 tablet-md:px-4 tablet-md:py-5 sm:px-8 sm:py-9">
         {/* Eyebrow Section */}
         <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
           <span className="h-px w-7 bg-primary" />
@@ -15,10 +15,10 @@ export default function SearchPageHero(props: ISearchPageHeroProps) {
 
         {/* Hero Copy Section */}
         <div className="max-w-3xl">
-          <h1 className="max-w-[20ch] text-balance text-3xl font-black leading-[1.04] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl tablet-md:text-xl">
+          <h1 className="max-w-[20ch] text-balance text-3xl font-black leading-[1.04] tracking-[-0.045em] text-foreground tablet-md:text-xl sm:text-4xl lg:text-5xl">
             {props.title}
           </h1>
-          <p className="mt-3 max-w-[64ch] text-sm leading-6 text-muted-foreground sm:text-base tablet-md:line-clamp-3 tablet-md:text-xs tablet-md:leading-5">
+          <p className="mt-3 max-w-[64ch] text-sm leading-6 text-muted-foreground tablet-md:line-clamp-3 tablet-md:text-xs tablet-md:leading-5 sm:text-base">
             {props.subtitle} {props.supportingText}
           </p>
         </div>

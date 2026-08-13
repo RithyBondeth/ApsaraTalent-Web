@@ -103,19 +103,19 @@ export function ExperienceCard({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="border border-border border-l-[5px] border-l-foreground rounded-none overflow-hidden shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] bg-background">
+    <div className="overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-background shadow-[4px_4px_0_hsl(var(--foreground)/0.05)]">
       {/* Card Header Section */}
       <div
-        className="flex items-center justify-between px-3 py-2 bg-muted/30 cursor-pointer select-none border-b border-border/40"
+        className="flex cursor-pointer select-none items-center justify-between border-b border-border/40 bg-muted/30 px-3 py-2"
         onClick={() => setOpen((o) => !o)}
       >
         {/* Card Header Title Section */}
-        <span className="text-xs font-bold truncate uppercase tracking-tight text-muted-foreground/80">
+        <span className="truncate text-xs font-bold uppercase tracking-tight text-muted-foreground/80">
           {(position as string) || `${t("experience")} ${index + 1}`}
         </span>
 
         {/* Card Header Actions Section */}
-        <div className="flex items-center gap-1 shrink-0 ml-2">
+        <div className="ml-2 flex shrink-0 items-center gap-1">
           {showRemove && (
             <button
               type="button"
@@ -123,7 +123,7 @@ export function ExperienceCard({
                 e.stopPropagation();
                 onRemove();
               }}
-              className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+              className="rounded p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
             >
               <Trash2 size={13} />
             </button>
@@ -138,7 +138,7 @@ export function ExperienceCard({
 
       {/* Card Body Section */}
       {open && (
-        <div className="p-3 flex flex-col gap-3.5">
+        <div className="flex flex-col gap-3.5 p-3">
           {/* Position and Company Section */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
             <div>
@@ -186,7 +186,7 @@ export function ExperienceCard({
                   size="sm"
                   onClick={handleDescRefine}
                   disabled={descLoading}
-                  className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                  className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                 >
                   {descLoading ? (
                     <Loader2 size={10} className="animate-spin" />
@@ -226,10 +226,10 @@ export function ExperienceCard({
               {achFields.map((f, ai) => (
                 <div
                   key={f.id}
-                  className="group/ach flex flex-col gap-1.5 p-2 rounded-none bg-muted/20 border border-border border-l-[4px] border-l-foreground"
+                  className="group/ach flex flex-col gap-1.5 rounded-none border border-l-[4px] border-border border-l-foreground bg-muted/20 p-2"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                    <span className="text-[10px] font-bold uppercase text-muted-foreground">
                       {t("achievementNumber", { number: ai + 1 })}
                     </span>
                     <div className="flex items-center gap-1">
@@ -240,7 +240,7 @@ export function ExperienceCard({
                           size="sm"
                           onClick={() => handleAchRefine(ai)}
                           disabled={achLoading}
-                          className="h-5 px-1.5 text-[8px] gap-1 text-primary hover:text-primary hover:bg-primary/10"
+                          className="h-5 gap-1 px-1.5 text-[8px] text-primary hover:bg-primary/10 hover:text-primary"
                         >
                           {achLoading ? (
                             <Loader2 size={9} className="animate-spin" />
@@ -253,7 +253,7 @@ export function ExperienceCard({
                       <button
                         type="button"
                         onClick={() => achRemove(ai)}
-                        className="p-1 text-muted-foreground hover:text-destructive transition-colors"
+                        className="p-1 text-muted-foreground transition-colors hover:text-destructive"
                       >
                         <Trash2 size={12} />
                       </button>
@@ -261,7 +261,7 @@ export function ExperienceCard({
                   </div>
                   <Input
                     placeholder={t("achievementPlaceholder")}
-                    className="h-8 text-xs bg-background"
+                    className="h-8 bg-background text-xs"
                     {...register(
                       `experience.${index}.achievements.${ai}` as Path<IBuildResume>,
                     )}
@@ -269,7 +269,7 @@ export function ExperienceCard({
                 </div>
               ))}
               {achFields.length === 0 && (
-                <TypographyMuted className="text-[11px] italic pl-1">
+                <TypographyMuted className="pl-1 text-[11px] italic">
                   {t("noAchievementsAdded")}
                 </TypographyMuted>
               )}

@@ -72,9 +72,9 @@ export function DatePicker({
           type="button"
           variant="outline"
           className={cn(
-            "w-full justify-between border rounded-none px-4 py-6 text-left text-muted-foreground bg-primary-foreground",
+            "w-full justify-between rounded-none border bg-primary-foreground px-4 py-6 text-left text-muted-foreground",
             !isValidDate && "text-muted-foreground",
-            disabled && "opacity-50 cursor-not-allowed",
+            disabled && "cursor-not-allowed opacity-50",
             className,
           )}
           disabled={disabled}
@@ -90,7 +90,7 @@ export function DatePicker({
       </PopoverTrigger>
       <PopoverContent
         className={cn(
-          "auth-calendar-popover w-[var(--radix-popover-trigger-width)] max-w-[calc(100vw-1.5rem)] min-w-[17.5rem] overflow-hidden p-0",
+          "auth-calendar-popover w-[var(--radix-popover-trigger-width)] min-w-[17.5rem] max-w-[calc(100vw-1.5rem)] overflow-hidden p-0",
           popoverClassName,
         )}
         align="start"

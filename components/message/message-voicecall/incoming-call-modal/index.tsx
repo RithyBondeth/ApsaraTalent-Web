@@ -22,30 +22,30 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-card rounded-none shadow-[7px_7px_0_hsl(var(--foreground)/0.14)] border border-border border-t-[5px] border-t-foreground w-80 p-6 flex flex-col items-center gap-5 animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm duration-200 animate-in fade-in">
+      <div className="flex w-80 flex-col items-center gap-5 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-6 shadow-[7px_7px_0_hsl(var(--foreground)/0.14)] duration-200 animate-in zoom-in-95">
         {/* Incoming Voice Call Label Section */}
-        <div className="text-center space-y-1">
-          <TypographyMuted className="text-xs text-muted-foreground uppercase tracking-widest font-medium">
+        <div className="space-y-1 text-center">
+          <TypographyMuted className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
             {t("incomingVoiceCall")}
           </TypographyMuted>
         </div>
 
         {/* Caller Avatar Section */}
         <div className="relative flex items-center justify-center">
-          <span className="animate-ping absolute inline-flex h-20 w-20 rounded-full bg-green-400 opacity-20" />
-          <span className="absolute inline-flex h-16 w-16 rounded-full bg-green-500/10 border-2 border-green-500/30" />
-          <Avatar className="h-16 w-16 relative z-10 rounded-none border-2 border-background">
+          <span className="absolute inline-flex h-20 w-20 animate-ping rounded-full bg-green-400 opacity-20" />
+          <span className="absolute inline-flex h-16 w-16 rounded-full border-2 border-green-500/30 bg-green-500/10" />
+          <Avatar className="relative z-10 h-16 w-16 rounded-none border-2 border-background">
             <AvatarImage src={caller.avatar} alt={caller.name} />
-            <AvatarFallback className="text-lg font-semibold rounded-none">
+            <AvatarFallback className="rounded-none text-lg font-semibold">
               {initials}
             </AvatarFallback>
           </Avatar>
         </div>
 
         {/* Caller Name and Status Label Section */}
-        <div className="text-center space-y-1">
-          <h3 className="font-semibold text-lg text-foreground leading-tight">
+        <div className="space-y-1 text-center">
+          <h3 className="text-lg font-semibold leading-tight text-foreground">
             {caller.name}
           </h3>
           <TypographyMuted className="text-sm text-muted-foreground">
@@ -60,7 +60,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
             <button
               type="button"
               onClick={handleDeclineCall}
-              className="h-14 w-14 rounded-full bg-red-500 hover:bg-red-600 active:bg-red-700 flex items-center justify-center transition-colors shadow-lg"
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-red-500 shadow-lg transition-colors hover:bg-red-600 active:bg-red-700"
               aria-label="Decline call"
             >
               <PhoneOff className="h-6 w-6 text-white" />
@@ -75,7 +75,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
             <button
               type="button"
               onClick={handleAcceptCall}
-              className="h-14 w-14 rounded-full bg-green-500 hover:bg-green-600 active:bg-green-700 flex items-center justify-center transition-colors shadow-lg"
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-green-500 shadow-lg transition-colors hover:bg-green-600 active:bg-green-700"
               aria-label="Accept call"
             >
               <Phone className="h-6 w-6 text-white" />

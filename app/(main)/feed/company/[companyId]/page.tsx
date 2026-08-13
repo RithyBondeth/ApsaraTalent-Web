@@ -271,11 +271,11 @@ export default function CompanyDetailPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="profile-detail-page mx-auto flex w-full max-w-7xl flex-col gap-4 animate-page-in sm:gap-5 tablet-sm:pb-28">
+    <div className="profile-detail-page animate-page-in mx-auto flex w-full max-w-7xl flex-col gap-4 tablet-sm:pb-28 sm:gap-5">
       {effectPortal}
       {/* Back Navigation Header Section */}
       <header className="sticky top-0 z-30 -mx-3 border-b border-border bg-background/95 px-3 backdrop-blur-xl sm:-mx-4 sm:px-4 lg:-mx-5 lg:px-5">
-        <div className="mx-auto flex h-16 max-w-7xl min-w-0 items-center gap-3">
+        <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center gap-3">
           <button
             type="button"
             onClick={() => router.back()}
@@ -426,7 +426,7 @@ export default function CompanyDetailPage() {
                             )}
                           </div>
                         </div>
-                        <div className="flex flex-col gap-1 text-xs text-muted-foreground tablet-md:flex-row tablet-md:gap-3 flex-shrink-0">
+                        <div className="flex flex-shrink-0 flex-col gap-1 text-xs text-muted-foreground tablet-md:flex-row tablet-md:gap-3">
                           <span className="flex items-center gap-1">
                             <LucideCalendarDays className="size-3" />
                             {tf("posted")}{" "}
@@ -449,10 +449,10 @@ export default function CompanyDetailPage() {
                         item.education ||
                         item.skills ||
                         item.salary) && (
-                        <div className="mt-4 pt-4 border-t border-border/60 space-y-3">
+                        <div className="mt-4 space-y-3 border-t border-border/60 pt-4">
                           {item.description && (
                             <div>
-                              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                                 {tf("description")}
                               </p>
                               <TypographyMuted className="text-sm leading-relaxed">
@@ -462,7 +462,7 @@ export default function CompanyDetailPage() {
                           )}
                           {item.education && (
                             <div>
-                              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                                 {tf("dialogEducation")}
                               </p>
                               <TypographyMuted className="text-sm">
@@ -472,7 +472,7 @@ export default function CompanyDetailPage() {
                           )}
                           {item.skills && (
                             <div>
-                              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                              <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                                 {tf("dialogSkills")}
                               </p>
                               <div className="flex flex-wrap gap-1.5">
@@ -489,7 +489,7 @@ export default function CompanyDetailPage() {
                           )}
                           {item.salary && (
                             <div>
-                              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                                 {tf("salaryRange")}
                               </p>
                               <span className="text-sm font-semibold text-primary">
@@ -615,14 +615,14 @@ export default function CompanyDetailPage() {
                 .filter((r) => r.val)
                 .map((row) => (
                   <div key={row.label} className="flex items-start gap-2.5">
-                    <span className="text-muted-foreground mt-0.5 flex-shrink-0 [&>svg]:size-4 [&>svg]:stroke-[1.5]">
+                    <span className="mt-0.5 flex-shrink-0 text-muted-foreground [&>svg]:size-4 [&>svg]:stroke-[1.5]">
                       {row.icon}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                         {row.label}
                       </p>
-                      <p className="text-sm mt-0.5 break-words">{row.val}</p>
+                      <p className="mt-0.5 break-words text-sm">{row.val}</p>
                     </div>
                   </div>
                 ))}
@@ -641,7 +641,7 @@ export default function CompanyDetailPage() {
               <div className="space-y-4">
                 {companyData.values.length > 0 && (
                   <div>
-                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                       {tf("dialogValues")}
                     </p>
                     <div className="flex flex-col gap-1.5">
@@ -659,7 +659,7 @@ export default function CompanyDetailPage() {
                 )}
                 {companyData.benefits.length > 0 && (
                   <div>
-                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                       {tf("dialogBenefits")}
                     </p>
                     <div className="flex flex-col gap-1.5">
@@ -707,7 +707,7 @@ export default function CompanyDetailPage() {
       </div>
 
       {/* Mobile Sticky Action Bar Section */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 hidden gap-2 border-t border-border bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-xl [&>button]:flex-1 [&>button]:rounded-none tablet-md:flex">
+      <div className="fixed bottom-0 left-0 right-0 z-30 hidden gap-2 border-t border-border bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-xl tablet-md:flex [&>button]:flex-1 [&>button]:rounded-none">
         {!isFav && (
           <Button
             variant="outline"

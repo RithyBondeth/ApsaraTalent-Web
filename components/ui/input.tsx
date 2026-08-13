@@ -27,19 +27,17 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
 
     const hasError = Boolean(message);
     const validationMessageId = `${props.id ?? generatedId}-validation`;
-    const describedBy = [
-      props["aria-describedby"],
-      hasError ? validationMessageId : undefined,
-    ]
-      .filter(Boolean)
-      .join(" ") || undefined;
+    const describedBy =
+      [props["aria-describedby"], hasError ? validationMessageId : undefined]
+        .filter(Boolean)
+        .join(" ") || undefined;
 
     return (
-      <div className="relative w-full flex flex-col items-start gap-1.5">
+      <div className="relative flex w-full flex-col items-start gap-1.5">
         <div
           data-error={hasError}
           className={cn(
-            "flex items-center h-12 w-full rounded-none border border-input bg-background px-3 text-base transition-[color,border-color,box-shadow] duration-200",
+            "flex h-12 w-full items-center rounded-none border border-input bg-background px-3 text-base transition-[color,border-color,box-shadow] duration-200",
             "hover:border-foreground/25",
             "focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/20",
             "data-[error=true]:border-destructive data-[error=true]:focus-within:border-destructive data-[error=true]:focus-within:ring-destructive/20",
@@ -55,7 +53,7 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
           <input
             type={type}
             className={cn(
-              "flex-1 min-w-0 bg-transparent outline-none placeholder:text-sm placeholder:text-muted-foreground/70",
+              "min-w-0 flex-1 bg-transparent outline-none placeholder:text-sm placeholder:text-muted-foreground/70",
               props.disabled ? "text-muted-foreground" : "text-foreground",
             )}
             ref={ref}

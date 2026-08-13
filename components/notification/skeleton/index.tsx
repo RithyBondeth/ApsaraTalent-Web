@@ -21,34 +21,34 @@ export default function NotificationLoadingSkeleton() {
           <Skeleton className="size-9 rounded-none" />
         </div>
 
-      {/* Header Section: Filter tabs + action buttons */}
-      <div className="flex w-full flex-col gap-3 border border-border border-t-[5px] border-t-primary bg-card p-3 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:flex-row sm:items-center sm:justify-between">
-        {/* Pill Tabs Filter Section: Hidden on tablet-sm */}
-        <div className="flex items-center gap-1 overflow-x-auto bg-muted/45 p-1 scrollbar-none tablet-sm:hidden">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-10 w-16 shrink-0 rounded-none" />
+        {/* Header Section: Filter tabs + action buttons */}
+        <div className="flex w-full flex-col gap-3 border border-t-[5px] border-border border-t-primary bg-card p-3 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:flex-row sm:items-center sm:justify-between">
+          {/* Pill Tabs Filter Section: Hidden on tablet-sm */}
+          <div className="scrollbar-none flex items-center gap-1 overflow-x-auto bg-muted/45 p-1 tablet-sm:hidden">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-10 w-16 shrink-0 rounded-none" />
+            ))}
+          </div>
+          {/* Mobile Dropdown Section: Shown only on tablet-sm */}
+          <Skeleton className="hidden h-11 w-full rounded-none tablet-sm:flex" />
+
+          {/* Action Buttons Section: Mobile: full-width split, desktop: fixed-width */}
+          <div className="flex w-full items-center gap-2 sm:hidden">
+            <Skeleton className="h-9 flex-1 rounded-none" />
+            <Skeleton className="h-9 flex-1 rounded-none" />
+          </div>
+          <div className="hidden shrink-0 items-center gap-2 sm:flex">
+            <Skeleton className="h-9 w-32 rounded-none" />
+            <Skeleton className="h-9 w-24 rounded-none" />
+          </div>
+        </div>
+
+        {/* Cards Section */}
+        <div className="flex flex-col gap-3">
+          {[...Array(4)].map((_, i) => (
+            <NotificationCardSkeleton key={i} />
           ))}
         </div>
-        {/* Mobile Dropdown Section: Shown only on tablet-sm */}
-        <Skeleton className="hidden h-11 w-full rounded-none tablet-sm:flex" />
-
-        {/* Action Buttons Section: Mobile: full-width split, desktop: fixed-width */}
-        <div className="flex items-center gap-2 w-full sm:hidden">
-          <Skeleton className="h-9 flex-1 rounded-none" />
-          <Skeleton className="h-9 flex-1 rounded-none" />
-        </div>
-        <div className="hidden sm:flex items-center gap-2 shrink-0">
-          <Skeleton className="h-9 w-32 rounded-none" />
-          <Skeleton className="h-9 w-24 rounded-none" />
-        </div>
-      </div>
-
-      {/* Cards Section */}
-      <div className="flex flex-col gap-3">
-        {[...Array(4)].map((_, i) => (
-          <NotificationCardSkeleton key={i} />
-        ))}
-      </div>
       </section>
     </div>
   );
@@ -57,7 +57,7 @@ export default function NotificationLoadingSkeleton() {
 /* -------------------------------- Notification Card Skeleton -------------------------------- */
 export function NotificationCardSkeleton() {
   return (
-    <div className="relative flex w-full items-start gap-3 overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:gap-5 sm:p-5">
+    <div className="relative flex w-full items-start gap-3 overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:gap-5 sm:p-5">
       {/* Unread Indicator Bar Section */}
       <div className="absolute bottom-0 left-0 top-0 w-1 animate-pulse bg-muted" />
 
@@ -65,9 +65,9 @@ export function NotificationCardSkeleton() {
       <Skeleton className="h-11 w-11 flex-shrink-0 rounded-none sm:h-14 sm:w-14" />
 
       {/* Content Section */}
-      <div className="w-full flex flex-col items-start gap-2">
+      <div className="flex w-full flex-col items-start gap-2">
         {/* Header Section */}
-        <div className="w-full flex items-center justify-between gap-2">
+        <div className="flex w-full items-center justify-between gap-2">
           <Skeleton className="h-5 w-36 rounded-none" />
           <div className="flex items-center gap-2">
             <Skeleton className="h-3.5 w-20 rounded-none" />
@@ -80,7 +80,7 @@ export function NotificationCardSkeleton() {
         <Skeleton className="h-5 w-2/3 rounded-none sm:hidden" />
 
         {/* Bottom Section */}
-        <div className="w-full flex items-center justify-between mt-2 tablet-sm:flex-col tablet-sm:items-start tablet-sm:gap-3">
+        <div className="mt-2 flex w-full items-center justify-between tablet-sm:flex-col tablet-sm:items-start tablet-sm:gap-3">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <Skeleton className="h-8 w-8 shrink-0 rounded-none" />

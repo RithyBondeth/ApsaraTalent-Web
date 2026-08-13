@@ -13,15 +13,35 @@ vi.mock("@/lib/axios", () => ({ default: axiosMocks }));
 describe("resume API stores", () => {
   beforeEach(() => {
     Object.values(axiosMocks).forEach((mock) => mock.mockReset());
-    useCoverLetterPdfStore.setState({ loading: false, error: null, data: null });
+    useCoverLetterPdfStore.setState({
+      loading: false,
+      error: null,
+      data: null,
+    });
     useGenerateAiResumeStore.setState({ loading: false, error: null });
-    useGenerateResumeStore.setState({ loading: false, error: null, data: null });
-    useGetAllTemplateStore.setState({ loading: false, error: null, templateData: null });
-    useInterviewPrepPdfStore.setState({ loading: false, error: null, data: null });
+    useGenerateResumeStore.setState({
+      loading: false,
+      error: null,
+      data: null,
+    });
+    useGetAllTemplateStore.setState({
+      loading: false,
+      error: null,
+      templateData: null,
+    });
+    useInterviewPrepPdfStore.setState({
+      loading: false,
+      error: null,
+      data: null,
+    });
   });
 
   it("generates a cover-letter PDF", async () => {
-    const pdf = { filename: "cover-letter.pdf", mimeType: "application/pdf", data: "base64" };
+    const pdf = {
+      filename: "cover-letter.pdf",
+      mimeType: "application/pdf",
+      data: "base64",
+    };
     const payload = {
       employeeName: "Sokha",
       companyName: "Apsara",
@@ -34,11 +54,17 @@ describe("resume API stores", () => {
       useCoverLetterPdfStore.getState().generateCoverLetterPdf(payload),
     ).resolves.toBe(pdf);
     expect(axiosMocks.post).toHaveBeenCalledWith(expect.any(String), payload);
-    expect(useCoverLetterPdfStore.getState()).toMatchObject({ data: pdf, loading: false });
+    expect(useCoverLetterPdfStore.getState()).toMatchObject({
+      data: pdf,
+      loading: false,
+    });
   });
 
   it("generates an AI resume from structured data", async () => {
-    const payload = { template: "modern", personalInfo: { firstname: "Sokha" } };
+    const payload = {
+      template: "modern",
+      personalInfo: { firstname: "Sokha" },
+    };
     const generated = { ...payload, summary: "Generated summary" };
     axiosMocks.post.mockResolvedValueOnce({ data: generated });
 
@@ -50,11 +76,17 @@ describe("resume API stores", () => {
       payload,
       expect.objectContaining({ timeout: expect.any(Number) }),
     );
-    expect(useGenerateAiResumeStore.getState()).toMatchObject({ loading: false, error: null });
+    expect(useGenerateAiResumeStore.getState()).toMatchObject({
+      loading: false,
+      error: null,
+    });
   });
 
   it("generates an AI resume from pasted text", async () => {
-    const payload = { sourceText: "Five years of engineering experience", template: "classic" as const };
+    const payload = {
+      sourceText: "Five years of engineering experience",
+      template: "classic" as const,
+    };
     const generated = { template: "classic", summary: "Engineer" };
     axiosMocks.post.mockResolvedValueOnce({ data: generated });
 
@@ -70,7 +102,11 @@ describe("resume API stores", () => {
 
   it("builds a downloadable resume", async () => {
     const payload = { template: "modern" };
-    const resume = { filename: "resume.pdf", mimeType: "application/pdf", data: "base64" };
+    const resume = {
+      filename: "resume.pdf",
+      mimeType: "application/pdf",
+      data: "base64",
+    };
     axiosMocks.post.mockResolvedValueOnce({ data: resume });
 
     await expect(
@@ -79,7 +115,10 @@ describe("resume API stores", () => {
     expect(axiosMocks.post).toHaveBeenCalledWith(
       expect.any(String),
       payload,
-      expect.objectContaining({ responseType: "json", timeout: expect.any(Number) }),
+      expect.objectContaining({
+        responseType: "json",
+        timeout: expect.any(Number),
+      }),
     );
     expect(useGenerateResumeStore.getState().data).toBe(resume);
   });
@@ -98,7 +137,11 @@ describe("resume API stores", () => {
   });
 
   it("generates an interview-preparation PDF", async () => {
-    const pdf = { filename: "interview.pdf", mimeType: "application/pdf", data: "base64" };
+    const pdf = {
+      filename: "interview.pdf",
+      mimeType: "application/pdf",
+      data: "base64",
+    };
     const payload = {
       interviewTitle: "Frontend interview",
       companyName: "Apsara",
@@ -117,7 +160,10 @@ describe("resume API stores", () => {
     await expect(
       useInterviewPrepPdfStore.getState().generateInterviewPrepPdf(payload),
     ).resolves.toBe(pdf);
-    expect(useInterviewPrepPdfStore.getState()).toMatchObject({ data: pdf, error: null });
+    expect(useInterviewPrepPdfStore.getState()).toMatchObject({
+      data: pdf,
+      error: null,
+    });
   });
 
   it("clears loading and exposes generation failures", async () => {

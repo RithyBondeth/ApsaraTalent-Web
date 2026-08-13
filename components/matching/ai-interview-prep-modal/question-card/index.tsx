@@ -15,23 +15,23 @@ export function QuestionCard(props: IQuestionCardProps) {
 
   /* -------------------------- Render UI ------------------------- */
   return (
-    <div className="rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] overflow-hidden px-4 py-4 flex flex-col gap-3 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+    <div className="flex flex-col gap-3 overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card px-4 py-4 shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
       {/* Question Section */}
       <div className="flex gap-3">
-        <span className="shrink-0 text-xs font-semibold text-muted-foreground/50 w-5 text-right leading-5 mt-0.5">
+        <span className="mt-0.5 w-5 shrink-0 text-right text-xs font-semibold leading-5 text-muted-foreground/50">
           {index + 1}
         </span>
         <div className="flex-1">
           <span
-            className={`inline-flex text-[11px] font-semibold px-2.5 py-0.5 rounded-none border border-current/15 mb-2 ${interviewPrepChip}`}
+            className={`border-current/15 mb-2 inline-flex rounded-none border px-2.5 py-0.5 text-[11px] font-semibold ${interviewPrepChip}`}
           >
             {item.category}
           </span>
-          <p className="text-sm font-medium text-foreground leading-relaxed">
+          <p className="text-sm font-medium leading-relaxed text-foreground">
             {item.question}
           </p>
           {item.questionKm && (
-            <p className="text-xs text-muted-foreground leading-relaxed mt-1">
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
               {item.questionKm}
             </p>
           )}
@@ -39,20 +39,20 @@ export function QuestionCard(props: IQuestionCardProps) {
       </div>
 
       {/* Tip Section */}
-      <div className="ml-8 rounded-none bg-amber-50 dark:bg-amber-900/20 border border-amber-100 border-l-[4px] border-l-amber-500 dark:border-amber-800/30 px-4 py-3">
+      <div className="ml-8 rounded-none border border-l-[4px] border-amber-100 border-l-amber-500 bg-amber-50 px-4 py-3 dark:border-amber-800/30 dark:bg-amber-900/20">
         <div className="flex gap-2.5">
           {/* Icon Section */}
-          <LucideLightbulb className="size-4 text-amber-500 shrink-0 mt-0.5" />
+          <LucideLightbulb className="mt-0.5 size-4 shrink-0 text-amber-500" />
           {/* Content Section */}
           <div>
-            <p className="text-[11px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-1.5">
+            <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
               {tipLabel}
             </p>
-            <p className="text-sm text-foreground/80 leading-relaxed">
+            <p className="text-sm leading-relaxed text-foreground/80">
               {item.tip}
             </p>
             {item.tipKm && (
-              <p className="text-xs text-muted-foreground leading-relaxed mt-2 pt-2 border-t border-amber-100 dark:border-amber-800/30">
+              <p className="mt-2 border-t border-amber-100 pt-2 text-xs leading-relaxed text-muted-foreground dark:border-amber-800/30">
                 {item.tipKm}
               </p>
             )}

@@ -483,7 +483,7 @@ function LoginPage() {
 
           {/* Social Button Login Section */}
           <div
-            className="w-full flex flex-col gap-3"
+            className="flex w-full flex-col gap-3"
             style={{ "--d": "80ms" } as React.CSSProperties}
           >
             <div className="grid grid-cols-2 gap-3">
@@ -544,11 +544,11 @@ function LoginPage() {
 
           {/* Divider Section */}
           <div
-            className="w-full flex items-center gap-3"
+            className="flex w-full items-center gap-3"
             style={{ "--d": "140ms" } as React.CSSProperties}
           >
             <Separator className="flex-1" />
-            <TypographyMuted className="text-xs whitespace-nowrap">
+            <TypographyMuted className="whitespace-nowrap text-xs">
               {t("orContinueWithEmail")}
             </TypographyMuted>
             <Separator className="flex-1" />
@@ -556,7 +556,7 @@ function LoginPage() {
 
           {/* Login Form Section */}
           <form
-            className="w-full flex flex-col items-stretch gap-4"
+            className="flex w-full flex-col items-stretch gap-4"
             onSubmit={handleSubmit(onSubmit)}
             style={{ "--d": "200ms" } as React.CSSProperties}
           >
@@ -583,8 +583,8 @@ function LoginPage() {
                 {...register("password")}
               />
             </div>
-            <div className="flex justify-between items-center">
-              <label className="flex min-h-11 items-center gap-2 cursor-pointer">
+            <div className="flex items-center justify-between">
+              <label className="flex min-h-11 cursor-pointer items-center gap-2">
                 <Controller
                   name="rememberMe"
                   control={control}
@@ -602,14 +602,14 @@ function LoginPage() {
               </label>
               <Link
                 href="/forgot-password"
-                className="inline-flex min-h-11 items-center text-xs font-medium text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="inline-flex min-h-11 items-center text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 {t("forgotPasswordLink")}
               </Link>
             </div>
             <Button
               type="submit"
-              className="auth-submit w-full h-11"
+              className="auth-submit h-11 w-full"
               disabled={loading}
             >
               {t("loginButton")}
@@ -620,7 +620,7 @@ function LoginPage() {
               </TypographyMuted>
               <Link
                 href="/signup/option"
-                className="text-sm font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground transition-colors"
+                className="text-sm font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
               >
                 {t("createAccount")}
               </Link>
@@ -659,7 +659,7 @@ function LoginPage() {
               </InputOTPGroup>
             </InputOTP>
             {twoFactorStore.error && (
-              <div className="flex items-center gap-1.5 text-destructive text-xs">
+              <div className="flex items-center gap-1.5 text-xs text-destructive">
                 <LucideAlertCircle className="size-3.5 shrink-0" />
                 {twoFactorStore.error}
               </div>

@@ -127,9 +127,7 @@ describe("AiInterviewPrepModal", () => {
     expect(screen.queryByText("Missing tip")).not.toBeInTheDocument();
     expect(screen.getByText("2 questions")).toBeVisible();
     expect(mocks.streamFetch).toHaveBeenCalledWith(
-      expect.stringContaining(
-        "interviewTitle=Senior%20Frontend%20Interview",
-      ),
+      expect.stringContaining("interviewTitle=Senior%20Frontend%20Interview"),
       { method: "GET" },
       expect.any(Function),
     );

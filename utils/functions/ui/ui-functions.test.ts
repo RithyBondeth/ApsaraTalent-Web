@@ -21,12 +21,13 @@ describe("UI functions", () => {
 
   it("builds bounded pagination windows", () => {
     expect(getPaginationPages({ currentPage: 1, totalPages: 0 })).toEqual([]);
-    expect(getPaginationPages({ currentPage: -2, totalPages: 5, maxVisiblePages: 2 })).toEqual([
-      1,
-      2,
-      "...",
-      5,
-    ]);
+    expect(
+      getPaginationPages({
+        currentPage: -2,
+        totalPages: 5,
+        maxVisiblePages: 2,
+      }),
+    ).toEqual([1, 2, "...", 5]);
     expect(getPaginationPages({ currentPage: 5, totalPages: 5 })).toEqual([5]);
     expect(getPaginationPages({ currentPage: 99, totalPages: 3 })).toEqual([3]);
   });
@@ -37,7 +38,9 @@ describe("UI functions", () => {
       bg: expect.any(String),
       text: expect.any(String),
     });
-    expect(React.isValidElement(getSocialPlatformTypeIcon("Github"))).toBe(true);
+    expect(React.isValidElement(getSocialPlatformTypeIcon("Github"))).toBe(
+      true,
+    );
     expect(getSocialPlatformTypeIcon("Unknown" as never)).toBeNull();
   });
 });

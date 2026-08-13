@@ -53,7 +53,7 @@ export default function NotificationBaseCard(
     <div
       onClick={onClick}
       className={cn(
-        "group/card relative flex w-full items-start gap-3 overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 sm:gap-5 sm:p-5",
+        "group/card relative flex w-full items-start gap-3 overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 sm:gap-5 sm:p-5",
         onClick &&
           "cursor-pointer hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:bg-muted/20 hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] active:scale-[0.99]",
         !seen && "bg-muted/15",
@@ -75,7 +75,7 @@ export default function NotificationBaseCard(
       {onDelete && (
         <button
           onClick={handleDelete}
-          className="absolute right-3 top-3 p-1.5 text-muted-foreground opacity-0 transition-all duration-200 hover:bg-destructive/10 hover:text-destructive group-hover/card:opacity-100 focus:opacity-100"
+          className="absolute right-3 top-3 p-1.5 text-muted-foreground opacity-0 transition-all duration-200 hover:bg-destructive/10 hover:text-destructive focus:opacity-100 group-hover/card:opacity-100"
           aria-label={t("deleteNotification")}
         >
           <LucideX className="size-4" />
@@ -85,7 +85,7 @@ export default function NotificationBaseCard(
       {/* Icon Section */}
       <div
         className={cn(
-          "shrink-0 border border-current/10 p-2.5 transition-transform duration-300 group-hover/card:scale-105 sm:p-3",
+          "border-current/10 shrink-0 border p-2.5 transition-transform duration-300 group-hover/card:scale-105 sm:p-3",
           iconBgColor,
           iconColor,
         )}
@@ -99,20 +99,20 @@ export default function NotificationBaseCard(
           <TypographyLead className="line-clamp-1 text-sm font-black tracking-[-0.02em] text-foreground sm:text-base">
             {title}
           </TypographyLead>
-          <div className="flex items-center gap-2 shrink-0">
-            <TypographySmall className="text-[10px] sm:text-xs text-muted-foreground font-medium">
+          <div className="flex shrink-0 items-center gap-2">
+            <TypographySmall className="text-[10px] font-medium text-muted-foreground sm:text-xs">
               {timeAgo(timestamp, tc)}
             </TypographySmall>
             {!seen && (
               <div
-                className={cn("size-2 rounded-full animate-pulse", unreadColor)}
+                className={cn("size-2 animate-pulse rounded-full", unreadColor)}
               />
             )}
           </div>
         </div>
 
         {/* Description Section */}
-        <div className="text-sm text-muted-foreground line-clamp-2 sm:line-clamp-3">
+        <div className="line-clamp-2 text-sm text-muted-foreground sm:line-clamp-3">
           {description}
         </div>
 

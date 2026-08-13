@@ -18,9 +18,9 @@ export default function Tag(props: ITagInterface) {
   /* -------------------------------- Render UI ------------------------------- */
   return (
     <div
-      className={`w-fit flex items-center ${
+      className={`flex w-fit items-center ${
         props.icon ? "gap-1 py-1.5" : "py-1.5"
-      } px-3 rounded-none border border-border/60 cursor-pointer transition-all duration-200 ease-out hover:border-foreground/30 active:scale-95 ${bg} ${props.className ?? ""}`}
+      } cursor-pointer rounded-none border border-border/60 px-3 transition-all duration-200 ease-out hover:border-foreground/30 active:scale-95 ${bg} ${props.className ?? ""}`}
     >
       {/* Icon Section */}
       {props.icon && (

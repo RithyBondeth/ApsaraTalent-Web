@@ -562,9 +562,7 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
         { opacity: 1, y: 0, duration: 0.6 },
         1.3,
       );
-      const scrollIndicator = container.querySelector(
-        "[data-hero='scroll']",
-      );
+      const scrollIndicator = container.querySelector("[data-hero='scroll']");
       if (scrollIndicator) {
         tl.fromTo(
           scrollIndicator,

@@ -22,7 +22,9 @@ const webRtcMocks = vi.hoisted(() => ({
   flushPendingIceCandidates: vi.fn(),
 }));
 
-vi.mock("../chat/socket-manager", () => ({ getSocket: socketManagerMocks.getSocket }));
+vi.mock("../chat/socket-manager", () => ({
+  getSocket: socketManagerMocks.getSocket,
+}));
 vi.mock("./utils", () => ({
   fetchIceServers: callUtilsMocks.fetchIceServers,
   normalizeParticipantAvatar: callUtilsMocks.normalizeParticipantAvatar,
@@ -40,13 +42,16 @@ function createPeerConnection() {
   return {
     connectionState: "new",
     remoteDescription: null as RTCSessionDescriptionInit | null,
-    onicecandidate: null as ((event: { candidate: { toJSON: () => object } | null }) => void) | null,
+    onicecandidate: null as
+      ((event: { candidate: { toJSON: () => object } | null }) => void) | null,
     ontrack: null as ((event: { streams: MediaStream[] }) => void) | null,
     onconnectionstatechange: null as (() => void) | null,
     addTrack: vi.fn(),
     addIceCandidate: vi.fn().mockResolvedValue(undefined),
     createOffer: vi.fn().mockResolvedValue({ type: "offer", sdp: "offer-sdp" }),
-    createAnswer: vi.fn().mockResolvedValue({ type: "answer", sdp: "answer-sdp" }),
+    createAnswer: vi
+      .fn()
+      .mockResolvedValue({ type: "answer", sdp: "answer-sdp" }),
     setLocalDescription: vi.fn().mockResolvedValue(undefined),
     setRemoteDescription: vi.fn().mockResolvedValue(undefined),
     close: vi.fn(),
@@ -75,8 +80,12 @@ describe("call store", () => {
       callee: null,
       callStartedAt: null,
     });
-    callUtilsMocks.fetchIceServers.mockResolvedValue([{ urls: "stun:test.example.com" }]);
-    callUtilsMocks.normalizeParticipantAvatar.mockImplementation((participant) => participant);
+    callUtilsMocks.fetchIceServers.mockResolvedValue([
+      { urls: "stun:test.example.com" },
+    ]);
+    callUtilsMocks.normalizeParticipantAvatar.mockImplementation(
+      (participant) => participant,
+    );
     webRtcMocks.getPc.mockReturnValue(null);
     webRtcMocks.getPendingOffer.mockReturnValue(null);
     webRtcMocks.stopStream.mockReturnValue(null);
@@ -126,7 +135,10 @@ describe("call store", () => {
     await useCallStore.getState().initiateCall(callee);
 
     expect(pc.addTrack).toHaveBeenCalledWith(track, stream);
-    expect(pc.setLocalDescription).toHaveBeenCalledWith({ type: "offer", sdp: "offer-sdp" });
+    expect(pc.setLocalDescription).toHaveBeenCalledWith({
+      type: "offer",
+      sdp: "offer-sdp",
+    });
     expect(socket.emit).toHaveBeenCalledWith("callOffer", {
       callId: "call-1",
       receiverId: "user-2",
@@ -140,7 +152,9 @@ describe("call store", () => {
       isMuted: false,
     });
 
-    pc.onicecandidate?.({ candidate: { toJSON: () => ({ candidate: "ice-1" }) } });
+    pc.onicecandidate?.({
+      candidate: { toJSON: () => ({ candidate: "ice-1" }) },
+    });
     expect(socket.emit).toHaveBeenCalledWith("iceCandidate", {
       callId: "call-1",
       targetUserId: "user-2",
@@ -187,7 +201,11 @@ describe("call store", () => {
       callId: "call-incoming",
       callerId: "user-2",
     });
-    expect(useCallStore.getState()).toMatchObject({ status: "idle", callId: null, caller: null });
+    expect(useCallStore.getState()).toMatchObject({
+      status: "idle",
+      callId: null,
+      caller: null,
+    });
 
     useCallStore.setState({ status: "calling" });
     useCallStore.getState()._handleOffer({ ...offer, callId: "call-busy" });
@@ -251,14 +269,17 @@ describe("call store", () => {
       callId: "call-1",
       candidate: { candidate: "queued-ice" },
     });
-    expect(webRtcMocks.addPendingIceCandidate).toHaveBeenCalledWith({ candidate: "queued-ice" });
+    expect(webRtcMocks.addPendingIceCandidate).toHaveBeenCalledWith({
+      candidate: "queued-ice",
+    });
 
     pc.remoteDescription = { type: "answer", sdp: "answer-sdp" };
-    vi.stubGlobal("RTCIceCandidate", function MockRTCIceCandidate(
-      candidate: RTCIceCandidateInit,
-    ) {
-      return candidate;
-    });
+    vi.stubGlobal(
+      "RTCIceCandidate",
+      function MockRTCIceCandidate(candidate: RTCIceCandidateInit) {
+        return candidate;
+      },
+    );
     await useCallStore.getState()._handleIceCandidate({
       callId: "call-1",
       candidate: { candidate: "live-ice" },
@@ -286,7 +307,11 @@ describe("call store", () => {
       targetUserId: "user-2",
       reason: "ended",
     });
-    expect(useCallStore.getState()).toMatchObject({ status: "ended", localStream: null, remoteStream: null });
+    expect(useCallStore.getState()).toMatchObject({
+      status: "ended",
+      localStream: null,
+      remoteStream: null,
+    });
     vi.advanceTimersByTime(2_000);
     expect(useCallStore.getState()).toMatchObject({
       status: "idle",

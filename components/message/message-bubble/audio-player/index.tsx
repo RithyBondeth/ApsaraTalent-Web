@@ -96,7 +96,7 @@ export function AudioPlayer(props: IAudioPlayerProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex items-center gap-2 mt-1 min-w-[150px] sm:min-w-[180px] max-w-xs">
+    <div className="mt-1 flex min-w-[150px] max-w-xs items-center gap-2 sm:min-w-[180px]">
       {/* Hidden Audio Element for Playback Section */}
       <audio ref={audioRef} src={url} preload="metadata" />
 
@@ -104,7 +104,7 @@ export function AudioPlayer(props: IAudioPlayerProps) {
       <button
         type="button"
         onClick={handlePlaybackToggle}
-        className={`shrink-0 h-8 w-8 flex items-center justify-center rounded-none transition-colors ${buttonClass}`}
+        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-none transition-colors ${buttonClass}`}
         aria-label={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (
@@ -116,7 +116,7 @@ export function AudioPlayer(props: IAudioPlayerProps) {
 
       {/* Waveform Section */}
       <div
-        className="flex-1 flex items-center gap-[2px] cursor-pointer h-8 py-1"
+        className="flex h-8 flex-1 cursor-pointer items-center gap-[2px] py-1"
         onClick={handleWaveformClick}
         role="slider"
         aria-label="Audio seek"
@@ -141,7 +141,7 @@ export function AudioPlayer(props: IAudioPlayerProps) {
 
       {/* Time Section */}
       <span
-        className={`shrink-0 text-[11px] tabular-nums font-mono ${timeColor}`}
+        className={`shrink-0 font-mono text-[11px] tabular-nums ${timeColor}`}
       >
         {formatDurationClock(displayTime)}
       </span>

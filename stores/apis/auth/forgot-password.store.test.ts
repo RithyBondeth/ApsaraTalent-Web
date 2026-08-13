@@ -20,9 +20,7 @@ describe("forgot-password store", () => {
   it("submits the identifier and exposes the success message", async () => {
     post.mockResolvedValueOnce({ data: { message: "Reset email sent" } });
 
-    await useForgotPasswordStore
-      .getState()
-      .forgotPassword("user@example.com");
+    await useForgotPasswordStore.getState().forgotPassword("user@example.com");
 
     expect(post).toHaveBeenCalledWith(expect.any(String), {
       identifier: "user@example.com",
@@ -37,9 +35,7 @@ describe("forgot-password store", () => {
   it("exits loading and exposes a request failure", async () => {
     post.mockRejectedValueOnce(new Error("Email service unavailable"));
 
-    await useForgotPasswordStore
-      .getState()
-      .forgotPassword("user@example.com");
+    await useForgotPasswordStore.getState().forgotPassword("user@example.com");
 
     expect(useForgotPasswordStore.getState()).toMatchObject({
       loading: false,

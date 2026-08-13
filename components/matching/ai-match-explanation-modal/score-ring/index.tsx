@@ -18,13 +18,13 @@ export default function ScoreRing(props: { score: number }) {
 
   /* -------------------------- Render UI ------------------------- */
   return (
-    <div className="relative flex items-center justify-center size-[72px] sm:size-[88px] shrink-0">
+    <div className="relative flex size-[72px] shrink-0 items-center justify-center sm:size-[88px]">
       <svg
         width="72"
         height="72"
         viewBox="0 0 84 84"
         aria-hidden="true"
-        className="-rotate-90 sm:w-[88px] sm:h-[88px]"
+        className="-rotate-90 sm:h-[88px] sm:w-[88px]"
       >
         {/* Track Section */}
         <circle
@@ -52,12 +52,12 @@ export default function ScoreRing(props: { score: number }) {
       {/* Score Label Section */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span
-          className="text-[18px] sm:text-[22px] font-bold tabular-nums leading-none"
+          className="text-[18px] font-bold tabular-nums leading-none sm:text-[22px]"
           style={{ color }}
         >
           {score}
         </span>
-        <span className="text-[9px] sm:text-[10px] text-muted-foreground font-medium mt-0.5">
+        <span className="mt-0.5 text-[9px] font-medium text-muted-foreground sm:text-[10px]">
           / 100
         </span>
       </div>

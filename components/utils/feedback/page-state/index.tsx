@@ -60,7 +60,7 @@ export function PageState(props: IPageStateProps) {
       aria-label={title}
       aria-live={isError ? "assertive" : "polite"}
       className={cn(
-        "flex w-full flex-col items-center justify-center gap-4 border border-border border-t-[5px] bg-card px-4 text-center shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]",
+        "flex w-full flex-col items-center justify-center gap-4 border border-t-[5px] border-border bg-card px-4 text-center shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]",
         isError
           ? "border-t-destructive bg-destructive/[0.025]"
           : "border-t-primary",
@@ -76,7 +76,7 @@ export function PageState(props: IPageStateProps) {
           aria-hidden={imageAlt === ""}
           height={200}
           width={200}
-          className="h-28 w-28 animate-float object-contain grayscale motion-reduce:animate-none sm:h-40 sm:w-40"
+          className="animate-float h-28 w-28 object-contain grayscale motion-reduce:animate-none sm:h-40 sm:w-40"
         />
       ) : (
         <span

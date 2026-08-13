@@ -11,8 +11,8 @@ export default function ResumeBuilderBanner() {
   return (
     <section className="flex min-h-[300px] w-full flex-row overflow-hidden border border-border bg-card">
       {/* Copy Section */}
-      <div className="flex w-3/5 min-w-0 flex-none flex-col justify-between gap-6 px-6 py-7 sm:px-8 sm:py-9 tablet-md:gap-4 tablet-md:px-4 tablet-md:py-5">
-         {/* AI Badge Section */}
+      <div className="flex w-3/5 min-w-0 flex-none flex-col justify-between gap-6 px-6 py-7 tablet-md:gap-4 tablet-md:px-4 tablet-md:py-5 sm:px-8 sm:py-9">
+        {/* AI Badge Section */}
         <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
           <span className="h-px w-7 bg-foreground" />
           <span className="line-clamp-1">{t("aiPoweredFeatures")}</span>
@@ -20,10 +20,10 @@ export default function ResumeBuilderBanner() {
 
         {/* Hero Copy Section */}
         <div>
-          <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.02] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl tablet-md:text-xl">
+          <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.02] tracking-[-0.045em] text-foreground tablet-md:text-xl sm:text-4xl lg:text-5xl">
             {t("bannerTitle")}
           </h1>
-          <p className="mt-3 max-w-[58ch] text-sm leading-6 text-muted-foreground sm:text-base tablet-md:line-clamp-3 tablet-md:text-xs tablet-md:leading-5">
+          <p className="mt-3 max-w-[58ch] text-sm leading-6 text-muted-foreground tablet-md:line-clamp-3 tablet-md:text-xs tablet-md:leading-5 sm:text-base">
             {t("bannerSubtitle1")} {t("bannerMuted")}
           </p>
         </div>

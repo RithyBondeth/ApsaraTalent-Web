@@ -5,15 +5,23 @@ import {
   setRole,
 } from "./helpers";
 
-test("anonymous users return to login with the complete callback URL", async ({ page }) => {
+test("anonymous users return to login with the complete callback URL", async ({
+  page,
+}) => {
   await page.goto("/search/employee?q=typescript&page=2");
   await expect(page).toHaveURL(/\/login\?callbackUrl=/);
   const url = new URL(page.url());
-  expect(url.searchParams.get("callbackUrl")).toBe("/search/employee?q=typescript&page=2");
-  await expect(page.getByRole("heading", { name: "Log in to your Account" })).toBeVisible();
+  expect(url.searchParams.get("callbackUrl")).toBe(
+    "/search/employee?q=typescript&page=2",
+  );
+  await expect(
+    page.getByRole("heading", { name: "Log in to your Account" }),
+  ).toBeVisible();
 });
 
-test("authenticated users are redirected away from guest pages", async ({ page }) => {
+test("authenticated users are redirected away from guest pages", async ({
+  page,
+}) => {
   await setRole(page, "employee");
   await mockBackendUnavailable(page);
   await page.goto("/login");
@@ -21,7 +29,9 @@ test("authenticated users are redirected away from guest pages", async ({ page }
   await expect(page.locator("body")).not.toBeEmpty();
 });
 
-test("users without a role are sent to onboarding and can remain there", async ({ page }) => {
+test("users without a role are sent to onboarding and can remain there", async ({
+  page,
+}) => {
   await setRole(page, "none");
   await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/signup\/option$/);
@@ -44,7 +54,9 @@ test("an expired session returns the user to login", async ({ page }) => {
   );
 });
 
-test("representative authenticated pages render without uncaught runtime errors", async ({ page }) => {
+test("representative authenticated pages render without uncaught runtime errors", async ({
+  page,
+}) => {
   test.setTimeout(180_000);
   await setRole(page, "employee");
   const failures: string[] = [];

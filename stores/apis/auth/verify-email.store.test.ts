@@ -10,7 +10,11 @@ import { useVerifyEmailStore } from "./verify-email.store";
 
 describe("verify-email store", () => {
   beforeEach(() => {
-    useVerifyEmailStore.setState({ loading: false, error: null, message: null });
+    useVerifyEmailStore.setState({
+      loading: false,
+      error: null,
+      message: null,
+    });
   });
 
   it("uses the verification token in the endpoint", async () => {

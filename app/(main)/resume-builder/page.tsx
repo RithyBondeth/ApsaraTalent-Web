@@ -17,7 +17,14 @@ import {
 } from "@/utils/types/resume/resume.type";
 import { TemplateCardSkeleton } from "@/components/resume-builder/skeleton";
 import { useTranslations } from "next-intl";
-import { normalizeResumePayload, prepareResumeAvatar, removeLegacyResumeDraft, resumeDraftSchema, resumeSchema, saveResumeDraft } from "@/utils/functions/resume";
+import {
+  normalizeResumePayload,
+  prepareResumeAvatar,
+  removeLegacyResumeDraft,
+  resumeDraftSchema,
+  resumeSchema,
+  saveResumeDraft,
+} from "@/utils/functions/resume";
 import { useGenerateAiResumeStore } from "@/stores/apis/resume/generate-ai-resume.store";
 import { toast } from "sonner";
 import { useAiQuotaStore } from "@/stores/apis/ai/get-ai-quota.store";
@@ -161,7 +168,7 @@ export default function ResumeBuilder() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="resume-builder-editorial mx-auto flex w-full max-w-[1500px] animate-page-in flex-col items-start gap-6 px-3 pb-8 sm:px-4 lg:px-5">
+    <div className="resume-builder-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-6 px-3 pb-8 sm:px-4 lg:px-5">
       {/* Banner Section */}
       <ResumeBuilderBanner />
 

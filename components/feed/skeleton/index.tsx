@@ -27,15 +27,15 @@ function RecommendedCardSkeleton({ isEmployee }: { isEmployee?: boolean }) {
 /* ------------ Neutral Card Skeleton (Shown Before user role is known) ------------ */
 function NeutralCardSkeleton() {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden border border-border border-t-[5px] border-t-foreground bg-card">
+    <div className="flex h-full w-full flex-col overflow-hidden border border-t-[5px] border-border border-t-foreground bg-card">
       <div className="flex items-start gap-3 p-4 pb-3">
         <Skeleton className="size-16 shrink-0 rounded-none" />
-        <div className="flex-1 flex flex-col gap-1.5">
+        <div className="flex flex-1 flex-col gap-1.5">
           <Skeleton className="h-4 w-28 rounded-none" />
           <Skeleton className="h-3 w-20 rounded-none" />
           <Skeleton className="h-3 w-16 rounded-none" />
         </div>
-        <div className="flex flex-col gap-1 shrink-0">
+        <div className="flex shrink-0 flex-col gap-1">
           <Skeleton className="size-8 rounded-none" />
           <Skeleton className="size-8 rounded-none" />
         </div>
@@ -45,11 +45,11 @@ function NeutralCardSkeleton() {
         <Skeleton className="h-6 w-20 rounded-none" />
         <Skeleton className="h-6 w-14 rounded-none" />
       </div>
-      <div className="px-4 pb-3 space-y-1.5">
+      <div className="space-y-1.5 px-4 pb-3">
         <Skeleton className="h-3 w-full rounded-none" />
         <Skeleton className="h-3 w-4/5 rounded-none" />
       </div>
-      <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-border/50">
+      <div className="flex items-center justify-end gap-2 border-t border-border/50 px-4 pb-3 pt-2">
         <Skeleton className="h-8 w-16 rounded-none" />
         <Skeleton className="h-8 w-16 rounded-none" />
       </div>
@@ -97,7 +97,7 @@ export function FeedBannerSkeleton() {
   return (
     <div className="grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
       {/* Desktop Skeleton Section 1050px */}
-      <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
+      <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6 sm:px-9 sm:py-10">
         <div className="flex items-center gap-2">
           <Skeleton className="h-px w-7 rounded-none" />
           <Skeleton className="h-3 w-28 rounded-none" />

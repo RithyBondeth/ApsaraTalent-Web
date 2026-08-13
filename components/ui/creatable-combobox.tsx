@@ -71,7 +71,7 @@ export function CreatableCombobox({
           aria-required={required}
           disabled={disabled}
           className={cn(
-            "h-12 w-full justify-between overflow-hidden text-muted-foreground font-normal",
+            "h-12 w-full justify-between overflow-hidden font-normal text-muted-foreground",
             triggerClassName,
           )}
         >

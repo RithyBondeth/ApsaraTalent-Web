@@ -10,18 +10,17 @@ const recorderMocks = vi.hoisted(() => ({
 }));
 
 vi.mock("next-intl", () => ({
-  useTranslations: () => (
-    key: string,
-    values?: Record<string, string | number>,
-  ) => {
-    if (key === "enterMessage") return "Enter a message";
-    if (key === "loadingChat") return "Loading chat";
-    if (key === "attachFiles") return "Attach files";
-    if (key === "maxFilesReached") return `Maximum ${values?.max} files reached`;
-    if (key === "uploadFailed") return "Upload failed";
-    if (key === "you") return "You";
-    return key;
-  },
+  useTranslations:
+    () => (key: string, values?: Record<string, string | number>) => {
+      if (key === "enterMessage") return "Enter a message";
+      if (key === "loadingChat") return "Loading chat";
+      if (key === "attachFiles") return "Attach files";
+      if (key === "maxFilesReached")
+        return `Maximum ${values?.max} files reached`;
+      if (key === "uploadFailed") return "Upload failed";
+      if (key === "you") return "You";
+      return key;
+    },
 }));
 
 vi.mock("next/dynamic", () => ({
@@ -47,13 +46,10 @@ describe("ChatInput", () => {
     recorderMocks.stopRecording.mockReset();
     recorderMocks.cancelRecording.mockReset();
     vi.stubGlobal("fetch", vi.fn());
-    vi.stubGlobal(
-      "requestAnimationFrame",
-      (callback: FrameRequestCallback) => {
-        callback(0);
-        return 1;
-      },
-    );
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
+      callback(0);
+      return 1;
+    });
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:preview");
     vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
   });
@@ -66,12 +62,7 @@ describe("ChatInput", () => {
     const user = userEvent.setup();
     const onSendMessage = vi.fn(() => true);
     const onTyping = vi.fn();
-    render(
-      <ChatInput
-        onSendMessage={onSendMessage}
-        onTyping={onTyping}
-      />,
-    );
+    render(<ChatInput onSendMessage={onSendMessage} onTyping={onTyping} />);
 
     const input = screen.getByPlaceholderText("Enter a message");
     await user.type(input, "  Hello team!  {Enter}");

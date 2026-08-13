@@ -21,7 +21,7 @@ function SearchHeroSkeleton() {
   return (
     <div className="flex min-h-[300px] w-full flex-row overflow-hidden border border-border bg-card">
       {/* Hero Copy and Search Section */}
-      <div className="flex w-3/5 min-w-0 flex-none flex-col justify-between gap-7 px-6 py-7 sm:px-8 sm:py-9 tablet-md:gap-4 tablet-md:px-4 tablet-md:py-5">
+      <div className="flex w-3/5 min-w-0 flex-none flex-col justify-between gap-7 px-6 py-7 tablet-md:gap-4 tablet-md:px-4 tablet-md:py-5 sm:px-8 sm:py-9">
         <div className="flex items-center gap-2">
           <Skeleton className="h-px w-7 rounded-none" />
           <Skeleton className="h-2.5 w-24 rounded-none" />
@@ -59,7 +59,7 @@ function SearchHeroSkeleton() {
 /* -------------------------- Filter Sidebar Skeleton ------------------------- */
 function SearchFilterSidebarSkeleton({ filterCount }: { filterCount: number }) {
   return (
-    <div className="search-filter-panel flex w-72 shrink-0 flex-col border border-border border-t-[5px] border-t-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] xl:w-80 tablet-xl:hidden">
+    <div className="search-filter-panel flex w-72 shrink-0 flex-col border border-t-[5px] border-border border-t-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] tablet-xl:hidden xl:w-80">
       {/* Sidebar Header Section */}
       <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4">
         <Skeleton className="h-5 w-28 rounded-none" />
@@ -99,7 +99,7 @@ function SearchResultsHeaderSkeleton() {
 /* -------------------------- Company Result Skeleton ------------------------- */
 export function SearchCompanyCardSkeleton() {
   return (
-    <div className="w-full overflow-hidden border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <div className="w-full overflow-hidden border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
       {/* Company and Position Content Section */}
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Section */}
@@ -149,7 +149,7 @@ export function SearchCompanyCardSkeleton() {
 /* -------------------------- Employee Result Skeleton ------------------------ */
 function SearchEmployeePageCardSkeleton() {
   return (
-    <div className="w-full overflow-hidden border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <div className="w-full overflow-hidden border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
       {/* Employee Content Section */}
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Section */}

@@ -227,71 +227,71 @@ export function ProductContent() {
         />
       }
     >
-          {/* Mobile App Section */}
-          <StaticSection
-            id="mobile-app"
-            number="01"
-            icon={<LucideSmartphone />}
-            title={t.mobileTitle}
-          >
-            <TypographyP>{t.mobileIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.mobileBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-            <StaticNote icon={<LucideDownload />}>{t.mobileDownload}</StaticNote>
-          </StaticSection>
+      {/* Mobile App Section */}
+      <StaticSection
+        id="mobile-app"
+        number="01"
+        icon={<LucideSmartphone />}
+        title={t.mobileTitle}
+      >
+        <TypographyP>{t.mobileIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.mobileBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+        <StaticNote icon={<LucideDownload />}>{t.mobileDownload}</StaticNote>
+      </StaticSection>
 
-          {/* Web Platform Section */}
-          <StaticSection
-            id="web-platform"
-            number="02"
-            icon={<LucideMonitor />}
-            title={t.webTitle}
-          >
-            <TypographyP>{t.webIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.webBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-          </StaticSection>
+      {/* Web Platform Section */}
+      <StaticSection
+        id="web-platform"
+        number="02"
+        icon={<LucideMonitor />}
+        title={t.webTitle}
+      >
+        <TypographyP>{t.webIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.webBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+      </StaticSection>
 
-          {/* Apsara Agentic AI Section */}
-          <StaticSection
-            id="agentic-ai"
-            number="03"
-            icon={<LucideBrain />}
-            title={t.aiTitle}
-          >
-            <TypographyP>{t.aiIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.aiBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-            <StaticNote icon={<LucideSparkles />}>{t.aiNote}</StaticNote>
-          </StaticSection>
+      {/* Apsara Agentic AI Section */}
+      <StaticSection
+        id="agentic-ai"
+        number="03"
+        icon={<LucideBrain />}
+        title={t.aiTitle}
+      >
+        <TypographyP>{t.aiIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.aiBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+        <StaticNote icon={<LucideSparkles />}>{t.aiNote}</StaticNote>
+      </StaticSection>
 
-          {/* Key Features Grid Section */}
-          <StaticSection
-            id="key-features"
-            number="04"
-            icon={<LucideGlobe />}
-            title={t.featuresTitle}
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
-              {t.features.map((f, i) => (
-                <StaticCard
-                  key={i}
-                  icon={featureIcons[i]}
-                  title={f.title}
-                  description={f.description}
-                />
-              ))}
-            </div>
-          </StaticSection>
+      {/* Key Features Grid Section */}
+      <StaticSection
+        id="key-features"
+        number="04"
+        icon={<LucideGlobe />}
+        title={t.featuresTitle}
+      >
+        <div className="mt-1 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {t.features.map((f, i) => (
+            <StaticCard
+              key={i}
+              icon={featureIcons[i]}
+              title={f.title}
+              description={f.description}
+            />
+          ))}
+        </div>
+      </StaticSection>
     </StaticPageShell>
   );
 }

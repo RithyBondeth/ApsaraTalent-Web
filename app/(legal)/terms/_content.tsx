@@ -521,230 +521,222 @@ export function TermsContent() {
         />
       }
     >
-          <div className="border-b border-border px-6 py-6 sm:px-10 lg:px-14">
-            <StaticNote icon={<LucideAlertTriangle />}>
-              {c.callout}
-            </StaticNote>
+      <div className="border-b border-border px-6 py-6 sm:px-10 lg:px-14">
+        <StaticNote icon={<LucideAlertTriangle />}>{c.callout}</StaticNote>
+      </div>
+
+      {/* 1. Acceptance Section */}
+      <Section id="acceptance" icon={<LucideFileText />} title={c.s1.title}>
+        <TypographyP>
+          {c.s1.p1}{" "}
+          <Link
+            href="/privacy"
+            className="text-primary underline underline-offset-2"
+          >
+            {c.s1.privacyLink}
+          </Link>
+          {c.s1.p1suffix}
+        </TypographyP>
+        <TypographyP>{c.s1.p2}</TypographyP>
+      </Section>
+
+      {/* 2. Eligibility Section */}
+      <Section id="eligibility" icon={<LucideUserCheck />} title={c.s2.title}>
+        <TypographyP>{c.s2.intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s2.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+        <TypographyP>{c.s2.note}</TypographyP>
+      </Section>
+
+      {/* 3. Account Types Section */}
+      <Section id="account-types" icon={<LucideUsers />} title={c.s3.title}>
+        <TypographyP>{c.s3.intro}</TypographyP>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="flex flex-col gap-2 border border-border bg-muted/20 p-5">
+            <TypographySmall className="font-semibold text-foreground">
+              {c.s3.type1Title}
+            </TypographySmall>
+            <TypographyP>{c.s3.type1}</TypographyP>
           </div>
+          <div className="flex flex-col gap-2 border border-border bg-muted/20 p-5">
+            <TypographySmall className="font-semibold text-foreground">
+              {c.s3.type2Title}
+            </TypographySmall>
+            <TypographyP>{c.s3.type2}</TypographyP>
+          </div>
+        </div>
+        <TypographyP>{c.s3.note}</TypographyP>
+      </Section>
 
-          {/* 1. Acceptance Section */}
-          <Section id="acceptance" icon={<LucideFileText />} title={c.s1.title}>
-            <TypographyP>
-              {c.s1.p1}{" "}
-              <Link href="/privacy" className="text-primary underline underline-offset-2">
-                {c.s1.privacyLink}
-              </Link>
-              {c.s1.p1suffix}
-            </TypographyP>
-            <TypographyP>{c.s1.p2}</TypographyP>
-          </Section>
+      {/* 4. Registration Section */}
+      <Section id="registration" icon={<LucideUser />} title={c.s4.title}>
+        <TypographyP>{c.s4.intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s4.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+        <TypographyP>{c.s4.note}</TypographyP>
+      </Section>
 
-          {/* 2. Eligibility Section */}
-          <Section
-            id="eligibility"
-            icon={<LucideUserCheck />}
-            title={c.s2.title}
+      {/* 5. Acceptable Use Section */}
+      <Section
+        id="acceptable-use"
+        icon={<LucideShieldCheck />}
+        title={c.s5.title}
+      >
+        <TypographyP>{c.s5.intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s5.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+      </Section>
+
+      {/* 6. Prohibited Section */}
+      <Section id="prohibited" icon={<LucideX />} title={c.s6.title}>
+        <TypographyP>{c.s6.intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s6.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+        <TypographyP>{c.s6.note}</TypographyP>
+      </Section>
+
+      {/* 7. Content Section */}
+      <Section id="content" icon={<LucideFileText />} title={c.s7.title}>
+        <TypographyP>{c.s7.p1}</TypographyP>
+        <TypographyP>{c.s7.p2}</TypographyP>
+        <TypographyP>{c.s7.p3}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s7.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+      </Section>
+
+      {/* 8. AI Features Section */}
+      <Section id="ai-features" icon={<LucideShieldCheck />} title={c.s8.title}>
+        <TypographyP>{c.s8.intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s8.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+      </Section>
+
+      {/* 9. IP Section */}
+      <Section id="ip" icon={<LucideLock />} title={c.s9.title}>
+        <TypographyP>{c.s9.p1}</TypographyP>
+        <TypographyP>{c.s9.p2}</TypographyP>
+      </Section>
+
+      {/* 10. Privacy Section */}
+      <Section id="privacy" icon={<LucideLock />} title={c.s10.title}>
+        <TypographyP>
+          {c.s10.p1}{" "}
+          <Link
+            href="/privacy"
+            className="text-primary underline underline-offset-2"
           >
-            <TypographyP>{c.s2.intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s2.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-            <TypographyP>{c.s2.note}</TypographyP>
-          </Section>
+            {c.s10.privacyLink}
+          </Link>
+          {c.s10.p1suffix}
+        </TypographyP>
+      </Section>
 
-          {/* 3. Account Types Section */}
-          <Section id="account-types" icon={<LucideUsers />} title={c.s3.title}>
-            <TypographyP>{c.s3.intro}</TypographyP>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="flex flex-col gap-2 border border-border bg-muted/20 p-5">
-                <TypographySmall className="font-semibold text-foreground">
-                  {c.s3.type1Title}
-                </TypographySmall>
-                <TypographyP>{c.s3.type1}</TypographyP>
-              </div>
-              <div className="flex flex-col gap-2 border border-border bg-muted/20 p-5">
-                <TypographySmall className="font-semibold text-foreground">
-                  {c.s3.type2Title}
-                </TypographySmall>
-                <TypographyP>{c.s3.type2}</TypographyP>
-              </div>
-            </div>
-            <TypographyP>{c.s3.note}</TypographyP>
-          </Section>
+      {/* 11. Disclaimers Section */}
+      <Section
+        id="disclaimers"
+        icon={<LucideAlertTriangle />}
+        title={c.s11.title}
+      >
+        <TypographyP>{c.s11.p1intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s11.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+      </Section>
 
-          {/* 4. Registration Section */}
-          <Section id="registration" icon={<LucideUser />} title={c.s4.title}>
-            <TypographyP>{c.s4.intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s4.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-            <TypographyP>{c.s4.note}</TypographyP>
-          </Section>
+      {/* 12. Liability Section */}
+      <Section id="liability" icon={<LucideGavel />} title={c.s12.title}>
+        <TypographyP>{c.s12.intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s12.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+        <TypographyP>{c.s12.note}</TypographyP>
+      </Section>
 
-          {/* 5. Acceptable Use Section */}
-          <Section
-            id="acceptable-use"
-            icon={<LucideShieldCheck />}
-            title={c.s5.title}
-          >
-            <TypographyP>{c.s5.intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s5.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-          </Section>
+      {/* 13. Termination Section */}
+      <Section id="termination" icon={<LucideX />} title={c.s13.title}>
+        <TypographyP>
+          <strong className="text-foreground">{c.s13.byYouStrong}</strong>{" "}
+          {c.s13.byYou.replace(c.s13.byYouStrong, "").trim()}
+        </TypographyP>
+        <TypographyP>
+          <strong className="text-foreground">{c.s13.byUsStrong}</strong>{" "}
+          {c.s13.byUs.replace(c.s13.byUsStrong, "").trim()}
+        </TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s13.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+        <TypographyP>{c.s13.note}</TypographyP>
+      </Section>
 
-          {/* 6. Prohibited Section */}
-          <Section id="prohibited" icon={<LucideX />} title={c.s6.title}>
-            <TypographyP>{c.s6.intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s6.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-            <TypographyP>{c.s6.note}</TypographyP>
-          </Section>
+      {/* 14. Governing Law Section */}
+      <Section id="governing-law" icon={<LucideGavel />} title={c.s14.title}>
+        <TypographyP>
+          {c.s14.p1prefix}{" "}
+          <strong className="text-foreground">{c.s14.p1strong}</strong>
+          {", "}
+          {c.s14.p1}
+        </TypographyP>
+        <TypographyP>{c.s14.p2}</TypographyP>
+      </Section>
 
-          {/* 7. Content Section */}
-          <Section id="content" icon={<LucideFileText />} title={c.s7.title}>
-            <TypographyP>{c.s7.p1}</TypographyP>
-            <TypographyP>{c.s7.p2}</TypographyP>
-            <TypographyP>{c.s7.p3}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s7.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-          </Section>
+      {/* 15. Changes Section */}
+      <Section id="changes" icon={<LucideRefreshCw />} title={c.s15.title}>
+        <TypographyP>{c.s15.p1}</TypographyP>
+        <TypographyP>{c.s15.p2}</TypographyP>
+      </Section>
 
-          {/* 8. AI Features Section */}
-          <Section
-            id="ai-features"
-            icon={<LucideShieldCheck />}
-            title={c.s8.title}
-          >
-            <TypographyP>{c.s8.intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s8.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-          </Section>
-
-          {/* 9. IP Section */}
-          <Section id="ip" icon={<LucideLock />} title={c.s9.title}>
-            <TypographyP>{c.s9.p1}</TypographyP>
-            <TypographyP>{c.s9.p2}</TypographyP>
-          </Section>
-
-          {/* 10. Privacy Section */}
-          <Section id="privacy" icon={<LucideLock />} title={c.s10.title}>
-            <TypographyP>
-              {c.s10.p1}{" "}
-              <Link href="/privacy" className="text-primary underline underline-offset-2">
-                {c.s10.privacyLink}
-              </Link>
-              {c.s10.p1suffix}
-            </TypographyP>
-          </Section>
-
-          {/* 11. Disclaimers Section */}
-          <Section
-            id="disclaimers"
-            icon={<LucideAlertTriangle />}
-            title={c.s11.title}
-          >
-            <TypographyP>{c.s11.p1intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s11.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-          </Section>
-
-          {/* 12. Liability Section */}
-          <Section id="liability" icon={<LucideGavel />} title={c.s12.title}>
-            <TypographyP>{c.s12.intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s12.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-            <TypographyP>{c.s12.note}</TypographyP>
-          </Section>
-
-          {/* 13. Termination Section */}
-          <Section id="termination" icon={<LucideX />} title={c.s13.title}>
-            <TypographyP>
-              <strong className="text-foreground">{c.s13.byYouStrong}</strong>{" "}
-              {c.s13.byYou.replace(c.s13.byYouStrong, "").trim()}
-            </TypographyP>
-            <TypographyP>
-              <strong className="text-foreground">{c.s13.byUsStrong}</strong>{" "}
-              {c.s13.byUs.replace(c.s13.byUsStrong, "").trim()}
-            </TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s13.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-            <TypographyP>{c.s13.note}</TypographyP>
-          </Section>
-
-          {/* 14. Governing Law Section */}
-          <Section
-            id="governing-law"
-            icon={<LucideGavel />}
-            title={c.s14.title}
-          >
-            <TypographyP>
-              {c.s14.p1prefix}{" "}
-              <strong className="text-foreground">{c.s14.p1strong}</strong>
-              {", "}
-              {c.s14.p1}
-            </TypographyP>
-            <TypographyP>{c.s14.p2}</TypographyP>
-          </Section>
-
-          {/* 15. Changes Section */}
-          <Section id="changes" icon={<LucideRefreshCw />} title={c.s15.title}>
-            <TypographyP>{c.s15.p1}</TypographyP>
-            <TypographyP>{c.s15.p2}</TypographyP>
-          </Section>
-
-          {/* 16. Contact Section */}
-          <Section id="contact" icon={<LucideMail />} title={c.s16.title}>
-            <TypographyP>{c.s16.intro}</TypographyP>
-            <div className="flex flex-col gap-1.5 border border-border bg-muted/30 p-5">
-              <TypographySmall className="font-semibold text-foreground">
-                Apsara Talent
-              </TypographySmall>
-              <TypographyP>
-                📧{" "}
-                <a
-                  href="mailto:legal@apsaratalent.com"
-                  className="text-primary underline underline-offset-2"
-                >
-                  legal@apsaratalent.com
-                </a>
-              </TypographyP>
-              <TypographyP>
-                🌐{" "}
-                <a
-                  href="https://apsaratalent.com"
-                  className="text-primary underline underline-offset-2"
-                >
-                  apsaratalent.com
-                </a>
-              </TypographyP>
-              <TypographyP>📍 {c.s16.address}</TypographyP>
-            </div>
-          </Section>
+      {/* 16. Contact Section */}
+      <Section id="contact" icon={<LucideMail />} title={c.s16.title}>
+        <TypographyP>{c.s16.intro}</TypographyP>
+        <div className="flex flex-col gap-1.5 border border-border bg-muted/30 p-5">
+          <TypographySmall className="font-semibold text-foreground">
+            Apsara Talent
+          </TypographySmall>
+          <TypographyP>
+            📧{" "}
+            <a
+              href="mailto:legal@apsaratalent.com"
+              className="text-primary underline underline-offset-2"
+            >
+              legal@apsaratalent.com
+            </a>
+          </TypographyP>
+          <TypographyP>
+            🌐{" "}
+            <a
+              href="https://apsaratalent.com"
+              className="text-primary underline underline-offset-2"
+            >
+              apsaratalent.com
+            </a>
+          </TypographyP>
+          <TypographyP>📍 {c.s16.address}</TypographyP>
+        </div>
+      </Section>
     </StaticPageShell>
   );
 }

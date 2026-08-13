@@ -2,7 +2,10 @@ import { expect, type Page, type Request } from "@playwright/test";
 
 export const AUTH_ROLE_COOKIE = "auth-session-role";
 
-export async function setRole(page: Page, role: "employee" | "company" | "none") {
+export async function setRole(
+  page: Page,
+  role: "employee" | "company" | "none",
+) {
   const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:14001";
   const cookie = {
     name: AUTH_ROLE_COOKIE,
@@ -21,7 +24,8 @@ export async function mockBackendUnavailable(page: Page) {
     // Keep route resilience checks focused on HTTP failure handling.
   });
   await page.route("http://127.0.0.1:13000/**", async (route) => {
-    const origin = route.request().headers()["origin"] ?? "http://127.0.0.1:14001";
+    const origin =
+      route.request().headers()["origin"] ?? "http://127.0.0.1:14001";
     const headers = {
       "access-control-allow-origin": origin,
       "access-control-allow-credentials": "true",
@@ -36,7 +40,9 @@ export async function mockBackendUnavailable(page: Page) {
       status: 503,
       contentType: "application/json",
       headers,
-      body: JSON.stringify({ message: "E2E backend intentionally unavailable" }),
+      body: JSON.stringify({
+        message: "E2E backend intentionally unavailable",
+      }),
     });
   });
 }
@@ -121,12 +127,24 @@ export function successfulEmployeeApi(request: Request): MockApiResult {
   }
   if (pathname.includes("/job/search")) {
     return {
-      body: { data: [], total: 0, page: 1, pageSize: 20, isUsingFallback: false },
+      body: {
+        data: [],
+        total: 0,
+        page: 1,
+        pageSize: 20,
+        isUsingFallback: false,
+      },
     };
   }
   if (pathname.includes("/search-employee")) {
     return {
-      body: { data: [], total: 0, page: 1, pageSize: 20, isUsingFallback: false },
+      body: {
+        data: [],
+        total: 0,
+        page: 1,
+        pageSize: 20,
+        isUsingFallback: false,
+      },
     };
   }
   if (pathname.includes("/match/analytics/")) {

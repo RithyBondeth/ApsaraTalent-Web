@@ -1,0 +1,22 @@
+# Build output and caches
+.next/
+.next-e2e/
+.next-analyze/
+out/
+build/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+# Generated / vendored
+next-env.d.ts
+package-lock.json
+
+# Binary and snapshot assets Prettier should not touch
+tests/e2e/*-snapshots/
+public/
+assets/

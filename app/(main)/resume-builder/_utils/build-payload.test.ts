@@ -128,7 +128,9 @@ describe("buildResumePayloadFromUser", () => {
     });
     expect(payload.skills).toEqual(["React"]);
     expect(payload.careerScopes).toEqual(["Engineering"]);
-    expect(payload.education).toBe("BSc, RUPP, 2022 | Certificate, Online, unknown");
+    expect(payload.education).toBe(
+      "BSc, RUPP, 2022 | Certificate, Online, unknown",
+    );
     expect(payload.experience[0]).toMatchObject({
       company: "Apsara",
       startDate: "not-a-date",

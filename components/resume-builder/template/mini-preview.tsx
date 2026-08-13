@@ -543,7 +543,7 @@ export function TemplateMiniPreview({
     <div
       aria-hidden
       data-resume-template-preview={templateKey}
-      className={cn("relative overflow-hidden select-none", className)}
+      className={cn("relative select-none overflow-hidden", className)}
       style={{
         background: theme.background,
         fontFamily: resolvePreviewFont(theme.font),

@@ -52,7 +52,7 @@ export function InterviewCard({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <article className="group w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+    <article className="group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Row Section */}
         <div className="flex items-start justify-between gap-2">
@@ -60,13 +60,13 @@ export function InterviewCard({
             <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
               {interview.title}
             </h3>
-            <TypographyMuted className="text-sm text-muted-foreground mt-0.5">
+            <TypographyMuted className="mt-0.5 text-sm text-muted-foreground">
               {t("with", { name: otherPartyName })}
             </TypographyMuted>
           </div>
           <Badge
             variant="outline"
-            className={`flex-shrink-0 whitespace-nowrap rounded-none border-current/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getStatusBadgeStyleClass(interview.status)}`}
+            className={`border-current/15 flex-shrink-0 whitespace-nowrap rounded-none px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getStatusBadgeStyleClass(interview.status)}`}
           >
             {t(`status.${interview.status}`)}
           </Badge>
@@ -74,7 +74,7 @@ export function InterviewCard({
 
         {/* Description Section */}
         {interview.description && (
-          <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+          <TypographyMuted className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
             {interview.description}
           </TypographyMuted>
         )}

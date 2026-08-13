@@ -80,7 +80,9 @@ async function openAsCompany(page: Page, pathname: string) {
     .getByRole("textbox", { name: "Password", exact: true })
     .fill("StrongPass1!");
   await page.getByRole("button", { name: "Login", exact: true }).click();
-  await expect(page).toHaveURL(new RegExp(`${pathname.replaceAll("/", "\\/")}$`));
+  await expect(page).toHaveURL(
+    new RegExp(`${pathname.replaceAll("/", "\\/")}$`),
+  );
 }
 
 function companyJourneyApi(state: CompanyJourneyState) {
@@ -140,7 +142,10 @@ function companyJourneyApi(state: CompanyJourneyState) {
     ) {
       state.unmatchRequests = (state.unmatchRequests ?? 0) + 1;
       if (state.unmatchFailure) {
-        return { status: 503, body: { message: "Unmatch service unavailable" } };
+        return {
+          status: 503,
+          body: { message: "Unmatch service unavailable" },
+        };
       }
       state.matchRemoved = true;
       return { body: { message: "Unmatched" } };
@@ -172,7 +177,9 @@ function companyJourneyApi(state: CompanyJourneyState) {
 }
 
 test.describe("company favorite journeys", () => {
-  test("removes saved talent and refreshes the empty state", async ({ page }) => {
+  test("removes saved talent and refreshes the empty state", async ({
+    page,
+  }) => {
     const state: CompanyJourneyState = {};
     await mockApi(page, companyJourneyApi(state));
     await openAsCompany(page, "/favorite");
@@ -183,10 +190,9 @@ test.describe("company favorite journeys", () => {
       page.getByText("sophea.chan removed from favorites."),
     ).toBeVisible();
     await expect(page.getByText("Favorite List Empty")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Explore more" })).toHaveAttribute(
-      "href",
-      "/search/employee",
-    );
+    await expect(
+      page.getByRole("link", { name: "Explore more" }),
+    ).toHaveAttribute("href", "/search/employee");
     expect(state.favoriteRemovals).toBe(1);
     expect(state.favoriteGets).toBeGreaterThanOrEqual(2);
   });
@@ -254,7 +260,9 @@ test.describe("company matching journeys", () => {
     expect(state.chatRequests).toBe(1);
   });
 
-  test("opens interview scheduling for the selected employee", async ({ page }) => {
+  test("opens interview scheduling for the selected employee", async ({
+    page,
+  }) => {
     await mockApi(page, companyJourneyApi({}));
     await openAsCompany(page, "/matching");
 
@@ -278,7 +286,9 @@ test.describe("company matching journeys", () => {
     expect(state.unmatchRequests).toBe(1);
   });
 
-  test("restores the employee match when unmatching fails", async ({ page }) => {
+  test("restores the employee match when unmatching fails", async ({
+    page,
+  }) => {
     const state: CompanyJourneyState = { unmatchFailure: true };
     await mockApi(page, companyJourneyApi(state));
     await openAsCompany(page, "/matching");

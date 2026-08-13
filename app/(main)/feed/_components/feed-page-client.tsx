@@ -631,7 +631,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="feed-scope w-full flex flex-col items-start gap-7 sm:gap-9 animate-page-in">
+    <div className="feed-scope animate-page-in flex w-full flex-col items-start gap-7 sm:gap-9">
       {effectPortal}
       {/* First-Time User Onboarding Flow Section */}
       <OnboardingFlow />
@@ -642,7 +642,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
         <FadeIn className="w-full">
           {/* Feed Banner Content Section */}
           <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
-            <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
+            <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6 sm:px-9 sm:py-10">
               <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
                 <span className="h-px w-7 bg-primary" />
                 {isEmployee ? tFeed("allCompanies") : tFeed("allTalent")}
@@ -739,7 +739,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
 
           if (recsLoading) {
             return (
-              <div className="w-full flex flex-col gap-5 border-y border-border py-6">
+              <div className="flex w-full flex-col gap-5 border-y border-border py-6">
                 <div className="flex items-end justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
@@ -755,7 +755,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                   {Array.from({ length: 3 }).map((_, i) =>
                     isEmployee ? (
                       <div key={i} className="flex h-full flex-col">
-                        <div className="flex items-center gap-1 mb-1.5 px-1">
+                        <div className="mb-1.5 flex items-center gap-1 px-1">
                           <Skeleton className="size-3 rounded-none" />
                           <Skeleton className="h-2.5 w-16 rounded-none" />
                         </div>
@@ -763,7 +763,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                       </div>
                     ) : (
                       <div key={i} className="flex h-full flex-col">
-                        <div className="flex items-center gap-1 mb-1.5 px-1">
+                        <div className="mb-1.5 flex items-center gap-1 px-1">
                           <Skeleton className="size-3 rounded-none" />
                           <Skeleton className="h-2.5 w-16 rounded-none" />
                         </div>
@@ -788,7 +788,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
               : queryCompanyRecommendations;
 
             return (
-              <div className="w-full flex items-center gap-3 border-y border-border py-5">
+              <div className="flex w-full items-center gap-3 border-y border-border py-5">
                 <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
                   01
                 </span>
@@ -812,7 +812,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
           if (!recs || recs.length === 0) return null;
 
           return (
-            <FadeIn className="w-full flex flex-col gap-5 border-y border-border py-6">
+            <FadeIn className="flex w-full flex-col gap-5 border-y border-border py-6">
               <div className="flex items-end justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
@@ -872,7 +872,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       {isLoading ? (
         <FeedDividerSkeleton />
       ) : (
-        <FadeIn className="w-full flex items-end justify-between gap-4 border-b border-border pb-4">
+        <FadeIn className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">
           <div className="flex items-center gap-3">
             <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
               02
@@ -986,18 +986,18 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
 
       {/* Infinite Scroll Sentinel Section: Triggers revealing the next batch of already-loaded cards */}
       {!isLoading && visibleCount < allUsers.length && (
-        <div ref={sentinelRef} className="w-full h-1" />
+        <div ref={sentinelRef} className="h-1 w-full" />
       )}
 
       {/* End of Results Section */}
       {!isLoading && allUsers.length > 0 && visibleCount >= allUsers.length && (
         <div className="flex flex-col items-center gap-2 py-8 text-center">
-          <div className="flex items-center gap-3 w-full max-w-xs">
-            <div className="flex-1 h-px bg-border/60" />
-            <span className="text-xs font-medium text-muted-foreground/60 shrink-0">
+          <div className="flex w-full max-w-xs items-center gap-3">
+            <div className="h-px flex-1 bg-border/60" />
+            <span className="shrink-0 text-xs font-medium text-muted-foreground/60">
               {tFeed("endOfResults")}
             </span>
-            <div className="flex-1 h-px bg-border/60" />
+            <div className="h-px flex-1 bg-border/60" />
           </div>
         </div>
       )}

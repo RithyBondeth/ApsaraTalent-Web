@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { post, clearAuthCookies, setSessionRole, clearUser } = vi.hoisted(() => ({
-  post: vi.fn(),
-  clearAuthCookies: vi.fn(),
-  setSessionRole: vi.fn(),
-  clearUser: vi.fn(),
-}));
+const { post, clearAuthCookies, setSessionRole, clearUser } = vi.hoisted(
+  () => ({
+    post: vi.fn(),
+    clearAuthCookies: vi.fn(),
+    setSessionRole: vi.fn(),
+    clearUser: vi.fn(),
+  }),
+);
 
 vi.mock("@/lib/axios", () => ({ default: { post } }));
 vi.mock("@/utils/auth/cookie-manager", () => ({

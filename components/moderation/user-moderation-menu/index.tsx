@@ -191,7 +191,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
           {/* Report Dialog Header Section */}
           <DialogHeader
             className={cn(
-              isEditorial && "border-b border-border px-5 pb-4 pt-5 pr-14",
+              isEditorial && "border-b border-border px-5 pb-4 pr-14 pt-5",
             )}
           >
             <DialogTitle>

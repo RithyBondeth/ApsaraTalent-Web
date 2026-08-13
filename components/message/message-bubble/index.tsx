@@ -24,10 +24,10 @@ function DeliveryStatusIcon({
 }) {
   if (!status) return null;
   if (status === "sending")
-    return <Clock className="h-3 w-3 text-muted-foreground/60 inline-block" />;
+    return <Clock className="inline-block h-3 w-3 text-muted-foreground/60" />;
   if (status === "seen")
-    return <CheckCheck className="h-3 w-3 text-green-500 inline-block" />;
-  return <Check className="h-3 w-3 text-muted-foreground/60 inline-block" />;
+    return <CheckCheck className="inline-block h-3 w-3 text-green-500" />;
+  return <Check className="inline-block h-3 w-3 text-muted-foreground/60" />;
 }
 
 function MessageBubble(props: IMessageBubbleProps) {
@@ -128,14 +128,14 @@ function MessageBubble(props: IMessageBubbleProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`mb-4 max-w-[88%] sm:max-w-[76%] md:max-w-[70%] group ${
+      className={`group mb-4 max-w-[88%] sm:max-w-[76%] md:max-w-[70%] ${
         message.isMe ? "ml-auto" : ""
       }`}
     >
       {/* Sender Label Section (Partner Message Only) */}
       {!message.isMe && (
-        <div className="flex items-center mb-1">
-          <Avatar className="h-6 w-6 mr-2 rounded-none border border-border">
+        <div className="mb-1 flex items-center">
+          <Avatar className="mr-2 h-6 w-6 rounded-none border border-border">
             {activeChat.isGroup ? (
               <AvatarFallback className="rounded-none">
                 {message.senderId
@@ -168,25 +168,25 @@ function MessageBubble(props: IMessageBubbleProps) {
         {/* Message Bubble Section */}
         <div className="relative" onClick={toggleDeliveryTime}>
           <div
-            className={`rounded-none border text-sm transition-all shadow-[3px_3px_0_hsl(var(--foreground)/0.05)] ${
+            className={`rounded-none border text-sm shadow-[3px_3px_0_hsl(var(--foreground)/0.05)] transition-all ${
               message.isMe
-                ? "bg-primary text-primary-foreground border-primary"
-                : "bg-card text-foreground border-border border-l-[4px] border-l-foreground"
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-l-[4px] border-border border-l-foreground bg-card text-foreground"
             } ${message.isDeleted ? "px-3 py-2 opacity-60" : "p-3"}`}
           >
             {/* Reply / Quote block Section */}
             {message.replyTo && !message.isDeleted && (
               <div
-                className={`mb-2 pl-2 border-l-2 text-xs opacity-80 rounded-none py-0.5 ${
+                className={`mb-2 rounded-none border-l-2 py-0.5 pl-2 text-xs opacity-80 ${
                   message.isMe
                     ? "border-primary-foreground/60 text-primary-foreground/80"
                     : "border-primary text-muted-foreground"
                 }`}
               >
-                <TypographyP className="[&:not(:first-child)]:mt-0 font-semibold leading-tight mb-0.5">
+                <TypographyP className="mb-0.5 font-semibold leading-tight [&:not(:first-child)]:mt-0">
                   {message.replyTo.senderName}
                 </TypographyP>
-                <TypographyP className="[&:not(:first-child)]:mt-0 leading-snug line-clamp-2">
+                <TypographyP className="line-clamp-2 leading-snug [&:not(:first-child)]:mt-0">
                   {message.replyTo.isDeleted
                     ? t("deletedMessage")
                     : (message.replyTo.content ?? "").slice(0, 80) +
@@ -198,12 +198,12 @@ function MessageBubble(props: IMessageBubbleProps) {
             {/* Message Content Section */}
             {message.isDeleted ? (
               /* Deleted Message Section */
-              <span className="italic text-muted-foreground text-xs">
+              <span className="text-xs italic text-muted-foreground">
                 {t("deletedMessage")}
               </span>
             ) : message.messageType === "call" ? (
               /* Call Section */
-              <div className="flex flex-col gap-2 min-w-[150px] sm:min-w-[180px]">
+              <div className="flex min-w-[150px] flex-col gap-2 sm:min-w-[180px]">
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <Phone className="h-4 w-4" />
                   <span>{message.content || t("callLabel")}</span>
@@ -222,7 +222,7 @@ function MessageBubble(props: IMessageBubbleProps) {
               </div>
             ) : isEditing ? (
               /* Edit Message Section */
-              <div className="flex flex-col gap-1.5 min-w-[160px] sm:min-w-[200px]">
+              <div className="flex min-w-[160px] flex-col gap-1.5 sm:min-w-[200px]">
                 <Textarea
                   ref={editTextareaRef}
                   value={editValue}
@@ -234,17 +234,15 @@ function MessageBubble(props: IMessageBubbleProps) {
                     }
                     if (e.key === "Escape") cancelEditing();
                   }}
-                  className="text-sm resize-none rounded-none min-h-[40px] max-h-[200px] py-1.5 px-2
-                    bg-transparent border-primary-foreground/30 text-primary-foreground
-                    placeholder:text-primary-foreground/50 focus-visible:ring-primary-foreground/50"
+                  className="max-h-[200px] min-h-[40px] resize-none rounded-none border-primary-foreground/30 bg-transparent px-2 py-1.5 text-sm text-primary-foreground placeholder:text-primary-foreground/50 focus-visible:ring-primary-foreground/50"
                   rows={1}
                 />
-                <div className="flex gap-1 justify-end">
+                <div className="flex justify-end gap-1">
                   {/* Cancel Edit Button */}
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 rounded-none text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10"
+                    className="h-6 w-6 rounded-none text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"
                     onClick={cancelEditing}
                     aria-label="Cancel edit"
                   >
@@ -254,7 +252,7 @@ function MessageBubble(props: IMessageBubbleProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 rounded-none text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10"
+                    className="h-6 w-6 rounded-none text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"
                     onClick={confirmEdit}
                     aria-label="Confirm edit"
                   >
@@ -285,7 +283,7 @@ function MessageBubble(props: IMessageBubbleProps) {
 
                 {/* Edited Message Section */}
                 {message.isEdited && (
-                  <span className="text-[10px] opacity-60 ml-1 italic">
+                  <span className="ml-1 text-[10px] italic opacity-60">
                     {t("edited")}
                   </span>
                 )}
@@ -326,7 +324,7 @@ function MessageBubble(props: IMessageBubbleProps) {
       {/* Timestamp + Delivery State Section (Click to Show) */}
       {(message.deliveryStatus === "sending" || showDeliveryTime) && (
         <div
-          className={`flex items-center gap-1 text-[10px] text-muted-foreground mt-1 ${
+          className={`mt-1 flex items-center gap-1 text-[10px] text-muted-foreground ${
             message.isMe ? "justify-end" : ""
           } ${showReactionBadge ? "mb-3" : ""}`}
         >
@@ -339,10 +337,10 @@ function MessageBubble(props: IMessageBubbleProps) {
 
       {/* "Seen" Avatar Indicator (Last Read Message) Section */}
       {isLastSeen && (
-        <div className="flex items-center justify-end gap-1 mt-0.5">
+        <div className="mt-0.5 flex items-center justify-end gap-1">
           <Avatar className="h-4 w-4 rounded-none">
             <AvatarImage src={activeChat.avatar} alt={activeChat.name} />
-            <AvatarFallback className="text-[8px] rounded-none">
+            <AvatarFallback className="rounded-none text-[8px]">
               {activeChat.name
                 .split(" ")
                 .map((n) => n[0])

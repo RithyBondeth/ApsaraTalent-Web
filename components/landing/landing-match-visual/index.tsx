@@ -371,7 +371,7 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
       <div className="landing-grid pointer-events-none absolute inset-0" />
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Match Visual Heading Section */}
-        <div className="mb-12 grid gap-6 border-b border-border pb-10 md:grid-cols-[1fr_0.72fr] md:items-end sm:mb-16">
+        <div className="mb-12 grid gap-6 border-b border-border pb-10 sm:mb-16 md:grid-cols-[1fr_0.72fr] md:items-end">
           <div>
             <span
               data-gsap="fade-up"
@@ -381,14 +381,14 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
             </span>
             <TypographyH2
               data-gsap="split-chars"
-              className="max-w-2xl text-3xl font-semibold tracking-[-0.035em] sm:text-4xl lg:text-5xl [perspective:800px]"
+              className="max-w-2xl text-3xl font-semibold tracking-[-0.035em] [perspective:800px] sm:text-4xl lg:text-5xl"
             >
               {t("matchVisualHeading")}
             </TypographyH2>
           </div>
           <p
             data-gsap="blur-reveal"
-            className="max-w-lg text-sm leading-relaxed text-muted-foreground md:justify-self-end sm:text-base"
+            className="max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base md:justify-self-end"
           >
             {t("matchVisualDescription")}
           </p>

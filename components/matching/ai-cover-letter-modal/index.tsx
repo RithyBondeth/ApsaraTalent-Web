@@ -88,7 +88,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
     [],
   );
 
-    /* ------------------------ Effects ------------------------ */
+  /* ------------------------ Effects ------------------------ */
   useEffect(() => {
     if (!autoOpenRef.current) return;
     autoOpenRef.current = false;
@@ -252,7 +252,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
         aria-label={t("coverLetter")}
         onClick={() => void generate()}
       >
-        <LucideFileText className="size-3.5 text-primary shrink-0" />
+        <LucideFileText className="size-3.5 shrink-0 text-primary" />
         <span className={props.compact ? "hidden sm:inline" : undefined}>
           {t("coverLetter")}
         </span>
@@ -268,9 +268,9 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
           }}
         >
           {/* Header Section */}
-          <DialogHeader className="px-5 pt-5 pb-3 shrink-0 border-b border-border/60">
-            <DialogTitle className="flex items-center gap-2 text-base text-left pr-8">
-              <LucideFileText className="size-4 text-primary shrink-0" />
+          <DialogHeader className="shrink-0 border-b border-border/60 px-5 pb-3 pt-5">
+            <DialogTitle className="flex items-center gap-2 pr-8 text-left text-base">
+              <LucideFileText className="size-4 shrink-0 text-primary" />
               <span className="truncate">
                 {t("aiCoverLetter", { name: props.companyName })}
               </span>
@@ -282,8 +282,8 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
           </DialogHeader>
 
           {/* Style Selector Section */}
-          <div className="shrink-0 px-5 pt-3 pb-2.5 border-b border-border/50 flex items-center gap-2.5 overflow-x-auto scrollbar-none bg-background">
-            <span className="text-xs text-muted-foreground font-medium shrink-0">
+          <div className="scrollbar-none flex shrink-0 items-center gap-2.5 overflow-x-auto border-b border-border/50 bg-background px-5 pb-2.5 pt-3">
+            <span className="shrink-0 text-xs font-medium text-muted-foreground">
               {t("styleLabel")}
             </span>
             {COVER_LETTER_STYLES.map((s) => (
@@ -291,10 +291,10 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
                 key={s.id}
                 onClick={() => setSelectedStyle(s.id)}
                 disabled={isBusy}
-                className={`text-xs px-3 py-1 rounded-none border transition-all shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`shrink-0 rounded-none border px-3 py-1 text-xs transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
                   selectedStyle === s.id
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-transparent text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-transparent text-muted-foreground hover:border-primary/50 hover:text-foreground"
                 }`}
               >
                 {s.label}
@@ -303,10 +303,10 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
           </div>
 
           {/* Content Section */}
-          <div className="flex-1 min-h-0 overflow-hidden flex flex-col px-5 py-4 gap-2 overscroll-contain">
+          <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden overscroll-contain px-5 py-4">
             {/* Error Section */}
             {genError && !generating && (
-              <p className="text-sm text-destructive shrink-0">{genError}</p>
+              <p className="shrink-0 text-sm text-destructive">{genError}</p>
             )}
 
             {/* Textarea Section */}
@@ -321,13 +321,13 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
                   disabled={generating || polishing || downloading}
                   readOnly={generating || polishing}
                   spellCheck={!generating && !polishing}
-                  className="flex-1 min-h-0 w-full resize-none bg-transparent text-sm text-foreground leading-relaxed outline-none border-0 focus:ring-0 p-0 overflow-y-auto scrollbar-none disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="scrollbar-none min-h-0 w-full flex-1 resize-none overflow-y-auto border-0 bg-transparent p-0 text-sm leading-relaxed text-foreground outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
                 />
 
                 {/* Streaming Cursor Section */}
                 {(generating || polishing) && (
-                  <div className="flex items-center gap-2 text-xs text-primary shrink-0">
-                    <LucideLoader2 className="size-3.5 animate-spin shrink-0" />
+                  <div className="flex shrink-0 items-center gap-2 text-xs text-primary">
+                    <LucideLoader2 className="size-3.5 shrink-0 animate-spin" />
                     <span>
                       {polishing
                         ? t("polishing")
@@ -338,13 +338,13 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
 
                 {/* Polish Error Section */}
                 {polishError && !polishing && (
-                  <p className="text-xs text-destructive shrink-0">
+                  <p className="shrink-0 text-xs text-destructive">
                     {polishError}
                   </p>
                 )}
 
                 {downloadError && !downloading && (
-                  <p className="text-xs text-destructive shrink-0">
+                  <p className="shrink-0 text-xs text-destructive">
                     {downloadError}
                   </p>
                 )}
@@ -353,7 +353,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
           </div>
 
           {/* Footer Section */}
-          <div className="shrink-0 px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-2">
+          <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border/60 bg-muted/30 px-4 py-3 sm:px-5">
             {generating && !coverLetter ? (
               <>
                 {/* Skeleton Loader Section */}
@@ -370,7 +370,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-8 text-xs gap-1.5 shrink-0"
+                  className="h-8 shrink-0 gap-1.5 text-xs"
                   onClick={handleRegenerate}
                   disabled={isBusy}
                 >
@@ -384,7 +384,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="h-8 text-xs gap-1.5 shrink-0"
+                    className="h-8 shrink-0 gap-1.5 text-xs"
                     onClick={handlePolish}
                     disabled={!coverLetter || isBusy}
                   >
@@ -405,7 +405,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="h-8 size-8 p-0 text-muted-foreground hover:text-foreground"
+                    className="size-8 h-8 p-0 text-muted-foreground hover:text-foreground"
                     onClick={handleCopy}
                     disabled={!coverLetter || isBusy}
                     title={copied ? t("copied") : t("copy")}
@@ -420,7 +420,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
                   {/* Download Button Section */}
                   <Button
                     size="sm"
-                    className="h-8 text-xs gap-1.5 shrink-0"
+                    className="h-8 shrink-0 gap-1.5 text-xs"
                     onClick={handleDownloadPdf}
                     disabled={!coverLetter || isBusy}
                   >

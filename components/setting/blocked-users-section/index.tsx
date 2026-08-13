@@ -85,14 +85,14 @@ export function BlockedUsersSection() {
           blockedUsers.map((u, index) => (
             <div key={u.id}>
               <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-5">
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex min-w-0 items-center gap-3">
                   <Avatar className="h-9 w-9 shrink-0 rounded-none border border-border">
                     <AvatarImage src={u.avatar ?? ""} alt={u.name} />
                     <AvatarFallback className="rounded-none text-xs font-bold">
                       {getNameInitials(u.name)}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium truncate">{u.name}</span>
+                  <span className="truncate text-sm font-medium">{u.name}</span>
                 </div>
                 {/* Unblock Button Section */}
                 <Button

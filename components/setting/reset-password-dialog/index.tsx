@@ -32,15 +32,15 @@ export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
           </div>
 
           {/* Reset Password Title Section */}
-          <DialogTitle className="text-center">{t("resetPasswordTitle")}</DialogTitle>
+          <DialogTitle className="text-center">
+            {t("resetPasswordTitle")}
+          </DialogTitle>
 
           {/* Reset Password Description Section */}
           <DialogDescription className="text-center text-sm leading-relaxed">
-            {sent ? (
-              t("resetSentDesc", { email: email ?? "" })
-            ) : (
-              t("resetDesc", { email: email ?? "" })
-            )}
+            {sent
+              ? t("resetSentDesc", { email: email ?? "" })
+              : t("resetDesc", { email: email ?? "" })}
           </DialogDescription>
         </DialogHeader>
 

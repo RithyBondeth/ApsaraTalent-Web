@@ -54,7 +54,7 @@ export function ExperienceTab({
         type="button"
         variant="outline"
         size="sm"
-        className="w-full text-xs border-dashed"
+        className="w-full border-dashed text-xs"
         onClick={addExperience}
       >
         <PlusCircle size={13} className="mr-1.5" />

@@ -23,9 +23,9 @@ export default function MainLayout({
   const t = useTranslations("states");
   const { theme } = useThemeStore();
 
- /* ---------------------------------- All States --------------------------------- */
+  /* ---------------------------------- All States --------------------------------- */
   const requestedUser = useRef<boolean>(false);
-  
+
   /* ------------------------------- API Integration ------------------------------ */
   const {
     user,
@@ -87,7 +87,7 @@ export default function MainLayout({
         <main
           id="main-content"
           tabIndex={-1}
-          className="container mx-auto p-3 sm:p-4 lg:p-5 animate-page-in"
+          className="animate-page-in container mx-auto p-3 sm:p-4 lg:p-5"
         >
           {children}
         </main>
@@ -117,8 +117,8 @@ export default function MainLayout({
         tabIndex={-1}
         className={
           isMessage
-            ? "h-[calc(100dvh-8rem)] md:h-[calc(100dvh-4rem)] flex flex-col px-3 pb-3 sm:px-4 sm:pb-4 lg:px-5 lg:pb-5"
-            : "container mx-auto px-3 sm:px-4 lg:px-6 py-5 pb-24 lg:pb-8"
+            ? "flex h-[calc(100dvh-8rem)] flex-col px-3 pb-3 sm:px-4 sm:pb-4 md:h-[calc(100dvh-4rem)] lg:px-5 lg:pb-5"
+            : "container mx-auto px-3 py-5 pb-24 sm:px-4 lg:px-6 lg:pb-8"
         }
       >
         {children}

@@ -203,7 +203,10 @@ try {
       `${route} returned ${response.status} instead of redirecting`,
     );
     const location = response.headers.get("location") ?? "";
-    assert(location.includes("/login?callbackUrl="), `${route} did not redirect to login`);
+    assert(
+      location.includes("/login?callbackUrl="),
+      `${route} did not redirect to login`,
+    );
     assert(
       decodeURIComponent(location).includes(`callbackUrl=${route}`),
       `${route} did not preserve its callback URL`,

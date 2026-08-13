@@ -26,7 +26,7 @@ on:
     # scan so the two do not contend, and alongside the Dependabot window.
     # The scheduled run is the point: it catches advisories published after a
     # commit landed, which a push-triggered scan never sees.
-    - cron: '30 3 * * 1'
+    - cron: "30 3 * * 1"
 
 permissions:
   contents: read

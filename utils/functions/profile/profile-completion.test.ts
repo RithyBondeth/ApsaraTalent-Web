@@ -70,7 +70,9 @@ const completeCompany = {
   benefits: [{ label: "Insurance" }],
   values: [{ label: "Integrity" }],
   careerScopes: [{ name: "Software Engineering" }],
-  socials: [{ platform: "linkedin", url: "https://linkedin.com/company/example" }],
+  socials: [
+    { platform: "linkedin", url: "https://linkedin.com/company/example" },
+  ],
   images: [{ image: "/office.jpg" }],
 } as ICompany;
 

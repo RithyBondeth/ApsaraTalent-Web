@@ -90,7 +90,7 @@ export default function ApsaraLoadingSpinner(props: IApsaraLoadingProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className={`w-fit flex items-center justify-center ${className}`}>
+    <div className={`flex w-fit items-center justify-center ${className}`}>
       <svg
         width={size}
         height={size}

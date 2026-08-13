@@ -85,7 +85,7 @@ export const ChatMessages = (props: IChatMessagesProps) => {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-muted/10 px-3 py-4 sm:px-4 md:px-5">
+    <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-muted/10 px-3 py-4 sm:px-4 md:px-5">
       {messages.length === 0 ? (
         /* Empty State Section */
         <PageState

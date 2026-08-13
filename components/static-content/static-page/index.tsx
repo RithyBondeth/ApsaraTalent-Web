@@ -12,8 +12,6 @@ import {
   IStaticStepProps,
 } from "./props";
 
-;
-
 export function StaticPageShell(props: IStaticPageShellProps) {
   /* ------------------------------- Props ------------------------------- */
   const {

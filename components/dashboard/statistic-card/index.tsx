@@ -13,17 +13,17 @@ export default function StatisticCard({
 }: IStatisticCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <article className="group relative overflow-hidden border border-border border-l-[5px] border-l-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] sm:p-5">
+    <article className="group relative overflow-hidden border border-l-[5px] border-border border-l-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] sm:p-5">
       {/* Subtle Gradient bg on hover Section */}
       <div
-        className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${bgColor}`}
+        className={`absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${bgColor}`}
         style={{ opacity: 0 }}
       />
       <div className="relative">
-        <div className="flex items-center justify-between mb-3">
+        <div className="mb-3 flex items-center justify-between">
           {/* Icon Section */}
           <div
-            className={`flex h-9 w-9 items-center justify-center border border-current/10 ${bgColor}`}
+            className={`border-current/10 flex h-9 w-9 items-center justify-center border ${bgColor}`}
           >
             <Icon className={`h-4.5 w-4.5 ${color}`} />
           </div>
@@ -31,12 +31,12 @@ export default function StatisticCard({
           <TrendingUp className="h-4 w-4 text-muted-foreground/40" />
         </div>
         {/* Value Section */}
-        <TypographyP className="[&:not(:first-child)]:mt-0 text-2xl sm:text-3xl font-bold tracking-tight">
+        <TypographyP className="text-2xl font-bold tracking-tight sm:text-3xl [&:not(:first-child)]:mt-0">
           {typeof value === "number" ? value : 0}
           {suffix ?? ""}
         </TypographyP>
         {/* Label Section */}
-        <TypographyMuted className="text-xs sm:text-sm text-muted-foreground mt-1 font-medium">
+        <TypographyMuted className="mt-1 text-xs font-medium text-muted-foreground sm:text-sm">
           {label}
         </TypographyMuted>
       </div>

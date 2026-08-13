@@ -60,7 +60,9 @@ describe("prepareResumeAvatar", () => {
 
   it("rejects invalid URLs, failed responses, oversized files, and network failures", async () => {
     const fetcher = vi.fn();
-    await expect(prepareResumeAvatar("/local/avatar.png", { fetcher })).resolves.toBeUndefined();
+    await expect(
+      prepareResumeAvatar("/local/avatar.png", { fetcher }),
+    ).resolves.toBeUndefined();
     expect(fetcher).not.toHaveBeenCalled();
 
     await expect(

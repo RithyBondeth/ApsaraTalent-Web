@@ -1,12 +1,7 @@
 import { ICareerScope } from "./career.interface";
 import { ISocialLink } from "./social.interface";
 
-type TCompanyType =
-  | "startup"
-  | "sme"
-  | "enterprise"
-  | "ngo"
-  | "government";
+type TCompanyType = "startup" | "sme" | "enterprise" | "ngo" | "government";
 
 export interface ICompany {
   id: string;

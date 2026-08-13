@@ -19,7 +19,7 @@ export default function ResumeBuilderLoadingSkeleton() {
     <div className="resume-builder-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-6 px-3 pb-8 sm:px-4 lg:px-5">
       {/* Banner Section */}
       <div className="flex min-h-[300px] w-full flex-row overflow-hidden border border-border bg-card">
-        <div className="flex w-3/5 min-w-0 flex-none flex-col justify-between gap-6 px-6 py-7 sm:px-8 sm:py-9 tablet-md:gap-4 tablet-md:px-4 tablet-md:py-5">
+        <div className="flex w-3/5 min-w-0 flex-none flex-col justify-between gap-6 px-6 py-7 tablet-md:gap-4 tablet-md:px-4 tablet-md:py-5 sm:px-8 sm:py-9">
           <div className="flex items-center gap-2">
             <Skeleton className="h-px w-7 rounded-none" />
             <Skeleton className="h-2.5 w-28 rounded-none" />
@@ -63,7 +63,7 @@ export default function ResumeBuilderLoadingSkeleton() {
           <StepHeaderSkeleton />
 
           {/* Source Input Skeleton Section */}
-          <div className="flex w-full flex-col gap-5 border border-border border-t-[5px] border-t-foreground bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+          <div className="flex w-full flex-col gap-5 border border-t-[5px] border-border border-t-foreground bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
             <div className="flex items-start gap-3">
               <Skeleton className="size-9 shrink-0 rounded-none" />
               <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -117,7 +117,7 @@ export function TemplateCardSkeleton() {
           </div>
         </div>
         {/* Mini Body Section */}
-        <div className="flex-1 grid grid-cols-[1fr_38%] gap-3 px-4 py-3">
+        <div className="grid flex-1 grid-cols-[1fr_38%] gap-3 px-4 py-3">
           <div className="flex flex-col gap-2">
             <Skeleton className="h-1.5 w-12 rounded-none" />
             <Skeleton className="h-1 w-full rounded-none" />
@@ -208,7 +208,10 @@ export function ResumeEditorLoadingSkeleton() {
             </div>
             <div className="mt-3 flex flex-col gap-2">
               {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="flex items-center gap-3 border border-border bg-muted/25 px-3 py-3">
+                <div
+                  key={index}
+                  className="flex items-center gap-3 border border-border bg-muted/25 px-3 py-3"
+                >
                   <Skeleton className="size-8 shrink-0 rounded-none" />
                   <div className="min-w-0 flex-1 space-y-1.5">
                     <Skeleton className="h-3 w-24 rounded-none" />
@@ -242,7 +245,7 @@ export function ResumeEditorLoadingSkeleton() {
             <div className="h-full w-full max-w-[720px] space-y-4 overflow-hidden border border-border bg-white p-6 shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] dark:bg-card">
               <Skeleton className="h-6 w-2/5 rounded-none" />
               <Skeleton className="h-4 w-3/5 rounded-none" />
-              <div className="border-t border-border/40 pt-4 space-y-4">
+              <div className="space-y-4 border-t border-border/40 pt-4">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <div key={i} className="space-y-2">
                     <Skeleton className="h-4 w-1/4 rounded-none" />

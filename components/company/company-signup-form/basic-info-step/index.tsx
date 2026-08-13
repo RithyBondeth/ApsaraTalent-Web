@@ -106,8 +106,8 @@ export default function BasicInfoStepForm({
         {...register("basicInfo.name")}
         validationMessage={errors!.basicInfo?.name?.message}
       />
-      <div className="w-full flex flex-col items-start gap-2">
-        <div className="w-full flex flex-col items-start gap-2">
+      <div className="flex w-full flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
           <Textarea
             autoResize
             placeholder={`${t("cmpBasicInfoDescriptionPlaceholder")} *`}
@@ -120,7 +120,7 @@ export default function BasicInfoStepForm({
                   size="sm"
                   onClick={handleRefine}
                   disabled={isRefining}
-                  className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                  className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                 >
                   {isRefining ? (
                     <Loader2 size={10} className="animate-spin" />
@@ -167,8 +167,8 @@ export default function BasicInfoStepForm({
           {...register("basicInfo.foundedYear")}
           validationMessage={errors!.basicInfo?.foundedYear?.message}
         />
-        <div className="w-full flex flex-col items-start gap-2">
-          <div className="w-full flex flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
+          <div className="flex w-full flex-col items-start gap-2">
             <Controller
               name="basicInfo.location"
               control={control!}
@@ -213,7 +213,7 @@ export default function BasicInfoStepForm({
         />
 
         {/* Company Type Section */}
-        <div className="w-full flex flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
           <Controller
             name="basicInfo.companyType"
             control={control!}

@@ -45,9 +45,9 @@ describe("two-factor store", () => {
   it("returns false and records an invalid-code failure", async () => {
     post.mockRejectedValueOnce(new Error("Invalid authenticator code"));
 
-    await expect(
-      useTwoFactorStore.getState().enable("000000"),
-    ).resolves.toBe(false);
+    await expect(useTwoFactorStore.getState().enable("000000")).resolves.toBe(
+      false,
+    );
     expect(useTwoFactorStore.getState()).toMatchObject({
       loading: false,
       error: "Invalid authenticator code",

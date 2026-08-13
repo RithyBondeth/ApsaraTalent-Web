@@ -84,7 +84,7 @@ export function SkillChips(props: {
           onDelete();
         }}
         onMouseDown={(e) => e.stopPropagation()}
-        className="opacity-0 group-hover/chip:opacity-70 hover:!opacity-100 transition-opacity ml-1"
+        className="ml-1 opacity-0 transition-opacity hover:!opacity-100 group-hover/chip:opacity-70"
         style={{ color: RESUME_COLOR.DANGER, lineHeight: 1 }}
         title={t("removeSkill")}
       >

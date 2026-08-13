@@ -304,30 +304,30 @@ export default function PhoneOTPPage() {
                   <InputOTPGroup>
                     <InputOTPSlot
                       index={0}
-                      className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
+                      className="input-otp-slot !size-12 tablet-md:!size-10 sm:!size-14"
                     />
                     <InputOTPSlot
                       index={1}
-                      className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
+                      className="input-otp-slot !size-12 tablet-md:!size-10 sm:!size-14"
                     />
                     <InputOTPSlot
                       index={2}
-                      className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
+                      className="input-otp-slot !size-12 tablet-md:!size-10 sm:!size-14"
                     />
                   </InputOTPGroup>
                   <InputOTPSeparator />
                   <InputOTPGroup>
                     <InputOTPSlot
                       index={3}
-                      className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
+                      className="input-otp-slot !size-12 tablet-md:!size-10 sm:!size-14"
                     />
                     <InputOTPSlot
                       index={4}
-                      className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
+                      className="input-otp-slot !size-12 tablet-md:!size-10 sm:!size-14"
                     />
                     <InputOTPSlot
                       index={5}
-                      className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
+                      className="input-otp-slot !size-12 tablet-md:!size-10 sm:!size-14"
                     />
                   </InputOTPGroup>
                 </InputOTP>
@@ -356,7 +356,7 @@ export default function PhoneOTPPage() {
           style={{ "--d": "150ms" } as React.CSSProperties}
         >
           {t("didntReceiveCode")}{" "}
-          <TypographySmall className="text-foreground font-medium cursor-pointer hover:opacity-70 transition-opacity">
+          <TypographySmall className="cursor-pointer font-medium text-foreground transition-opacity hover:opacity-70">
             {t("resend")}
           </TypographySmall>
         </TypographyMuted>

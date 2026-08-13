@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
 
         {/* Form Section */}
         <form
-          className="w-full flex flex-col gap-4"
+          className="flex w-full flex-col gap-4"
           onSubmit={handleSubmit(onSubmit)}
           style={{ "--d": "90ms" } as React.CSSProperties}
         >

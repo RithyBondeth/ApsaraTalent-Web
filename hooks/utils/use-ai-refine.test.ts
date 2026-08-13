@@ -14,7 +14,11 @@ describe("useAIRefine", () => {
 
   it("maps refinement types, streams accumulated text, and returns the result", async () => {
     streamMocks.streamFetch.mockImplementation(
-      async (_url: string, _options: unknown, onEvent: (event: unknown) => void) => {
+      async (
+        _url: string,
+        _options: unknown,
+        onEvent: (event: unknown) => void,
+      ) => {
         onEvent({ t: "chunk", v: "Improved " });
         onEvent({ t: "chunk", v: "summary" });
       },
@@ -68,7 +72,11 @@ describe("useAIRefine", () => {
   it("surfaces streamed rate limits and returns null on failures", async () => {
     streamMocks.streamFetch
       .mockImplementationOnce(
-        async (_url: string, _options: unknown, onEvent: (event: unknown) => void) => {
+        async (
+          _url: string,
+          _options: unknown,
+          onEvent: (event: unknown) => void,
+        ) => {
           onEvent({ t: "error", v: "Daily quota reached", code: 429 });
         },
       )
@@ -76,8 +84,12 @@ describe("useAIRefine", () => {
     const { result } = renderHook(() => useAIRefine());
 
     await act(async () => {
-      await expect(result.current.refineContent("Text", "summary")).resolves.toBeNull();
-      await expect(result.current.refineContent("Text", "summary")).resolves.toBeNull();
+      await expect(
+        result.current.refineContent("Text", "summary"),
+      ).resolves.toBeNull();
+      await expect(
+        result.current.refineContent("Text", "summary"),
+      ).resolves.toBeNull();
     });
     expect(toastMocks.error).toHaveBeenCalledWith("Daily quota reached");
     expect(result.current.isRefining).toBe(false);

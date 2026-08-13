@@ -61,7 +61,7 @@ export function AppearanceSection(props: IAppearanceSectionProps) {
           />
         </div>
         {/* Theme Description Section */}
-        <TypographyMuted className="text-xs text-center">
+        <TypographyMuted className="text-center text-xs">
           {theme === "system"
             ? t("followsSystem")
             : t("usingMode", { theme: themeLabel[theme] ?? theme })}

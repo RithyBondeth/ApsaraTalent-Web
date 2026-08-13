@@ -139,7 +139,9 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mocks.routerPush }),
 }));
 vi.mock("next/image", () => ({
-  default: (props: { alt: string }) => <span role="img" aria-label={props.alt} />,
+  default: (props: { alt: string }) => (
+    <span role="img" aria-label={props.alt} />
+  ),
 }));
 vi.mock("sonner", () => ({
   toast: {
@@ -214,11 +216,13 @@ describe("MatchingPageClient", () => {
     const user = userEvent.setup();
     render(<MatchingPageClient initialIsEmployee />);
 
-    await user.click(await screen.findByRole("button", { name: "Page unmatch" }));
+    await user.click(
+      await screen.findByRole("button", { name: "Page unmatch" }),
+    );
     await waitFor(() =>
-      expect(mocks.employeeStore.queryCurrentEmployeeMatching).toHaveBeenCalledWith(
-        "employee-1",
-      ),
+      expect(
+        mocks.employeeStore.queryCurrentEmployeeMatching,
+      ).toHaveBeenCalledWith("employee-1"),
     );
     expect(mocks.getRecentChats).toHaveBeenCalledOnce();
     expect(mocks.refetchInterviews).toHaveBeenCalledWith(

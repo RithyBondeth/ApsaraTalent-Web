@@ -252,17 +252,17 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="favorite-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 animate-page-in sm:gap-9 sm:px-4 lg:px-5">
+    <div className="favorite-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
       <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
-        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
+        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6 sm:px-9 sm:py-10">
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
             <span className="h-px w-7 bg-primary" />
             {tFav("savedFavorites")}
           </div>
           <div className="max-w-3xl">
             <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.05] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl">
-            {tFav("bannerTitle")}
+              {tFav("bannerTitle")}
             </h1>
             <p className="mt-4 max-w-[60ch] text-sm leading-6 text-muted-foreground sm:text-base">
               {tFav("bannerSubtitle1")} {tFav("bannerSubtitle2")}
@@ -339,79 +339,79 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-start gap-3 stagger-list">
-        {isEmployee &&
-        filteredEmployeeFavorites &&
-        filteredEmployeeFavorites.length > 0 ? (
-          filteredEmployeeFavorites.map((fav) => (
-            <FavoriteCompanyCard
-              key={fav.id}
-              id={fav.company.id}
-              name={fav.company.name}
-              avatar={fav.company.avatar ?? ""}
-              industry={fav.company.industry}
-              description={fav.company.description}
-              companySize={fav.company.companySize}
-              foundedYear={fav.company.foundedYear}
-              openPosition={fav.company.openPositions ?? []}
-              location={fav.company.location}
-              isRemoving={removingFavIds.has(fav.id)}
-              onRemoveFromFavorite={() => {
-                if (currentUser && currentUser.employee) {
-                  handleEmployeeRemoveCompanyFromFavorite(
-                    currentUser.employee.id,
-                    fav.company.id,
-                    fav.id,
-                    fav.company.name,
-                  );
-                }
+        <div className="stagger-list flex w-full flex-col items-start gap-3">
+          {isEmployee &&
+          filteredEmployeeFavorites &&
+          filteredEmployeeFavorites.length > 0 ? (
+            filteredEmployeeFavorites.map((fav) => (
+              <FavoriteCompanyCard
+                key={fav.id}
+                id={fav.company.id}
+                name={fav.company.name}
+                avatar={fav.company.avatar ?? ""}
+                industry={fav.company.industry}
+                description={fav.company.description}
+                companySize={fav.company.companySize}
+                foundedYear={fav.company.foundedYear}
+                openPosition={fav.company.openPositions ?? []}
+                location={fav.company.location}
+                isRemoving={removingFavIds.has(fav.id)}
+                onRemoveFromFavorite={() => {
+                  if (currentUser && currentUser.employee) {
+                    handleEmployeeRemoveCompanyFromFavorite(
+                      currentUser.employee.id,
+                      fav.company.id,
+                      fav.id,
+                      fav.company.name,
+                    );
+                  }
+                }}
+              />
+            ))
+          ) : !isEmployee &&
+            filteredCompanyFavorites &&
+            filteredCompanyFavorites.length > 0 ? (
+            filteredCompanyFavorites.map((fav) => (
+              <FavoriteEmployeeCard
+                key={fav.id}
+                id={fav.employee.id}
+                name={`${fav.employee.firstname} ${fav.employee.lastname}`}
+                username={fav.employee.username ?? ""}
+                avatar={fav.employee.avatar ?? ""}
+                description={fav.employee.description}
+                position={fav.employee.job}
+                experience={fav.employee.yearsOfExperience}
+                availability={fav.employee.availability}
+                location={fav.employee.location ?? ""}
+                skills={(fav.employee.skills ?? []).map((skill) => skill.name)}
+                isRemoving={removingFavIds.has(fav.id)}
+                onRemoveFromFavorite={() => {
+                  if (currentUser && currentUser.company) {
+                    handleCompanyRemoveEmployeeFromFavorite(
+                      currentUser.company.id,
+                      fav.employee.id,
+                      fav.id,
+                      fav.employee.username ??
+                        `${fav.employee.firstname} ${fav.employee.lastname}`,
+                    );
+                  }
+                }}
+              />
+            ))
+          ) : (
+            /* Empty Favorite List */
+            <PageState
+              variant="empty"
+              title={tFav("emptyList")}
+              image={emptySvg}
+              compact
+              className="my-6 sm:my-8"
+              action={{
+                label: tFav("explore"),
+                href: isEmployee ? "/search/company" : "/search/employee",
               }}
             />
-          ))
-        ) : !isEmployee &&
-          filteredCompanyFavorites &&
-          filteredCompanyFavorites.length > 0 ? (
-          filteredCompanyFavorites.map((fav) => (
-            <FavoriteEmployeeCard
-              key={fav.id}
-              id={fav.employee.id}
-              name={`${fav.employee.firstname} ${fav.employee.lastname}`}
-              username={fav.employee.username ?? ""}
-              avatar={fav.employee.avatar ?? ""}
-              description={fav.employee.description}
-              position={fav.employee.job}
-              experience={fav.employee.yearsOfExperience}
-              availability={fav.employee.availability}
-              location={fav.employee.location ?? ""}
-              skills={(fav.employee.skills ?? []).map((skill) => skill.name)}
-              isRemoving={removingFavIds.has(fav.id)}
-              onRemoveFromFavorite={() => {
-                if (currentUser && currentUser.company) {
-                  handleCompanyRemoveEmployeeFromFavorite(
-                    currentUser.company.id,
-                    fav.employee.id,
-                    fav.id,
-                    fav.employee.username ??
-                      `${fav.employee.firstname} ${fav.employee.lastname}`,
-                  );
-                }
-              }}
-            />
-          ))
-        ) : (
-          /* Empty Favorite List */
-          <PageState
-            variant="empty"
-            title={tFav("emptyList")}
-            image={emptySvg}
-            compact
-            className="my-6 sm:my-8"
-            action={{
-              label: tFav("explore"),
-              href: isEmployee ? "/search/company" : "/search/employee",
-            }}
-          />
-        )}
+          )}
         </div>
       </section>
     </div>

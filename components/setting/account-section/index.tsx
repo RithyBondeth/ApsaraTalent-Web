@@ -53,11 +53,11 @@ export function AccountSection(props: IAccountSectionProps) {
             {getNameInitials(displayName)}
           </AvatarFallback>
         </Avatar>
-        <div className="flex flex-col gap-1 min-w-0">
-          <TypographySmall className="font-semibold leading-none truncate block">
+        <div className="flex min-w-0 flex-col gap-1">
+          <TypographySmall className="block truncate font-semibold leading-none">
             {displayName}
           </TypographySmall>
-          <TypographyMuted className="text-xs truncate">
+          <TypographyMuted className="truncate text-xs">
             {email ?? "—"}
           </TypographyMuted>
           <Badge
@@ -79,7 +79,7 @@ export function AccountSection(props: IAccountSectionProps) {
 
       {/* Two-Factor Auth Section */}
       <div className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="flex min-w-0 items-center gap-3">
           <span className="flex size-8 shrink-0 items-center justify-center bg-muted text-foreground [&>svg]:size-4">
             <LucideShieldCheck />
           </span>
@@ -133,7 +133,7 @@ export function AccountSection(props: IAccountSectionProps) {
 
       {/* Reset Password Section */}
       <div className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="flex min-w-0 items-center gap-3">
           <span className="flex size-8 shrink-0 items-center justify-center bg-muted text-foreground [&>svg]:size-4">
             <LucideKeyRound />
           </span>
