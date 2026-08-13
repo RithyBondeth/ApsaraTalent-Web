@@ -47,7 +47,6 @@ type TGithubLoginState = {
 const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_GITHUB_URL).origin;
 const FRONTEND_ORIGIN =
   typeof window !== "undefined" ? window.location.origin : "";
-const ALLOWED_ORIGINS = new Set([BACKEND_ORIGIN, FRONTEND_ORIGIN]);
 
 // Shared Finish Logic
 const FINISH_LOGIN = (data: TGithubLoginResponse) => {
@@ -125,8 +124,21 @@ export const useGithubLoginStore = create<TGithubLoginState>((set) => ({
     let messageReceived = false;
 
     const handleMessage = (ev: MessageEvent<TGithubLoginResponse>) => {
-      // Origin check: accept messages from backend or frontend
-      if (!ALLOWED_ORIGINS.has(ev.origin)) {
+      // Only the backend callback page and this app may drive login.
+      // Written as explicit comparisons rather than a Set lookup: the
+      // behaviour is identical, but CodeQL's js/missing-origin-check does not
+      // recognise `Set.has(ev.origin)` as an origin check and reported these
+      // four handlers as unguarded.
+      //
+      // The empty-origin guard is not cosmetic. `ev.origin` is "" for opaque
+      // origins (sandboxed iframes, file://, data:), and FRONTEND_ORIGIN is
+      // also "" whenever this module is evaluated without a window — so
+      // without it those two could compare equal and admit a message from an
+      // origin the browser refused to name.
+      if (
+        !ev.origin ||
+        (ev.origin !== BACKEND_ORIGIN && ev.origin !== FRONTEND_ORIGIN)
+      ) {
         console.warn("Ignored message from unexpected origin:", ev.origin);
         return;
       }
