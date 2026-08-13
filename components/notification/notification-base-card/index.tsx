@@ -66,7 +66,7 @@ export default function NotificationBaseCard(
         <div
           className={cn(
             "absolute bottom-0 left-0 top-0 w-1 transition-all duration-300",
-            unreadColor.replace("bg-", "bg-"), // Ensure it's a bg class
+            unreadColor,
           )}
         />
       )}

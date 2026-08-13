@@ -44,7 +44,7 @@ export default function RootLayout({
             <Toaster />
           </ThemeProvider>
         </LanguageProvider>
-        {/* Title Section: Sync document.title on client-side language toggle */}
+        {/* Title Section */}
         <TitleSync />
       </body>
     </html>
