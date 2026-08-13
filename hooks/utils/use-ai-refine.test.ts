@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const streamMocks = vi.hoisted(() => ({ streamFetch: vi.fn() }));
 const toastMocks = vi.hoisted(() => ({ error: vi.fn() }));
 
-vi.mock("@/utils/functions/stream-fetch", () => streamMocks);
+vi.mock("@/utils/functions/network/stream-fetch", () => streamMocks);
 vi.mock("sonner", () => ({ toast: toastMocks }));
 
 import { useAIRefine } from "./use-ai-refine";

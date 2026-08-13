@@ -14,7 +14,7 @@ import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { makeResetPasswordSchema, TResetPasswordForm } from "./validate";
+import { makeResetPasswordSchema, TResetPasswordForm } from "./validation";
 import { resetPasswordSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,

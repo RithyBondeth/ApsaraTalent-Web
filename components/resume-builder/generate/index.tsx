@@ -5,7 +5,7 @@ import { Loader2, LucideLayoutTemplate, LucideRocket } from "lucide-react";
 import { IResumeBuilderGenerateProps } from "./props";
 import { useTranslations } from "next-intl";
 import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
-import { resolveResumeTemplateTheme } from "@/utils/functions/resume/resume-theme";
+import { resolveResumeTemplateTheme } from "@/utils/functions/resume";
 
 export default function ResumeBuilderGenerate({
   onGenerateClick,

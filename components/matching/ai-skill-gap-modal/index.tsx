@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { API_AI_SKILL_GAP_STREAM_URL } from "@/utils/constants/apis/matching.api.constant";
 import { ISkillGapMissing, ISkillGapSummary } from "@/utils/interfaces/resume";
-import { streamFetch } from "@/utils/functions/stream-fetch";
+import { streamFetch } from "@/utils/functions/network";
 import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { useLocale, useTranslations } from "next-intl";
 import MissingCard from "./missing-card";

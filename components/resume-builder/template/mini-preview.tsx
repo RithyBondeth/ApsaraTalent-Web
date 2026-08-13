@@ -4,7 +4,7 @@ import { CSSProperties } from "react";
 import {
   resolveResumeLayoutBlueprint,
   resolveResumeTemplateTheme,
-} from "@/utils/functions/resume/resume-theme";
+} from "@/utils/functions/resume";
 import { IResumeTemplateTheme } from "@/utils/interfaces/resume/resume-theme.interface";
 import { RESUME_EDITOR_DEFAULT_SECTION_ORDER } from "@/utils/constants/resume.constant";
 import {

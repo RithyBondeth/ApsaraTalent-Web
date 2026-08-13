@@ -27,7 +27,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { IUserModerationMenuProps } from "./props";
-import { REPORT_REASONS } from "@/utils/constants/moderation";
+import { REPORT_REASONS } from "@/utils/constants/moderation.constant";
 import { cn } from "@/lib/utils";
 
 export default function UserModerationMenu(props: IUserModerationMenuProps) {

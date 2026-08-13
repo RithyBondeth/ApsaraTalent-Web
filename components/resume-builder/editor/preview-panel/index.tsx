@@ -14,7 +14,7 @@ import {
   RESUME_EDITOR_ZOOM_MIN,
   RESUME_EDITOR_ZOOM_MAX,
 } from "@/utils/constants/resume.constant";
-import { estimateResumePages } from "@/utils/functions/resume/resume-pages";
+import { estimateResumePages } from "@/utils/functions/resume";
 
 export default function ResumeEditorPreviewPanel({
   data,

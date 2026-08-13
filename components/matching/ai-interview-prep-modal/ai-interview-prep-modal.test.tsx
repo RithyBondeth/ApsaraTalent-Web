@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
   stopProgress: vi.fn(),
 }));
 
-vi.mock("@/utils/functions/stream-fetch", () => ({
+vi.mock("@/utils/functions/network/stream-fetch", () => ({
   streamFetch: mocks.streamFetch,
 }));
 vi.mock("@/stores/apis/resume/interview-prep-pdf.store", () => ({

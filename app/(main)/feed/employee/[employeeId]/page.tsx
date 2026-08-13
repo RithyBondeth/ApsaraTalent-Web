@@ -19,7 +19,7 @@ import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/cou
 import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
+import { getAvailabilityStyleClass, getSocialPlatformTypeIcon } from "@/utils/functions/ui";
 import { translateLocation } from "@/utils/functions/text";
 import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { formatShortDate } from "@/utils/functions/date";
@@ -60,7 +60,6 @@ import { useFeedActionEffect } from "@/components/utils/effects/feed-action-effe
 import MetaChip from "@/components/utils/data-display/meta-chip";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { SectionTitle } from "@/components/utils/layout/section-title";
-import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
 import UserModerationMenu from "@/components/moderation/user-moderation-menu";
 import { API_GET_EMP_DOCUMENT_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
 import { ProfileDetailHero } from "@/components/feed/detail/profile-detail-hero";

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { makeForgotPasswordSchema } from "./(auth)/forgot-password/validate";
+import { makeForgotPasswordSchema } from "./(auth)/forgot-password/validation";
 import { makeLoginSchema } from "./(auth)/login/validation";
 import { makePhoneLoginSchema } from "./(auth)/login/phone-number/validation";
-import { makeResetPasswordSchema } from "./(auth)/reset-password/validate";
+import { makeResetPasswordSchema } from "./(auth)/reset-password/validation";
 import {
   makeBasicSignupCompanySchema,
   makeBasicSignupEmployeeSchema,

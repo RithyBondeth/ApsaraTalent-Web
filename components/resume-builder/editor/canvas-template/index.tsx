@@ -27,16 +27,12 @@ import { ExperienceEntry } from "./utils/experience-entry";
 import { SkillChips } from "./utils/skill-chip";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
 import { ResumeTemplateThemeContext } from "@/hooks/resume/use-resume-template-theme";
-import {
-  resolveResumeLayoutBlueprint,
-  resolveResumeTemplateTheme,
-} from "@/utils/functions/resume/resume-theme";
+import { getYearsExperienceSuffix, resolveResumeLayoutBlueprint, resolveResumeTemplateTheme } from "@/utils/functions/resume";
 import { useTranslations } from "next-intl";
 import {
   formatSocialPlatformLabel,
   normalizeSocialLinkUrl,
-} from "@/utils/functions/url/social-link";
-import { getYearsExperienceSuffix } from "@/utils/functions/resume/format-resume-meta";
+} from "@/utils/functions/url";
 
 /* ---------------------------------- Helper --------------------------------- */
 /**

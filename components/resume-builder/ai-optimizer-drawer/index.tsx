@@ -21,7 +21,7 @@ import {
   IOptimizeResumeResponse,
   IExperienceSuggestion,
 } from "@/utils/interfaces/resume";
-import { streamFetch } from "@/utils/functions/stream-fetch";
+import { streamFetch } from "@/utils/functions/network";
 import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { Badge } from "@/components/ui/badge";
 import { IAiOptimizerDrawerProps } from "./props";

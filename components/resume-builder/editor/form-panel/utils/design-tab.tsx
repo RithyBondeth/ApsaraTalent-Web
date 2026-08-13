@@ -25,7 +25,7 @@ import {
   buildTemplateBaseDesign,
   shuffleResumeDesign,
   RESUME_DESIGN_OPTIONS,
-} from "@/utils/functions/resume/resume-design";
+} from "@/utils/functions/resume";
 import {
   DESIGN_FONTS,
   DESIGN_PALETTES,

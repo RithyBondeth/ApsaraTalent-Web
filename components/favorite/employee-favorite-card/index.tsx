@@ -1,8 +1,5 @@
 import MetaChip from "@/components/utils/data-display/meta-chip";
-import {
-  formatAvailabilityWords,
-  getNameInitials,
-} from "@/utils/functions/text";
+import { formatAvailabilityWords, getNameInitials, translateLocation } from "@/utils/functions/text";
 import {
   LucideBookmarkX,
   LucideBriefcaseBusiness,
@@ -15,10 +12,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import { IFavoriteEmployeeCardProps } from "./props";
-import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
+import { getAvailabilityStyleClass } from "@/utils/functions/ui";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
-import { translateLocation } from "@/utils/functions/text";
 
 export default function FavoriteEmployeeCard(
   props: IFavoriteEmployeeCardProps,

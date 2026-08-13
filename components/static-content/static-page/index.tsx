@@ -1,4 +1,4 @@
-import Header from "@/components/header";
+import Header from "@/components/landing/landing-header";
 import LandingFooter from "@/components/landing/landing-footer";
 import { GridRunners } from "@/components/ui/grid-runners";
 import { ScrollProgress } from "@/components/utils/animations/scroll-progress";

@@ -7,7 +7,7 @@ import { Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { IChatSidebarProps } from "./props";
 import ExpandedChatList from "./expanded-chat-list";
-import CollapsedChatList from "./collapesed-chat-list";
+import CollapsedChatList from "./collapsed-chat-list";
 import { useTranslations } from "next-intl";
 
 export default function ChatSidebar(props: IChatSidebarProps) {

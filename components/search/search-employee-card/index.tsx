@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ISearchEmployeeCardProps } from "./props";
-import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
+import { getAvailabilityStyleClass } from "@/utils/functions/ui";
 import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";

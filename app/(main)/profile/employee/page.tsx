@@ -74,11 +74,11 @@ import {
   salaryCurrencyConstant,
   workModeConstant,
 } from "@/utils/constants/ui.constant";
-import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
+import { getSocialPlatformTypeIcon } from "@/utils/functions/ui";
 import { capitalizeWords } from "@/utils/functions/text";
 import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { MAX_IMAGE_SIZE } from "@/utils/constants/config.constant";
-import { isUuid } from "@/utils/functions/validation/check-uuid";
+import { isUuid } from "@/utils/functions/validation";
 import {
   extractCleanFilename,
   isSupportedProfileImage,

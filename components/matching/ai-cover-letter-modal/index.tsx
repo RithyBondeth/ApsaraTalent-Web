@@ -30,7 +30,7 @@ import {
   API_RESUME_COVER_LETTER_STREAM_URL,
   API_RESUME_POLISH_COVER_LETTER_STREAM_URL,
 } from "@/utils/constants/apis/resume.api.constant";
-import { streamFetch } from "@/utils/functions/stream-fetch";
+import { streamFetch } from "@/utils/functions/network";
 import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { useTranslations } from "next-intl";
 import { IAiCoverLetterModalProps } from "./props";

@@ -17,14 +17,7 @@ import {
 } from "@/utils/types/resume/resume.type";
 import { TemplateCardSkeleton } from "@/components/resume-builder/skeleton";
 import { useTranslations } from "next-intl";
-import {
-  normalizeResumePayload,
-  removeLegacyResumeDraft,
-  resumeDraftSchema,
-  resumeSchema,
-  saveResumeDraft,
-} from "@/utils/functions/resume/resume-draft";
-import { prepareResumeAvatar } from "@/utils/functions/resume/prepare-resume-avatar";
+import { normalizeResumePayload, prepareResumeAvatar, removeLegacyResumeDraft, resumeDraftSchema, resumeSchema, saveResumeDraft } from "@/utils/functions/resume";
 import { useGenerateAiResumeStore } from "@/stores/apis/resume/generate-ai-resume.store";
 import { toast } from "sonner";
 import { useAiQuotaStore } from "@/stores/apis/ai/get-ai-quota.store";

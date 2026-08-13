@@ -13,7 +13,7 @@ import {
   MoveUpRight,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ISearchCompanyCardProps } from "./prop";
+import { ISearchCompanyCardProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo } from "react";

@@ -73,9 +73,9 @@ import {
   loginMethodConstant,
   platformConstant,
 } from "@/utils/constants/ui.constant";
-import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
+import { getSocialPlatformTypeIcon } from "@/utils/functions/ui";
 import { capitalizeWords, getNameInitials } from "@/utils/functions/text";
-import { isUuid } from "@/utils/functions/validation/check-uuid";
+import { isUuid } from "@/utils/functions/validation";
 import { parseMaybeDate } from "@/utils/functions/date";
 import {
   isSupportedProfileImage,

@@ -54,17 +54,7 @@ import { AiResumeOptimizerDrawer } from "@/components/resume-builder/ai-optimize
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 import { ResumeEditorLoadingSkeleton } from "@/components/resume-builder/skeleton";
-import {
-  loadResumeDraft,
-  normalizeResumePayload,
-  removeLegacyResumeDraft,
-  resumeSchema,
-  saveResumeDraft,
-} from "@/utils/functions/resume/resume-draft";
-import {
-  matchesResumeOwnerName,
-  prepareResumeAvatar,
-} from "@/utils/functions/resume/prepare-resume-avatar";
+import { loadResumeDraft, matchesResumeOwnerName, normalizeResumePayload, prepareResumeAvatar, removeLegacyResumeDraft, resumeSchema, saveResumeDraft } from "@/utils/functions/resume";
 
 export default function ResumeEditorPage() {
   /* ---------------------------------- Utils --------------------------------- */
