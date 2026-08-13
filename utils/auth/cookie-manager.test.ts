@@ -13,6 +13,7 @@ import {
   clearAuthCookies,
   clearAuthCookiesServerSide,
   getRememberPreference,
+  hasWebSession,
   setSessionRole,
 } from "./cookie-manager";
 
@@ -31,7 +32,9 @@ describe("cookie manager", () => {
       COOKIE_CONFIG.SESSION_ROLE,
       "employee",
       expect.objectContaining({
-        maxAge: COOKIE_CONFIG.PREFERENCE_STORAGE,
+        // Capped to the refresh token's life — a longer-lived role cookie makes
+        // the middleware route into pages the API can only answer with a 401.
+        maxAge: COOKIE_CONFIG.REMEMBER_REFRESH_TOKEN,
         sameSite: "strict",
         path: "/",
         secure: false,
@@ -43,6 +46,16 @@ describe("cookie manager", () => {
       "true",
       expect.any(Object),
     );
+  });
+
+  it("reports a web session only while the role cookie exists", () => {
+    getCookie.mockReturnValueOnce("employee");
+    expect(hasWebSession()).toBe(true);
+
+    getCookie.mockReturnValueOnce(undefined);
+    expect(hasWebSession()).toBe(false);
+
+    expect(getCookie).toHaveBeenCalledWith(COOKIE_CONFIG.SESSION_ROLE);
   });
 
   it("does not write cookies when no role is provided", () => {

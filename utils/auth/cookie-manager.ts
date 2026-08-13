@@ -16,8 +16,12 @@ export const setSessionRole = (
       ? COOKIE_CONFIG.SECURE
       : window.location.protocol === "https:";
 
+  // Never outlive the API's refresh token. The middleware treats this cookie as
+  // "logged in", but only the API's refresh-token cookie can actually revive a
+  // session — a role cookie that lasts longer just routes the user into pages
+  // that are guaranteed to 401.
   setCookie(COOKIE_CONFIG.SESSION_ROLE, role, {
-    ...(rememberMe ? { maxAge: COOKIE_CONFIG.PREFERENCE_STORAGE } : {}),
+    ...(rememberMe ? { maxAge: COOKIE_CONFIG.REMEMBER_REFRESH_TOKEN } : {}),
     secure,
     sameSite: COOKIE_CONFIG.SAME_SITE,
     path: COOKIE_CONFIG.PATH,
@@ -61,6 +65,19 @@ export const clearAuthCookiesServerSide = async (): Promise<boolean> => {
   } catch {
     return false;
   }
+};
+
+/**
+ * Whether the web origin believes a session exists.
+ *
+ * The API's auth cookies are httpOnly and live on the API's own domain, so the
+ * browser can never read them. This role cookie is the only session signal the
+ * web app has — it is what the middleware routes on, and what tells a 401 apart
+ * from "an anonymous visitor hit a protected endpoint".
+ */
+export const hasWebSession = (): boolean => {
+  if (typeof document === "undefined") return false;
+  return Boolean(getCookie(COOKIE_CONFIG.SESSION_ROLE));
 };
 
 export const getRememberPreference = (): boolean => {
