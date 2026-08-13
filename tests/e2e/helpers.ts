@@ -1,6 +1,6 @@
 import { expect, type Page, type Request } from "@playwright/test";
 
-export const AUTH_ROLE_COOKIE = "auth-session-role";
+const AUTH_ROLE_COOKIE = "auth-session-role";
 
 export async function setRole(
   page: Page,

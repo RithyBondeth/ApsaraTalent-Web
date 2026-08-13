@@ -36,7 +36,7 @@ const AiInterviewPrepModal = lazy(() =>
 );
 
 /* ------------------------------------ Lazy Action Button Component ------------------------------- */
-export function LazyActionButton(props: ILazyActionButtonProps) {
+function LazyActionButton(props: ILazyActionButtonProps) {
   /* ----------------------------- Props ----------------------------- */
   const { label, compact, icon, interview, onClick } = props;
 
@@ -60,7 +60,7 @@ export function LazyActionButton(props: ILazyActionButtonProps) {
 }
 
 /* ---------------------------------- Loading Action Button Component ----------------------------- */
-export function LoadingActionButton(
+function LoadingActionButton(
   props: Pick<ILazyActionButtonProps, "label" | "compact" | "interview">,
 ) {
   /* ----------------------------- Props ----------------------------- */

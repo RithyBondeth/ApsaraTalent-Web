@@ -3,7 +3,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-export const E2E_DIST_DIR = ".next-e2e";
+const E2E_DIST_DIR = ".next-e2e";
 
 export function resolveDistDir({
   skipBuild = process.env.E2E_SKIP_BUILD === "1",
