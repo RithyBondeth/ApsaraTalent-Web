@@ -1,18 +1,18 @@
 # Stage 1: Install dependencies
-FROM node:24.18.1-alpine3.23 AS deps
+FROM node:26.7.0-alpine3.23 AS deps
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
 # Stage 2: Build
-FROM node:24.18.1-alpine3.23 AS builder
+FROM node:26.7.0-alpine3.23 AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
 # Stage 3: Production runner
-FROM node:24.18.1-alpine3.23 AS runner
+FROM node:26.7.0-alpine3.23 AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
