@@ -37,7 +37,7 @@
     "@emoji-mart/react": "^1.1.1",
     "@fontsource/preahvihear": "^5.3.0",
     "@fontsource/ubuntu": "^5.3.0",
-    "@hookform/resolvers": "^4.1.3",
+    "@hookform/resolvers": "^5.7.1",
     "@radix-ui/react-avatar": "^1.2.6",
     "@radix-ui/react-checkbox": "^1.3.11",
     "@radix-ui/react-collapsible": "^1.1.20",
