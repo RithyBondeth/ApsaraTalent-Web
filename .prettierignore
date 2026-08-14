@@ -15,6 +15,9 @@ node_modules/
 # Generated / vendored
 next-env.d.ts
 package-lock.json
+# Written by `npm run api:types` from the API's OpenAPI spec — reformatting it
+# would make every regeneration show up as a diff.
+utils/interfaces/generated/
 
 # Binary and snapshot assets Prettier should not touch
 tests/e2e/*-snapshots/
