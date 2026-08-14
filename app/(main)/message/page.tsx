@@ -13,8 +13,13 @@ import {
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useChatStore } from "@/stores/features/chat/chat.store";
 import { useCallStore } from "@/stores/features/call/call.store";
+import { useInitiateChatStore } from "@/stores/apis/chat/initiate-chat.store";
+import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
+import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
+import NewChatDialog from "@/components/message/new-chat-dialog";
+import type { INewChatCandidate } from "@/components/message/new-chat-dialog/props";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import MessageLoadingSkeleton, {
@@ -39,6 +44,8 @@ export default function MessagePageContent() {
   const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
   const [replyTarget, setReplyTarget] = useState<IMessage | null>(null);
   const [loadingTimedOut, setLoadingTimedOut] = useState<boolean>(false);
+  const [isNewChatOpen, setNewChatOpen] = useState<boolean>(false);
+  const [startingChatId, setStartingChatId] = useState<string | null>(null);
 
   /* ----------------------------- API Integration ---------------------------- */
   // Current User
@@ -60,6 +67,42 @@ export default function MessagePageContent() {
 
   // Voice Call Initiation
   const initiateCall = useCallStore((s) => s.initiateCall);
+
+  // New Chat: only matched people may be messaged, so the picker is fed by the
+  // same matching lists the matching page uses — companies for an employee,
+  // employees for a company.
+  const { initiateChat } = useInitiateChatStore();
+  const isEmployee = currentUser?.role === "employee";
+  const {
+    currentEmployeeMatching: matchedCompanies,
+    loading: matchedCompaniesLoading,
+    queryCurrentEmployeeMatching,
+  } = useGetCurrentEmployeeMatchingStore();
+  const {
+    currentCompanyMatching: matchedEmployees,
+    loading: matchedEmployeesLoading,
+    queryCurrentCompanyMatching,
+  } = useGetCurrentCompanyMatchingStore();
+
+  const newChatCandidates: INewChatCandidate[] = useMemo(() => {
+    if (isEmployee) {
+      return (matchedCompanies ?? []).map((company) => ({
+        id: company.id ?? "",
+        name: company.name ?? t("unknown"),
+        avatar: company.avatar,
+        subtitle: company.industry,
+      }));
+    }
+    return (matchedEmployees ?? []).map((employee) => ({
+      id: employee.id ?? "",
+      name:
+        [employee.firstname, employee.lastname].filter(Boolean).join(" ") ||
+        employee.username ||
+        t("unknown"),
+      avatar: employee.avatar,
+      subtitle: employee.job,
+    }));
+  }, [isEmployee, matchedCompanies, matchedEmployees, t]);
 
   /* --------------------------------- Effects --------------------------------- */
   // Keep resizable panel state in sync with the sidebar toggle (avoid calling
@@ -154,6 +197,45 @@ export default function MessagePageContent() {
       avatar: activeChat.avatar,
     });
   };
+
+  // ── Handle New Chat ───────────────────────────────────────
+  // Matches are fetched when the picker opens rather than on mount, so the
+  // message page does not pay for a list most visits never use.
+  const handleOpenNewChat = useCallback(() => {
+    setNewChatOpen(true);
+    const profileId = isEmployee
+      ? currentUser?.employee?.id
+      : currentUser?.company?.id;
+    if (!profileId) return;
+    if (isEmployee) void queryCurrentEmployeeMatching(profileId);
+    else void queryCurrentCompanyMatching(profileId);
+  }, [
+    currentUser,
+    isEmployee,
+    queryCurrentCompanyMatching,
+    queryCurrentEmployeeMatching,
+  ]);
+
+  const handleSelectNewChat = useCallback(
+    async (candidate: INewChatCandidate) => {
+      const senderId = isEmployee
+        ? currentUser?.employee?.id
+        : currentUser?.company?.id;
+      if (!senderId || !candidate.id || startingChatId) return;
+
+      setStartingChatId(candidate.id);
+      try {
+        const chat = await initiateChat(senderId, candidate.id);
+        setNewChatOpen(false);
+        router.push(`/message?chatId=${chat.id}`);
+      } catch (error) {
+        console.error("Failed to start chat:", error);
+      } finally {
+        setStartingChatId(null);
+      }
+    },
+    [currentUser, initiateChat, isEmployee, router, startingChatId],
+  );
 
   // ── Send Message ─────────────────────────────────────────
   const handleSendMessage = (
@@ -298,6 +380,16 @@ export default function MessagePageContent() {
       {/* Call Overlay + Incoming Modal Section */}
       <CallOrchestrator />
 
+      {/* New Chat Picker Section */}
+      <NewChatDialog
+        open={isNewChatOpen}
+        onOpenChange={setNewChatOpen}
+        candidates={newChatCandidates}
+        loading={isEmployee ? matchedCompaniesLoading : matchedEmployeesLoading}
+        startingId={startingChatId}
+        onSelect={handleSelectNewChat}
+      />
+
       {/* Desktop Resizable Layout Section */}
       <div className="hidden h-full min-h-0 w-full lg:flex">
         <ResizablePanelGroup
@@ -322,7 +414,7 @@ export default function MessagePageContent() {
               className="h-full"
               currentUserId={currentUser?.id}
               onChatSelect={(chat) => router.push(`/message?chatId=${chat.id}`)}
-              onNewChat={() => router.push("/message")}
+              onNewChat={handleOpenNewChat}
             />
           </ResizablePanel>
           <ResizableHandle withHandle />
@@ -344,7 +436,7 @@ export default function MessagePageContent() {
               className="h-full w-full"
               currentUserId={currentUser?.id}
               onChatSelect={handleChatSelect}
-              onNewChat={() => router.push("/message")}
+              onNewChat={handleOpenNewChat}
             />
           </div>
         )}

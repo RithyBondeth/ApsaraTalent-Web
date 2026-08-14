@@ -1428,7 +1428,12 @@
     "decline": "Decline",
     "accept": "Accept",
     "collapseSidebar": "Collapse sidebar",
-    "expandSidebar": "Expand sidebar"
+    "expandSidebar": "Expand sidebar",
+    "newChat": "New chat",
+    "newChatDescription": "Start a conversation with someone you have matched with.",
+    "newChatSearch": "Search matches...",
+    "newChatEmpty": "You have no matches yet. Match with someone to start chatting.",
+    "newChatNoResults": "No matches found."
   },
   "common": {
     "previous": "Previous",
