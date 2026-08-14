@@ -5,22 +5,30 @@ import { AvailabilityBadge } from "@/components/utils/data-display/availability-
 import { SearchErrorCard } from "@/components/search/search-error-card";
 
 vi.mock("next-intl", () => ({
-  useTranslations: (namespace: string) => (key: string, values?: Record<string, unknown>) => {
-    if (namespace === "profile.completionFields") return `field:${key}`;
-    if (key === "percentComplete") return `${values?.percentage}% complete`;
-    return key;
-  },
+  useTranslations:
+    (namespace: string) => (key: string, values?: Record<string, unknown>) => {
+      if (namespace === "profile.completionFields") return `field:${key}`;
+      if (key === "percentComplete") return `${values?.percentage}% complete`;
+      return key;
+    },
 }));
 
 describe("profile status components", () => {
   it("shows an incomplete profile, capped field list, and overflow count", () => {
     const { container } = render(
-      <ProfileCompletionCard percentage={60} missingFields={["avatar", "job", "skills", "location", "resume"] as never} />,
+      <ProfileCompletionCard
+        percentage={60}
+        missingFields={
+          ["avatar", "job", "skills", "location", "resume"] as never
+        }
+      />,
     );
     expect(screen.getByText("60%")).toBeInTheDocument();
     expect(screen.getByText("field:avatar")).toBeInTheDocument();
     expect(screen.getByText("+1 missingInformation")).toBeInTheDocument();
-    expect(container.querySelector('[style="width: 60%;"]')).toBeInTheDocument();
+    expect(
+      container.querySelector('[style="width: 60%;"]'),
+    ).toBeInTheDocument();
   });
 
   it("shows the complete profile state", () => {

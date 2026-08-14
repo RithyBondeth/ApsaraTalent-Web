@@ -48,14 +48,21 @@ vi.mock("@/stores/apis/favorite/company-fav-employee.store", () => ({
     cmpFavError: null,
   }),
 }));
-vi.mock("@/stores/apis/favorite/count-current-employee-favorites.store", () => ({
-  useCountCurrentEmployeeFavoritesStore: (
-    selector: (state: { decrementCount: typeof mocks.decrementEmployee }) => unknown,
-  ) => selector({ decrementCount: mocks.decrementEmployee }),
-}));
+vi.mock(
+  "@/stores/apis/favorite/count-current-employee-favorites.store",
+  () => ({
+    useCountCurrentEmployeeFavoritesStore: (
+      selector: (state: {
+        decrementCount: typeof mocks.decrementEmployee;
+      }) => unknown,
+    ) => selector({ decrementCount: mocks.decrementEmployee }),
+  }),
+);
 vi.mock("@/stores/apis/favorite/count-current-company-favorites.store", () => ({
   useCountCurrentCompanyFavoritesStore: (
-    selector: (state: { decrementCount: typeof mocks.decrementCompany }) => unknown,
+    selector: (state: {
+      decrementCount: typeof mocks.decrementCompany;
+    }) => unknown,
   ) => selector({ decrementCount: mocks.decrementCompany }),
 }));
 vi.mock("@/stores/apis/matching/get-current-employee-liked.store", () => ({
@@ -69,7 +76,11 @@ vi.mock("@/stores/apis/matching/get-current-company-liked.store", () => ({
   }),
 }));
 vi.mock("@/components/favorite/company-favorite-card", () => ({
-  default: (props: { name: string; isRemoving: boolean; onRemoveFromFavorite: () => void }) => (
+  default: (props: {
+    name: string;
+    isRemoving: boolean;
+    onRemoveFromFavorite: () => void;
+  }) => (
     <div data-removing={String(props.isRemoving)}>
       <span>{props.name}</span>
       <button onClick={props.onRemoveFromFavorite}>Remove company</button>
@@ -88,7 +99,9 @@ vi.mock("@/components/favorite/skeleton", () => ({
   FavoriteLoadingSkeleton: () => <div>Favorite loading</div>,
 }));
 vi.mock("next/image", () => ({
-  default: (props: { alt: string }) => <span role="img" aria-label={props.alt} />,
+  default: (props: { alt: string }) => (
+    <span role="img" aria-label={props.alt} />
+  ),
 }));
 vi.mock("sonner", () => ({
   toast: { success: mocks.toastSuccess, error: mocks.toastError },
@@ -130,7 +143,9 @@ describe("FavoritePageClient", () => {
     mocks.companyLiked = [];
     mocks.removeCompany.mockResolvedValue(undefined);
     mocks.removeEmployee.mockResolvedValue(undefined);
-    mocks.employeeFavorites.queryAllEmployeeFavorites.mockResolvedValue(undefined);
+    mocks.employeeFavorites.queryAllEmployeeFavorites.mockResolvedValue(
+      undefined,
+    );
   });
 
   it("filters already-liked companies and completes delayed favorite removal", async () => {
@@ -144,9 +159,9 @@ describe("FavoritePageClient", () => {
 
     expect(await screen.findByText("Visible Labs")).toBeVisible();
     expect(screen.queryByText("Already Liked")).not.toBeInTheDocument();
-    expect(mocks.employeeFavorites.queryAllEmployeeFavorites).toHaveBeenCalledWith(
-      "employee-1",
-    );
+    expect(
+      mocks.employeeFavorites.queryAllEmployeeFavorites,
+    ).toHaveBeenCalledWith("employee-1");
 
     await user.click(screen.getByRole("button", { name: "Remove company" }));
     expect(screen.getByText("Visible Labs").parentElement).toHaveAttribute(

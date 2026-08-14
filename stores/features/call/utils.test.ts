@@ -22,7 +22,9 @@ describe("call utilities", () => {
     } as Response);
 
     await expect(fetchIceServers()).resolves.toEqual(iceServers);
-    expect(fetch).toHaveBeenCalledWith("https://api.example.com/auth/ice-servers");
+    expect(fetch).toHaveBeenCalledWith(
+      "https://api.example.com/auth/ice-servers",
+    );
   });
 
   it("uses safe STUN fallbacks when the API fails or omits servers", async () => {
@@ -41,8 +43,14 @@ describe("call utilities", () => {
   });
 
   it("normalizes participant avatars while preserving participant identity", () => {
-    mediaMocks.normalizeMediaUrl.mockReturnValue("https://cdn.example.com/avatar.png");
-    const participant = { userId: "user-1", name: "Sokha", avatar: "/avatar.png" };
+    mediaMocks.normalizeMediaUrl.mockReturnValue(
+      "https://cdn.example.com/avatar.png",
+    );
+    const participant = {
+      userId: "user-1",
+      name: "Sokha",
+      avatar: "/avatar.png",
+    };
 
     expect(normalizeParticipantAvatar(participant)).toEqual({
       ...participant,

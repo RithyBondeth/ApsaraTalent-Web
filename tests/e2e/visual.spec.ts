@@ -1,8 +1,14 @@
 import { expect, test } from "@playwright/test";
 import { loginEmployee, mockApi, successfulEmployeeApi } from "./helpers";
 
-test("key pages match reviewed visual baselines", async ({ page, browserName }) => {
-  test.skip(browserName !== "chromium", "Visual baselines are maintained in Chromium");
+test("key pages match reviewed visual baselines", async ({
+  page,
+  browserName,
+}) => {
+  test.skip(
+    browserName !== "chromium",
+    "Visual baselines are maintained in Chromium",
+  );
   test.setTimeout(45_000);
   await page.emulateMedia({ reducedMotion: "reduce", colorScheme: "light" });
 

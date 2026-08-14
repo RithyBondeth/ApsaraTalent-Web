@@ -13,23 +13,23 @@ import { useTranslations } from "next-intl";
 const WIDE_CARD_INDEXES = new Set([0, 3, 5]);
 
 export default function LandingFeatures() {
-    /* ---------------------------------- Utils --------------------------------- */
-    const sectionRef = useGsapScrollAnimation<HTMLElement>();
-    const t = useTranslations("landing");
-  
-    /* -------------------------------- Render UI ------------------------------- */
+  /* ---------------------------------- Utils --------------------------------- */
+  const sectionRef = useGsapScrollAnimation<HTMLElement>();
+  const t = useTranslations("landing");
+
+  /* -------------------------------- Render UI ------------------------------- */
   return (
     <section
       ref={sectionRef}
       className="relative border-b border-border py-20 sm:py-28 lg:py-36"
     >
-       {/* Grid Background Section */}
+      {/* Grid Background Section */}
       <div className="landing-grid pointer-events-none absolute inset-0" />
       <GridRunners className="landing-grid-runners" density="quiet" />
-      
-       {/* Features Section */}
+
+      {/* Features Section */}
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 grid gap-6 border-b border-border pb-10 md:grid-cols-[1fr_0.7fr] md:items-end sm:mb-16">
+        <div className="mb-12 grid gap-6 border-b border-border pb-10 sm:mb-16 md:grid-cols-[1fr_0.7fr] md:items-end">
           {/* Feature Header Section */}
           <div>
             <span
@@ -40,7 +40,7 @@ export default function LandingFeatures() {
             </span>
             <TypographyH2
               data-gsap="split-chars"
-              className="max-w-2xl text-3xl font-semibold tracking-[-0.035em] sm:text-4xl lg:text-5xl [perspective:800px]"
+              className="max-w-2xl text-3xl font-semibold tracking-[-0.035em] [perspective:800px] sm:text-4xl lg:text-5xl"
             >
               {t("featuresHeading")}{" "}
               <span className="landing-highlight">
@@ -49,16 +49,16 @@ export default function LandingFeatures() {
             </TypographyH2>
           </div>
 
-           {/* Feature Description Section */}
+          {/* Feature Description Section */}
           <TypographyMuted
             data-gsap="blur-reveal"
-            className="max-w-lg text-sm !leading-relaxed md:justify-self-end sm:text-base"
+            className="max-w-lg text-sm !leading-relaxed sm:text-base md:justify-self-end"
           >
             {t("featuresDescription")}
           </TypographyMuted>
         </div>
 
-         {/* Feature Cards Section */}
+        {/* Feature Cards Section */}
         <div
           data-gsap="stagger-children"
           className="grid grid-cols-1 border-l border-t border-border sm:grid-cols-2 lg:grid-cols-3"

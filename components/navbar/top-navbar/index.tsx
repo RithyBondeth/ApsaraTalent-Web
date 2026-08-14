@@ -213,7 +213,7 @@ export default function TopNavbar() {
         aria-label={`${t("navigationGroup")} — Apsara Talent`}
         className="sticky top-0 z-50 w-full"
       >
-        <div className="app-top-navbar relative border-b border-border bg-background/92 backdrop-blur-xl">
+        <div className="app-top-navbar bg-background/92 relative border-b border-border backdrop-blur-xl">
           <div
             className="relative mx-auto flex h-[60px] max-w-screen-2xl items-center justify-between px-3 sm:px-4 lg:h-16 lg:px-5"
             style={{ paddingTop: "env(safe-area-inset-top)" }}
@@ -271,7 +271,7 @@ export default function TopNavbar() {
       {/* Mobile Bottom Tab Bar Section */}
       <nav
         aria-label={t("navigationGroup")}
-        className="app-mobile-navbar fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/94 backdrop-blur-xl lg:hidden"
+        className="app-mobile-navbar bg-background/94 fixed bottom-0 left-0 right-0 z-50 border-t border-border backdrop-blur-xl lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="mx-auto flex h-[68px] max-w-xl items-stretch justify-around">

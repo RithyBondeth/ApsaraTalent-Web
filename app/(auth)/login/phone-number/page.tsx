@@ -157,7 +157,7 @@ export default function PhoneNumberPage() {
             error={errors.phone?.message}
             {...register("phone")}
           />
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex cursor-pointer items-center gap-2">
             <Controller
               name="rememberMe"
               control={control}

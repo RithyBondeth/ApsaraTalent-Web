@@ -22,7 +22,7 @@ export function MessageBubbleActions(props: IMessageBubbleActionsProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity flex items-center gap-0.5">
+    <div className="flex items-center gap-0.5 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
       {/* Reply Section */}
       {canReply && (
         <Button

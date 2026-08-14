@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { IJobPosition } from "@/utils/interfaces/user/company.interface";
 import {
   LucideBookmark,
@@ -78,7 +79,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
               />
             )}
             {/* Like Button and Dialog Button Section */}
-            <div className="absolute top-2 right-2 flex justify-center items-center gap-1">
+            <div className="absolute right-2 top-2 flex items-center justify-center gap-1">
               <Button
                 size="icon"
                 variant="ghost"
@@ -128,24 +129,24 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 {props.name}
               </TypographyP>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
-                <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
+                <TypographySmall className="flex items-center gap-1 text-[11px] text-muted-foreground">
                   <LucideBuilding2 className="size-3 shrink-0" />
                   <span className="truncate">{props.industry}</span>
                 </TypographySmall>
-                <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
+                <TypographySmall className="flex items-center gap-1 text-[11px] text-muted-foreground">
                   <LucideMapPin className="size-3 shrink-0" />
                   <span className="truncate">
                     {translateLocation(props.location, tl)}
                   </span>
                 </TypographySmall>
-                <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
+                <TypographySmall className="flex items-center gap-1 text-[11px] text-muted-foreground">
                   <LucideUsers className="size-3 shrink-0" />
                   <span>
                     {t("companyPeopleCount", { count: props.companySize })}
                   </span>
                 </TypographySmall>
                 {props.foundedYear && (
-                  <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
+                  <TypographySmall className="flex items-center gap-1 text-[11px] text-muted-foreground">
                     <LucideCalendar className="size-3 shrink-0" />
                     <span>{t("established", { year: props.foundedYear })}</span>
                   </TypographySmall>
@@ -154,14 +155,14 @@ export default function CompanyCard(props: ICompanyCardProps) {
             </div>
 
             {/* Description Section */}
-            <TypographyMuted className="text-xs leading-relaxed line-clamp-2 tablet-md:line-clamp-1">
+            <TypographyMuted className="line-clamp-2 text-xs leading-relaxed tablet-md:line-clamp-1">
               {props.description}
             </TypographyMuted>
 
             {/* Open Positions Section */}
             {props.openPositions.length > 0 && (
               <div className="flex flex-col gap-1.5">
-                <TypographySmall className="text-[11px] font-semibold text-foreground/70 flex items-center gap-1">
+                <TypographySmall className="flex items-center gap-1 text-[11px] font-semibold text-foreground/70">
                   <LucideBriefcaseBusiness className="size-3" />
                   {t("openPositionCount", {
                     count: props.openPositions.length,
@@ -179,7 +180,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                       />
                     ))}
                   {props.openPositions.length > 3 && (
-                    <span className="text-[11px] text-muted-foreground self-center font-medium">
+                    <span className="self-center text-[11px] font-medium text-muted-foreground">
                       {t("moreItems", {
                         count: props.openPositions.length - 3,
                       })}
@@ -201,7 +202,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                   />
                 ))}
                 {props.benefits.length > 3 && (
-                  <span className="text-[11px] text-muted-foreground self-center font-medium">
+                  <span className="self-center text-[11px] font-medium text-muted-foreground">
                     {t("moreItems", { count: props.benefits.length - 3 })}
                   </span>
                 )}
@@ -263,9 +264,9 @@ export default function CompanyCard(props: ICompanyCardProps) {
 
   // ── Default Variant Section ───────────────────────────────────────────────
   return (
-    <div className="h-fit w-full flex flex-col items-start gap-4 rounded-none border border-border border-t-[5px] border-t-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] hover:border-foreground/40">
+    <div className="flex h-fit w-full cursor-pointer flex-col items-start gap-4 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-foreground/40 hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
       {/* Main Content Section */}
-      <div className="w-full flex flex-wrap items-start justify-between gap-3">
+      <div className="flex w-full flex-wrap items-start justify-between gap-3">
         {/* Header Section: Avatar + Info + Actions */}
         <div className="flex items-center gap-3">
           <CachedAvatar
@@ -279,49 +280,52 @@ export default function CompanyCard(props: ICompanyCardProps) {
           >
             {props.name.slice(0, 3)}
           </CachedAvatar>
-          <div className="flex flex-col items-start gap-1 min-w-0">
-            <TypographyP className="font-semibold truncate max-w-full">
+          <div className="flex min-w-0 flex-col items-start gap-1">
+            <TypographyP className="max-w-full truncate font-semibold">
               {props.name}
             </TypographyP>
-            <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
-              <LucideUsers className="size-3 " />
+            <TypographySmall className="flex items-center gap-1 text-xs text-muted-foreground">
+              <LucideUsers className="size-3" />
               <span>{t("employeeCount", { count: props.companySize })}</span>
             </TypographySmall>
-            <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
-              <LucideMapPin className="size-3 " />
+            <TypographySmall className="flex items-center gap-1 text-xs text-muted-foreground">
+              <LucideMapPin className="size-3" />
               <span>{translateLocation(props.location, tl)}</span>
             </TypographySmall>
           </div>
         </div>
 
         {/* Action Buttons Section */}
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex shrink-0 items-center gap-1">
           <Button
             aria-label="Quick view"
-            className="size-10 sm:size-12 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95"
+            className="size-10 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95 sm:size-12"
             onClick={handleClickDialog}
           >
-            <LucideEye className="!size-5 sm:!size-6 transition-all duration-300 ease-in-out" />
+            <LucideEye className="!size-5 transition-all duration-300 ease-in-out sm:!size-6" />
           </Button>
           <Button
             aria-label="Like"
-            className="size-10 sm:size-12 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95"
+            className="size-10 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95 sm:size-12"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
           >
             <LucideHeartHandshake
-              className={`!size-5 sm:!size-6 transition-all duration-300 ease-in-out${props.onLikeClickDisable ? " animate-pop-shrink" : ""}`}
+              className={cn(
+                "!size-5 transition-all duration-300 ease-in-out sm:!size-6",
+                props.onLikeClickDisable && "animate-pop-shrink",
+              )}
             />
           </Button>
         </div>
       </div>
 
       {/* Industry and Description Section */}
-      <div className="w-full flex flex-col gap-3">
+      <div className="flex w-full flex-col gap-3">
         <IconLabel
           text={t("industryLabel")}
           icon={<LucideBuilding strokeWidth={"1.5px"} />}
-          className="[&>p]:text-primary [&>p]:font-medium"
+          className="[&>p]:font-medium [&>p]:text-primary"
         />
         <TypographyMuted className="leading-relaxed">
           {props.description}
@@ -334,9 +338,9 @@ export default function CompanyCard(props: ICompanyCardProps) {
           <IconLabel
             text={t("openPositionCount", { count: props.openPositions.length })}
             icon={<LucideBriefcaseBusiness strokeWidth={"1.5px"} />}
-            className="[&>p]:text-primary [&>p]:font-medium"
+            className="[&>p]:font-medium [&>p]:text-primary"
           />
-          <div className="w-full flex flex-wrap gap-2">
+          <div className="flex w-full flex-wrap gap-2">
             {props.openPositions.map((item: IJobPosition, index) => (
               <Tag key={index} label={item.title} />
             ))}
@@ -347,9 +351,9 @@ export default function CompanyCard(props: ICompanyCardProps) {
             <IconLabel
               text={t("availableTime", { count: props.availableTimes.length })}
               icon={<LucideClock strokeWidth={"1.5px"} />}
-              className="[&>p]:text-primary [&>p]:font-medium"
+              className="[&>p]:font-medium [&>p]:text-primary"
             />
-            <div className="w-full flex flex-wrap gap-2">
+            <div className="flex w-full flex-wrap gap-2">
               {props.availableTimes.map((item, index) => (
                 <Tag key={index} label={item} />
               ))}
@@ -359,10 +363,10 @@ export default function CompanyCard(props: ICompanyCardProps) {
       </div>
 
       {/* Footer Section: Save, View Buttons */}
-      <div className="w-full flex items-center justify-end gap-2 sm:gap-3 tablet-lg:justify-stretch tablet-lg:[&>button]:flex-1 phone-xl:justify-stretch phone-xl:[&>button]:flex-1">
+      <div className="flex w-full items-center justify-end gap-2 phone-xl:justify-stretch tablet-lg:justify-stretch sm:gap-3 phone-xl:[&>button]:flex-1 tablet-lg:[&>button]:flex-1">
         {!props.hideSaveButton && (
           <Button
-            className="text-xs rounded-none"
+            className="rounded-none text-xs"
             variant="outline"
             onClick={props.onSaveClick}
           >
@@ -370,7 +374,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             <LucideBookmark />
           </Button>
         )}
-        <Button className="text-xs rounded-none" onClick={props.onViewClick}>
+        <Button className="rounded-none text-xs" onClick={props.onViewClick}>
           {t("view")}
           <LucideCircleArrowRight />
         </Button>

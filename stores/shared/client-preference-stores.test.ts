@@ -18,7 +18,11 @@ describe("client preference stores", () => {
 
   it("tracks hydration and toggles explicit and system themes", async () => {
     const { useThemeStore } = await import("../themes/theme-store");
-    useThemeStore.setState({ theme: "dark", systemTheme: "light", isHydrated: false });
+    useThemeStore.setState({
+      theme: "dark",
+      systemTheme: "light",
+      isHydrated: false,
+    });
     useThemeStore.getState().toggleTheme();
     expect(useThemeStore.getState().theme).toBe("light");
     useThemeStore.setState({ theme: "system", systemTheme: "light" });
@@ -26,7 +30,10 @@ describe("client preference stores", () => {
     expect(useThemeStore.getState().theme).toBe("dark");
     useThemeStore.getState().setTheme("system");
     useThemeStore.getState().setHydrated(true);
-    expect(useThemeStore.getState()).toMatchObject({ theme: "system", isHydrated: true });
+    expect(useThemeStore.getState()).toMatchObject({
+      theme: "system",
+      isHydrated: true,
+    });
   });
 
   it("reacts to operating-system theme changes", async () => {
@@ -40,7 +47,10 @@ describe("client preference stores", () => {
           },
           media: "(prefers-color-scheme: dark)",
           onchange: null,
-          addEventListener: (_event: string, callback: EventListenerOrEventListenerObject) => {
+          addEventListener: (
+            _event: string,
+            callback: EventListenerOrEventListenerObject,
+          ) => {
             listener = callback as () => void;
           },
           removeEventListener: vi.fn(),
@@ -59,7 +69,10 @@ describe("client preference stores", () => {
   it("uses browser storage through the safe persistence adapter", async () => {
     const { safePersistStorage } = await import("./persist-storage");
     expect(safePersistStorage).toBeDefined();
-    await safePersistStorage!.setItem("preference", { state: { enabled: true }, version: 0 });
+    await safePersistStorage!.setItem("preference", {
+      state: { enabled: true },
+      version: 0,
+    });
     expect(await safePersistStorage!.getItem("preference")).toEqual({
       state: { enabled: true },
       version: 0,

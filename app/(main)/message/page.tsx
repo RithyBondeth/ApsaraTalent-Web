@@ -247,7 +247,7 @@ export default function MessagePageContent() {
   /* -------------------------------- Render UI -------------------------------- */
   // Chat View Section
   const chatView = activeChat ? (
-    <div className="flex flex-col h-full min-h-0 min-w-0 bg-card">
+    <div className="flex h-full min-h-0 min-w-0 flex-col bg-card">
       {/* Chat Header Section */}
       <ChatHeader
         chat={activeChat}
@@ -294,15 +294,15 @@ export default function MessagePageContent() {
   );
 
   return (
-    <div className="message-editorial mx-auto w-full max-w-[1500px] h-full min-h-0 flex bg-card overflow-hidden relative animate-page-in border border-border border-t-[5px] border-t-primary shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <div className="message-editorial animate-page-in relative mx-auto flex h-full min-h-0 w-full max-w-[1500px] overflow-hidden border border-t-[5px] border-border border-t-primary bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
       {/* Call Overlay + Incoming Modal Section */}
       <CallOrchestrator />
 
       {/* Desktop Resizable Layout Section */}
-      <div className="hidden lg:flex w-full h-full min-h-0">
+      <div className="hidden h-full min-h-0 w-full lg:flex">
         <ResizablePanelGroup
           direction="horizontal"
-          className="w-full h-full min-h-0"
+          className="h-full min-h-0 w-full"
         >
           <ResizablePanel
             ref={sidebarPanelRef}
@@ -326,17 +326,17 @@ export default function MessagePageContent() {
             />
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel minSize={60} className="flex flex-col min-w-0">
+          <ResizablePanel minSize={60} className="flex min-w-0 flex-col">
             {chatView ?? desktopEmptyStateView}
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
 
       {/* Mobile Content Area Section */}
-      <div className="lg:hidden flex-1 flex flex-col min-w-0 h-full min-h-0">
+      <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col lg:hidden">
         {/* Mobile Section: show full-height sidebar list when no chat is selected */}
         {!chatId && (
-          <div className="h-full min-h-0 flex flex-col">
+          <div className="flex h-full min-h-0 flex-col">
             <ChatSidebar
               chats={activeChats}
               activeChat={activeChat}
@@ -352,7 +352,7 @@ export default function MessagePageContent() {
         {/* Chat View Section: shown when a chatId is in the URL */}
         {chatId && chatView}
         {chatId && !chatView && (
-          <div className="flex-1 min-w-0 min-h-0">
+          <div className="min-h-0 min-w-0 flex-1">
             <MessagePaneSkeleton />
           </div>
         )}

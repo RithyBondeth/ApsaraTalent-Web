@@ -137,10 +137,10 @@ export default function NotificationPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="notification-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 animate-page-in sm:gap-9 sm:px-4 lg:px-5">
+    <div className="notification-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
       <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
-        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
+        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6 sm:px-9 sm:py-10">
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
             <span className="h-px w-7 bg-primary" />
             {t("activityCenter")}
@@ -174,225 +174,308 @@ export default function NotificationPage() {
             <div className="feed-hero-art-frame">
               <div className="feed-hero-art-grid" />
               <div className="feed-hero-art-glow" />
-              <Image src={notificationBannerSvg} alt="" height={260} width={360} className="feed-hero-artwork" priority />
+              <Image
+                src={notificationBannerSvg}
+                alt=""
+                height={260}
+                width={360}
+                className="feed-hero-artwork"
+                priority
+              />
               <span className="feed-hero-corner feed-hero-corner-nw" />
               <span className="feed-hero-corner feed-hero-corner-ne" />
               <span className="feed-hero-corner feed-hero-corner-sw" />
               <span className="feed-hero-corner feed-hero-corner-se" />
             </div>
           </div>
-          <div aria-hidden className="feed-hero-signal-bars"><span /><span /><span /><span /></div>
+          <div aria-hidden className="feed-hero-signal-bars">
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
         </div>
       </section>
 
       <section className="flex w-full flex-col gap-5">
         <div className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">01</span>
+            <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+              01
+            </span>
             <div>
-              <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">{t("recentActivity")}</h2>
-              <p className="mt-1 text-xs font-medium text-muted-foreground">{t("notificationCount", { count: filteredNotifications.length })}</p>
+              <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">
+                {t("recentActivity")}
+              </h2>
+              <p className="mt-1 text-xs font-medium text-muted-foreground">
+                {t("notificationCount", {
+                  count: filteredNotifications.length,
+                })}
+              </p>
             </div>
           </div>
-          <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground"><BellRing className="size-4" /></div>
+          <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
+            <BellRing className="size-4" />
+          </div>
         </div>
 
-      {/* Controls Section */}
-      <div className="flex w-full flex-col gap-3 border border-border border-t-[5px] border-t-primary bg-card p-3 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:flex-row sm:items-center sm:justify-between">
-        {/* Pill Tabs Filter Section */}
-        <div className="flex items-center gap-1 overflow-x-auto bg-muted/45 p-1 scrollbar-none tablet-sm:hidden">
-          {(
-            [
-              "all",
-              "match",
-              "message",
-              "like",
-              "interview",
-              "unread",
-            ] as TNotificationFilterType[]
-          ).map((f) => {
-            const labels: Record<TNotificationFilterType, string> = {
-              all: t("filterAll"),
-              match: t("filterMatches"),
-              message: t("filterMessages"),
-              like: t("filterLikes"),
-              interview: t("filterInterviews"),
-              unread: t("filterUnread"),
-            };
-            const active = notificationFilter === f;
-            return (
-              <button
-                key={f}
-                type="button"
-                onClick={() => setNotificationFilter(f)}
-                aria-pressed={active}
-                className={`min-h-10 shrink-0 px-3 py-1.5 text-xs font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-                  active
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+        {/* Controls Section */}
+        <div className="flex w-full flex-col gap-3 border border-t-[5px] border-border border-t-primary bg-card p-3 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:flex-row sm:items-center sm:justify-between">
+          {/* Pill Tabs Filter Section */}
+          <div className="scrollbar-none flex items-center gap-1 overflow-x-auto bg-muted/45 p-1 tablet-sm:hidden">
+            {(
+              [
+                "all",
+                "match",
+                "message",
+                "like",
+                "interview",
+                "unread",
+              ] as TNotificationFilterType[]
+            ).map((f) => {
+              const labels: Record<TNotificationFilterType, string> = {
+                all: t("filterAll"),
+                match: t("filterMatches"),
+                message: t("filterMessages"),
+                like: t("filterLikes"),
+                interview: t("filterInterviews"),
+                unread: t("filterUnread"),
+              };
+              const active = notificationFilter === f;
+              return (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setNotificationFilter(f)}
+                  aria-pressed={active}
+                  className={`min-h-10 shrink-0 px-3 py-1.5 text-xs font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                    active
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {labels[f]}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Responsive Dropdown Section */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild className="hidden tablet-sm:flex">
+              <Button className="h-11 w-full rounded-none text-xs tablet-sm:w-auto">
+                {t("filterLabel")}{" "}
+                {
+                  (
+                    {
+                      all: t("filterAll"),
+                      match: t("filterMatches"),
+                      message: t("filterMessages"),
+                      like: t("filterLikes"),
+                      interview: t("filterInterviews"),
+                      unread: t("filterUnread"),
+                    } as Record<TNotificationFilterType, string>
+                  )[notificationFilter]
+                }
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="rounded-none">
+              <DropdownMenuItem onClick={() => setNotificationFilter("all")}>
+                {t("filterAll")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setNotificationFilter("match")}>
+                {t("filterMatches")}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setNotificationFilter("message")}
               >
-                {labels[f]}
-              </button>
-            );
-          })}
-        </div>
+                {t("filterMessages")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setNotificationFilter("like")}>
+                {t("filterLikes")}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setNotificationFilter("interview")}
+              >
+                {t("filterInterviews")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setNotificationFilter("unread")}>
+                {t("filterUnread")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-        {/* Responsive Dropdown Section */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild className="hidden tablet-sm:flex">
-            <Button className="h-11 w-full rounded-none text-xs tablet-sm:w-auto">
-              {t("filterLabel")}{" "}
-              {
-                (
-                  {
-                    all: t("filterAll"),
-                    match: t("filterMatches"),
-                    message: t("filterMessages"),
-                    like: t("filterLikes"),
-                    interview: t("filterInterviews"),
-                    unread: t("filterUnread"),
-                  } as Record<TNotificationFilterType, string>
-                )[notificationFilter]
-              }
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="rounded-none">
-            <DropdownMenuItem onClick={() => setNotificationFilter("all")}>
-              {t("filterAll")}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setNotificationFilter("match")}>
-              {t("filterMatches")}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setNotificationFilter("message")}>
-              {t("filterMessages")}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setNotificationFilter("like")}>
-              {t("filterLikes")}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => setNotificationFilter("interview")}
+          {/* Action Buttons Section */}
+          <div className="flex w-full items-center gap-2 sm:w-auto">
+            <Button
+              className="h-9 flex-1 rounded-none text-xs sm:flex-none"
+              variant="outline"
+              onClick={() => void markAllRead()}
+              disabled={unreadCount === 0 || notifications.length === 0}
             >
-              {t("filterInterviews")}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setNotificationFilter("unread")}>
-              {t("filterUnread")}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Action Buttons Section */}
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <Button
-            className="h-9 flex-1 rounded-none text-xs sm:flex-none"
-            variant="outline"
-            onClick={() => void markAllRead()}
-            disabled={unreadCount === 0 || notifications.length === 0}
-          >
-            <LucideCheckCheck />
-            {t("markAllRead")}
-          </Button>
-          <Button
-            className="h-9 flex-1 rounded-none text-xs sm:flex-none"
-            variant="outline"
-            onClick={deleteAllNotifications}
-            disabled={notifications.length === 0}
-          >
-            <LucideTrash2 />
-            {t("deleteAll")}
-          </Button>
+              <LucideCheckCheck />
+              {t("markAllRead")}
+            </Button>
+            <Button
+              className="h-9 flex-1 rounded-none text-xs sm:flex-none"
+              variant="outline"
+              onClick={deleteAllNotifications}
+              disabled={notifications.length === 0}
+            >
+              <LucideTrash2 />
+              {t("deleteAll")}
+            </Button>
+          </div>
         </div>
-      </div>
 
-      {/* Notification List Section */}
-      <div className="flex w-full flex-col gap-3">
-        {loading && (
-          <>
-            <NotificationCardSkeleton />
-            <NotificationCardSkeleton />
-            <NotificationCardSkeleton />
-          </>
-        )}
-        {/* Error State Section */}
-        {!loading && error && (
-          <PageState
-            variant="error"
-            title={error}
-            description={t("loadErrorDescription")}
-            compact
-            className="my-6 sm:my-8"
-            action={{
-              label: t("retry"),
-              onClick: () =>
-                void queryNotifications({
-                  page: 1,
-                  limit: 50,
-                  ...(notificationFilter === "unread" && {
-                    unreadOnly: true,
+        {/* Notification List Section */}
+        <div className="flex w-full flex-col gap-3">
+          {loading && (
+            <>
+              <NotificationCardSkeleton />
+              <NotificationCardSkeleton />
+              <NotificationCardSkeleton />
+            </>
+          )}
+          {/* Error State Section */}
+          {!loading && error && (
+            <PageState
+              variant="error"
+              title={error}
+              description={t("loadErrorDescription")}
+              compact
+              className="my-6 sm:my-8"
+              action={{
+                label: t("retry"),
+                onClick: () =>
+                  void queryNotifications({
+                    page: 1,
+                    limit: 50,
+                    ...(notificationFilter === "unread" && {
+                      unreadOnly: true,
+                    }),
                   }),
-                }),
-            }}
-          />
-        )}
+              }}
+            />
+          )}
 
-        {/* Empty State Section */}
-        {!loading && !error && filteredNotifications.length === 0 && (
-          <PageState
-            variant="empty"
-            title={t("emptyList")}
-            description={t("emptyListDescription")}
-            image={notificationEmptySvg}
-            compact
-            className="my-6 sm:my-8"
-            action={
-              notificationFilter !== "all"
-                ? {
-                    label: t("filterAll"),
-                    onClick: () => setNotificationFilter("all"),
-                  }
-                : undefined
-            }
-          />
-        )}
+          {/* Empty State Section */}
+          {!loading && !error && filteredNotifications.length === 0 && (
+            <PageState
+              variant="empty"
+              title={t("emptyList")}
+              description={t("emptyListDescription")}
+              image={notificationEmptySvg}
+              compact
+              className="my-6 sm:my-8"
+              action={
+                notificationFilter !== "all"
+                  ? {
+                      label: t("filterAll"),
+                      onClick: () => setNotificationFilter("all"),
+                    }
+                  : undefined
+              }
+            />
+          )}
 
-        {/* Notification Cards Section */}
-        {!loading &&
-          !error &&
-          filteredNotifications.map((notification: INotification) => {
-            const notifUser = resolveNotificationUser(notification, role);
+          {/* Notification Cards Section */}
+          {!loading &&
+            !error &&
+            filteredNotifications.map((notification: INotification) => {
+              const notifUser = resolveNotificationUser(notification, role);
 
-            if (notification.type === "chat") {
-              return (
-                <NotificationMessageCard
-                  key={notification.id}
-                  id={notification.id}
-                  seen={notification.isRead}
-                  timestamp={notification.createdAt}
-                  role={role}
-                  user={notifUser}
-                  preview={notification.message}
-                  onMarkRead={markRead}
-                  onDelete={deleteNotification}
-                />
-              );
-            }
+              if (notification.type === "chat") {
+                return (
+                  <NotificationMessageCard
+                    key={notification.id}
+                    id={notification.id}
+                    seen={notification.isRead}
+                    timestamp={notification.createdAt}
+                    role={role}
+                    user={notifUser}
+                    preview={notification.message}
+                    onMarkRead={markRead}
+                    onDelete={deleteNotification}
+                  />
+                );
+              }
 
-            if (notification.type === "match") {
-              return (
-                <NotificationMatchCard
-                  key={notification.id}
-                  id={notification.id}
-                  seen={notification.isRead}
-                  timestamp={notification.createdAt}
-                  role={role}
-                  user={notifUser}
-                  onMarkRead={markRead}
-                  onDelete={deleteNotification}
-                />
-              );
-            }
+              if (notification.type === "match") {
+                return (
+                  <NotificationMatchCard
+                    key={notification.id}
+                    id={notification.id}
+                    seen={notification.isRead}
+                    timestamp={notification.createdAt}
+                    role={role}
+                    user={notifUser}
+                    onMarkRead={markRead}
+                    onDelete={deleteNotification}
+                  />
+                );
+              }
 
-            if (notification.type === "like") {
+              if (notification.type === "like") {
+                return (
+                  <NotificationLikeCard
+                    key={notification.id}
+                    id={notification.id}
+                    seen={notification.isRead}
+                    timestamp={notification.createdAt}
+                    role={role}
+                    user={notifUser}
+                    onMarkRead={markRead}
+                    onDelete={deleteNotification}
+                  />
+                );
+              }
+
+              if (notification.type === "interview") {
+                const rawMsg = notification.message ?? "";
+                const dataInterviewTitle =
+                  (notification.data?.interviewTitle as string) || "";
+                const dataSenderName =
+                  (notification.data?.senderName as string) || "";
+
+                // Backwards-compat: extract parts from old English message format
+                const scheduledSep = " wants to schedule an interview: ";
+                const sepIdx = rawMsg.indexOf(scheduledSep);
+                const parsedSenderName =
+                  sepIdx !== -1 ? rawMsg.slice(0, sepIdx) : "";
+                const parsedInterviewTitle =
+                  sepIdx !== -1
+                    ? rawMsg.slice(sepIdx + scheduledSep.length)
+                    : "";
+
+                const resolvedSenderName = dataSenderName || parsedSenderName;
+                const resolvedInterviewTitle =
+                  dataInterviewTitle || parsedInterviewTitle;
+
+                return (
+                  <NotificationInterviewCard
+                    key={notification.id}
+                    id={notification.id}
+                    seen={notification.isRead}
+                    timestamp={notification.createdAt}
+                    role={role}
+                    eventType={
+                      (notification.data?.eventType as string) ??
+                      "interview_scheduled"
+                    }
+                    senderName={resolvedSenderName}
+                    interviewTitle={resolvedInterviewTitle}
+                    status={notification.data?.status as string | undefined}
+                    rawMessage={
+                      !resolvedInterviewTitle ? rawMsg || undefined : undefined
+                    }
+                    user={notifUser}
+                    onMarkRead={markRead}
+                    onDelete={deleteNotification}
+                  />
+                );
+              }
+
               return (
                 <NotificationLikeCard
                   key={notification.id}
@@ -405,65 +488,8 @@ export default function NotificationPage() {
                   onDelete={deleteNotification}
                 />
               );
-            }
-
-            if (notification.type === "interview") {
-              const rawMsg = notification.message ?? "";
-              const dataInterviewTitle =
-                (notification.data?.interviewTitle as string) || "";
-              const dataSenderName =
-                (notification.data?.senderName as string) || "";
-
-              // Backwards-compat: extract parts from old English message format
-              const scheduledSep = " wants to schedule an interview: ";
-              const sepIdx = rawMsg.indexOf(scheduledSep);
-              const parsedSenderName =
-                sepIdx !== -1 ? rawMsg.slice(0, sepIdx) : "";
-              const parsedInterviewTitle =
-                sepIdx !== -1 ? rawMsg.slice(sepIdx + scheduledSep.length) : "";
-
-              const resolvedSenderName = dataSenderName || parsedSenderName;
-              const resolvedInterviewTitle =
-                dataInterviewTitle || parsedInterviewTitle;
-
-              return (
-                <NotificationInterviewCard
-                  key={notification.id}
-                  id={notification.id}
-                  seen={notification.isRead}
-                  timestamp={notification.createdAt}
-                  role={role}
-                  eventType={
-                    (notification.data?.eventType as string) ??
-                    "interview_scheduled"
-                  }
-                  senderName={resolvedSenderName}
-                  interviewTitle={resolvedInterviewTitle}
-                  status={notification.data?.status as string | undefined}
-                  rawMessage={
-                    !resolvedInterviewTitle ? rawMsg || undefined : undefined
-                  }
-                  user={notifUser}
-                  onMarkRead={markRead}
-                  onDelete={deleteNotification}
-                />
-              );
-            }
-
-            return (
-              <NotificationLikeCard
-                key={notification.id}
-                id={notification.id}
-                seen={notification.isRead}
-                timestamp={notification.createdAt}
-                role={role}
-                user={notifUser}
-                onMarkRead={markRead}
-                onDelete={deleteNotification}
-              />
-            );
-          })}
-      </div>
+            })}
+        </div>
       </section>
     </div>
   );

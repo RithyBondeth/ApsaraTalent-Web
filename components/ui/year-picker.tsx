@@ -61,8 +61,8 @@ export function YearPicker({
           variant="outline"
           disabled={disabled}
           className={cn(
-            "w-full justify-between border rounded-none px-4 py-6 text-left text-muted-foreground bg-primary-foreground",
-            disabled && "opacity-50 cursor-not-allowed",
+            "w-full justify-between rounded-none border bg-primary-foreground px-4 py-6 text-left text-muted-foreground",
+            disabled && "cursor-not-allowed opacity-50",
             className,
           )}
         >
@@ -80,7 +80,7 @@ export function YearPicker({
         sideOffset={8}
       >
         {/* Navigation */}
-        <div className="flex items-center justify-between mb-2">
+        <div className="mb-2 flex items-center justify-between">
           <Button
             type="button"
             variant="ghost"

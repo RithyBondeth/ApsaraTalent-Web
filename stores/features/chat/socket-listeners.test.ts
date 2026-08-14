@@ -1,13 +1,27 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { IChatPreview, IMessage } from "@/utils/interfaces/chat/chat.interface";
+import type {
+  IChatPreview,
+  IMessage,
+} from "@/utils/interfaces/chat/chat.interface";
 import type { TChatState } from "./types";
 import { createMockSocket } from "@/tests/helpers/mock-socket";
 
-const notificationMocks = vi.hoisted(() => ({ add: vi.fn(), increment: vi.fn() }));
+const notificationMocks = vi.hoisted(() => ({
+  add: vi.fn(),
+  increment: vi.fn(),
+}));
 const interviewMocks = vi.hoisted(() => ({ refetch: vi.fn() }));
 const currentUserMocks = vi.hoisted(() => ({ getState: vi.fn() }));
-const employeeMatchingMocks = vi.hoisted(() => ({ refetch: vi.fn(), increment: vi.fn(), decrement: vi.fn() }));
-const companyMatchingMocks = vi.hoisted(() => ({ refetch: vi.fn(), increment: vi.fn(), decrement: vi.fn() }));
+const employeeMatchingMocks = vi.hoisted(() => ({
+  refetch: vi.fn(),
+  increment: vi.fn(),
+  decrement: vi.fn(),
+}));
+const companyMatchingMocks = vi.hoisted(() => ({
+  refetch: vi.fn(),
+  increment: vi.fn(),
+  decrement: vi.fn(),
+}));
 const toastMocks = vi.hoisted(() => ({ info: vi.fn() }));
 
 vi.mock("@/stores/apis/notification/notification.store", () => ({
@@ -19,7 +33,9 @@ vi.mock("@/stores/apis/notification/notification.store", () => ({
   },
 }));
 vi.mock("@/stores/apis/matching/interview.store", () => ({
-  useInterviewStore: { getState: () => ({ silentRefetch: interviewMocks.refetch }) },
+  useInterviewStore: {
+    getState: () => ({ silentRefetch: interviewMocks.refetch }),
+  },
 }));
 vi.mock("@/stores/apis/users/get-current-user.store", () => ({
   useGetCurrentUserStore: { getState: currentUserMocks.getState },
@@ -55,7 +71,10 @@ vi.mock("@/utils/functions/media", () => ({
   normalizeMediaUrl: (value: string | null | undefined) => value ?? null,
 }));
 
-import { markUnmatchInitiated, registerSocketListeners } from "./socket-listeners";
+import {
+  markUnmatchInitiated,
+  registerSocketListeners,
+} from "./socket-listeners";
 
 const preview = (id: string): IChatPreview => ({
   id,
@@ -113,7 +132,8 @@ function createStateHarness(overrides: Partial<TChatState> = {}) {
   };
 
   const set = (
-    update: Partial<TChatState> | ((current: TChatState) => Partial<TChatState>),
+    update:
+      Partial<TChatState> | ((current: TChatState) => Partial<TChatState>),
   ) => {
     const next = typeof update === "function" ? update(state) : update;
     state = { ...state, ...next };
@@ -182,7 +202,11 @@ describe("chat socket listeners", () => {
 
   it("adds active-chat messages, resolves replies, and replaces optimistic messages", () => {
     const socket = createMockSocket();
-    const parent = message("parent", { content: "Original", isMe: true, senderId: "user-1" });
+    const parent = message("parent", {
+      content: "Original",
+      isMe: true,
+      senderId: "user-1",
+    });
     const harness = createStateHarness({
       activeChat: preview("user-2"),
       activeChats: [preview("user-2")],
@@ -206,7 +230,9 @@ describe("chat socket listeners", () => {
     });
 
     harness.set({
-      currentMessages: [message("temp", { senderId: "user-1", isMe: true, content: "Mine" })],
+      currentMessages: [
+        message("temp", { senderId: "user-1", isMe: true, content: "Mine" }),
+      ],
     });
     socket.listeners.get("newMessage")?.({
       id: "message-real",
@@ -216,7 +242,11 @@ describe("chat socket listeners", () => {
       isRead: false,
     });
     expect(harness.get().currentMessages).toEqual([
-      expect.objectContaining({ id: "message-real", deliveryStatus: "sent", isMe: true }),
+      expect.objectContaining({
+        id: "message-real",
+        deliveryStatus: "sent",
+        isMe: true,
+      }),
     ]);
   });
 
@@ -231,9 +261,18 @@ describe("chat socket listeners", () => {
     registerSocketListeners(socket as never, harness.set as never, harness.get);
 
     socket.listeners.get("userTyping")?.({ userId: "user-2", isTyping: true });
-    socket.listeners.get("messageReaction")?.({ messageId: "message-1", reactions: { "user-1": "👍" } });
-    socket.listeners.get("messageRead")?.({ messageId: "message-1", readerId: "user-2" });
-    socket.listeners.get("userStatus")?.({ userId: "user-2", status: "online" });
+    socket.listeners.get("messageReaction")?.({
+      messageId: "message-1",
+      reactions: { "user-1": "👍" },
+    });
+    socket.listeners.get("messageRead")?.({
+      messageId: "message-1",
+      readerId: "user-2",
+    });
+    socket.listeners.get("userStatus")?.({
+      userId: "user-2",
+      status: "online",
+    });
     socket.listeners.get("messageDeleted")?.({ messageId: "message-1" });
     socket.listeners.get("messageEdited")?.({
       messageId: "message-1",
@@ -245,7 +284,9 @@ describe("chat socket listeners", () => {
       isTyping: { "user-2": true },
       onlineUsers: { "user-2": true },
       activeChat: expect.objectContaining({ isOnline: true }),
-      activeChats: [expect.objectContaining({ isOnline: true, isRead: true, unread: 0 })],
+      activeChats: [
+        expect.objectContaining({ isOnline: true, isRead: true, unread: 0 }),
+      ],
       currentMessages: [
         expect.objectContaining({
           content: "Updated",
@@ -273,7 +314,10 @@ describe("chat socket listeners", () => {
       updatedAt: "2026-07-23T10:00:00.000Z",
     };
 
-    socket.listeners.get("newNotification")?.({ ...baseNotification, type: "match" });
+    socket.listeners.get("newNotification")?.({
+      ...baseNotification,
+      type: "match",
+    });
     expect(notificationMocks.add).toHaveBeenCalledOnce();
     expect(employeeMatchingMocks.increment).toHaveBeenCalledOnce();
     expect(employeeMatchingMocks.refetch).toHaveBeenCalledWith("employee-1");
@@ -283,7 +327,10 @@ describe("chat socket listeners", () => {
       id: "notification-2",
       type: "interview",
     });
-    expect(interviewMocks.refetch).toHaveBeenCalledWith("employee-1", "employee");
+    expect(interviewMocks.refetch).toHaveBeenCalledWith(
+      "employee-1",
+      "employee",
+    );
 
     socket.listeners.get("newNotification")?.({ id: 123, type: "match" });
     expect(notificationMocks.add).toHaveBeenCalledTimes(2);
@@ -308,7 +355,9 @@ describe("chat socket listeners", () => {
   });
 
   it("logs safe socket error messages", () => {
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const errorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
     const socket = createMockSocket();
     const harness = createStateHarness();
     registerSocketListeners(socket as never, harness.set as never, harness.get);

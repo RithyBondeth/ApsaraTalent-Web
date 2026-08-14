@@ -64,9 +64,9 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<TCropArea | null>(
     null,
   );
-  const [mediaStatus, setMediaStatus] = useState<
-    "loading" | "ready" | "error"
-  >("loading");
+  const [mediaStatus, setMediaStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
 
   /* /* ------------------------------ All Effects ---------------------------- */
   useEffect(() => {
@@ -117,14 +117,18 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
     );
 
     return new Promise((resolve, reject) => {
-      canvas.toBlob((blob) => {
-        if (blob) {
-          resolve(blob);
-          return;
-        }
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+            return;
+          }
 
-        reject(new Error("The cropped image could not be created."));
-      }, "image/jpeg", 0.9);
+          reject(new Error("The cropped image could not be created."));
+        },
+        "image/jpeg",
+        0.9,
+      );
     });
   }
 
@@ -204,11 +208,11 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
         </div>
 
         {/* Crop Section */}
-        <div className="flex flex-col gap-2 mt-4">
+        <div className="mt-4 flex flex-col gap-2">
           <span className="text-sm text-muted-foreground">{t("zoom")}</span>
 
           <Slider
-            className="[&>span]:rounded-none [&>span>span]:rounded-none"
+            className="[&>span>span]:rounded-none [&>span]:rounded-none"
             value={[zoom]}
             min={1}
             max={3}

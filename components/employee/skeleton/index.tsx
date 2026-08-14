@@ -4,20 +4,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 /* ------------------------- Employee Card Skeleton ------------------------- */
 export default function EmployeeCardSkeleton() {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden rounded-none border border-border border-t-[5px] border-t-foreground bg-card">
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-none border border-t-[5px] border-border border-t-foreground bg-card">
       {/* Header Section */}
       <div className="flex items-start gap-3 p-4 pb-3">
         <Skeleton className="size-16 shrink-0 rounded-none" />
-        <div className="flex-1 flex flex-col gap-1.5">
+        <div className="flex flex-1 flex-col gap-1.5">
           <Skeleton className="h-4 w-28 rounded-none" />
           <Skeleton className="h-3 w-20 rounded-none" />
-          <div className="flex gap-2 mt-0.5">
+          <div className="mt-0.5 flex gap-2">
             <Skeleton className="h-3 w-16 rounded-none" />
             <Skeleton className="h-3 w-14 rounded-none" />
           </div>
         </div>
         {/* Like and Quick View Buttons Section (Stacked) */}
-        <div className="flex justify-end items-center gap-1 shrink-0">
+        <div className="flex shrink-0 items-center justify-end gap-1">
           <Skeleton className="size-8 rounded-none" />
           <Skeleton className="size-8 rounded-none" />
         </div>
@@ -43,13 +43,13 @@ export default function EmployeeCardSkeleton() {
       </div>
 
       {/* Description Section */}
-      <div className="px-4 pb-3 flex-1 space-y-1.5">
+      <div className="flex-1 space-y-1.5 px-4 pb-3">
         <Skeleton className="h-3 w-full rounded-none" />
         <Skeleton className="h-3 w-4/5 rounded-none" />
       </div>
 
       {/* Footer Section */}
-      <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-border/50">
+      <div className="flex items-center justify-end gap-2 border-t border-border/50 px-4 pb-3 pt-2">
         <Skeleton className="h-8 w-16 rounded-none" />
         <Skeleton className="h-8 w-16 rounded-none" />
       </div>
@@ -77,10 +77,10 @@ function SkeletonCard({
 /* ---------------------- Employee Detail Page Skeleton ---------------------- */
 export function EmployeeDetailPageLoadingSkeleton() {
   return (
-    <div className="profile-detail-page mx-auto flex w-full max-w-7xl flex-col gap-4 sm:gap-5 tablet-sm:pb-28">
+    <div className="profile-detail-page mx-auto flex w-full max-w-7xl flex-col gap-4 tablet-sm:pb-28 sm:gap-5">
       {/* Back Navigation Header Section */}
       <header className="sticky top-0 z-30 -mx-3 border-b border-border bg-background/95 px-3 backdrop-blur-xl sm:-mx-4 sm:px-4 lg:-mx-5 lg:px-5">
-        <div className="mx-auto flex h-16 max-w-7xl min-w-0 items-center gap-3">
+        <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center gap-3">
           <Skeleton className="h-10 w-10 shrink-0 rounded-none sm:w-24" />
           <div className="min-w-0 flex-1 space-y-1.5 border-l border-border pl-3">
             <Skeleton className="h-2.5 w-20 rounded-none" />
@@ -101,7 +101,7 @@ export function EmployeeDetailPageLoadingSkeleton() {
               <Skeleton className="h-7 w-28 rounded-none opacity-25" />
             </div>
 
-            <div className="relative z-[2] mt-auto flex items-end gap-4 sm:gap-5 tablet-sm:flex-col tablet-sm:items-start">
+            <div className="relative z-[2] mt-auto flex items-end gap-4 tablet-sm:flex-col tablet-sm:items-start sm:gap-5">
               <Skeleton className="size-24 shrink-0 rounded-none opacity-30 sm:size-28" />
               <div className="min-w-0 flex-1 space-y-3 pb-1">
                 <Skeleton className="h-2.5 w-24 rounded-none opacity-25" />
@@ -174,10 +174,10 @@ export function EmployeeDetailPageLoadingSkeleton() {
               {[...Array(2)].map((_, i) => (
                 <div key={i} className="flex gap-3">
                   {/* Timeline Dot + Line Section */}
-                  <div className="flex flex-col items-center pt-1 flex-shrink-0">
+                  <div className="flex flex-shrink-0 flex-col items-center pt-1">
                     <Skeleton className="size-2.5 rounded-none" />
                     {i === 0 && (
-                      <Skeleton className="w-px flex-1 mt-1.5 min-h-[60px]" />
+                      <Skeleton className="mt-1.5 min-h-[60px] w-px flex-1" />
                     )}
                   </div>
                   {/* Card Section */}
@@ -202,7 +202,7 @@ export function EmployeeDetailPageLoadingSkeleton() {
                   className="flex items-start gap-3 border border-border p-4"
                 >
                   <Skeleton className="size-9 flex-shrink-0 rounded-none" />
-                  <div className="space-y-1.5 flex-1">
+                  <div className="flex-1 space-y-1.5">
                     <Skeleton className="h-5 w-4/5 rounded-none" />
                     <Skeleton className="h-3.5 w-2/3 rounded-none" />
                     <Skeleton className="h-3.5 w-1/2 rounded-none" />
@@ -224,7 +224,7 @@ export function EmployeeDetailPageLoadingSkeleton() {
                   key={i}
                   className="flex items-center justify-between gap-2 border border-border bg-muted/50 px-3 py-2.5"
                 >
-                  <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex min-w-0 items-center gap-2">
                     <Skeleton className="size-4 flex-shrink-0" />
                     <Skeleton className="h-4 w-32" />
                   </div>
@@ -244,7 +244,7 @@ export function EmployeeDetailPageLoadingSkeleton() {
               {[...Array(3)].map((_, i) => (
                 <div key={i} className="flex items-start gap-2.5">
                   <Skeleton className="mt-0.5 size-4 flex-shrink-0 rounded-none" />
-                  <div className="space-y-1 flex-1">
+                  <div className="flex-1 space-y-1">
                     <Skeleton className="h-3 w-14" />
                     <Skeleton className="h-4 w-36" />
                   </div>

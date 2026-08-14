@@ -120,9 +120,9 @@ export default function BenefitValueStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-5">
+    <div className="flex w-full flex-col items-start gap-5">
       {/* Benefit Section */}
-      <div className="w-full bg-card rounded-none border border-border border-l-[5px] border-l-foreground shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] p-5 sm:p-6 flex flex-col items-start gap-5">
+      <div className="flex w-full flex-col items-start gap-5 rounded-none border border-l-[5px] border-border border-l-foreground bg-card p-5 shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] sm:p-6">
         <div className="w-full">
           <SectionTitle
             icon={<LucideCircleCheck />}
@@ -130,12 +130,12 @@ export default function BenefitValueStepForm({
           />
         </div>
         {/* Benefit List Section */}
-        <div className="w-full flex flex-col items-stretch gap-3">
-          <div className="w-full flex flex-wrap gap-3">
+        <div className="flex w-full flex-col items-stretch gap-3">
+          <div className="flex w-full flex-wrap gap-3">
             {benefits.length > 0 ? (
               benefits.map((benefit) => (
                 <div
-                  className="flex items-center gap-2 px-3 py-2 rounded-none border border-border bg-muted cursor-pointer [&>div>p]:text-xs"
+                  className="flex cursor-pointer items-center gap-2 rounded-none border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
                   key={benefit}
                 >
                   <IconLabel
@@ -145,18 +145,18 @@ export default function BenefitValueStepForm({
                         fill={COMPANY_ICON_COLOR.BENEFIT}
                       />
                     }
-                    className="[&>p]:text-[#0073E6] font-medium"
+                    className="font-medium [&>p]:text-[#0073E6]"
                     text={benefit}
                   />
                   <LucideXCircle
-                    className="text-red-500 cursor-pointer"
+                    className="cursor-pointer text-red-500"
                     width={"18px"}
                     onClick={() => removeBenefit(benefit)}
                   />
                 </div>
               ))
             ) : (
-              <div className="w-full flex items-center justify-center py-2">
+              <div className="flex w-full items-center justify-center py-2">
                 <TypographyMuted className="text-sm">
                   {t("cmpBenefitEmpty")}
                 </TypographyMuted>
@@ -179,7 +179,7 @@ export default function BenefitValueStepForm({
                 <LucidePlus />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+            <PopoverContent className="flex w-[var(--radix-popper-anchor-width)] flex-col items-end gap-3 p-5">
               <Input
                 placeholder={t("cmpBenefitPlaceholder")}
                 value={benefitInput}
@@ -206,17 +206,17 @@ export default function BenefitValueStepForm({
       </div>
 
       {/* Value Section */}
-      <div className="w-full bg-card rounded-none border border-border border-l-[5px] border-l-foreground shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] p-5 sm:p-6 flex flex-col items-start gap-5">
+      <div className="flex w-full flex-col items-start gap-5 rounded-none border border-l-[5px] border-border border-l-foreground bg-card p-5 shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] sm:p-6">
         <div className="w-full">
           <SectionTitle icon={<LucideZap />} title={t("cmpValueTitle")} />
         </div>
         {/* Value List Section */}
-        <div className="w-full flex flex-col items-stretch gap-3">
-          <div className="w-full flex flex-wrap gap-3">
+        <div className="flex w-full flex-col items-stretch gap-3">
+          <div className="flex w-full flex-wrap gap-3">
             {values.length > 0 ? (
               values.map((value) => (
                 <div
-                  className="flex items-center gap-2 px-3 py-2 rounded-none border border-border bg-muted cursor-pointer [&>div>p]:text-xs"
+                  className="flex cursor-pointer items-center gap-2 rounded-none border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
                   key={value}
                 >
                   <IconLabel
@@ -226,18 +226,18 @@ export default function BenefitValueStepForm({
                         fill={COMPANY_ICON_COLOR.VALUE}
                       />
                     }
-                    className="[&>p]:text-[#69B41E] font-medium"
+                    className="font-medium [&>p]:text-[#69B41E]"
                     text={value}
                   />
                   <LucideXCircle
-                    className="text-red-500 cursor-pointer"
+                    className="cursor-pointer text-red-500"
                     width={"18px"}
                     onClick={() => removeValue(value)}
                   />
                 </div>
               ))
             ) : (
-              <div className="w-full flex items-center justify-center py-2">
+              <div className="flex w-full items-center justify-center py-2">
                 <TypographyMuted className="text-sm">
                   {t("cmpValueEmpty")}
                 </TypographyMuted>
@@ -256,7 +256,7 @@ export default function BenefitValueStepForm({
                 <LucidePlus />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+            <PopoverContent className="flex w-[var(--radix-popper-anchor-width)] flex-col items-end gap-3 p-5">
               <Input
                 placeholder={t("cmpValuePlaceholder")}
                 value={valueInput}

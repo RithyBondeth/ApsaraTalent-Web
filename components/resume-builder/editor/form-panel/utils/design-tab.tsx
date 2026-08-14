@@ -25,7 +25,7 @@ import {
   buildTemplateBaseDesign,
   shuffleResumeDesign,
   RESUME_DESIGN_OPTIONS,
-} from "@/utils/functions/resume/resume-design";
+} from "@/utils/functions/resume";
 import {
   DESIGN_FONTS,
   DESIGN_PALETTES,
@@ -59,7 +59,7 @@ function PillGroup<T extends string>({
             className={cn(
               "rounded-none border px-2.5 py-1 text-[11px] capitalize transition-colors",
               option === value
-                ? "border-primary bg-primary/10 text-primary font-medium"
+                ? "border-primary bg-primary/10 font-medium text-primary"
                 : "border-border/70 bg-card text-muted-foreground hover:border-border hover:text-foreground",
             )}
           >
@@ -203,7 +203,7 @@ export function DesignTab({
                 className={cn(
                   "size-8 rounded-none border transition-all",
                   selected
-                    ? "ring-2 ring-primary ring-offset-2 ring-offset-background border-transparent scale-105"
+                    ? "scale-105 border-transparent ring-2 ring-primary ring-offset-2 ring-offset-background"
                     : "border-border/60 hover:scale-105",
                 )}
                 style={{
@@ -358,7 +358,7 @@ export function DesignTab({
                       className={cn(
                         "rounded-none border px-2.5 py-1 text-[11px] capitalize transition-colors",
                         selected
-                          ? "border-primary bg-primary/10 text-primary font-medium"
+                          ? "border-primary bg-primary/10 font-medium text-primary"
                           : "border-border/70 bg-card text-muted-foreground hover:border-border hover:text-foreground",
                       )}
                     >

@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => ({
   downloadFile: vi.fn(),
 }));
 
-vi.mock("@/utils/functions/stream-fetch", () => ({
+vi.mock("@/utils/functions/network/stream-fetch", () => ({
   streamFetch: mocks.streamFetch,
 }));
 vi.mock("@/stores/apis/resume/cover-letter-pdf.store", () => ({
@@ -114,7 +114,9 @@ describe("AiCoverLetterModal", () => {
 
     await user.click(screen.getByRole("button", { name: /Regenerate/ }));
     expect(await screen.findByText("Cover letter failed")).toBeVisible();
-    expect(screen.getByRole("button", { name: /Regenerate/ })).not.toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: /Regenerate/ }),
+    ).not.toBeDisabled();
 
     await user.click(screen.getByRole("button", { name: /Regenerate/ }));
     expect(await screen.findByDisplayValue("Recovered letter")).toBeVisible();
@@ -166,11 +168,12 @@ describe("AiCoverLetterModal", () => {
 
     await user.click(screen.getByRole("button", { name: /Download PDF/ }));
     await waitFor(
-      () => expect(mocks.downloadFile).toHaveBeenCalledWith(
-        "pdf",
-        "application/pdf",
-        "letter.pdf",
-      ),
+      () =>
+        expect(mocks.downloadFile).toHaveBeenCalledWith(
+          "pdf",
+          "application/pdf",
+          "letter.pdf",
+        ),
       { timeout: 1000 },
     );
     expect(mocks.generatePdf).toHaveBeenCalledWith(
@@ -196,6 +199,8 @@ describe("AiCoverLetterModal", () => {
     expect(
       await screen.findByText("Failed to generate PDF. Please try again."),
     ).toBeVisible();
-    expect(screen.getByRole("button", { name: /Download PDF/ })).not.toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: /Download PDF/ }),
+    ).not.toBeDisabled();
   });
 });

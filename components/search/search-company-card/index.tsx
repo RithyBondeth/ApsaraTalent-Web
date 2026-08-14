@@ -13,7 +13,7 @@ import {
   MoveUpRight,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ISearchCompanyCardProps } from "./prop";
+import { ISearchCompanyCardProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo } from "react";
@@ -30,7 +30,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <article className="group w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+    <article className="group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Section: Avatar, Title, Name and Industry */}
         <div className="flex gap-4">
@@ -44,11 +44,11 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
             <AvatarImage src={props.company.avatar} alt={props.company.name} />
           </Avatar>
 
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0 flex-1">
             <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
               {props.title}
             </h3>
-            <TypographyMuted className="text-sm text-muted-foreground mt-0.5 truncate">
+            <TypographyMuted className="mt-0.5 truncate text-sm text-muted-foreground">
               {props.company.name}
             </TypographyMuted>
             <TypographyP className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-foreground [&:not(:first-child)]:mt-0">
@@ -92,7 +92,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
 
         {/* Description Section */}
         {props.description && (
-          <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+          <TypographyMuted className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
             {props.description}
           </TypographyMuted>
         )}
@@ -119,7 +119,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
 
       {/* Action Bar Section */}
       <div className="flex items-center justify-between gap-3 border-t border-border bg-muted/25 px-4 py-3 sm:px-5">
-        <div className="flex flex-wrap items-center gap-2 min-w-0">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
           <MetaChip
             icon={<LucideCircleDollarSign />}
             text={props.salary}

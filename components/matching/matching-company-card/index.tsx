@@ -47,7 +47,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <article className="group w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+    <article className="group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
       <div className="flex gap-4 p-4 sm:gap-5 sm:p-5">
         {/* Avatar Section */}
         <Avatar
@@ -81,7 +81,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
 
           {/* Description Section */}
           {props.description && (
-            <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            <TypographyMuted className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
               {props.description}
             </TypographyMuted>
           )}
@@ -165,7 +165,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
             onClick={() => setUnmatchDialogOpen(true)}
           >
             {isUnmatching ? (
-              <LucideLoader2 className="size-3.5 animate-spin shrink-0" />
+              <LucideLoader2 className="size-3.5 shrink-0 animate-spin" />
             ) : (
               <LucideUserX className="size-3.5 shrink-0" />
             )}
@@ -226,7 +226,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
             disabled={props.isChatLoading}
           >
             {props.isChatLoading ? (
-              <LucideLoader2 className="size-3.5 animate-spin shrink-0" />
+              <LucideLoader2 className="size-3.5 shrink-0 animate-spin" />
             ) : (
               <LucideMessageCircle className="size-3.5 shrink-0" />
             )}

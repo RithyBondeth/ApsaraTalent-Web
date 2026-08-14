@@ -20,12 +20,14 @@ export function SectionTitle(props: {
         isDetail && "border-border",
       )}
     >
-      <div className="flex items-center gap-2.5 min-w-0">
+      <div className="flex min-w-0 items-center gap-2.5">
         {/* Icon Section */}
         <div
           className={cn(
             "flex size-8 flex-shrink-0 items-center justify-center bg-primary/10",
-            isDetail ? "border border-border bg-muted/60" : "rounded-none bg-foreground text-background",
+            isDetail
+              ? "border border-border bg-muted/60"
+              : "rounded-none bg-foreground text-background",
           )}
         >
           <span
@@ -58,7 +60,7 @@ export function SectionTitle(props: {
 export function SectionTitleSkeleton() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex items-center gap-2.5 mb-4 pb-3.5 border-b border-border/60">
+    <div className="mb-4 flex items-center gap-2.5 border-b border-border/60 pb-3.5">
       {/* Icon Skeleton Section */}
       <Skeleton className="size-8 shrink-0 rounded-none" />
 

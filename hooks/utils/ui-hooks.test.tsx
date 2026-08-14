@@ -42,7 +42,9 @@ describe("UI utility hooks", () => {
       removeListener: vi.fn(),
       dispatchEvent: vi.fn(),
     }));
-    const { result, unmount } = renderHook(() => useMediaQuery("(min-width: 1024px)"));
+    const { result, unmount } = renderHook(() =>
+      useMediaQuery("(min-width: 1024px)"),
+    );
 
     expect(result.current).toBe(true);
     act(() => changeListener?.({ matches: false } as MediaQueryListEvent));
@@ -68,11 +70,17 @@ describe("UI utility hooks", () => {
       removeListener: vi.fn(),
       dispatchEvent: vi.fn(),
     });
-    Object.defineProperty(window, "innerWidth", { configurable: true, value: 500 });
+    Object.defineProperty(window, "innerWidth", {
+      configurable: true,
+      value: 500,
+    });
     const { result } = renderHook(() => useIsMobile());
     expect(result.current).toBe(true);
 
-    Object.defineProperty(window, "innerWidth", { configurable: true, value: 1200 });
+    Object.defineProperty(window, "innerWidth", {
+      configurable: true,
+      value: 1200,
+    });
     act(() => changeListener?.());
     expect(result.current).toBe(false);
   });

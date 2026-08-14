@@ -9,7 +9,7 @@ import {
   khmerPhoneNumberValidation,
   selectedValidation,
   textValidation,
-} from "@/utils/functions/validation/form-schemas";
+} from "@/utils/functions/validation";
 import * as z from "zod";
 
 const basicInfoSchema = z.object({

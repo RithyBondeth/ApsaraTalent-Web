@@ -48,7 +48,7 @@ function SectionItem({
       ref={setNodeRef}
       style={style}
       className={`flex items-center justify-between border bg-card p-3 transition-colors ${
-        !isVisible ? "opacity-60 bg-muted/30" : "shadow-sm"
+        !isVisible ? "bg-muted/30 opacity-60" : "shadow-sm"
       }`}
     >
       {/* Information Section */}
@@ -57,7 +57,7 @@ function SectionItem({
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing text-muted-foreground"
+          className="cursor-grab text-muted-foreground active:cursor-grabbing"
         >
           <GripVertical size={16} />
         </div>
@@ -65,7 +65,7 @@ function SectionItem({
         {/* Section Name and Status Section */}
         <div className="flex flex-col">
           <span className="text-sm font-medium">{label}</span>
-          <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
             {isVisible ? t("visible") : t("hidden")}
           </span>
         </div>
@@ -182,10 +182,10 @@ export function LayoutTab() {
 
       {/* Pro Tip Section */}
       <div className="border border-primary/10 bg-primary/5 p-4">
-        <h5 className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
+        <h5 className="mb-2 text-xs font-bold uppercase tracking-widest text-primary">
           {t("proTip")}
         </h5>
-        <p className="text-xs text-muted-foreground leading-relaxed">
+        <p className="text-xs leading-relaxed text-muted-foreground">
           {t("proTipDesc")}
         </p>
       </div>

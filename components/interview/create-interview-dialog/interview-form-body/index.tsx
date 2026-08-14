@@ -59,7 +59,7 @@ function Field({
         )}
         <Label className="text-sm font-medium">
           {label}
-          {required && <span className="text-destructive ml-0.5">*</span>}
+          {required && <span className="ml-0.5 text-destructive">*</span>}
         </Label>
       </div>
       {children}
@@ -117,7 +117,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
               value={selectedEmployeeId}
               onValueChange={setSelectedEmployeeId}
             >
-              <SelectTrigger className="w-full h-10">
+              <SelectTrigger className="h-10 w-full">
                 <SelectValue placeholder={t("chooseMatchedEmployee")} />
               </SelectTrigger>
               <SelectContent>
@@ -188,7 +188,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
             <LucideCalendarCheck className="size-3.5 text-muted-foreground" />
             <Label className="text-sm font-medium">
               {t("dateTime")}
-              <span className="text-destructive ml-0.5">*</span>
+              <span className="ml-0.5 text-destructive">*</span>
             </Label>
           </div>
 
@@ -242,7 +242,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
             </Field>
 
             <Field label={t("duration")} icon={<LucideTimer />}>
-              <div className="flex items-center h-10 rounded-none border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-background">
+              <div className="flex h-10 items-center rounded-none border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-background">
                 <input
                   type="number"
                   min={5}
@@ -256,7 +256,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
                     );
                     setDurationMinutes(v);
                   }}
-                  className="w-full bg-transparent text-sm outline-none tabular-nums [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  className="w-full bg-transparent text-sm tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                 />
                 <span className="ml-1.5 shrink-0 text-sm text-muted-foreground">
                   {minLabel}
@@ -292,7 +292,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
         </div>
 
         {error && (
-          <p className="rounded-none border border-destructive/20 border-l-[4px] border-l-destructive bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <p className="rounded-none border border-l-[4px] border-destructive/20 border-l-destructive bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {error}
           </p>
         )}

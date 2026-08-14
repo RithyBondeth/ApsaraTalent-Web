@@ -112,8 +112,7 @@ export default function ProfessionStepForm({
   const jobValue = useWatch({ control, name: "profession.job" });
   const descValue = useWatch({ control, name: "profession.description" });
   const languagesValue = useWatch({ control, name: "profession.languages" }) as
-    | string[]
-    | undefined;
+    string[] | undefined;
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Job Refine ─────────────────────────────────────────
@@ -171,7 +170,7 @@ export default function ProfessionStepForm({
                     size="sm"
                     onClick={handleJobRefine}
                     disabled={jobLoading}
-                    className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                    className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                   >
                     {jobLoading ? (
                       <Loader2 size={10} className="animate-spin" />
@@ -194,8 +193,8 @@ export default function ProfessionStepForm({
       {/* Year of Experience and Availability Section */}
       <div className="field-row w-full">
         {/* Year of Experience Section */}
-        <div className="w-full flex flex-col items-start gap-2">
-          <div className="w-full flex flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
+          <div className="flex w-full flex-col items-start gap-2">
             <Controller
               name="profession.yearOfExperience"
               control={control!}
@@ -217,8 +216,8 @@ export default function ProfessionStepForm({
         </div>
 
         {/* Availability Section */}
-        <div className="w-full flex flex-col items-start gap-2">
-          <div className="w-full flex flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
+          <div className="flex w-full flex-col items-start gap-2">
             <Controller
               name="profession.availability"
               control={control!}
@@ -243,7 +242,7 @@ export default function ProfessionStepForm({
       {/* Work Mode and Notice Period Section */}
       <div className="field-row w-full">
         {/* Work Mode Section */}
-        <div className="w-full flex flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
           <Controller
             name="profession.workMode"
             control={control!}
@@ -261,7 +260,7 @@ export default function ProfessionStepForm({
         </div>
 
         {/* Notice Period Section */}
-        <div className="w-full flex flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
           <Controller
             name="profession.noticePeriod"
             control={control!}
@@ -283,14 +282,14 @@ export default function ProfessionStepForm({
 
       {/* Languages and Expected Salary Section */}
       <div className="grid w-full gap-4">
-        <div className="w-full flex flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
           {/* Languages Dropdown Section */}
           <Popover open={langPopoverOpen} onOpenChange={setLangPopoverOpen}>
             <PopoverTrigger asChild>
               <Button
                 type="button"
                 variant="outline"
-                className="w-full justify-start text-muted-foreground font-normal h-12"
+                className="h-12 w-full justify-start font-normal text-muted-foreground"
               >
                 <Languages />
                 <span className="truncate">
@@ -337,7 +336,7 @@ export default function ProfessionStepForm({
         </div>
 
         {/* Expected Salary Section */}
-        <div className="w-full flex flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
           <div className="auth-salary-grid grid w-full grid-cols-[108px_minmax(0,1fr)_minmax(0,1fr)] items-start gap-2">
             {/* Currency Section */}
             <div>
@@ -369,7 +368,7 @@ export default function ProfessionStepForm({
             </div>
 
             {/* Min Salary Section */}
-            <div className="flex-1 flex flex-col gap-1">
+            <div className="flex flex-1 flex-col gap-1">
               <Controller
                 name="profession.expectedSalaryMin"
                 control={control!}
@@ -424,8 +423,8 @@ export default function ProfessionStepForm({
       </div>
 
       {/* Description Section */}
-      <div className="w-full flex flex-col items-start gap-1">
-        <div className="w-full flex flex-col items-start gap-2">
+      <div className="flex w-full flex-col items-start gap-1">
+        <div className="flex w-full flex-col items-start gap-2">
           <Controller
             name="profession.description"
             control={control!}
@@ -442,7 +441,7 @@ export default function ProfessionStepForm({
                       size="sm"
                       onClick={handleDescRefine}
                       disabled={descLoading}
-                      className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                      className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                     >
                       {descLoading ? (
                         <Loader2 size={10} className="animate-spin" />

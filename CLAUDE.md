@@ -8,6 +8,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Build**: `npm run build`
 - **Production**: `npm start`
 - **Linting**: `npm run lint`
+- **Formatting**: `npm run format` (write) / `npm run format:check` (CI gate)
+- **Type checking**: `npm run typecheck`
+- **Unit tests**: `npm test` / `npm run test:coverage`
+- **E2E tests**: `npm run test:e2e`
 
 ## Project Overview
 
@@ -41,20 +45,32 @@ components/
 ├── ui/              # Reusable shadcn/ui components
 ├── company/         # Company-specific components
 ├── employee/        # Employee-specific components
-├── utils/           # Utility components (typography, themes)
+├── utils/           # Shared presentational components (typography, themes,
+│                    # dialogs, layout) — note this holds components, not the
+│                    # pure helpers that live in the root `utils/`
 └── [feature]/       # Feature-specific component groups
 
 stores/
 ├── apis/            # API store modules organized by feature
 ├── contexts/        # Global state contexts
+├── features/        # Client-side feature state (chat, call)
+├── shared/          # Persistence keys, storage, shared error mapping
+├── languages/       # Language store
 └── themes/          # Theme management
 
 utils/
+├── auth/            # Cookie/session helpers
 ├── constants/       # API URLs and application constants
-├── firebase/        # Firebase configuration and services
-├── functions/       # Utility functions
+├── functions/       # Pure helper functions, grouped by domain
 ├── interfaces/      # TypeScript interfaces
 └── types/           # TypeScript type definitions
+
+lib/                 # Third-party client setup (axios, firebase, cn)
+hooks/               # React hooks, grouped by domain
+language/            # next-intl message catalogues (en, km)
+assets/              # SVG/image assets imported by components
+tests/               # E2E specs, shared helpers, vitest setup
+scripts/             # Node maintenance and verification scripts
 ```
 
 ### Authentication System
@@ -89,6 +105,33 @@ utils/
 - Real-time notifications and updates
 
 ## Development Guidelines
+
+### File Naming Conventions
+- Directories and files are kebab-case
+- A component lives in its own directory as `index.tsx`, with its prop types in
+  a sibling `props.ts` (always plural, always `.ts` — props files carry no JSX)
+- Route-level Zod schemas are always `validation.ts`, never `validate.ts`
+- Constants files end in `.constant.ts`, interfaces in `.interface.ts`, types in
+  `.type.ts`, Zustand API stores in `.store.ts`
+- Unit tests sit next to their subject and are named after it
+  (`search-bar.test.tsx`), never `index.test.tsx` — the filename is what shows
+  up in test output, so it has to identify the subject on its own
+
+### Utility Imports
+- Every subdirectory of `utils/functions/` has a barrel beside it
+  (`utils/functions/date/` ↔ `utils/functions/date.ts`)
+- Import helpers through the barrel (`@/utils/functions/date`), not the deep
+  module path. Add new modules to the barrel when you create them.
+- Interfaces and types are the exception: import those from their concrete
+  file (`@/utils/interfaces/user/company.interface`)
+
+### Formatting
+- Prettier owns all formatting; ESLint defers to it via `eslint-config-prettier`
+- `npm run format:check` gates CI, so run `npm run format` before pushing
+- `prettier-plugin-tailwindcss` sorts Tailwind classes. It also *trims* string
+  literals, so never rely on a leading/trailing space inside one to separate
+  classes — `` `base${x ? " extra" : ""}` `` silently becomes `baseextra`.
+  Use `cn("base", x && "extra")` for conditional classes.
 
 ### Component Organization
 - Components are organized by feature domain (company, employee, matching, etc.)

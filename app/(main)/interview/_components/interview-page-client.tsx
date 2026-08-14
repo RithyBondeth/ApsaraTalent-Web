@@ -106,10 +106,10 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="interview-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 animate-page-in sm:gap-9 sm:px-4 lg:px-5">
+    <div className="interview-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
       <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
-        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
+        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6 sm:px-9 sm:py-10">
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
             <span className="h-px w-7 bg-primary" />
             {t("interviewDesk")}
@@ -173,7 +173,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
 
       {/* Error Banner Section */}
       {error && interviews.length > 0 && (
-        <div className="w-full border border-destructive/20 border-l-[5px] border-l-destructive bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="w-full border border-l-[5px] border-destructive/20 border-l-destructive bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
         </div>
       )}
@@ -224,7 +224,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
             }
           />
         ) : interviews.length > 0 ? (
-          <div className="flex w-full flex-col gap-3 stagger-list">
+          <div className="stagger-list flex w-full flex-col gap-3">
             {interviews.map((interview) => (
               <InterviewCard
                 key={interview.id}
@@ -241,9 +241,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
           <PageState
             variant="empty"
             title={
-              isEmployee
-                ? t("noInterviewsEmployee")
-                : t("noInterviewsCompany")
+              isEmployee ? t("noInterviewsEmployee") : t("noInterviewsCompany")
             }
             image={emptySvg}
             compact

@@ -7,7 +7,7 @@ import { Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { IChatSidebarProps } from "./props";
 import ExpandedChatList from "./expanded-chat-list";
-import CollapsedChatList from "./collapesed-chat-list";
+import CollapsedChatList from "./collapsed-chat-list";
 import { useTranslations } from "next-intl";
 
 export default function ChatSidebar(props: IChatSidebarProps) {
@@ -60,7 +60,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
   return (
     <div
       className={cn(
-        "flex flex-col h-full transition-all duration-300 ease-in-out overflow-hidden border-r border-border bg-card",
+        "flex h-full flex-col overflow-hidden border-r border-border bg-card transition-all duration-300 ease-in-out",
         widthClass,
         !isResizable && "lg:w-auto",
         className,
@@ -69,12 +69,12 @@ export default function ChatSidebar(props: IChatSidebarProps) {
     >
       {/* Sidebar Header Section */}
       {isOpen ? (
-        <div className="px-3 md:px-4 pt-4 md:pt-5 pb-3 md:pb-4 flex items-end justify-between shrink-0 border-b border-border">
+        <div className="flex shrink-0 items-end justify-between border-b border-border px-3 pb-3 pt-4 md:px-4 md:pb-4 md:pt-5">
           <div className="flex items-center gap-3">
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
               01
             </span>
-            <h1 className="text-xl md:text-2xl font-black text-foreground tracking-[-0.035em]">
+            <h1 className="text-xl font-black tracking-[-0.035em] text-foreground md:text-2xl">
               {t("chats")}
             </h1>
           </div>
@@ -84,7 +84,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
               <button
                 onClick={onNewChat}
                 aria-label="New conversation"
-                className="h-9 w-9 rounded-none border border-foreground bg-foreground flex items-center justify-center text-background hover:bg-primary hover:border-primary transition-colors"
+                className="flex h-9 w-9 items-center justify-center rounded-none border border-foreground bg-foreground text-background transition-colors hover:border-primary hover:bg-primary"
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -94,7 +94,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 lg:hidden rounded-none"
+                className="h-8 w-8 rounded-none lg:hidden"
                 onClick={onClose}
                 aria-label="Close sidebar"
               >
@@ -105,12 +105,12 @@ export default function ChatSidebar(props: IChatSidebarProps) {
         </div>
       ) : (
         /* Sidebar Collapsed Header Section */
-        <div className="py-4 flex flex-col items-center shrink-0">
+        <div className="flex shrink-0 flex-col items-center py-4">
           {onNewChat && (
             <button
               onClick={onNewChat}
               aria-label="New conversation"
-              className="h-9 w-9 rounded-none border border-foreground bg-foreground flex items-center justify-center text-background hover:bg-primary hover:border-primary transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-none border border-foreground bg-foreground text-background transition-colors hover:border-primary hover:bg-primary"
             >
               <Plus className="h-4 w-4" />
             </button>
@@ -120,12 +120,12 @@ export default function ChatSidebar(props: IChatSidebarProps) {
 
       {/* Sidebar Search Section */}
       {isOpen && (
-        <div className="px-3 md:px-4 py-3 shrink-0 border-b border-border">
+        <div className="shrink-0 border-b border-border px-3 py-3 md:px-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t("chatsSearch")}
-              className="pl-9 h-10 rounded-none bg-muted/30 border-border focus-visible:ring-1 focus-visible:ring-primary"
+              className="h-10 rounded-none border-border bg-muted/30 pl-9 focus-visible:ring-1 focus-visible:ring-primary"
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
             />

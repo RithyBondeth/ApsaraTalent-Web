@@ -74,11 +74,11 @@ import {
   salaryCurrencyConstant,
   workModeConstant,
 } from "@/utils/constants/ui.constant";
-import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
+import { getSocialPlatformTypeIcon } from "@/utils/functions/ui";
 import { capitalizeWords } from "@/utils/functions/text";
 import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { MAX_IMAGE_SIZE } from "@/utils/constants/config.constant";
-import { isUuid } from "@/utils/functions/validation/check-uuid";
+import { isUuid } from "@/utils/functions/validation";
 import {
   extractCleanFilename,
   isSupportedProfileImage,
@@ -151,10 +151,9 @@ import { EmployeeProfilePageLoadingSkeleton } from "@/components/profile/skeleto
 import MissingProfileFieldButton from "@/components/profile/missing-profile-field-button";
 import ProfileEditActionBar from "@/components/profile/profile-edit-action-bar";
 
-  /* -------------------------------- Helpers --------------------------------- */
+/* -------------------------------- Helpers --------------------------------- */
 let employeeProfileResolverPromise:
-  | Promise<Resolver<TEmployeeProfileForm>>
-  | undefined;
+  Promise<Resolver<TEmployeeProfileForm>> | undefined;
 
 const lazyEmployeeProfileResolver: Resolver<TEmployeeProfileForm> = async (
   ...args
@@ -1283,7 +1282,9 @@ export default function EmployeeProfilePage() {
   /* -------------------------------- Profile Completion ---------------------- */
   const profileCompletion = getEmployeeProfileCompletion({
     ...employee,
-    email: user.email,
+    // The API omits `email` rather than sending null, and the completion
+    // helper distinguishes "absent" as null.
+    email: user.email ?? null,
     avatar: avatarLoadError ? undefined : employee.avatar,
   });
 
@@ -1291,7 +1292,7 @@ export default function EmployeeProfilePage() {
   return (
     <form
       data-profile-editing={isEdit}
-      className="profile-editorial profile-employee !min-w-full flex flex-col gap-6 animate-page-in sm:gap-7"
+      className="profile-editorial profile-employee animate-page-in flex !min-w-full flex-col gap-6 sm:gap-7"
       onSubmit={handleSubmit}
       onKeyDown={(e) => {
         if (
@@ -1333,8 +1334,8 @@ export default function EmployeeProfilePage() {
         </div>
 
         {/* Identity Row Section */}
-        <div className="px-5 sm:px-6 pb-6">
-          <div className="flex items-end gap-4 -mt-10 sm:-mt-12 tablet-md:flex-col tablet-md:items-center">
+        <div className="px-5 pb-6 sm:px-6">
+          <div className="-mt-10 flex items-end gap-4 tablet-md:flex-col tablet-md:items-center sm:-mt-12">
             {/* Avatar Section */}
             <div
               className="relative flex-shrink-0"
@@ -1343,20 +1344,20 @@ export default function EmployeeProfilePage() {
               }}
             >
               <Avatar
-                className="size-24 cursor-pointer border-[6px] border-card shadow-none sm:size-28 !rounded-none"
+                className="size-24 cursor-pointer !rounded-none border-[6px] border-card shadow-none sm:size-28"
                 rounded="md"
               >
                 <AvatarImage
                   src={avatarPreview}
                   onError={() => setAvatarLoadError(true)}
                 />
-                <AvatarFallback className="uppercase text-lg font-semibold">
+                <AvatarFallback className="text-lg font-semibold uppercase">
                   {employee.username?.slice(0, AVATAR_INITIALS_LENGTH)}
                 </AvatarFallback>
               </Avatar>
 
               {(isEdit || !employee.avatar) && (
-                <div className="flex items-center gap-1 absolute -bottom-1 -right-1">
+                <div className="absolute -bottom-1 -right-1 flex items-center gap-1">
                   <Button
                     className="size-7 rounded-none bg-foreground p-0 text-primary-foreground shadow-none"
                     type="button"
@@ -1434,7 +1435,7 @@ export default function EmployeeProfilePage() {
             />
 
             {/* Name and Job Section */}
-            <div className="flex-1 min-w-0 pb-1 tablet-md:text-center">
+            <div className="min-w-0 flex-1 pb-1 tablet-md:text-center">
               <h1 className="truncate text-2xl font-black leading-tight tracking-[-0.04em] sm:text-3xl">
                 {employee.username}
               </h1>
@@ -1773,7 +1774,7 @@ export default function EmployeeProfilePage() {
                         if (result) toast.success(tr("refinedSuccess"));
                       }}
                       disabled={jobLoading}
-                      className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                      className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                     >
                       {jobLoading ? (
                         <LucideLoader2 size={10} className="animate-spin" />
@@ -2069,7 +2070,7 @@ export default function EmployeeProfilePage() {
                       <Button
                         type="button"
                         variant="outline"
-                        className="w-full justify-start text-muted-foreground font-normal h-10"
+                        className="h-10 w-full justify-start font-normal text-muted-foreground"
                       >
                         <LucidePlus />
                         {tP("addLanguage")}
@@ -2216,7 +2217,7 @@ export default function EmployeeProfilePage() {
 
               {/* Description Section */}
               <div className="col-span-12 flex w-full flex-col items-start gap-1 tablet-md:col-span-1">
-                <div className="w-full flex items-center justify-between">
+                <div className="flex w-full items-center justify-between">
                   <TypographyMuted className="text-xs font-bold text-foreground">
                     {tP("description")}
                   </TypographyMuted>
@@ -2244,7 +2245,7 @@ export default function EmployeeProfilePage() {
                         if (result) toast.success(tr("refinedSuccess"));
                       }}
                       disabled={descLoading}
-                      className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                      className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                     >
                       {descLoading ? (
                         <LucideLoader2 size={10} className="animate-spin" />
@@ -2255,7 +2256,7 @@ export default function EmployeeProfilePage() {
                     </Button>
                   )}
                 </div>
-                <div className="w-full flex flex-col items-start gap-2">
+                <div className="flex w-full flex-col items-start gap-2">
                   {!isEdit && !descValue?.trim() ? (
                     <MissingProfileFieldButton
                       label={tP("addMissingField", {
@@ -2366,12 +2367,12 @@ export default function EmployeeProfilePage() {
                     );
                   })
                 ) : (
-                  <div className="w-full flex flex-col items-center justify-center p-3">
+                  <div className="flex w-full flex-col items-center justify-center p-3">
                     {/* Add New Experience Section */}
                     <Image
                       alt="empty"
                       src={addNewExperienceSvg}
-                      className="size-60 animate-float"
+                      className="animate-float size-60"
                     />
                     <Button
                       className="text-xs"
@@ -2439,8 +2440,7 @@ export default function EmployeeProfilePage() {
                 {educationFA.fields.length > 0 ? (
                   educationFA.fields.map((row, index) => {
                     const educationId = form.watch(`educations.${index}.id`) as
-                      | string
-                      | undefined;
+                      string | undefined;
 
                     return (
                       <EmployeeEducationForm
@@ -2484,12 +2484,12 @@ export default function EmployeeProfilePage() {
                     );
                   })
                 ) : (
-                  <div className="w-full flex flex-col items-center justify-center p-3">
+                  <div className="flex w-full flex-col items-center justify-center p-3">
                     {/* Add New Education Section */}
                     <Image
                       alt="empty"
                       src={addNewEducationSvg}
-                      className="size-60 animate-float"
+                      className="animate-float size-60"
                     />
                     <Button
                       variant={"secondary"}
@@ -2571,7 +2571,7 @@ export default function EmployeeProfilePage() {
                 ))}
               </div>
             ) : (
-              <div className="w-full flex items-center justify-center">
+              <div className="flex w-full items-center justify-center">
                 {/* No Skill Section */}
                 <TypographyMuted className="text-sm">
                   {tP("noSkillAvailable")}
@@ -2649,7 +2649,7 @@ export default function EmployeeProfilePage() {
             </div>
 
             {/* Career Scopes List Section */}
-            <div className="w-full flex flex-wrap gap-3">
+            <div className="flex w-full flex-wrap gap-3">
               {careerScopes.length > 0 ? (
                 careerScopes.map((career, index) => (
                   <div key={index} className="flex items-center gap-1">
@@ -2684,7 +2684,7 @@ export default function EmployeeProfilePage() {
                   </div>
                 ))
               ) : (
-                <div className="w-full flex items-center justify-center">
+                <div className="flex w-full items-center justify-center">
                   {/* No CareerScopes Section */}
                   <TypographyMuted className="text-sm">
                     {tP("noCareerScopeAvailable")}
@@ -2794,10 +2794,10 @@ export default function EmployeeProfilePage() {
               icon={<LucideFileText />}
               title={tP("referencesInformation")}
             />
-            <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
+            <div className="flex w-full flex-col items-start gap-5 [&>div]:w-full">
               {/* Resume Section */}
               <div className="flex items-center justify-between border border-border bg-muted/50 px-3 py-2">
-                <div className="flex items-center text-muted-foreground gap-1">
+                <div className="flex items-center gap-1 text-muted-foreground">
                   <LucideFileText strokeWidth={"1.3px"} />
                   <TypographyMuted>
                     {resumeFile
@@ -2861,7 +2861,7 @@ export default function EmployeeProfilePage() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      className="text-red-500 bg-red-100"
+                      className="bg-red-100 text-red-500"
                       onClick={() => setOpenRemoveResumeDialog(true)}
                     >
                       <LucideTrash2 />
@@ -2900,7 +2900,7 @@ export default function EmployeeProfilePage() {
 
               {/* CoverLetter Section */}
               <div className="flex items-center justify-between border border-border bg-muted/50 px-3 py-2">
-                <div className="flex items-center text-muted-foreground gap-1">
+                <div className="flex items-center gap-1 text-muted-foreground">
                   <LucideFileText strokeWidth={"1.3px"} />
                   <TypographyMuted>
                     {coverLetterFile
@@ -2967,7 +2967,7 @@ export default function EmployeeProfilePage() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      className="text-red-500 bg-red-100"
+                      className="bg-red-100 text-red-500"
                       onClick={() => setOpenRemoveCoverLetterDialog(true)}
                     >
                       <LucideTrash2 />
@@ -3030,7 +3030,7 @@ export default function EmployeeProfilePage() {
               <div className="flex flex-wrap gap-2">
                 {socials.map((item, index) => (
                   <div
-                    className="flex items-center gap-1.5 max-w-full"
+                    className="flex max-w-full items-center gap-1.5"
                     key={index}
                   >
                     <Link
@@ -3040,11 +3040,11 @@ export default function EmployeeProfilePage() {
                       <span className="flex-shrink-0">
                         {getSocialPlatformTypeIcon(item.platform as TPlatform)}
                       </span>
-                      <span className="text-sm truncate">{item.platform}</span>
+                      <span className="truncate text-sm">{item.platform}</span>
                     </Link>
                     {isEdit && (
                       <LucideXCircle
-                        className="flex-shrink-0 cursor-pointer text-red-500 hover:text-red-600 transition-colors"
+                        className="flex-shrink-0 cursor-pointer text-red-500 transition-colors hover:text-red-600"
                         size={18}
                         onClick={() => removeSocial(item.platform as TPlatform)}
                       />
@@ -3053,7 +3053,7 @@ export default function EmployeeProfilePage() {
                 ))}
               </div>
             ) : (
-              <div className="w-full flex items-center justify-center pt-2">
+              <div className="flex w-full items-center justify-center pt-2">
                 {/* No Social Section */}
                 <TypographyMuted className="text-sm">
                   {tP("noSocialAvailable")}
@@ -3066,8 +3066,8 @@ export default function EmployeeProfilePage() {
               <div>
                 {isEdit && (
                   <div className="mt-3 flex w-full flex-col items-start gap-4 overflow-hidden border border-border p-4">
-                    <div className="w-full flex flex-col gap-3">
-                      <div className="w-full flex-shrink-0 flex flex-col items-start gap-1">
+                    <div className="flex w-full flex-col gap-3">
+                      <div className="flex w-full flex-shrink-0 flex-col items-start gap-1">
                         <TypographyMuted className="text-xs">
                           {tP("platform")}
                         </TypographyMuted>
@@ -3117,7 +3117,7 @@ export default function EmployeeProfilePage() {
                         </Select>
                       </div>
 
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <LabelInput
                           label={tP("link")}
                           input={
@@ -3150,7 +3150,7 @@ export default function EmployeeProfilePage() {
                 <Button
                   type="button"
                   variant="secondary"
-                  className="text-xs w-full mt-3"
+                  className="mt-3 w-full text-xs"
                   onClick={() => {
                     const openPlatformSelect = () => {
                       const el = socialSelectPlatformRef.current;
@@ -3197,7 +3197,7 @@ export default function EmployeeProfilePage() {
               title={tP("authentication")}
             />
 
-            <div className="w-full flex flex-col items-start gap-3">
+            <div className="flex w-full flex-col items-start gap-3">
               {/* Google, Facebook, LinkedIn and Github Methods Section */}
               {loginMethodConstant.map((item) => (
                 <div

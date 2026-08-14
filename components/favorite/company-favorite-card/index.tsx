@@ -1,4 +1,5 @@
 import MetaChip from "@/components/utils/data-display/meta-chip";
+import { cn } from "@/lib/utils";
 import {
   LucideBookmarkX,
   LucideBriefcaseBusiness,
@@ -26,9 +27,12 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <article
-      className={`group w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
+      className={cn(
+        "group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]",
+        props.isRemoving && "animate-card-pop-shrink",
+      )}
     >
-      <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
+      <div className="flex gap-4 p-4 sm:gap-5 sm:p-5">
         {/* Avatar Section: Company Avatar */}
         <Avatar
           rounded="md"
@@ -41,10 +45,10 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
         </Avatar>
 
         {/* Content Section */}
-        <div className="flex-1 min-w-0 flex flex-col gap-3">
+        <div className="flex min-w-0 flex-1 flex-col gap-3">
           {/* Header Section: Company Name, Industry, Founded Year */}
           <div>
-              <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
+            <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
               {props.name}
             </h3>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
@@ -61,7 +65,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
 
           {/* Description Section */}
           {props.description && (
-            <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            <TypographyMuted className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
               {props.description}
             </TypographyMuted>
           )}
@@ -70,7 +74,12 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
           {props.openPosition.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {props.openPosition.slice(0, 6).map((op) => (
-                <Tag label={op.title} key={op.id} neutral className="!rounded-none border border-border hover:shadow-none" />
+                <Tag
+                  label={op.title}
+                  key={op.id}
+                  neutral
+                  className="!rounded-none border border-border hover:shadow-none"
+                />
               ))}
             </div>
           )}

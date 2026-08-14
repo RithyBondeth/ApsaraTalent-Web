@@ -22,7 +22,9 @@ export function readImageFileAsDataUrl(file: File): Promise<string> {
     };
 
     reader.onerror = () => {
-      reject(reader.error ?? new Error("The selected image could not be read."));
+      reject(
+        reader.error ?? new Error("The selected image could not be read."),
+      );
     };
 
     reader.readAsDataURL(file);

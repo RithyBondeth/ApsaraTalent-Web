@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { makeForgotPasswordSchema } from "./(auth)/forgot-password/validate";
+import { makeForgotPasswordSchema } from "./(auth)/forgot-password/validation";
 import { makeLoginSchema } from "./(auth)/login/validation";
 import { makePhoneLoginSchema } from "./(auth)/login/phone-number/validation";
-import { makeResetPasswordSchema } from "./(auth)/reset-password/validate";
+import { makeResetPasswordSchema } from "./(auth)/reset-password/validation";
 import {
   makeBasicSignupCompanySchema,
   makeBasicSignupEmployeeSchema,
@@ -31,8 +31,13 @@ describe("application validation schemas", () => {
       ...passwordMessages,
     });
 
-    expect(schema.safeParse({ email: "user@example.com", password: "Secure1!" }).success).toBe(true);
-    expect(schema.safeParse({ email: "invalid", password: "weak" }).success).toBe(false);
+    expect(
+      schema.safeParse({ email: "user@example.com", password: "Secure1!" })
+        .success,
+    ).toBe(true);
+    expect(
+      schema.safeParse({ email: "invalid", password: "weak" }).success,
+    ).toBe(false);
   });
 
   it("accepts email or Cambodian phone recovery identifiers", () => {
@@ -40,13 +45,22 @@ describe("application validation schemas", () => {
       phoneOrEmailRequired: "Required",
       phoneOrEmailInvalid: "Invalid",
     });
-    expect(schema.safeParse({ forgotPassword: "user@example.com" }).success).toBe(true);
-    expect(schema.safeParse({ forgotPassword: "+85512345678" }).success).toBe(true);
-    expect(schema.safeParse({ forgotPassword: "not-an-account" }).success).toBe(false);
+    expect(
+      schema.safeParse({ forgotPassword: "user@example.com" }).success,
+    ).toBe(true);
+    expect(schema.safeParse({ forgotPassword: "+85512345678" }).success).toBe(
+      true,
+    );
+    expect(schema.safeParse({ forgotPassword: "not-an-account" }).success).toBe(
+      false,
+    );
   });
 
   it("trims and validates phone login values", () => {
-    const schema = makePhoneLoginSchema({ phoneRequired: "Required", phoneInvalid: "Invalid" });
+    const schema = makePhoneLoginSchema({
+      phoneRequired: "Required",
+      phoneInvalid: "Invalid",
+    });
     expect(schema.parse({ phone: " 012345678 " }).phone).toBe("012345678");
     expect(schema.safeParse({ phone: "" }).success).toBe(false);
     expect(schema.safeParse({ phone: "123" }).success).toBe(false);
@@ -59,11 +73,16 @@ describe("application validation schemas", () => {
       passwordsMismatch: "Passwords differ",
     });
     expect(
-      schema.safeParse({ password: "Secure1!", confirmPassword: "Secure1!" }).success,
+      schema.safeParse({ password: "Secure1!", confirmPassword: "Secure1!" })
+        .success,
     ).toBe(true);
-    const invalid = schema.safeParse({ password: "Secure1!", confirmPassword: "Different1!" });
+    const invalid = schema.safeParse({
+      password: "Secure1!",
+      confirmPassword: "Different1!",
+    });
     expect(invalid.success).toBe(false);
-    if (!invalid.success) expect(invalid.error.issues[0]?.path).toEqual(["confirmPassword"]);
+    if (!invalid.success)
+      expect(invalid.error.issues[0]?.path).toEqual(["confirmPassword"]);
   });
 
   it("validates the basic employee signup step", () => {
@@ -94,7 +113,9 @@ describe("application validation schemas", () => {
       confirmPassword: "Secure1!",
     };
     expect(schema.safeParse(valid).success).toBe(true);
-    expect(schema.safeParse({ ...valid, confirmPassword: "Mismatch1!" }).success).toBe(false);
+    expect(
+      schema.safeParse({ ...valid, confirmPassword: "Mismatch1!" }).success,
+    ).toBe(false);
   });
 
   it("validates the basic company signup step", () => {
@@ -152,7 +173,9 @@ describe("application validation schemas", () => {
       careerScopes: ["Engineering"],
     };
     expect(schema.safeParse(valid).success).toBe(true);
-    expect(schema.safeParse({ ...valid, openPositions: [] }).success).toBe(false);
+    expect(schema.safeParse({ ...valid, openPositions: [] }).success).toBe(
+      false,
+    );
   });
 
   it("validates complete employee onboarding and date ordering", () => {
@@ -184,7 +207,9 @@ describe("application validation schemas", () => {
           endDate: "2025-01-01",
         },
       ],
-      educations: [{ school: "University", degree: "Computer Science", year: 2022 }],
+      educations: [
+        { school: "University", degree: "Computer Science", year: 2022 },
+      ],
       skillAndReference: { skills: ["TypeScript"] },
       careerScopes: ["Engineering"],
     };
@@ -198,11 +223,18 @@ describe("application validation schemas", () => {
   });
 
   it("validates role selection and search filters", () => {
-    expect(signupOptionSchema.safeParse({ selectedRole: "employee" }).success).toBe(true);
-    expect(signupOptionSchema.safeParse({ selectedRole: "" }).success).toBe(false);
     expect(
-      companySearchSchema.safeParse({ keyword: "engineer", sortBy: "createdAt", orderBy: "DESC" })
-        .success,
+      signupOptionSchema.safeParse({ selectedRole: "employee" }).success,
+    ).toBe(true);
+    expect(signupOptionSchema.safeParse({ selectedRole: "" }).success).toBe(
+      false,
+    );
+    expect(
+      companySearchSchema.safeParse({
+        keyword: "engineer",
+        sortBy: "createdAt",
+        orderBy: "DESC",
+      }).success,
     ).toBe(true);
     expect(
       employeeSearchSchema.safeParse({
@@ -217,7 +249,9 @@ describe("application validation schemas", () => {
 
   it("validates company profile media, URLs, and open-position constraints", () => {
     const image = new File(["image"], "logo.png", { type: "image/png" });
-    const unsupported = new File(["image"], "logo.svg", { type: "image/svg+xml" });
+    const unsupported = new File(["image"], "logo.svg", {
+      type: "image/svg+xml",
+    });
     expect(
       companyFormSchema.safeParse({
         basicInfo: {
@@ -238,20 +272,27 @@ describe("application validation schemas", () => {
       }).success,
     ).toBe(true);
     expect(
-      companyFormSchema.safeParse({ basicInfo: { websiteUrl: "invalid", avatar: unsupported } })
-        .success,
+      companyFormSchema.safeParse({
+        basicInfo: { websiteUrl: "invalid", avatar: unsupported },
+      }).success,
     ).toBe(false);
     expect(
       companyFormSchema.safeParse({
-        openPositions: [{ salaryMin: -1, openingsCount: 0, deadlineDate: "invalid" }],
+        openPositions: [
+          { salaryMin: -1, openingsCount: 0, deadlineDate: "invalid" },
+        ],
       }).success,
     ).toBe(false);
   });
 
   it("validates employee profile dates, media, documents, and social URLs", () => {
     const image = new File(["image"], "avatar.webp", { type: "image/webp" });
-    const resume = new File(["resume"], "resume.pdf", { type: "application/pdf" });
-    const unsupported = new File(["text"], "resume.txt", { type: "text/plain" });
+    const resume = new File(["resume"], "resume.pdf", {
+      type: "application/pdf",
+    });
+    const unsupported = new File(["text"], "resume.txt", {
+      type: "text/plain",
+    });
     expect(
       employeeFormSchema.safeParse({
         basicInfo: { avatar: image, dob: "2000-01-01" },
@@ -274,7 +315,8 @@ describe("application validation schemas", () => {
       }).success,
     ).toBe(false);
     expect(
-      employeeFormSchema.safeParse({ basicInfo: { avatar: unsupported } }).success,
+      employeeFormSchema.safeParse({ basicInfo: { avatar: unsupported } })
+        .success,
     ).toBe(false);
   });
 });

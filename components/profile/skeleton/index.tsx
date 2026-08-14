@@ -52,19 +52,19 @@ export function CompanyProfilePageLoadingSkeleton() {
         <Skeleton className="h-48 w-full sm:h-64" />
 
         {/* Identity Section */}
-        <div className="px-4 sm:px-6 pb-5">
+        <div className="px-4 pb-5 sm:px-6">
           <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
             {/* Avatar Overlapping Cover Section */}
             <Skeleton className="-mt-10 size-24 flex-shrink-0 sm:-mt-12 sm:size-28" />
 
             {/* Name and Industry Section */}
-            <div className="flex-1 min-w-0 pt-2 space-y-1.5 tablet-md:flex tablet-md:flex-col tablet-md:items-center">
+            <div className="min-w-0 flex-1 space-y-1.5 pt-2 tablet-md:flex tablet-md:flex-col tablet-md:items-center">
               <Skeleton className="h-8 w-48" />
               <Skeleton className="h-4 w-32" />
             </div>
 
             {/* Edit Button Section */}
-            <div className="flex gap-2 flex-shrink-0 pt-2">
+            <div className="flex flex-shrink-0 gap-2 pt-2">
               <Skeleton className="h-8 w-24 rounded-none" />
             </div>
           </div>
@@ -139,7 +139,7 @@ export function CompanyProfilePageLoadingSkeleton() {
               {[...Array(2)].map((_, i) => (
                 <div
                   key={i}
-                  className="rounded-none border border-border/60 p-4 space-y-3"
+                  className="space-y-3 rounded-none border border-border/60 p-4"
                 >
                   {/* Role Details Section */}
                   <div className="grid grid-cols-12 gap-3 tablet-md:grid-cols-1">
@@ -221,7 +221,7 @@ export function CompanyProfilePageLoadingSkeleton() {
               {[...Array(3)].map((_, i) => (
                 <Skeleton
                   key={i}
-                  className="h-44 w-60 rounded-none flex-shrink-0"
+                  className="h-44 w-60 flex-shrink-0 rounded-none"
                 />
               ))}
             </div>
@@ -238,7 +238,7 @@ export function CompanyProfilePageLoadingSkeleton() {
                 <Skeleton key={i} className="h-8 w-24 rounded-none" />
               ))}
             </div>
-            <Skeleton className="h-10 w-full rounded-none mt-4" />
+            <Skeleton className="mt-4 h-10 w-full rounded-none" />
           </SkeletonCard>
 
           {/* Values Section */}
@@ -249,7 +249,7 @@ export function CompanyProfilePageLoadingSkeleton() {
                 <Skeleton key={i} className="h-8 w-28 rounded-none" />
               ))}
             </div>
-            <Skeleton className="h-10 w-full rounded-none mt-4" />
+            <Skeleton className="mt-4 h-10 w-full rounded-none" />
           </SkeletonCard>
 
           {/* Career Scopes Section */}
@@ -260,7 +260,7 @@ export function CompanyProfilePageLoadingSkeleton() {
                 <Skeleton key={i} className="h-8 w-28 rounded-none" />
               ))}
             </div>
-            <Skeleton className="h-10 w-full rounded-none mt-4" />
+            <Skeleton className="mt-4 h-10 w-full rounded-none" />
           </SkeletonCard>
 
           {/* Social Information Section */}
@@ -271,7 +271,7 @@ export function CompanyProfilePageLoadingSkeleton() {
                 <Skeleton key={i} className="h-8 w-24 rounded-none" />
               ))}
             </div>
-            <Skeleton className="h-10 w-full rounded-none mt-4" />
+            <Skeleton className="mt-4 h-10 w-full rounded-none" />
           </SkeletonCard>
 
           {/* Authentication Section */}
@@ -282,7 +282,7 @@ export function CompanyProfilePageLoadingSkeleton() {
               {[...Array(4)].map((_, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between bg-muted/30 rounded-none py-3 px-3"
+                  className="flex items-center justify-between rounded-none bg-muted/30 px-3 py-3"
                 >
                   <div className="flex items-center gap-2">
                     <Skeleton className="profile-social-icon-skeleton size-[30px] rounded-full" />
@@ -292,7 +292,7 @@ export function CompanyProfilePageLoadingSkeleton() {
                 </div>
               ))}
               {/* Email and Password Section */}
-              <div className="space-y-3 mt-2">
+              <div className="mt-2 space-y-3">
                 <div className="space-y-1.5">
                   <Skeleton className="h-3 w-12" />
                   <Skeleton className="h-10 w-full rounded-none" />
@@ -322,19 +322,19 @@ export function EmployeeProfilePageLoadingSkeleton() {
         <Skeleton className="h-40 w-full sm:h-52" />
 
         {/* Identity Section */}
-        <div className="px-4 sm:px-6 pb-5">
+        <div className="px-4 pb-5 sm:px-6">
           <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
             {/* Avatar Overlapping Banner Section */}
             <Skeleton className="-mt-10 size-24 flex-shrink-0 sm:-mt-12 sm:size-28" />
 
             {/* Name and JobTitle Section */}
-            <div className="flex-1 min-w-0 pt-2 space-y-1.5 tablet-md:flex tablet-md:flex-col tablet-md:items-center">
+            <div className="min-w-0 flex-1 space-y-1.5 pt-2 tablet-md:flex tablet-md:flex-col tablet-md:items-center">
               <Skeleton className="h-8 w-40" />
               <Skeleton className="h-4 w-28" />
             </div>
 
             {/* Edit Button Section */}
-            <div className="flex gap-2 flex-shrink-0 pt-2">
+            <div className="flex flex-shrink-0 gap-2 pt-2">
               <Skeleton className="h-8 w-24 rounded-none" />
             </div>
           </div>
@@ -473,7 +473,7 @@ export function EmployeeProfilePageLoadingSkeleton() {
               {[...Array(2)].map((_, i) => (
                 <div
                   key={i}
-                  className="rounded-none border border-border/60 p-4 space-y-3"
+                  className="space-y-3 rounded-none border border-border/60 p-4"
                 >
                   <div className="grid grid-cols-12 gap-3 tablet-md:grid-cols-1">
                     <div className="col-span-7 space-y-1.5 tablet-md:col-span-1">
@@ -511,7 +511,7 @@ export function EmployeeProfilePageLoadingSkeleton() {
               {[...Array(2)].map((_, i) => (
                 <div
                   key={i}
-                  className="rounded-none border border-border/60 p-4 space-y-3"
+                  className="space-y-3 rounded-none border border-border/60 p-4"
                 >
                   <div className="grid grid-cols-12 items-end gap-3 tablet-md:grid-cols-1">
                     <div className="col-span-7 space-y-1.5 tablet-md:col-span-1">
@@ -550,7 +550,7 @@ export function EmployeeProfilePageLoadingSkeleton() {
                 />
               ))}
             </div>
-            <Skeleton className="h-10 w-full rounded-none mt-4" />
+            <Skeleton className="mt-4 h-10 w-full rounded-none" />
           </SkeletonCard>
 
           {/* Career Scopes Section */}
@@ -561,7 +561,7 @@ export function EmployeeProfilePageLoadingSkeleton() {
                 <Skeleton key={i} className="h-8 w-24 rounded-none" />
               ))}
             </div>
-            <Skeleton className="h-10 w-full rounded-none mt-4" />
+            <Skeleton className="mt-4 h-10 w-full rounded-none" />
           </SkeletonCard>
 
           {/* References Section */}
@@ -571,9 +571,9 @@ export function EmployeeProfilePageLoadingSkeleton() {
               {[...Array(2)].map((_, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between gap-2 px-3 py-2.5 bg-muted/50 rounded-none border border-border/40"
+                  className="flex items-center justify-between gap-2 rounded-none border border-border/40 bg-muted/50 px-3 py-2.5"
                 >
-                  <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex min-w-0 items-center gap-2">
                     <Skeleton className="size-4 flex-shrink-0" />
                     <Skeleton className="h-4 w-32" />
                   </div>
@@ -595,7 +595,7 @@ export function EmployeeProfilePageLoadingSkeleton() {
                 <Skeleton key={i} className="h-8 w-24 rounded-none" />
               ))}
             </div>
-            <Skeleton className="h-10 w-full rounded-none mt-4" />
+            <Skeleton className="mt-4 h-10 w-full rounded-none" />
           </SkeletonCard>
 
           {/* Authentication Section */}
@@ -606,7 +606,7 @@ export function EmployeeProfilePageLoadingSkeleton() {
               {[...Array(4)].map((_, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between bg-muted/30 rounded-none py-3 px-3"
+                  className="flex items-center justify-between rounded-none bg-muted/30 px-3 py-3"
                 >
                   <div className="flex items-center gap-2">
                     <Skeleton className="profile-social-icon-skeleton size-[30px] rounded-full" />
@@ -616,7 +616,7 @@ export function EmployeeProfilePageLoadingSkeleton() {
                 </div>
               ))}
               {/* Email and Password Section */}
-              <div className="space-y-3 mt-2">
+              <div className="mt-2 space-y-3">
                 <div className="space-y-1.5">
                   <Skeleton className="h-3 w-12" />
                   <Skeleton className="h-10 w-full rounded-none" />

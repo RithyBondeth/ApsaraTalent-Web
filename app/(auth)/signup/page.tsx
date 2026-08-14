@@ -112,9 +112,9 @@ export default function SignupPage() {
     };
 
     return locationConstant.map((loc) => ({
-        value: loc,
-        label: locationLabels[loc] ?? loc,
-      }));
+      value: loc,
+      label: locationLabels[loc] ?? loc,
+    }));
   }, [tLoc]);
   const genderOptions = useMemo(
     () =>
@@ -310,10 +310,10 @@ export default function SignupPage() {
   /* -------------------------------- Section divider helper ------------------------------- */
   const SectionLabel = ({ children }: { children: React.ReactNode }) => (
     <div className="flex items-center gap-3">
-      <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.16em] whitespace-nowrap">
+      <span className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
         {children}
       </span>
-      <div className="flex-1 h-px bg-border" />
+      <div className="h-px flex-1 bg-border" />
     </div>
   );
 
@@ -546,7 +546,7 @@ export default function SignupPage() {
               }
               error={
                 isEmployeeForm
-                    ? employeeErrors.password?.message
+                  ? employeeErrors.password?.message
                   : companyErrors.password?.message
               }
               {...(isEmployeeForm
@@ -580,7 +580,7 @@ export default function SignupPage() {
           >
             {t("back")}
           </AuthBackButton>
-          <Button className="auth-submit w-full h-11" type="submit">
+          <Button className="auth-submit h-11 w-full" type="submit">
             {t("next")}
             <LucideArrowRight />
           </Button>

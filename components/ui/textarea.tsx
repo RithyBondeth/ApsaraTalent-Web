@@ -66,15 +66,13 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         : validationMessage?.message;
     const hasError = Boolean(message);
     const validationMessageId = `${props.id ?? generatedId}-validation`;
-    const describedBy = [
-      props["aria-describedby"],
-      hasError ? validationMessageId : undefined,
-    ]
-      .filter(Boolean)
-      .join(" ") || undefined;
+    const describedBy =
+      [props["aria-describedby"], hasError ? validationMessageId : undefined]
+        .filter(Boolean)
+        .join(" ") || undefined;
 
     return (
-      <div className="relative w-full flex flex-col items-start gap-1">
+      <div className="relative flex w-full flex-col items-start gap-1">
         <div className="relative w-full">
           {prefix && (
             <span className="pointer-events-none absolute left-3 top-3.5 z-10 text-muted-foreground [&_svg]:size-[18px]">
@@ -91,7 +89,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             aria-invalid={hasError || props["aria-invalid"]}
             aria-describedby={describedBy}
             className={cn(
-              "flex min-h-[80px] w-full rounded-none border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm !leading-loose",
+              "flex min-h-[80px] w-full rounded-none border border-input bg-background px-3 py-2 text-base !leading-loose ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
               prefix && "pl-10",
               action && "pr-24",
               autoResize && "resize-none overflow-hidden",

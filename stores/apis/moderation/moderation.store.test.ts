@@ -75,14 +75,18 @@ describe("moderation store", () => {
       ],
     });
 
-    await expect(useModerationStore.getState().blockUser("employee-2")).resolves.toBe(true);
+    await expect(
+      useModerationStore.getState().blockUser("employee-2"),
+    ).resolves.toBe(true);
     expect(useModerationStore.getState().statusByTarget["employee-2"]).toEqual({
       isBlocked: true,
       blockedByMe: true,
       blockedMe: false,
     });
 
-    await expect(useModerationStore.getState().unblockUser("employee-2")).resolves.toBe(true);
+    await expect(
+      useModerationStore.getState().unblockUser("employee-2"),
+    ).resolves.toBe(true);
     expect(useModerationStore.getState().statusByTarget["employee-2"]).toEqual({
       isBlocked: false,
       blockedByMe: false,
@@ -92,13 +96,21 @@ describe("moderation store", () => {
   });
 
   it("submits reports and returns false on rejected reports", async () => {
-    const payload = { reportedId: "user-2", reason: "spam" as const, details: "Repeated messages" };
+    const payload = {
+      reportedId: "user-2",
+      reason: "spam" as const,
+      details: "Repeated messages",
+    };
     axiosMocks.post
       .mockResolvedValueOnce({ data: {} })
       .mockRejectedValueOnce(new Error("report unavailable"));
 
-    await expect(useModerationStore.getState().reportUser(payload)).resolves.toBe(true);
-    await expect(useModerationStore.getState().reportUser(payload)).resolves.toBe(false);
+    await expect(
+      useModerationStore.getState().reportUser(payload),
+    ).resolves.toBe(true);
+    await expect(
+      useModerationStore.getState().reportUser(payload),
+    ).resolves.toBe(false);
     expect(useModerationStore.getState()).toMatchObject({
       reporting: false,
       error: "report unavailable",

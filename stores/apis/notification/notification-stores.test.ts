@@ -81,7 +81,10 @@ describe("notification API stores", () => {
     const first = notification("notification-1");
     const second = notification("notification-2");
     axiosMocks.patch.mockResolvedValue({ data: {} });
-    useNotificationStore.setState({ notifications: [first, second], unreadCount: 2 });
+    useNotificationStore.setState({
+      notifications: [first, second],
+      unreadCount: 2,
+    });
 
     await useNotificationStore.getState().markRead("notification-1");
     expect(useNotificationStore.getState().notifications[0]?.isRead).toBe(true);
@@ -92,11 +95,18 @@ describe("notification API stores", () => {
     expect(useNotificationStore.getState().notifications[1]?.isRead).toBe(true);
 
     useNotificationStore.setState({
-      notifications: [notification("notification-1"), notification("notification-2")],
+      notifications: [
+        notification("notification-1"),
+        notification("notification-2"),
+      ],
       unreadCount: 2,
     });
     await useNotificationStore.getState().markAllRead();
-    expect(useNotificationStore.getState().notifications.every((item) => item.isRead)).toBe(true);
+    expect(
+      useNotificationStore
+        .getState()
+        .notifications.every((item) => item.isRead),
+    ).toBe(true);
     expect(useNotificationStore.getState().unreadCount).toBe(0);
   });
 
@@ -109,14 +119,19 @@ describe("notification API stores", () => {
 
     await useNotificationStore.getState().markRead("notification-1");
 
-    expect(useNotificationStore.getState().notifications[0]?.isRead).toBe(false);
+    expect(useNotificationStore.getState().notifications[0]?.isRead).toBe(
+      false,
+    );
     expect(useNotificationStore.getState().unreadCount).toBe(1);
   });
 
   it("deletes one notification and then all notifications", async () => {
     axiosMocks.delete.mockResolvedValue({ data: {} });
     useNotificationStore.setState({
-      notifications: [notification("notification-1"), notification("notification-2", true)],
+      notifications: [
+        notification("notification-1"),
+        notification("notification-2", true),
+      ],
       unreadCount: 1,
     });
 
@@ -126,7 +141,10 @@ describe("notification API stores", () => {
       unreadCount: 0,
     });
     await useNotificationStore.getState().deleteAllNotifications();
-    expect(useNotificationStore.getState()).toMatchObject({ notifications: [], unreadCount: 0 });
+    expect(useNotificationStore.getState()).toMatchObject({
+      notifications: [],
+      unreadCount: 0,
+    });
     expect(axiosMocks.delete).toHaveBeenCalledTimes(2);
   });
 
@@ -135,7 +153,12 @@ describe("notification API stores", () => {
 
     await useUpdatePushTokenStore.getState().updatePushToken("push-token-1");
 
-    expect(axiosMocks.post).toHaveBeenCalledWith(expect.any(String), { token: "push-token-1" });
-    expect(useUpdatePushTokenStore.getState()).toMatchObject({ loading: false, error: null });
+    expect(axiosMocks.post).toHaveBeenCalledWith(expect.any(String), {
+      token: "push-token-1",
+    });
+    expect(useUpdatePushTokenStore.getState()).toMatchObject({
+      loading: false,
+      error: null,
+    });
   });
 });

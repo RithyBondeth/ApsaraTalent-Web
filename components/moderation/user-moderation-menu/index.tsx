@@ -27,7 +27,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { IUserModerationMenuProps } from "./props";
-import { REPORT_REASONS } from "@/utils/constants/moderation";
+import { REPORT_REASONS } from "@/utils/constants/moderation.constant";
 import { cn } from "@/lib/utils";
 
 export default function UserModerationMenu(props: IUserModerationMenuProps) {
@@ -191,7 +191,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
           {/* Report Dialog Header Section */}
           <DialogHeader
             className={cn(
-              isEditorial && "border-b border-border px-5 pb-4 pt-5 pr-14",
+              isEditorial && "border-b border-border px-5 pb-4 pr-14 pt-5",
             )}
           >
             <DialogTitle>

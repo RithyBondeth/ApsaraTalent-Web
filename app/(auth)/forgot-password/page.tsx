@@ -7,7 +7,7 @@ import { AuthBackButton } from "@/components/auth/auth-back-button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store";
-import { isNumberPhoneInput } from "@/utils/functions/validation/check-phone-input";
+import { isNumberPhoneInput } from "@/utils/functions/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucideKeyRound, LucideMail, LucidePhone } from "lucide-react";
 import { toast } from "sonner";
@@ -15,7 +15,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { makeForgotPasswordSchema, TForgotPasswordForm } from "./validate";
+import { makeForgotPasswordSchema, TForgotPasswordForm } from "./validation";
 import { forgotPasswordSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
 
         {/* Form Section */}
         <form
-          className="w-full flex flex-col gap-4"
+          className="flex w-full flex-col gap-4"
           onSubmit={handleSubmit(onSubmit)}
           style={{ "--d": "90ms" } as React.CSSProperties}
         >

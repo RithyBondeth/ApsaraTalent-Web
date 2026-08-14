@@ -1,5 +1,5 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignore": ["public/firebase-messaging-sw.js"],
+  "ignore": ["public/firebase-messaging-sw.js", "scripts/start-e2e-server.mjs"],
   "ignoreDependencies": ["eslint-config-next"]
 }

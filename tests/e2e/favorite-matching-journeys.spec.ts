@@ -134,7 +134,10 @@ function journeyApi(state: JourneyState) {
     ) {
       state.unmatchRequests = (state.unmatchRequests ?? 0) + 1;
       if (state.unmatchFailure) {
-        return { status: 503, body: { message: "Unmatch service unavailable" } };
+        return {
+          status: 503,
+          body: { message: "Unmatch service unavailable" },
+        };
       }
       state.matchRemoved = true;
       return { body: { message: "Unmatched" } };
@@ -145,13 +148,12 @@ function journeyApi(state: JourneyState) {
       if (state.chatDelayMs) {
         await new Promise((resolve) => setTimeout(resolve, state.chatDelayMs));
       }
-      return { body: { id: "chat-1", senderId: "employee-1", receiverId: "company-1" } };
+      return {
+        body: { id: "chat-1", senderId: "employee-1", receiverId: "company-1" },
+      };
     }
 
-    if (
-      method === "GET" &&
-      pathname.endsWith("/user/company/one/company-1")
-    ) {
+    if (method === "GET" && pathname.endsWith("/user/company/one/company-1")) {
       return { body: company };
     }
 
@@ -160,19 +162,22 @@ function journeyApi(state: JourneyState) {
 }
 
 test.describe("authenticated favorite journeys", () => {
-  test("removes a saved company and refreshes the empty state", async ({ page }) => {
+  test("removes a saved company and refreshes the empty state", async ({
+    page,
+  }) => {
     const state: JourneyState = {};
     await mockApi(page, journeyApi(state));
     await loginEmployee(page, "/favorite");
 
     await expect(page.getByText("Apsara Labs")).toBeVisible();
     await page.getByRole("button", { name: "Remove" }).click();
-    await expect(page.getByText("Apsara Labs removed from favorites.")).toBeVisible();
+    await expect(
+      page.getByText("Apsara Labs removed from favorites."),
+    ).toBeVisible();
     await expect(page.getByText("Favorite List Empty")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Explore more" })).toHaveAttribute(
-      "href",
-      "/search/company",
-    );
+    await expect(
+      page.getByRole("link", { name: "Explore more" }),
+    ).toHaveAttribute("href", "/search/company");
     expect(state.favoriteRemovals).toBe(1);
     expect(state.favoriteGets).toBeGreaterThanOrEqual(2);
   });
@@ -239,7 +244,9 @@ test.describe("authenticated matching journeys", () => {
     expect(state.chatRequests).toBe(1);
   });
 
-  test("opens interview scheduling for the selected company", async ({ page }) => {
+  test("opens interview scheduling for the selected company", async ({
+    page,
+  }) => {
     await mockApi(page, journeyApi({}));
     await loginEmployee(page, "/matching");
 

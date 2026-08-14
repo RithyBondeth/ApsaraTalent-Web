@@ -131,9 +131,9 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-3">
+    <div className="flex w-full flex-col items-start gap-3">
       {/* Header With Remove Button Section */}
-      <div className="w-full flex items-center justify-between">
+      <div className="flex w-full items-center justify-between">
         <TypographyMuted className="font-bold text-foreground">
           {tP("positionIndex", { index: Number(props.index) + 1 })}
         </TypographyMuted>

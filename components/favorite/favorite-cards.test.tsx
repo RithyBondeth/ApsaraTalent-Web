@@ -12,18 +12,19 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: mocks.replace }),
 }));
 vi.mock("next-intl", () => ({
-  useTranslations: (namespace: string) => (key: string, values?: Record<string, unknown>) => {
-    if (namespace === "locations") return key;
-    const labels: Record<string, string> = {
-      remove: "Remove",
-      viewDetail: "View detail",
-      founded: `Founded ${values?.year ?? ""}`,
-      memberCount: `${values?.count ?? 0} members`,
-      positionCount: `${values?.count ?? 0} positions`,
-      yrsExp: `${values?.years ?? 0} years`,
-    };
-    return labels[key] ?? key;
-  },
+  useTranslations:
+    (namespace: string) => (key: string, values?: Record<string, unknown>) => {
+      if (namespace === "locations") return key;
+      const labels: Record<string, string> = {
+        remove: "Remove",
+        viewDetail: "View detail",
+        founded: `Founded ${values?.year ?? ""}`,
+        memberCount: `${values?.count ?? 0} members`,
+        positionCount: `${values?.count ?? 0} positions`,
+        yrsExp: `${values?.years ?? 0} years`,
+      };
+      return labels[key] ?? key;
+    },
 }));
 
 const positions = Array.from({ length: 7 }, (_, index) => ({

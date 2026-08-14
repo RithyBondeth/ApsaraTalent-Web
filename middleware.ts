@@ -42,8 +42,7 @@ function buildCallbackUrl(request: NextRequest) {
 export function middleware(request: NextRequest) {
   try {
     const { pathname } = request.nextUrl;
-    const role =
-      request.cookies.get(COOKIE_CONFIG.SESSION_ROLE)?.value ?? null;
+    const role = request.cookies.get(COOKIE_CONFIG.SESSION_ROLE)?.value ?? null;
     const isAuthenticated = role !== null;
 
     const isAuthRoute = isRouteMatch(pathname, AUTH_ROUTES);

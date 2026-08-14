@@ -56,12 +56,17 @@ export default function StaticContentLoadingSkeleton({
             <div className="border-t border-[hsl(var(--landing-panel-ink)/0.16)]">
               <Skeleton className="my-4 h-2.5 w-20 rounded-none opacity-20" />
               <div className="grid grid-cols-2 border-t border-[hsl(var(--landing-panel-ink)/0.16)]">
-                {Array.from({ length: Math.min(sectionCount, 4) }).map((_, index) => (
-                  <div key={index} className="flex min-h-14 items-center gap-3 border-b border-[hsl(var(--landing-panel-ink)/0.16)] px-3 odd:border-r">
-                    <Skeleton className="h-2.5 w-4 rounded-none opacity-20" />
-                    <Skeleton className="h-3 flex-1 rounded-none opacity-20" />
-                  </div>
-                ))}
+                {Array.from({ length: Math.min(sectionCount, 4) }).map(
+                  (_, index) => (
+                    <div
+                      key={index}
+                      className="flex min-h-14 items-center gap-3 border-b border-[hsl(var(--landing-panel-ink)/0.16)] px-3 odd:border-r"
+                    >
+                      <Skeleton className="h-2.5 w-4 rounded-none opacity-20" />
+                      <Skeleton className="h-3 flex-1 rounded-none opacity-20" />
+                    </div>
+                  ),
+                )}
               </div>
             </div>
           </div>
@@ -81,7 +86,10 @@ export default function StaticContentLoadingSkeleton({
             <div className="p-8">
               <Skeleton className="mb-5 h-3 w-20 rounded-none" />
               {Array.from({ length: sectionCount }).map((_, index) => (
-                <div key={index} className="grid grid-cols-[28px_1fr] gap-2 border-t border-border py-3 last:border-b">
+                <div
+                  key={index}
+                  className="grid grid-cols-[28px_1fr] gap-2 border-t border-border py-3 last:border-b"
+                >
                   <Skeleton className="h-3 w-5 rounded-none" />
                   <Skeleton className="h-3 w-full rounded-none" />
                 </div>
@@ -91,7 +99,10 @@ export default function StaticContentLoadingSkeleton({
 
           <main className="min-w-0">
             {Array.from({ length: sectionCount }).map((_, index) => (
-              <section key={index} className="border-b border-border px-6 py-14 sm:px-10 sm:py-16 lg:px-14 lg:py-20">
+              <section
+                key={index}
+                className="border-b border-border px-6 py-14 sm:px-10 sm:py-16 lg:px-14 lg:py-20"
+              >
                 <div className="grid gap-6 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-8">
                   <Skeleton className="size-12 rounded-none sm:size-14" />
                   <div>

@@ -316,95 +316,92 @@ export function LearnContent() {
       toc={t.toc}
       icon={<LucideBookOpen />}
       heroVisual={
-        <StaticPageArtworkSlot
-          icon={<LucideBookOpen />}
-          label={t.pageTitle}
-        />
+        <StaticPageArtworkSlot icon={<LucideBookOpen />} label={t.pageTitle} />
       }
     >
-          {/* Getting Started Section */}
-          <StaticSection
-            id="getting-started"
-            number="01"
-            icon={<LucideRocket />}
-            title={t.gettingStartedTitle}
-          >
-            <TypographyP>{t.gettingStartedIntro}</TypographyP>
-            <div className="flex flex-col gap-5 mt-2">
-              {t.steps.map((step, i) => (
-                <StaticStep
-                  key={i}
-                  step={i + 1}
-                  title={step.title}
-                  description={step.description}
-                />
-              ))}
-            </div>
-          </StaticSection>
+      {/* Getting Started Section */}
+      <StaticSection
+        id="getting-started"
+        number="01"
+        icon={<LucideRocket />}
+        title={t.gettingStartedTitle}
+      >
+        <TypographyP>{t.gettingStartedIntro}</TypographyP>
+        <div className="mt-2 flex flex-col gap-5">
+          {t.steps.map((step, i) => (
+            <StaticStep
+              key={i}
+              step={i + 1}
+              title={step.title}
+              description={step.description}
+            />
+          ))}
+        </div>
+      </StaticSection>
 
-          {/* For Job Seekers Section */}
-          <StaticSection
-            id="for-job-seekers"
-            number="02"
-            icon={<LucideUsers />}
-            title={t.jobSeekersTitle}
-          >
-            <TypographyP>{t.jobSeekersIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.jobSeekersBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-          </StaticSection>
+      {/* For Job Seekers Section */}
+      <StaticSection
+        id="for-job-seekers"
+        number="02"
+        icon={<LucideUsers />}
+        title={t.jobSeekersTitle}
+      >
+        <TypographyP>{t.jobSeekersIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.jobSeekersBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+      </StaticSection>
 
-          {/* For Employers Section */}
-          <StaticSection
-            id="for-employers"
-            number="03"
-            icon={<LucideBriefcase />}
-            title={t.employersTitle}
-          >
-            <TypographyP>{t.employersIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.employersBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-          </StaticSection>
+      {/* For Employers Section */}
+      <StaticSection
+        id="for-employers"
+        number="03"
+        icon={<LucideBriefcase />}
+        title={t.employersTitle}
+      >
+        <TypographyP>{t.employersIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.employersBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+      </StaticSection>
 
-          {/* Using AI Features Section */}
-          <StaticSection
-            id="using-ai"
-            number="04"
-            icon={<LucideSparkles />}
-            title={t.aiTitle}
-          >
-            <TypographyP>{t.aiIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.aiBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-          </StaticSection>
+      {/* Using AI Features Section */}
+      <StaticSection
+        id="using-ai"
+        number="04"
+        icon={<LucideSparkles />}
+        title={t.aiTitle}
+      >
+        <TypographyP>{t.aiIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.aiBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+      </StaticSection>
 
-          {/* Guides & Tutorials Section */}
-          <StaticSection
-            id="guides"
-            number="05"
-            icon={<LucideBookOpen />}
-            title={t.guidesTitle}
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
-              {t.guides.map((g, i) => (
-                <StaticCard
-                  key={i}
-                  icon={guideIcons[i]}
-                  title={g.title}
-                  description={g.description}
-                />
-              ))}
-            </div>
-          </StaticSection>
+      {/* Guides & Tutorials Section */}
+      <StaticSection
+        id="guides"
+        number="05"
+        icon={<LucideBookOpen />}
+        title={t.guidesTitle}
+      >
+        <div className="mt-1 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {t.guides.map((g, i) => (
+            <StaticCard
+              key={i}
+              icon={guideIcons[i]}
+              title={g.title}
+              description={g.description}
+            />
+          ))}
+        </div>
+      </StaticSection>
     </StaticPageShell>
   );
 }

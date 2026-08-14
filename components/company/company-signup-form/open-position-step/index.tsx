@@ -517,7 +517,7 @@ export default function OpenPositionStepForm({
         ))}
 
         {/* Add More Button Section */}
-        <div className="w-full flex justify-end">
+        <div className="flex w-full justify-end">
           <Button
             variant="secondary"
             size="sm"

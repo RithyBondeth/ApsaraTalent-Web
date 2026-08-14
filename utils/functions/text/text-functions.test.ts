@@ -19,7 +19,9 @@ describe("text functions", () => {
   it("translates known locations and preserves unknown values", () => {
     const t = vi.fn((key: string) => `translated:${key}`);
     expect(translateLocation("PHNOM PENH", t)).toBe("translated:phnomPenh");
-    expect(translateLocation("Sihanoukville", t)).toBe("translated:preahSihanouk");
+    expect(translateLocation("Sihanoukville", t)).toBe(
+      "translated:preahSihanouk",
+    );
     expect(translateLocation("Somewhere", t)).toBe("Somewhere");
     expect(translateLocation(null, t)).toBe("");
   });

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { LucideLogIn } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import LogoComponent from "@/components/utils/brand/logo";
 import Switcher from "@/components/utils/switcher";
 

@@ -42,7 +42,7 @@ export default function AuthBrandPanel(props: IAuthBrandPanelProps) {
       ref={panelRef}
       onMouseMove={handlePointer}
       className={cn(
-        "auth-panel relative hidden lg:flex flex-col p-12 xl:p-14",
+        "auth-panel relative hidden flex-col p-12 lg:flex xl:p-14",
         className,
       )}
     >
@@ -64,7 +64,7 @@ export default function AuthBrandPanel(props: IAuthBrandPanelProps) {
                 src={image}
                 alt={imageAlt}
                 priority
-                className="mx-auto h-auto w-full max-h-[42vh] object-contain select-none"
+                className="mx-auto h-auto max-h-[42vh] w-full select-none object-contain"
                 draggable={false}
               />
             </div>
@@ -75,7 +75,7 @@ export default function AuthBrandPanel(props: IAuthBrandPanelProps) {
       {/* Editorial Caption Section */}
       <div className="relative z-10 max-w-md">
         <p className="auth-eyebrow mb-3.5">{t(eyebrowKey)}</p>
-        <h2 className="text-[1.9rem] xl:text-[2.15rem] font-semibold leading-[1.12] tracking-[-0.02em]">
+        <h2 className="text-[1.9rem] font-semibold leading-[1.12] tracking-[-0.02em] xl:text-[2.15rem]">
           {t(titleKey)}
         </h2>
         <p className="mt-3.5 max-w-sm text-[14.5px] leading-relaxed text-[hsl(var(--auth-ink)/0.58)]">

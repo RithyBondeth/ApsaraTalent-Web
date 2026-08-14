@@ -85,7 +85,7 @@ export default function EmployeeCareerScopeStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-stretch gap-8">
+    <div className="flex w-full flex-col items-stretch gap-8">
       {/* Title and SubTite Section */}
       <div className="phone-xl:mt-10">
         <TypographyH4>{t("careerScopeTitle")}</TypographyH4>
@@ -130,7 +130,7 @@ export default function EmployeeCareerScopeStepForm({
           return (
             <Card
               key={index}
-              className={`flex items-center gap-2 p-2 transition-all hover:scale-105 cursor-pointer ${
+              className={`flex cursor-pointer items-center gap-2 p-2 transition-all hover:scale-105 ${
                 isChecked ? "border-primary" : ""
               }`}
             >

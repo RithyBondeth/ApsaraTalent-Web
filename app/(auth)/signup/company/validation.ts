@@ -1,4 +1,4 @@
-import { optionalImageValidation } from "@/utils/functions/validation/form-schemas";
+import { optionalImageValidation } from "@/utils/functions/validation";
 import * as z from "zod";
 
 const makeDateRequired = (requiredError: string) =>

@@ -73,7 +73,10 @@ interface IGridRunnersProps {
   density?: "full" | "quiet";
 }
 
-export function GridRunners({ className, density = "full" }: IGridRunnersProps) {
+export function GridRunners({
+  className,
+  density = "full",
+}: IGridRunnersProps) {
   const runners = density === "quiet" ? GRID_RUNNERS.slice(0, 6) : GRID_RUNNERS;
 
   return (

@@ -52,7 +52,7 @@ export default function MoreSheetItem(props: IMoreSheetItemProps) {
       >
         {label}
       </span>
-      
+
       <span
         aria-hidden="true"
         className={cn(

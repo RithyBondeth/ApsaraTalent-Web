@@ -29,7 +29,9 @@ describe("PageState", () => {
       />,
     );
 
-    expect(screen.getByRole("region", { name: "Nothing here yet" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: "Nothing here yet" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Explore" })).toHaveAttribute(
       "href",
       "/feed",

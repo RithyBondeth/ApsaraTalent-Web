@@ -75,7 +75,7 @@ export function AiQuotaBadge({ className }: { className?: string }) {
       })}
     >
       <Sparkles className={cn("size-3.5 shrink-0", tone.text)} />
-      <span className={cn("text-xs font-medium whitespace-nowrap", tone.text)}>
+      <span className={cn("whitespace-nowrap text-xs font-medium", tone.text)}>
         {t("usesLeftToday", { remaining, limit })}
       </span>
       <span className="h-1.5 w-10 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">

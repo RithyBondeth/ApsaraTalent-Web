@@ -364,7 +364,7 @@ export default function ChatInput(props: IChatInputProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="px-2.5 py-2.5 md:px-5 md:py-3 bg-card border-t border-border shrink-0 [padding-bottom:calc(env(safe-area-inset-bottom)+0.5rem)] md:[padding-bottom:0.75rem]">
+    <div className="shrink-0 border-t border-border bg-card px-2.5 py-2.5 [padding-bottom:calc(env(safe-area-inset-bottom)+0.5rem)] md:px-5 md:py-3 md:[padding-bottom:0.75rem]">
       {/* Reply Preview Bar Section */}
       {replyTarget && (
         <MessageReplyPreview
@@ -388,7 +388,7 @@ export default function ChatInput(props: IChatInputProps) {
         />
 
         {/* Input Pill Section */}
-        <div className="flex-1 rounded-none border border-border border-l-[4px] border-l-foreground bg-muted/20 focus-within:border-primary focus-within:border-l-primary focus-within:bg-background transition-colors overflow-hidden shadow-[3px_3px_0_hsl(var(--foreground)/0.04)]">
+        <div className="flex-1 overflow-hidden rounded-none border border-l-[4px] border-border border-l-foreground bg-muted/20 shadow-[3px_3px_0_hsl(var(--foreground)/0.04)] transition-colors focus-within:border-primary focus-within:border-l-primary focus-within:bg-background">
           {/* Attachment Thumbnail Strip Section (inside the pill, above the textarea) */}
           {hasAnyFiles && (
             <MessageAttachmentStrip
@@ -413,12 +413,12 @@ export default function ChatInput(props: IChatInputProps) {
               onStop={handleVoiceRecordingStop}
             />
           ) : (
-            <div className="flex items-end px-2.5 sm:px-3 py-1.5 sm:py-2 gap-0.5 sm:gap-1">
+            <div className="flex items-end gap-0.5 px-2.5 py-1.5 sm:gap-1 sm:px-3 sm:py-2">
               {/* Textarea Section */}
               <textarea
                 ref={textareaRef}
                 placeholder={isDisabled ? t("loadingChat") : t("enterMessage")}
-                className="flex-1 resize-none bg-transparent text-sm leading-relaxed text-foreground placeholder:text-muted-foreground outline-none border-none min-h-[30px] sm:min-h-[32px] max-h-[96px] sm:max-h-[120px] overflow-y-auto py-1 disabled:opacity-50"
+                className="max-h-[96px] min-h-[30px] flex-1 resize-none overflow-y-auto border-none bg-transparent py-1 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground disabled:opacity-50 sm:max-h-[120px] sm:min-h-[32px]"
                 rows={1}
                 value={newMessage}
                 onChange={(e) => handleInputChange(e.target.value)}
@@ -437,7 +437,7 @@ export default function ChatInput(props: IChatInputProps) {
                   <button
                     type="button"
                     disabled={inputDisabled}
-                    className="shrink-0 h-8 w-8 flex items-center justify-center rounded-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
                     aria-label="Emoji"
                   >
                     <SmilePlus className="h-4 w-4" />
@@ -447,7 +447,7 @@ export default function ChatInput(props: IChatInputProps) {
                   side="top"
                   align="end"
                   sideOffset={8}
-                  className="w-[min(92vw,340px)] max-h-[55vh] overflow-hidden p-0"
+                  className="max-h-[55vh] w-[min(92vw,340px)] overflow-hidden p-0"
                 >
                   {emojiData ? (
                     <Picker
@@ -480,7 +480,7 @@ export default function ChatInput(props: IChatInputProps) {
                 type="button"
                 disabled={inputDisabled || atFileLimit}
                 onClick={openFilePicker}
-                className="shrink-0 h-8 w-8 flex items-center justify-center rounded-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
                 aria-label={
                   atFileLimit
                     ? t("maxFilesReached", { max: CHAT_MAX_FILES })
@@ -500,7 +500,7 @@ export default function ChatInput(props: IChatInputProps) {
                 type="button"
                 disabled={inputDisabled}
                 onClick={startRecording}
-                className="shrink-0 h-8 w-8 flex items-center justify-center rounded-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
                 aria-label="Record voice message"
               >
                 <Mic className="h-4 w-4" />
@@ -515,7 +515,7 @@ export default function ChatInput(props: IChatInputProps) {
             variant="default"
             onClick={handleSend}
             disabled={sendDisabled}
-            className="shrink-0 h-9 w-9 sm:h-10 sm:w-10 rounded-none p-0 font-medium shadow-[3px_3px_0_hsl(var(--foreground)/0.12)]"
+            className="h-9 w-9 shrink-0 rounded-none p-0 font-medium shadow-[3px_3px_0_hsl(var(--foreground)/0.12)] sm:h-10 sm:w-10"
             aria-label="Send message"
           >
             <LucideSendHorizonal className="h-4 w-4" />

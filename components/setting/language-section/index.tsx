@@ -62,10 +62,10 @@ function LanguageCard(props: ILanguageCardProps) {
       )}
     >
       {/* Flag Section */}
-      <span className="text-2xl shrink-0">{flag}</span>
+      <span className="shrink-0 text-2xl">{flag}</span>
 
       {/* Label Section */}
-      <div className="flex flex-col flex-1 min-w-0">
+      <div className="flex min-w-0 flex-1 flex-col">
         <span
           className={cn("text-sm font-semibold", active ? "text-primary" : "")}
         >

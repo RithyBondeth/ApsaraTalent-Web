@@ -105,9 +105,9 @@ export default function SingUpOption() {
 
   /* ---------------------------------------- Render UI ---------------------------------------- */
   return (
-    <div className="w-full max-w-[540px] mx-auto flex flex-col items-start gap-6 border border-border border-t-[5px] border-t-foreground bg-card p-6 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-8 tablet-lg:my-4">
+    <div className="mx-auto flex w-full max-w-[540px] flex-col items-start gap-6 border border-t-[5px] border-border border-t-foreground bg-card p-6 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] tablet-lg:my-4 sm:p-8">
       {/* Icon Badge Section */}
-      <div className="size-14 rounded-none bg-foreground flex items-center justify-center">
+      <div className="flex size-14 items-center justify-center rounded-none bg-foreground">
         <LucideUsers className="size-6 text-background" />
       </div>
 
@@ -118,11 +118,11 @@ export default function SingUpOption() {
       <TypographyMuted>{t("signupOptionSubtitle")}</TypographyMuted>
 
       <form
-        className="w-full flex flex-col gap-4"
+        className="flex w-full flex-col gap-4"
         onSubmit={handleSubmit(onSubmit)}
       >
         {/* Role Selection Section */}
-        <div className="w-full flex flex-col items-start">
+        <div className="flex w-full flex-col items-start">
           <Controller
             name="selectedRole"
             control={control}
@@ -162,7 +162,7 @@ export default function SingUpOption() {
       </form>
 
       {/* Note Section */}
-      <div className="w-full flex items-center justify-center">
+      <div className="flex w-full items-center justify-center">
         <TypographyMuted className="text-xs">
           {t("signupOptionNote")}
         </TypographyMuted>
@@ -176,13 +176,13 @@ export default function SingUpOption() {
         }}
       >
         <DialogContent className="max-w-lg rounded-none border-t-[5px] border-t-foreground shadow-[6px_6px_0_hsl(var(--foreground)/0.1)]">
-          <div className="px-6 pt-6 pb-5 flex flex-col gap-5">
+          <div className="flex flex-col gap-5 px-6 pb-5 pt-6">
             {/* Header Section */}
             <DialogHeader>
               <DialogTitle className="text-xl">
                 {t("smartUploadDialogTitle")}
               </DialogTitle>
-              <DialogDescription className="text-sm mt-1">
+              <DialogDescription className="mt-1 text-sm">
                 {t("smartUploadDialogSubtitle")}
               </DialogDescription>
             </DialogHeader>
@@ -194,7 +194,7 @@ export default function SingUpOption() {
             <Button
               type="button"
               variant="ghost"
-              className="w-full rounded-none text-muted-foreground hover:text-foreground text-sm"
+              className="w-full rounded-none text-sm text-muted-foreground hover:text-foreground"
               onClick={goToSignup}
             >
               {t("smartUploadDialogSkip")}

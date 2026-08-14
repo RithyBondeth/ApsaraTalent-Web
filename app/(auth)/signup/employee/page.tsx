@@ -436,18 +436,18 @@ export default function EmployeeSignup() {
 
   /* ----------------------------------- Render UI ---------------------------------- */
   return (
-    <div className="auth-wizard w-full max-w-4xl mx-auto flex flex-col gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
+    <div className="auth-wizard mx-auto flex w-full max-w-4xl flex-col gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* SmartResumeUpload Chip Title Section */}
       {!!parsedData && (
-        <div className="auth-wizard-notice flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-800/50 border-l-[4px] border-l-emerald-500 px-3 py-1.5 rounded-none w-fit">
+        <div className="auth-wizard-notice flex w-fit items-center gap-1.5 rounded-none border border-l-[4px] border-emerald-200/50 border-l-emerald-500 bg-emerald-50 px-3 py-1.5 text-xs text-emerald-700 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400">
           <LucideCheckCircle2 size={13} className="shrink-0" />
           {t("smartUploadDataApplied")}
         </div>
       )}
 
       {/* Step Progress Indicator Section */}
-      <div className="auth-wizard-progress w-full overflow-x-auto border border-border border-t-[5px] border-t-foreground bg-card p-4 shadow-[4px_4px_0_hsl(var(--foreground)/0.05)]">
-        <div className="w-full min-w-[280px] flex items-center gap-0">
+      <div className="auth-wizard-progress w-full overflow-x-auto border border-t-[5px] border-border border-t-foreground bg-card p-4 shadow-[4px_4px_0_hsl(var(--foreground)/0.05)]">
+        <div className="flex w-full min-w-[280px] items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => {
               const isSkipped =
@@ -456,11 +456,11 @@ export default function EmployeeSignup() {
                   "no_experience";
               const isActive = step >= st && !isSkipped;
               return (
-                <div key={st} className="w-full flex items-center">
+                <div key={st} className="flex w-full items-center">
                   <div
-                    className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-none font-bold transition-all ${
+                    className={`flex size-8 items-center justify-center rounded-none text-xs font-bold transition-all sm:size-9 sm:text-sm ${
                       isSkipped
-                        ? "bg-muted text-muted-foreground opacity-40 line-through"
+                        ? "bg-muted text-muted-foreground line-through opacity-40"
                         : isActive
                           ? "bg-primary text-primary-foreground shadow-[2px_2px_0_hsl(var(--foreground)/0.16)]"
                           : "bg-muted text-muted-foreground"
@@ -469,9 +469,9 @@ export default function EmployeeSignup() {
                     {st}
                   </div>
                   {index < totalSteps - 1 && (
-                    <div className="flex-1 h-1 bg-muted rounded-none relative">
+                    <div className="relative h-1 flex-1 rounded-none bg-muted">
                       <div
-                        className={`absolute top-0 left-0 h-full rounded-none bg-primary transition-all duration-300 ${
+                        className={`absolute left-0 top-0 h-full rounded-none bg-primary transition-all duration-300 ${
                           step > st && !isSkipped ? "w-full" : "w-0"
                         }`}
                       />

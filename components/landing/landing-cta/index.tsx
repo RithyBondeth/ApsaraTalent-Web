@@ -23,7 +23,7 @@ export default function LandingCta() {
         {/* Grid Background Section */}
         <div className="landing-dark-grid pointer-events-none absolute inset-0" />
         <GridRunners className="landing-dark-grid-runners" density="quiet" />
-        
+
         {/* CTA Heading Section */}
         <div className="relative z-10 grid gap-12 lg:grid-cols-[1fr_0.72fr] lg:items-end">
           <div>
@@ -32,7 +32,7 @@ export default function LandingCta() {
             </p>
             <TypographyH2
               data-gsap="split-chars"
-              className="max-w-3xl text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl lg:text-6xl !leading-[1.05] [perspective:800px]"
+              className="max-w-3xl text-3xl font-semibold !leading-[1.05] tracking-[-0.04em] text-white [perspective:800px] sm:text-4xl lg:text-6xl"
             >
               {t("ctaHeading")} {t("ctaHeadingHighlight")}?
             </TypographyH2>
@@ -46,7 +46,7 @@ export default function LandingCta() {
             >
               {t("ctaDescription")}
             </p>
-           
+
             {/* CTA Button Section */}
             <div
               data-gsap="fade-up"

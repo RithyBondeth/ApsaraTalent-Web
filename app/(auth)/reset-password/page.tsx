@@ -14,7 +14,7 @@ import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { makeResetPasswordSchema, TResetPasswordForm } from "./validate";
+import { makeResetPasswordSchema, TResetPasswordForm } from "./validation";
 import { resetPasswordSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
@@ -124,7 +124,7 @@ export default function ResetPasswordPage() {
 
         {/* Form Section */}
         <form
-          className="w-full flex flex-col gap-4"
+          className="flex w-full flex-col gap-4"
           onSubmit={handleSubmit(onSubmit)}
           style={{ "--d": "90ms" } as React.CSSProperties}
         >

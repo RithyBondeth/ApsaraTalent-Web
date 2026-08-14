@@ -25,7 +25,7 @@ export default function ImagePopup(props: {
           alt="Image"
           width={1600}
           height={1200}
-          className="h-auto w-auto max-h-[85vh] max-w-[90vw] rounded-none"
+          className="h-auto max-h-[85vh] w-auto max-w-[90vw] rounded-none"
           unoptimized
         />
       </DialogContent>

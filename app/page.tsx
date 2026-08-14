@@ -1,6 +1,6 @@
 "use client";
 
-import Header from "@/components/header";
+import Header from "@/components/landing/landing-header";
 import LandingHero from "@/components/landing/landing-hero";
 import LandingMarquee from "@/components/landing/landing-marquee";
 import LandingFeatures from "@/components/landing/landing-features";

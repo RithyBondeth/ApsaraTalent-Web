@@ -1,4 +1,5 @@
 "use client";
+import { cn } from "@/lib/utils";
 import {
   LucideBookmark,
   LucideBriefcase,
@@ -65,7 +66,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
     return (
       <>
-        <article className="relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-none border border-border border-t-[5px] border-t-foreground bg-card transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:border-foreground/45 hover:border-t-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] active:translate-y-0 active:scale-[0.985] active:shadow-none">
+        <article className="relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-none border border-t-[5px] border-border border-t-foreground bg-card transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:border-foreground/45 hover:border-t-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] active:translate-y-0 active:scale-[0.985] active:shadow-none">
           {/* Header Section: Avatar, Identity, Quick View and Like */}
           <div className="flex items-start gap-3 p-4 pb-3">
             <CachedAvatar
@@ -80,30 +81,30 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
               {props.username?.slice(0, AVATAR_INITIALS_LENGTH)}
             </CachedAvatar>
 
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <TypographyP className="!m-0 text-base font-black leading-tight tracking-[-0.02em]">
                 {props.username}
               </TypographyP>
-              <TypographyMuted className="text-xs truncate mt-0.5 block font-medium">
+              <TypographyMuted className="mt-0.5 block truncate text-xs font-medium">
                 {props.job}
               </TypographyMuted>
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1">
+              <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
                 {props.location && (
-                  <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
+                  <TypographySmall className="flex items-center gap-1 text-[11px] text-muted-foreground">
                     <LucideMapPin className="size-3 shrink-0" />
                     <span className="truncate">
                       {translateLocation(props.location, tl)}
                     </span>
                   </TypographySmall>
                 )}
-                <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
+                <TypographySmall className="flex items-center gap-1 text-[11px] text-muted-foreground">
                   <LucideTimer className="size-3 shrink-0" />
                   <span>{props.yearsOfExperience}</span>
                 </TypographySmall>
               </div>
             </div>
 
-            <div className="flex justify-end items-center gap-1 shrink-0">
+            <div className="flex shrink-0 items-center justify-end gap-1">
               <Button
                 size="icon"
                 variant="ghost"
@@ -151,7 +152,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 />
               ))}
               {props.skills.length > 4 && (
-                <span className="text-[11px] text-muted-foreground self-center font-medium">
+                <span className="self-center text-[11px] font-medium text-muted-foreground">
                   +{props.skills.length - 4}
                 </span>
               )}
@@ -161,14 +162,14 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           {/* Experience and Education Section */}
           <div className="flex flex-col gap-1 px-4 pb-3">
             {latestExp && (
-              <TypographySmall className="text-[11px] flex items-start gap-1.5 text-muted-foreground">
-                <LucideBriefcase className="size-3 shrink-0 mt-0.5" />
+              <TypographySmall className="flex items-start gap-1.5 text-[11px] text-muted-foreground">
+                <LucideBriefcase className="mt-0.5 size-3 shrink-0" />
                 <span className="line-clamp-1">{latestExp.title}</span>
               </TypographySmall>
             )}
             {latestEdu && (
-              <TypographySmall className="text-[11px] flex items-start gap-1.5 text-muted-foreground">
-                <LucideGraduationCap className="size-3 shrink-0 mt-0.5" />
+              <TypographySmall className="flex items-start gap-1.5 text-[11px] text-muted-foreground">
+                <LucideGraduationCap className="mt-0.5 size-3 shrink-0" />
                 <span className="line-clamp-1">
                   {latestEdu.degree} · {latestEdu.school}
                 </span>
@@ -177,8 +178,8 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           </div>
 
           {/* Description Section */}
-          <div className="px-4 pb-3 flex-1">
-            <TypographyMuted className="text-xs leading-relaxed line-clamp-2 tablet-md:line-clamp-1">
+          <div className="flex-1 px-4 pb-3">
+            <TypographyMuted className="line-clamp-2 text-xs leading-relaxed tablet-md:line-clamp-1">
               {props.description}
             </TypographyMuted>
           </div>
@@ -223,9 +224,9 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
   // ─── Default Variant Section ──────────────────────────────────
   return (
-    <div className="h-fit w-full flex flex-col items-start gap-4 rounded-none border border-border border-t-[5px] border-t-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] hover:border-foreground/40">
+    <div className="flex h-fit w-full cursor-pointer flex-col items-start gap-4 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-foreground/40 hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
       {/* Profile Section */}
-      <div className="w-full flex flex-wrap items-start justify-between gap-3">
+      <div className="flex w-full flex-wrap items-start justify-between gap-3">
         {/* Avatar, Username, JobTitle and Location Section */}
         <div className="flex items-center gap-3">
           <CachedAvatar
@@ -239,57 +240,60 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           >
             {props.username?.slice(0, 3)}
           </CachedAvatar>
-          <div className="flex flex-col items-start gap-1 min-w-0">
-            <TypographyP className="font-semibold truncate max-w-full">
+          <div className="flex min-w-0 flex-col items-start gap-1">
+            <TypographyP className="max-w-full truncate font-semibold">
               {props.username}
             </TypographyP>
             <TypographyMuted>{props.job}</TypographyMuted>
-            <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
-              <LucideMapPin className="size-3 " />
+            <TypographySmall className="flex items-center gap-1 text-xs text-muted-foreground">
+              <LucideMapPin className="size-3" />
               <span>{translateLocation(props.location, tl)}</span>
             </TypographySmall>
           </div>
         </div>
         {/* Action Buttons Section: View and Like Button */}
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex shrink-0 items-center gap-1">
           <Button
             aria-label="Quick view"
-            className="size-10 sm:size-12 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95"
+            className="size-10 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95 sm:size-12"
             onClick={handleClickDialog}
           >
-            <LucideEye className="!size-5 sm:!size-6 transition-all duration-300 ease-in-out" />
+            <LucideEye className="!size-5 transition-all duration-300 ease-in-out sm:!size-6" />
           </Button>
           <Button
             aria-label="Like"
-            className="size-10 sm:size-12 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95"
+            className="size-10 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95 sm:size-12"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
           >
             <LucideHeartHandshake
-              className={`!size-5 sm:!size-6 transition-all duration-300 ease-in-out${props.onLikeClickDisable ? " animate-pop-shrink" : ""}`}
+              className={cn(
+                "!size-5 transition-all duration-300 ease-in-out sm:!size-6",
+                props.onLikeClickDisable && "animate-pop-shrink",
+              )}
             />
           </Button>
         </div>
       </div>
       {/* Skills Tags Section */}
       {props.skills.length > 0 && (
-        <div className="w-full flex flex-wrap gap-2">
+        <div className="flex w-full flex-wrap gap-2">
           {props.skills.slice(0, 5).map((skill) => (
             <Tag key={skill.id} label={skill.name} />
           ))}
           {props.skills.length > 5 && (
-            <span className="text-[11px] text-muted-foreground self-center font-medium">
+            <span className="self-center text-[11px] font-medium text-muted-foreground">
               {t("moreItems", { count: props.skills.length - 5 })}
             </span>
           )}
         </div>
       )}
       {/* Description Section */}
-      <TypographyP className="!m-0 text-sm leading-relaxed line-clamp-3">
+      <TypographyP className="!m-0 line-clamp-3 text-sm leading-relaxed">
         {props.description}
       </TypographyP>
       {/* Experience & Availability Section */}
-      <div className="flex flex-wrap gap-2 items-center">
+      <div className="flex flex-wrap items-center gap-2">
         {props.educations.length > 0 &&
           props.educations.map((edu, index) => (
             <Tag key={index} label={edu.degree} />
@@ -298,10 +302,10 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         <Tag label={formatAvailabilityWords(props.availability)} />
       </div>
       {/* Action Buttons Section: View and Save Buttons */}
-      <div className="w-full flex items-center justify-end gap-2 sm:gap-3 tablet-lg:justify-stretch tablet-lg:[&>button]:flex-1 phone-xl:justify-stretch phone-xl:[&>button]:flex-1">
+      <div className="flex w-full items-center justify-end gap-2 phone-xl:justify-stretch tablet-lg:justify-stretch sm:gap-3 phone-xl:[&>button]:flex-1 tablet-lg:[&>button]:flex-1">
         {!props.hideSaveButton && (
           <Button
-            className="text-sm rounded-none"
+            className="rounded-none text-sm"
             variant="outline"
             onClick={props.onSaveClick}
           >
@@ -309,7 +313,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             <LucideBookmark />
           </Button>
         )}
-        <Button className="text-sm rounded-none" onClick={props.onViewClick}>
+        <Button className="rounded-none text-sm" onClick={props.onViewClick}>
           {t("view")}
           <LucideCircleArrowRight />
         </Button>

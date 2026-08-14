@@ -593,206 +593,191 @@ export function PrivacyContent() {
         />
       }
     >
-          {/* 1. Information We Collect Section */}
-          <Section
-            id="information-we-collect"
-            icon={<LucideDatabase />}
-            title={c.s1.title}
+      {/* 1. Information We Collect Section */}
+      <Section
+        id="information-we-collect"
+        icon={<LucideDatabase />}
+        title={c.s1.title}
+      >
+        <TypographyP>{c.s1.intro}</TypographyP>
+        <div className="flex flex-col gap-2">
+          <TypographySmall className="font-medium text-foreground">
+            {c.s1.g1Title}
+          </TypographySmall>
+          <ul className="ml-1 flex flex-col gap-1.5">
+            {c.s1.g1.map((t, i) => (
+              <Bullet key={i}>{t}</Bullet>
+            ))}
+          </ul>
+        </div>
+        <div className="flex flex-col gap-2">
+          <TypographySmall className="font-medium text-foreground">
+            {c.s1.g2Title}
+          </TypographySmall>
+          <ul className="ml-1 flex flex-col gap-1.5">
+            {c.s1.g2.map((t, i) => (
+              <Bullet key={i}>{t}</Bullet>
+            ))}
+          </ul>
+        </div>
+        <div className="flex flex-col gap-2">
+          <TypographySmall className="font-medium text-foreground">
+            {c.s1.g3Title}
+          </TypographySmall>
+          <ul className="ml-1 flex flex-col gap-1.5">
+            {c.s1.g3.map((t, i) => (
+              <Bullet key={i}>{t}</Bullet>
+            ))}
+          </ul>
+        </div>
+        <div className="flex flex-col gap-2">
+          <TypographySmall className="font-medium text-foreground">
+            {c.s1.g4Title}
+          </TypographySmall>
+          <ul className="ml-1 flex flex-col gap-1.5">
+            {c.s1.g4.map((t, i) => (
+              <Bullet key={i}>{t}</Bullet>
+            ))}
+          </ul>
+        </div>
+      </Section>
+
+      {/* 2. How We Use Section */}
+      <Section id="how-we-use" icon={<LucideUserCheck />} title={c.s2.title}>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s2.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+        <TypographyP>
+          {c.s2.notePrefix}{" "}
+          <strong className="text-foreground">{c.s2.noteStrong}</strong>{" "}
+          {c.s2.noteSuffix}
+        </TypographyP>
+      </Section>
+
+      {/* 3. How We Share Section */}
+      <Section id="how-we-share" icon={<LucideShare2 />} title={c.s3.title}>
+        <TypographyP>{c.s3.intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s3.bullets.map((b, i) => (
+            <Bullet key={i}>
+              <strong className="text-foreground">{b.label}</strong> {b.text}
+            </Bullet>
+          ))}
+        </ul>
+      </Section>
+
+      {/* 4. Third-Party Services Section */}
+      <Section id="third-party" icon={<LucideServer />} title={c.s4.title}>
+        <TypographyP>{c.s4.intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s4.bullets.map((b, i) => (
+            <Bullet key={i}>
+              <strong className="text-foreground">{b.label}</strong> {b.text}
+            </Bullet>
+          ))}
+        </ul>
+      </Section>
+
+      {/* 5. Data Retention Section */}
+      <Section id="data-retention" icon={<LucideDatabase />} title={c.s5.title}>
+        <TypographyP>{c.s5.intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s5.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+      </Section>
+
+      {/* 6. Security Section */}
+      <Section id="security" icon={<LucideLock />} title={c.s6.title}>
+        <TypographyP>{c.s6.intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s6.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+        <TypographyP>{c.s6.note}</TypographyP>
+      </Section>
+
+      {/* 7. Your Rights Section */}
+      <Section id="your-rights" icon={<LucideShieldCheck />} title={c.s7.title}>
+        <TypographyP>{c.s7.intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s7.bullets.map((b, i) => (
+            <Bullet key={i}>
+              <strong className="text-foreground">{b.label}</strong> {b.text}
+            </Bullet>
+          ))}
+        </ul>
+        <TypographyP>
+          {c.s7.note}{" "}
+          <a
+            href={`mailto:${c.s7.email}`}
+            className="text-primary underline underline-offset-2"
           >
-            <TypographyP>{c.s1.intro}</TypographyP>
-            <div className="flex flex-col gap-2">
-              <TypographySmall className="font-medium text-foreground">
-                {c.s1.g1Title}
-              </TypographySmall>
-              <ul className="flex flex-col gap-1.5 ml-1">
-                {c.s1.g1.map((t, i) => (
-                  <Bullet key={i}>{t}</Bullet>
-                ))}
-              </ul>
-            </div>
-            <div className="flex flex-col gap-2">
-              <TypographySmall className="font-medium text-foreground">
-                {c.s1.g2Title}
-              </TypographySmall>
-              <ul className="flex flex-col gap-1.5 ml-1">
-                {c.s1.g2.map((t, i) => (
-                  <Bullet key={i}>{t}</Bullet>
-                ))}
-              </ul>
-            </div>
-            <div className="flex flex-col gap-2">
-              <TypographySmall className="font-medium text-foreground">
-                {c.s1.g3Title}
-              </TypographySmall>
-              <ul className="flex flex-col gap-1.5 ml-1">
-                {c.s1.g3.map((t, i) => (
-                  <Bullet key={i}>{t}</Bullet>
-                ))}
-              </ul>
-            </div>
-            <div className="flex flex-col gap-2">
-              <TypographySmall className="font-medium text-foreground">
-                {c.s1.g4Title}
-              </TypographySmall>
-              <ul className="flex flex-col gap-1.5 ml-1">
-                {c.s1.g4.map((t, i) => (
-                  <Bullet key={i}>{t}</Bullet>
-                ))}
-              </ul>
-            </div>
-          </Section>
+            {c.s7.email}
+          </a>
+          {c.s7.noteSuffix}
+        </TypographyP>
+      </Section>
 
-          {/* 2. How We Use Section */}
-          <Section
-            id="how-we-use"
-            icon={<LucideUserCheck />}
-            title={c.s2.title}
-          >
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s2.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-            <TypographyP>
-              {c.s2.notePrefix}{" "}
-              <strong className="text-foreground">{c.s2.noteStrong}</strong>{" "}
-              {c.s2.noteSuffix}
-            </TypographyP>
-          </Section>
+      {/* 8. Cookies Section */}
+      <Section id="cookies" icon={<LucideDatabase />} title={c.s8.title}>
+        <TypographyP>{c.s8.intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s8.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+        <TypographyP>{c.s8.note}</TypographyP>
+      </Section>
 
-          {/* 3. How We Share Section */}
-          <Section id="how-we-share" icon={<LucideShare2 />} title={c.s3.title}>
-            <TypographyP>{c.s3.intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s3.bullets.map((b, i) => (
-                <Bullet key={i}>
-                  <strong className="text-foreground">{b.label}</strong>{" "}
-                  {b.text}
-                </Bullet>
-              ))}
-            </ul>
-          </Section>
+      {/* 9. Children Section */}
+      <Section id="children" icon={<LucideUser />} title={c.s9.title}>
+        <TypographyP>{c.s9.text}</TypographyP>
+      </Section>
 
-          {/* 4. Third-Party Services Section */}
-          <Section id="third-party" icon={<LucideServer />} title={c.s4.title}>
-            <TypographyP>{c.s4.intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s4.bullets.map((b, i) => (
-                <Bullet key={i}>
-                  <strong className="text-foreground">{b.label}</strong>{" "}
-                  {b.text}
-                </Bullet>
-              ))}
-            </ul>
-          </Section>
+      {/* 10. Changes Section */}
+      <Section id="changes" icon={<LucideRefreshCw />} title={c.s10.title}>
+        <TypographyP>{c.s10.intro}</TypographyP>
+        <ul className="ml-1 flex flex-col gap-1.5">
+          {c.s10.bullets.map((t, i) => (
+            <Bullet key={i}>{t}</Bullet>
+          ))}
+        </ul>
+        <TypographyP>{c.s10.note}</TypographyP>
+      </Section>
 
-          {/* 5. Data Retention Section */}
-          <Section
-            id="data-retention"
-            icon={<LucideDatabase />}
-            title={c.s5.title}
-          >
-            <TypographyP>{c.s5.intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s5.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-          </Section>
-
-          {/* 6. Security Section */}
-          <Section id="security" icon={<LucideLock />} title={c.s6.title}>
-            <TypographyP>{c.s6.intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s6.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-            <TypographyP>{c.s6.note}</TypographyP>
-          </Section>
-
-          {/* 7. Your Rights Section */}
-          <Section
-            id="your-rights"
-            icon={<LucideShieldCheck />}
-            title={c.s7.title}
-          >
-            <TypographyP>{c.s7.intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s7.bullets.map((b, i) => (
-                <Bullet key={i}>
-                  <strong className="text-foreground">{b.label}</strong>{" "}
-                  {b.text}
-                </Bullet>
-              ))}
-            </ul>
-            <TypographyP>
-              {c.s7.note}{" "}
-              <a
-                href={`mailto:${c.s7.email}`}
-                className="text-primary underline underline-offset-2"
-              >
-                {c.s7.email}
-              </a>
-              {c.s7.noteSuffix}
-            </TypographyP>
-          </Section>
-
-          {/* 8. Cookies Section */}
-          <Section id="cookies" icon={<LucideDatabase />} title={c.s8.title}>
-            <TypographyP>{c.s8.intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s8.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-            <TypographyP>{c.s8.note}</TypographyP>
-          </Section>
-
-          {/* 9. Children Section */}
-          <Section id="children" icon={<LucideUser />} title={c.s9.title}>
-            <TypographyP>{c.s9.text}</TypographyP>
-          </Section>
-
-          {/* 10. Changes Section */}
-          <Section id="changes" icon={<LucideRefreshCw />} title={c.s10.title}>
-            <TypographyP>{c.s10.intro}</TypographyP>
-            <ul className="flex flex-col gap-1.5 ml-1">
-              {c.s10.bullets.map((t, i) => (
-                <Bullet key={i}>{t}</Bullet>
-              ))}
-            </ul>
-            <TypographyP>{c.s10.note}</TypographyP>
-          </Section>
-
-          {/* 11. Contact Section */}
-          <Section id="contact" icon={<LucideMail />} title={c.s11.title}>
-            <TypographyP>{c.s11.intro}</TypographyP>
-            <div className="flex flex-col gap-1.5 border border-border bg-muted/30 p-5">
-              <TypographySmall className="font-semibold text-foreground">
-                Apsara Talent
-              </TypographySmall>
-              <TypographyP>
-                📧{" "}
-                <a
-                  href="mailto:privacy@apsaratalent.com"
-                  className="text-primary underline underline-offset-2"
-                >
-                  privacy@apsaratalent.com
-                </a>
-              </TypographyP>
-              <TypographyP>
-                🌐{" "}
-                <a
-                  href="https://apsaratalent.com"
-                  className="text-primary underline underline-offset-2"
-                >
-                  apsaratalent.com
-                </a>
-              </TypographyP>
-              <TypographyP>📍 {c.s11.address}</TypographyP>
-            </div>
-          </Section>
+      {/* 11. Contact Section */}
+      <Section id="contact" icon={<LucideMail />} title={c.s11.title}>
+        <TypographyP>{c.s11.intro}</TypographyP>
+        <div className="flex flex-col gap-1.5 border border-border bg-muted/30 p-5">
+          <TypographySmall className="font-semibold text-foreground">
+            Apsara Talent
+          </TypographySmall>
+          <TypographyP>
+            📧{" "}
+            <a
+              href="mailto:privacy@apsaratalent.com"
+              className="text-primary underline underline-offset-2"
+            >
+              privacy@apsaratalent.com
+            </a>
+          </TypographyP>
+          <TypographyP>
+            🌐{" "}
+            <a
+              href="https://apsaratalent.com"
+              className="text-primary underline underline-offset-2"
+            >
+              apsaratalent.com
+            </a>
+          </TypographyP>
+          <TypographyP>📍 {c.s11.address}</TypographyP>
+        </div>
+      </Section>
     </StaticPageShell>
   );
 }
