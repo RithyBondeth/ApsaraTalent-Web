@@ -56,9 +56,29 @@ export default {
             opacity: "0",
           },
         },
+        // Incoming-call ring: a square expands and fades outward from the
+        // caller avatar. Square rather than round to match the avatar and the
+        // rest of the surface.
+        "call-ring": {
+          "0%": { transform: "scale(1)", opacity: "0.7" },
+          "100%": { transform: "scale(1.9)", opacity: "0" },
+        },
+        // Gentle breathing on the avatar and the accept button, so the dialog
+        // reads as an active call rather than a still image.
+        "call-pulse": {
+          "0%,100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.06)" },
+        },
+        "call-dot": {
+          "0%,80%,100%": { opacity: "0.25" },
+          "40%": { opacity: "1" },
+        },
       },
       animation: {
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+        "call-ring": "call-ring 1.8s cubic-bezier(0.2, 0.6, 0.35, 1) infinite",
+        "call-pulse": "call-pulse 1.8s ease-in-out infinite",
+        "call-dot": "call-dot 1.2s ease-in-out infinite",
       },
       colors: {
         background: "hsl(var(--background))",

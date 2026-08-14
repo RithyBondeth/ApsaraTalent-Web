@@ -9,7 +9,6 @@ import {
   ChevronRight,
   Phone,
   Users,
-  Video,
 } from "lucide-react";
 import { IChatHeaderProps } from "./props";
 import { useTranslations } from "next-intl";
@@ -25,7 +24,6 @@ export default function ChatHeader(props: IChatHeaderProps) {
     onBack,
     onOpenMobileSidebar,
     onStartVoiceCall,
-    onStartVideoCall,
   } = props;
 
   /* ---------------------------------- Utils --------------------------------- */
@@ -112,17 +110,6 @@ export default function ChatHeader(props: IChatHeaderProps) {
 
       {/* Header Actions Section */}
       <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
-        {/* Video Call Button (Desktop) */}
-        <Button
-          variant="outline"
-          size="icon"
-          className="hidden h-9 w-9 rounded-none text-muted-foreground hover:text-foreground sm:flex"
-          onClick={onStartVideoCall}
-          aria-label="Start video call"
-        >
-          <Video className="h-4 w-4" />
-        </Button>
-
         {/* Voice Call Button */}
         <Button
           variant="outline"
