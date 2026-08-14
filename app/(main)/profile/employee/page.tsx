@@ -1282,7 +1282,9 @@ export default function EmployeeProfilePage() {
   /* -------------------------------- Profile Completion ---------------------- */
   const profileCompletion = getEmployeeProfileCompletion({
     ...employee,
-    email: user.email,
+    // The API omits `email` rather than sending null, and the completion
+    // helper distinguishes "absent" as null.
+    email: user.email ?? null,
     avatar: avatarLoadError ? undefined : employee.avatar,
   });
 

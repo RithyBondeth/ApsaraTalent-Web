@@ -15,8 +15,7 @@ const user = {
   id: "user-1",
   role: "employee",
   email: "private@example.com",
-  employee: null,
-  company: null,
+  // The API omits both profile keys when absent rather than sending null.
   createdAt: "2026-07-23T00:00:00.000Z",
 } as IUser;
 

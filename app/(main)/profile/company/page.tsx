@@ -1181,7 +1181,9 @@ export default function ProfilePage() {
   /* -------------------------------- Profile Completion ----------------------- */
   const profileCompletion = getCompanyProfileCompletion({
     ...company,
-    email: user.email,
+    // The API omits `email` rather than sending null, and the completion
+    // helper distinguishes "absent" as null.
+    email: user.email ?? null,
     avatar: avatarLoadError ? undefined : company.avatar,
     cover: coverLoadError ? undefined : company.cover,
   });

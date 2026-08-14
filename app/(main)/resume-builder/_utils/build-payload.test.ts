@@ -7,7 +7,8 @@ function employeeUser(overrides: Record<string, unknown> = {}): IUser {
     id: "user-1",
     role: "employee",
     email: "candidate@example.com",
-    company: null,
+    // The API omits the non-matching profile rather than nulling it — an
+    // employee response carries no `company` key at all.
     createdAt: "2026-01-01T00:00:00.000Z",
     employee: {
       id: "employee-1",
@@ -143,7 +144,7 @@ describe("buildResumePayloadFromUser", () => {
   it("requires employee data", () => {
     expect(() =>
       buildResumePayloadFromUser(
-        { id: "user-1", role: "company", employee: null } as IUser,
+        { id: "user-1", role: "company" } as IUser,
         "classic",
       ),
     ).toThrow("Employee data is required");
