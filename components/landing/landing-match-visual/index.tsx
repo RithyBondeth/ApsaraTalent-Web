@@ -54,7 +54,7 @@ function CompanyDevice() {
           <p className="pixel-label text-[9px] text-[hsl(var(--auth-paper)/0.48)]">
             {t("matchVisualCompanyView")}
           </p>
-          <p className="mt-0.5 text-xs font-semibold">Kiri Labs</p>
+          <p className="mt-0.5 text-xs font-medium">Kiri Labs</p>
         </div>
         <span className="grid size-7 place-items-center rounded-full border border-[hsl(var(--auth-paper)/0.14)]">
           <LucideBriefcaseBusiness className="size-3.5" strokeWidth={1.6} />
@@ -65,16 +65,14 @@ function CompanyDevice() {
       <div className="p-4">
         {/* Employee Cover and Avatar Section */}
         <div className="landing-profile-cover relative mb-10 h-20 overflow-visible border border-[hsl(var(--auth-paper)/0.1)]">
-          <span className="absolute -bottom-7 left-3 grid size-14 place-items-center rounded-full border-4 border-[hsl(var(--auth-ink))] bg-[hsl(var(--auth-paper))] text-base font-semibold text-[hsl(var(--auth-ink))]">
+          <span className="absolute -bottom-7 left-3 grid size-14 place-items-center rounded-full border-4 border-[hsl(var(--auth-ink))] bg-[hsl(var(--auth-paper))] text-base font-medium text-[hsl(var(--auth-ink))]">
             SD
           </span>
         </div>
 
         {/* Employee Identity Section */}
         <div className="mb-4">
-          <h3 className="text-base font-semibold tracking-tight">
-            Sophea Dara
-          </h3>
+          <h3 className="text-base font-medium tracking-tight">Sophea Dara</h3>
           <p className="mt-1 text-[11px] text-[hsl(var(--auth-paper)/0.56)]">
             Senior Product Designer
           </p>
@@ -97,7 +95,7 @@ function CompanyDevice() {
         </div>
 
         {/* Company Like Action Section */}
-        <div className="landing-match-like landing-match-like-company flex items-center justify-center gap-2 bg-[hsl(var(--auth-paper))] px-3 py-3 text-xs font-semibold text-[hsl(var(--auth-ink))]">
+        <div className="landing-match-like landing-match-like-company flex items-center justify-center gap-2 bg-[hsl(var(--auth-paper))] px-3 py-3 text-xs font-medium text-[hsl(var(--auth-ink))]">
           <LucideHeart className="size-4 fill-current" strokeWidth={1.6} />
           {t("matchVisualLiked")}
         </div>
@@ -119,10 +117,10 @@ function EmployeeDevice() {
           <p className="pixel-label text-[9px] text-[hsl(var(--auth-paper)/0.48)]">
             {t("matchVisualEmployeeView")}
           </p>
-          <p className="mt-0.5 text-xs font-semibold">Sophea Dara</p>
+          <p className="mt-0.5 text-xs font-medium">Sophea Dara</p>
         </div>
         <span className="grid size-7 place-items-center rounded-full border border-[hsl(var(--auth-paper)/0.14)]">
-          <span className="text-[9px] font-semibold">SD</span>
+          <span className="text-[9px] font-medium">SD</span>
         </span>
       </div>
 
@@ -130,14 +128,14 @@ function EmployeeDevice() {
       <div className="p-4">
         {/* Company Cover and Avatar Section */}
         <div className="landing-company-cover relative mb-10 h-20 overflow-visible border border-[hsl(var(--auth-paper)/0.1)]">
-          <span className="absolute -bottom-7 left-3 grid size-14 place-items-center rounded-full border-4 border-[hsl(var(--auth-ink))] bg-[hsl(var(--auth-paper))] text-[11px] font-bold text-[hsl(var(--auth-ink))]">
+          <span className="absolute -bottom-7 left-3 grid size-14 place-items-center rounded-full border-4 border-[hsl(var(--auth-ink))] bg-[hsl(var(--auth-paper))] text-[11px] font-medium text-[hsl(var(--auth-ink))]">
             KIRI
           </span>
         </div>
 
         {/* Company Identity Section */}
         <div className="mb-4">
-          <h3 className="text-base font-semibold tracking-tight">Kiri Labs</h3>
+          <h3 className="text-base font-medium tracking-tight">Kiri Labs</h3>
           <p className="mt-1 text-[11px] text-[hsl(var(--auth-paper)/0.56)]">
             Product &amp; Technology
           </p>
@@ -156,7 +154,7 @@ function EmployeeDevice() {
         </div>
 
         {/* Employee Like Action Section */}
-        <div className="landing-match-like landing-match-like-employee flex items-center justify-center gap-2 bg-[hsl(var(--auth-paper))] px-3 py-3 text-xs font-semibold text-[hsl(var(--auth-ink))]">
+        <div className="landing-match-like landing-match-like-employee flex items-center justify-center gap-2 bg-[hsl(var(--auth-paper))] px-3 py-3 text-xs font-medium text-[hsl(var(--auth-ink))]">
           <LucideHeart className="size-4 fill-current" strokeWidth={1.6} />
           {t("matchVisualLiked")}
         </div>
@@ -429,7 +427,7 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
                 <span className="mx-auto mb-3 grid size-10 place-items-center rounded-full bg-[hsl(var(--auth-ink))] text-[hsl(var(--auth-paper))]">
                   <LucideCheck className="size-5" strokeWidth={2} />
                 </span>
-                <p className="text-sm font-semibold text-[hsl(var(--auth-ink))]">
+                <p className="text-sm font-medium text-[hsl(var(--auth-ink))]">
                   {t("matchVisualMatchReady")}
                 </p>
                 <p className="mt-1.5 text-[10px] leading-relaxed text-[hsl(var(--auth-ink)/0.48)]">

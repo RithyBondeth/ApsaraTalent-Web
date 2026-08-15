@@ -75,7 +75,7 @@ export default function NotificationInterviewCard(
               <AvatarImage src={props.user.avatar} />
             </Avatar>
             <div className="flex min-w-0 flex-col">
-              <TypographySmall className="line-clamp-1 font-bold text-foreground">
+              <TypographySmall className="line-clamp-1 font-medium text-foreground">
                 {props.user.name}
               </TypographySmall>
               {(props.user.position || props.user.industry) && (

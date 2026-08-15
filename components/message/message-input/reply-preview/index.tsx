@@ -24,7 +24,7 @@ export function MessageReplyPreview(props: IMessageReplyPreviewProps) {
       {/* Reply Preview Section */}
       <div className="flex-1 rounded-none border-l-[4px] border-primary bg-muted/40 py-1.5 pl-3 pr-2">
         {/* Reply Sender Section */}
-        <TypographyP className="text-xs font-semibold leading-tight text-primary [&:not(:first-child)]:mt-0">
+        <TypographyP className="text-xs font-medium leading-tight text-primary [&:not(:first-child)]:mt-0">
           {replySenderLabel}
         </TypographyP>
 

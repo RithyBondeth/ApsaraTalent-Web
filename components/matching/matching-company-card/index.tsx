@@ -48,14 +48,14 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <article className="group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+    <article className="hover: group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground">
       <div className="flex gap-4 p-4 sm:gap-5 sm:p-5">
         {/* Avatar Section */}
         <Avatar
           rounded="md"
           className="size-14 flex-shrink-0 !rounded-none border border-border sm:size-16"
         >
-          <AvatarFallback className="text-sm font-semibold">
+          <AvatarFallback className="text-sm font-medium">
             {getNameInitials(props.name)}
           </AvatarFallback>
           <AvatarImage src={props.avatar} />

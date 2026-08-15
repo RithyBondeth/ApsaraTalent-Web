@@ -80,7 +80,7 @@ export default function LandingFeatures() {
                 </div>
               </div>
               <div className="mt-16 max-w-md">
-                <TypographyH3 className="mb-3 text-xl font-semibold tracking-tight">
+                <TypographyH3 className="mb-3 text-xl font-medium tracking-tight">
                   {t(feature.titleKey)}
                 </TypographyH3>
                 <TypographyMuted className="!text-sm !leading-relaxed">

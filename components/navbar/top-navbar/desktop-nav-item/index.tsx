@@ -36,7 +36,7 @@ export default function DesktopNavItem(props: IDesktopNavItemProps) {
       <span className="hidden whitespace-nowrap 2xl:inline">{label}</span>
 
       {/* Compact-Mode Tooltip Section */}
-      <span className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 translate-y-1 whitespace-nowrap border border-foreground bg-foreground px-2.5 py-1.5 text-[10px] font-semibold tracking-wide text-background opacity-0 shadow-[3px_3px_0_hsl(var(--foreground)/0.12)] transition-all duration-150 group-hover:translate-y-0 group-hover:opacity-100 2xl:hidden">
+      <span className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 translate-y-1 whitespace-nowrap border border-foreground bg-foreground px-2.5 py-1.5 text-[10px] font-medium tracking-wide text-background opacity-0 transition-all duration-150 group-hover:translate-y-0 group-hover:opacity-100 2xl:hidden">
         {label}
       </span>
     </Link>

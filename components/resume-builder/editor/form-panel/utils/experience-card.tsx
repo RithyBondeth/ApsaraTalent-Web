@@ -103,14 +103,14 @@ export function ExperienceCard({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-background shadow-[4px_4px_0_hsl(var(--foreground)/0.05)]">
+    <div className="overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-background">
       {/* Card Header Section */}
       <div
         className="flex cursor-pointer select-none items-center justify-between border-b border-border/40 bg-muted/30 px-3 py-2"
         onClick={() => setOpen((o) => !o)}
       >
         {/* Card Header Title Section */}
-        <span className="truncate text-xs font-bold uppercase tracking-tight text-muted-foreground/80">
+        <span className="truncate text-xs font-medium uppercase tracking-tight text-muted-foreground/80">
           {(position as string) || `${t("experience")} ${index + 1}`}
         </span>
 
@@ -229,7 +229,7 @@ export function ExperienceCard({
                   className="group/ach flex flex-col gap-1.5 rounded-none border border-l-[4px] border-border border-l-foreground bg-muted/20 p-2"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase text-muted-foreground">
+                    <span className="text-[10px] font-medium uppercase text-muted-foreground">
                       {t("achievementNumber", { number: ai + 1 })}
                     </span>
                     <div className="flex items-center gap-1">

@@ -549,13 +549,13 @@ export function TermsContent() {
         <TypographyP>{c.s3.intro}</TypographyP>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="flex flex-col gap-2 border border-border bg-muted/20 p-5">
-            <TypographySmall className="font-semibold text-foreground">
+            <TypographySmall className="font-medium text-foreground">
               {c.s3.type1Title}
             </TypographySmall>
             <TypographyP>{c.s3.type1}</TypographyP>
           </div>
           <div className="flex flex-col gap-2 border border-border bg-muted/20 p-5">
-            <TypographySmall className="font-semibold text-foreground">
+            <TypographySmall className="font-medium text-foreground">
               {c.s3.type2Title}
             </TypographySmall>
             <TypographyP>{c.s3.type2}</TypographyP>
@@ -706,7 +706,7 @@ export function TermsContent() {
       <Section id="contact" icon={<LucideMail />} title={c.s16.title}>
         <TypographyP>{c.s16.intro}</TypographyP>
         <div className="flex flex-col gap-1.5 border border-border bg-muted/30 p-5">
-          <TypographySmall className="font-semibold text-foreground">
+          <TypographySmall className="font-medium text-foreground">
             Apsara Talent
           </TypographySmall>
           <TypographyP>

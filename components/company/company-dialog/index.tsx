@@ -64,7 +64,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
               rounded="md"
             >
               <AvatarImage src={props.avatar!} />
-              <AvatarFallback className="text-lg font-semibold uppercase">
+              <AvatarFallback className="text-lg font-medium uppercase">
                 {getNameInitials(props.name)}
               </AvatarFallback>
             </Avatar>
@@ -73,7 +73,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
 
         {/* Name, Industry, Location, CompanySize, FoundedYear, Progress Section */}
         <div className="shrink-0 px-4 pt-12">
-          <DialogTitle className="text-base font-bold leading-tight">
+          <DialogTitle className="text-base font-medium leading-tight">
             {props.name}
           </DialogTitle>
           <DialogDescription className="mt-0.5 text-sm text-muted-foreground">
@@ -114,7 +114,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           {/* About Section */}
           {props.description && (
             <section>
-              <TypographyP className="mb-1.5 text-sm font-semibold [&:not(:first-child)]:mt-0">
+              <TypographyP className="mb-1.5 text-sm font-medium [&:not(:first-child)]:mt-0">
                 {t("dialogAboutCompany", { name: props.name })}
               </TypographyP>
               <TypographyMuted className="text-sm leading-relaxed text-muted-foreground">
@@ -126,7 +126,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           {/* Benefits Section */}
           {props.benefits && props.benefits.length > 0 && (
             <section>
-              <TypographyP className="mb-2 text-sm font-semibold [&:not(:first-child)]:mt-0">
+              <TypographyP className="mb-2 text-sm font-medium [&:not(:first-child)]:mt-0">
                 {t("dialogBenefits")}
               </TypographyP>
               <div className="flex flex-wrap gap-2">
@@ -146,7 +146,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           {/* Values Section */}
           {props.values && props.values.length > 0 && (
             <section>
-              <TypographyP className="mb-2 text-sm font-semibold [&:not(:first-child)]:mt-0">
+              <TypographyP className="mb-2 text-sm font-medium [&:not(:first-child)]:mt-0">
                 {t("dialogValues")}
               </TypographyP>
               <div className="flex flex-wrap gap-2">

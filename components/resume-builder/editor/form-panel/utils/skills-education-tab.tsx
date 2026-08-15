@@ -205,7 +205,9 @@ export function SkillsEducationTab({
         />
         <TypographyMuted className="mt-1 pl-1 text-[10px]">
           {t("separateDegrees")}{" "}
-          <code className="rounded bg-muted px-1 text-[10px] font-bold">|</code>
+          <code className="rounded bg-muted px-1 text-[10px] font-medium">
+            |
+          </code>
         </TypographyMuted>
       </div>
 

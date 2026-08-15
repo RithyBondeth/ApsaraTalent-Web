@@ -617,7 +617,7 @@ function LoginPage() {
               </TypographyMuted>
               <Link
                 href="/signup/option"
-                className="text-sm font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
+                className="text-sm font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
               >
                 {t("createAccount")}
               </Link>

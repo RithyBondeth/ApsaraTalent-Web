@@ -105,7 +105,7 @@ export default function SingUpOption() {
 
   /* ---------------------------------------- Render UI ---------------------------------------- */
   return (
-    <div className="mx-auto flex w-full max-w-[540px] flex-col items-start gap-6 border border-t-[5px] border-border border-t-foreground bg-card p-6 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] tablet-lg:my-4 sm:p-8">
+    <div className="mx-auto flex w-full max-w-[540px] flex-col items-start gap-6 border border-t-[5px] border-border border-t-foreground bg-card p-6 tablet-lg:my-4 sm:p-8">
       {/* Icon Badge Section */}
       <div className="flex size-14 items-center justify-center rounded-none bg-foreground">
         <LucideUsers className="size-6 text-background" />
@@ -175,7 +175,7 @@ export default function SingUpOption() {
           if (!open) goToSignup();
         }}
       >
-        <DialogContent className="max-w-lg rounded-none border-t-[5px] border-t-foreground shadow-[6px_6px_0_hsl(var(--foreground)/0.1)]">
+        <DialogContent className="max-w-lg rounded-none border-t-[5px] border-t-foreground">
           <div className="flex flex-col gap-5 px-6 pb-5 pt-6">
             {/* Header Section */}
             <DialogHeader>

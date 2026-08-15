@@ -286,7 +286,7 @@ export default function CompanyDetailPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex h-10 shrink-0 items-center gap-2 border border-border bg-card px-3 text-sm font-semibold text-muted-foreground transition-[border-color,background-color,color,transform] hover:border-foreground/35 hover:bg-muted/60 hover:text-foreground active:translate-y-px"
+            className="flex h-10 shrink-0 items-center gap-2 border border-border bg-card px-3 text-sm font-medium text-muted-foreground transition-[border-color,background-color,color,transform] hover:border-foreground/35 hover:bg-muted/60 hover:text-foreground active:translate-y-px"
           >
             <LucideArrowLeft className="size-4" />
             <span className="hidden sm:inline">{tf("back")}</span>
@@ -295,7 +295,7 @@ export default function CompanyDetailPage() {
             <p className="pixel-label text-[9px] text-muted-foreground">
               {tf("companyDetail")}
             </p>
-            <p className="truncate text-sm font-semibold">
+            <p className="truncate text-sm font-medium">
               {companyData.name || tf("companyDetail")}
             </p>
           </div>
@@ -397,7 +397,7 @@ export default function CompanyDetailPage() {
                   title={tf("openPositions")}
                   variant="detail"
                   action={
-                    <span className="flex size-8 items-center justify-center border border-foreground bg-foreground text-xs font-bold text-background">
+                    <span className="flex size-8 items-center justify-center border border-foreground bg-foreground text-xs font-medium text-background">
                       {companyData.openPositions.length}
                     </span>
                   }
@@ -406,12 +406,12 @@ export default function CompanyDetailPage() {
                   {companyData.openPositions.map((item) => (
                     <div
                       key={item.id}
-                      className="profile-detail-position-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-[4px_4px_0_hsl(var(--foreground)/0.06)] sm:p-5"
+                      className="profile-detail-position-card hover: border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 sm:p-5"
                     >
                       {/* Position Header Section */}
                       <div className="flex items-start justify-between gap-3 tablet-md:flex-col">
                         <div className="space-y-2">
-                          <p className="text-lg font-bold tracking-tight sm:text-xl">
+                          <p className="text-lg font-medium tracking-tight sm:text-xl">
                             {item.title}
                           </p>
                           <div className="flex flex-wrap gap-1.5">
@@ -508,7 +508,7 @@ export default function CompanyDetailPage() {
                             <p className="pixel-label mb-1 text-muted-foreground">
                               {tf("salaryRange")}
                             </p>
-                            <span className="text-sm font-semibold text-primary">
+                            <span className="text-sm font-medium text-primary">
                               {salaryText(item)}
                             </span>
                           </div>
@@ -709,7 +709,7 @@ export default function CompanyDetailPage() {
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-semibold transition-colors hover:border-foreground/30 hover:bg-muted"
+                    className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-medium transition-colors hover:border-foreground/30 hover:bg-muted"
                   >
                     {getSocialPlatformTypeIcon(s.platform as TPlatform)}
                     {s.platform}

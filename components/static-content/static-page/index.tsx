@@ -53,7 +53,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
               </span>
             </div>
 
-            <h1 className="static-page-reveal static-page-reveal-delay mt-6 max-w-3xl text-3xl font-bold leading-[1.03] tracking-[-0.04em] sm:text-4xl md:text-5xl lg:text-[3.75rem]">
+            <h1 className="static-page-reveal static-page-reveal-delay mt-6 max-w-3xl text-3xl font-medium leading-[1.03] tracking-[-0.04em] sm:text-4xl md:text-5xl lg:text-[3.75rem]">
               {title}
             </h1>
             <p className="static-page-reveal static-page-reveal-delay-2 mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -240,7 +240,7 @@ export function StaticCard(props: IStaticCardProps) {
         <span className="[&>svg]:size-4 [&>svg]:stroke-[1.6]">{icon}</span>
       </div>
       {/* Card Content Section */}
-      <h3 className="mt-5 text-sm font-semibold text-foreground">{title}</h3>
+      <h3 className="mt-5 text-sm font-medium text-foreground">{title}</h3>
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
         {description}
       </p>
@@ -258,12 +258,12 @@ export function StaticStep(props: IStaticStepProps) {
     <div className="static-page-step relative grid grid-cols-[48px_1fr] gap-4 pb-6 last:pb-0">
       {/* Static Step Section */}
       {/* Step Number Section */}
-      <div className="pixel-numeral relative z-10 flex size-10 items-center justify-center border border-foreground/25 bg-background text-xs font-semibold text-foreground">
+      <div className="pixel-numeral relative z-10 flex size-10 items-center justify-center border border-foreground/25 bg-background text-xs font-medium text-foreground">
         {String(step).padStart(2, "0")}
       </div>
       {/* Step Content Section */}
       <div className="pt-1">
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+        <h3 className="text-sm font-medium text-foreground">{title}</h3>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
           {description}
         </p>

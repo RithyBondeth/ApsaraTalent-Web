@@ -59,7 +59,7 @@ function SearchHeroSkeleton() {
 /* -------------------------- Filter Sidebar Skeleton ------------------------- */
 function SearchFilterSidebarSkeleton({ filterCount }: { filterCount: number }) {
   return (
-    <div className="search-filter-panel flex w-72 shrink-0 flex-col border border-t-[5px] border-border border-t-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] tablet-xl:hidden xl:w-80">
+    <div className="search-filter-panel flex w-72 shrink-0 flex-col border border-t-[5px] border-border border-t-foreground bg-card tablet-xl:hidden xl:w-80">
       {/* Sidebar Header Section */}
       <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4">
         <Skeleton className="h-5 w-28 rounded-none" />
@@ -99,7 +99,7 @@ function SearchResultsHeaderSkeleton() {
 /* -------------------------- Company Result Skeleton ------------------------- */
 export function SearchCompanyCardSkeleton() {
   return (
-    <div className="w-full overflow-hidden border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <div className="w-full overflow-hidden border border-l-[5px] border-border border-l-foreground bg-card">
       {/* Company and Position Content Section */}
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Section */}
@@ -149,7 +149,7 @@ export function SearchCompanyCardSkeleton() {
 /* -------------------------- Employee Result Skeleton ------------------------ */
 function SearchEmployeePageCardSkeleton() {
   return (
-    <div className="w-full overflow-hidden border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <div className="w-full overflow-hidden border border-l-[5px] border-border border-l-foreground bg-card">
       {/* Employee Content Section */}
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Section */}

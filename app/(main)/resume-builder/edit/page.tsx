@@ -386,7 +386,7 @@ export default function ResumeEditorPage() {
           <div className="hidden items-center gap-2 border-l-2 border-foreground pl-3 sm:flex">
             <FileText size={16} className="shrink-0 text-foreground" />
             <div className="flex flex-col">
-              <TypographyLead className="text-[13px] font-bold leading-none">
+              <TypographyLead className="text-[13px] font-medium leading-none">
                 {tRb("resumeEditor")}
               </TypographyLead>
               <TypographySmall className="mt-0.5 text-[10px] font-medium uppercase tracking-tight text-muted-foreground">
@@ -460,7 +460,7 @@ export default function ResumeEditorPage() {
           type="button"
           aria-pressed={mobileWorkspace === "edit"}
           onClick={() => setMobileWorkspace("edit")}
-          className={`flex h-9 items-center justify-center gap-2 border text-xs font-bold transition-colors ${
+          className={`flex h-9 items-center justify-center gap-2 border text-xs font-medium transition-colors ${
             mobileWorkspace === "edit"
               ? "border-foreground bg-foreground text-background"
               : "border-border bg-background text-muted-foreground"
@@ -473,7 +473,7 @@ export default function ResumeEditorPage() {
           type="button"
           aria-pressed={mobileWorkspace === "preview"}
           onClick={() => setMobileWorkspace("preview")}
-          className={`flex h-9 items-center justify-center gap-2 border border-l-0 text-xs font-bold transition-colors ${
+          className={`flex h-9 items-center justify-center gap-2 border border-l-0 text-xs font-medium transition-colors ${
             mobileWorkspace === "preview"
               ? "border-foreground bg-foreground text-background"
               : "border-border bg-background text-muted-foreground"
@@ -571,7 +571,7 @@ export default function ResumeEditorPage() {
               <span className="flex size-11 shrink-0 items-center justify-center border border-background/25 bg-background/10">
                 <RotateCcw size={18} />
               </span>
-              <DialogTitle className="text-xl font-bold tracking-tight sm:text-2xl">
+              <DialogTitle className="text-xl font-medium tracking-tight sm:text-2xl">
                 {tRb("resetDialogTitle")}
               </DialogTitle>
             </div>

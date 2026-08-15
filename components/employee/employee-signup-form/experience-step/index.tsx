@@ -92,7 +92,7 @@ export default function ExperienceStepForm({
           {/* Header Without Remove Button Section */}
           {fields.length === 1 && (
             <div className="mb-3 w-full">
-              <TypographyMuted className="text-md font-bold text-foreground">
+              <TypographyMuted className="text-md font-medium text-foreground">
                 {t("empExperienceLabel")} {index + 1}
               </TypographyMuted>
             </div>
@@ -101,7 +101,7 @@ export default function ExperienceStepForm({
           {/* Header With Remove Button Section */}
           {fields.length > 1 && (
             <div className="mb-3 flex w-full items-center justify-between">
-              <TypographyMuted className="text-md font-bold text-foreground">
+              <TypographyMuted className="text-md font-medium text-foreground">
                 {t("empExperienceLabel")} {index + 1}
               </TypographyMuted>
               <Button

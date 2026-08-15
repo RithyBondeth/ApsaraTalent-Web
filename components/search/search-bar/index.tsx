@@ -110,7 +110,7 @@ export default function SearchBar<T extends FieldValues>(
             <MapPin className="mr-2 size-[18px] shrink-0" />
             <SelectValue placeholder={t("location")} />
           </SelectTrigger>
-          <SelectContent className="rounded-none border-border shadow-[5px_5px_0_hsl(var(--foreground)/0.08)] [&_[role=option]]:rounded-none">
+          <SelectContent className="rounded-none border-border [&_[role=option]]:rounded-none">
             <SelectItem key="all-location" value="all">
               {t("all")}
             </SelectItem>
@@ -154,7 +154,7 @@ export default function SearchBar<T extends FieldValues>(
           emptyText={t("typeJobType")}
           icon={<BriefcaseBusiness />}
           triggerClassName="rounded-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-          contentClassName="rounded-none border-border shadow-[5px_5px_0_hsl(var(--foreground)/0.08)] [&_*]:rounded-none"
+          contentClassName="rounded-none border-border [&_*]:rounded-none"
         />
       </div>
     </div>

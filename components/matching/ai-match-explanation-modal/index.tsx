@@ -140,7 +140,7 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
       {/* Dialog Section */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="rounded-none border-t-[5px] border-t-foreground shadow-[6px_6px_0_hsl(var(--foreground)/0.1)]"
+          className="rounded-none border-t-[5px] border-t-foreground"
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             triggerRef.current?.focus();
@@ -269,7 +269,7 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
                       {t("vsCompany", { name: companyName })}
                     </p>
                     <span
-                      className={`border-current/15 w-fit rounded-none border px-2.5 py-1 text-xs font-semibold ${verdictColor(data.verdict)}`}
+                      className={`border-current/15 w-fit rounded-none border px-2.5 py-1 text-xs font-medium ${verdictColor(data.verdict)}`}
                     >
                       {data.verdict}
                     </span>

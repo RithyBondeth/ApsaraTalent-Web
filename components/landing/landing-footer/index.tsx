@@ -33,9 +33,7 @@ export default function LandingFooter() {
           <div className="grid grid-cols-2 gap-x-12 gap-y-10 sm:grid-cols-3 md:gap-x-16">
             {/* Platform Section */}
             <div className="flex flex-col gap-3">
-              <span className="text-sm font-semibold">
-                {t("footerPlatform")}
-              </span>
+              <span className="text-sm font-medium">{t("footerPlatform")}</span>
               <Link href="/login">
                 <TypographyMuted className="cursor-pointer !text-xs transition-colors hover:text-foreground">
                   {t("login")}
@@ -50,7 +48,7 @@ export default function LandingFooter() {
 
             {/* Products Section */}
             <div className="flex flex-col gap-3">
-              <span className="text-sm font-semibold">{t("products")}</span>
+              <span className="text-sm font-medium">{t("products")}</span>
               <Link href="/product">
                 <TypographyMuted className="cursor-pointer !text-xs transition-colors hover:text-foreground">
                   {t("products")}
@@ -75,7 +73,7 @@ export default function LandingFooter() {
 
             {/* Legal Section */}
             <div className="flex flex-col gap-3">
-              <span className="text-sm font-semibold">{t("footerLegal")}</span>
+              <span className="text-sm font-medium">{t("footerLegal")}</span>
               <Link href="/privacy">
                 <TypographyMuted className="cursor-pointer !text-xs transition-colors hover:text-foreground">
                   {t("footerPrivacy")}

@@ -168,7 +168,7 @@ export default function NotificationPage() {
       <section className="flex w-full flex-col gap-5">
         <div className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+            <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
               01
             </span>
             <div>
@@ -188,7 +188,7 @@ export default function NotificationPage() {
         </div>
 
         {/* Controls Section */}
-        <div className="flex w-full flex-col gap-3 border border-t-[5px] border-border border-t-primary bg-card p-3 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex w-full flex-col gap-3 border border-t-[5px] border-border border-t-primary bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
           {/* Pill Tabs Filter Section */}
           <div className="scrollbar-none flex items-center gap-1 overflow-x-auto bg-muted/45 p-1 tablet-sm:hidden">
             {(
@@ -216,7 +216,7 @@ export default function NotificationPage() {
                   type="button"
                   onClick={() => setNotificationFilter(f)}
                   aria-pressed={active}
-                  className={`min-h-10 shrink-0 px-3 py-1.5 text-xs font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                  className={`min-h-10 shrink-0 px-3 py-1.5 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                     active
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:text-foreground"

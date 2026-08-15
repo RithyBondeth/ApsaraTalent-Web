@@ -138,7 +138,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
     <div className="flex w-full flex-col items-start gap-3">
       {/* Header With Remove Button Section */}
       <div className="flex w-full items-center justify-between">
-        <TypographyMuted className="font-bold text-foreground">
+        <TypographyMuted className="font-medium text-foreground">
           {tP("positionIndex", { index: Number(props.index) + 1 })}
         </TypographyMuted>
         {props.isEdit && (
@@ -193,7 +193,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
           {/* Description Section */}
           <div className="col-span-12 flex w-full flex-col items-start gap-1 tablet-md:col-span-1">
             <div className="flex w-full items-center justify-between">
-              <TypographyMuted className="text-xs font-bold text-foreground">
+              <TypographyMuted className="text-xs font-medium text-foreground">
                 {tP("expDescription")}
               </TypographyMuted>
               {props.isEdit && descValue && (

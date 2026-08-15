@@ -63,7 +63,7 @@ export function LandingHowItWorks() {
                 </span>
               </div>
               <div className="mt-16">
-                <TypographyH3 className="mb-3 text-xl font-semibold">
+                <TypographyH3 className="mb-3 text-xl font-medium">
                   {t(step.titleKey)}
                 </TypographyH3>
                 <TypographyMuted className="!text-sm !leading-relaxed">

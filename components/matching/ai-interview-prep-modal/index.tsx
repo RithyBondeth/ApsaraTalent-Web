@@ -183,7 +183,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
 
       {/* Modal Section */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="flex flex-col gap-0 rounded-none border-t-[5px] border-t-foreground p-0 shadow-[6px_6px_0_hsl(var(--foreground)/0.1)] sm:max-w-2xl">
+        <DialogContent className="flex flex-col gap-0 rounded-none border-t-[5px] border-t-foreground p-0 sm:max-w-2xl">
           {/* Header Section */}
           <DialogHeader className="shrink-0 border-b border-border/60 px-5 pb-4 pt-5">
             <div className="flex items-center gap-3 pr-8">
@@ -191,7 +191,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
                 <LucideMessageCircleQuestion className="size-5 text-background" />
               </div>
               <div className="min-w-0 flex-1">
-                <DialogTitle className="truncate text-left text-base font-semibold leading-tight">
+                <DialogTitle className="truncate text-left text-base font-medium leading-tight">
                   {interviewTitle ??
                     t("aiInterviewPrep", { name: companyName })}
                 </DialogTitle>

@@ -17,17 +17,16 @@ import { cn } from "@/lib/utils";
  * its own hierarchy from elevation without needing colour to do all of it.
  * ------------------------------------------------------------------------- */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none text-sm font-bold ring-offset-background transition-[color,background-color,border-color,box-shadow,transform] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-[color,background-color,border-color,box-shadow,transform] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
-      // `pixel-press` rides along with the shadow, never on its own: the
-      // press animates a button *into* its offset, so a flat variant that
-      // travelled the same 4px would just look like it slipped.
+      // Flat. Measured across mistral.ai: 2–3 shadowed elements per page out
+      // of several thousand, and nothing moves on press. Hierarchy comes from
+      // fill and border, which is all a square UI actually needs.
       variant: {
-        default:
-          "pixel-press bg-primary text-primary-foreground shadow-pixel hover:bg-primary/90",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
-          "pixel-press bg-destructive text-destructive-foreground shadow-pixel hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
           "border border-input bg-background hover:border-primary hover:bg-accent hover:text-accent-foreground",
         secondary:

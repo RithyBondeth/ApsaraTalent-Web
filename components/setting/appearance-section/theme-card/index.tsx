@@ -34,7 +34,7 @@ export function ThemeCard(props: IThemeCardProps) {
       className={cn(
         "relative flex w-full cursor-pointer flex-col items-center gap-2 border-2 p-3 text-left transition-all duration-200",
         active
-          ? "border-primary bg-primary/5 shadow-[3px_3px_0_hsl(var(--primary)/0.18)]"
+          ? "border-primary bg-primary/5"
           : "border-border bg-card hover:border-primary/40 hover:bg-accent/50",
       )}
     >

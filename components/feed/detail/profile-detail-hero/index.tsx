@@ -28,13 +28,13 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
     <Avatar
       rounded="md"
       className={cn(
-        "shrink-0 rounded-none border-[3px] border-card bg-card shadow-[7px_7px_0_hsl(var(--foreground)/0.14)]",
+        "shrink-0 rounded-none border-[3px] border-card bg-card",
         avatar && onAvatarClick && "cursor-pointer",
       )}
       onClick={avatar && onAvatarClick ? onAvatarClick : undefined}
     >
       <AvatarImage src={avatar ?? ""} alt={name} className="object-cover" />
-      <AvatarFallback className="bg-background text-xl font-bold uppercase text-foreground">
+      <AvatarFallback className="bg-background text-xl font-medium uppercase text-foreground">
         {fallback ?? <User className="size-6" />}
       </AvatarFallback>
     </Avatar>
@@ -72,7 +72,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
                 <p className="pixel-label mb-2 text-[9px] opacity-55">
                   Apsara profile
                 </p>
-                <h1 className="text-3xl font-bold leading-[0.95] tracking-[-0.045em] sm:text-5xl">
+                <h1 className="text-3xl font-medium leading-[0.95] tracking-[-0.045em] sm:text-5xl">
                   {name}
                 </h1>
               </div>
@@ -94,7 +94,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
                 {status}
               </div>
               {headline && (
-                <p className="mt-7 max-w-xl text-4xl font-bold leading-[0.95] tracking-[-0.05em] sm:text-6xl md:mt-10">
+                <p className="mt-7 max-w-xl text-4xl font-medium leading-[0.95] tracking-[-0.05em] sm:text-6xl md:mt-10">
                   {headline}
                 </p>
               )}
@@ -147,7 +147,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
           {headline && (
             <p className="pixel-label mb-4 text-xs opacity-70">{headline}</p>
           )}
-          <h1 className="text-4xl font-bold leading-[0.9] tracking-[-0.055em] sm:text-6xl lg:text-7xl">
+          <h1 className="text-4xl font-medium leading-[0.9] tracking-[-0.055em] sm:text-6xl lg:text-7xl">
             {name}
           </h1>
         </div>

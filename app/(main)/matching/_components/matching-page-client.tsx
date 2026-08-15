@@ -282,7 +282,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
       <section className="flex w-full flex-col gap-5">
         <div className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+            <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
               01
             </span>
             <div>

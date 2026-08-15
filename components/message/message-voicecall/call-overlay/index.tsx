@@ -80,7 +80,7 @@ export function CallOverlay(props: ICallOverlayProps) {
       <audio ref={remoteAudioRef} autoPlay playsInline className="hidden" />
 
       {/* Call Overlay Section */}
-      <div className="fixed bottom-6 right-6 z-50 w-72 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-4 shadow-[6px_6px_0_hsl(var(--foreground)/0.12)] duration-200 animate-in slide-in-from-bottom-4">
+      <div className="fixed bottom-6 right-6 z-50 w-72 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-4 duration-200 animate-in slide-in-from-bottom-4">
         <div className="mb-4 flex items-center gap-3">
           {/* Partner Avatar Section */}
           <Avatar className="h-10 w-10 shrink-0 rounded-none border border-border">
@@ -92,7 +92,7 @@ export function CallOverlay(props: ICallOverlayProps) {
 
           {/* Partner Name and Status Label Section */}
           <div className="min-w-0">
-            <TypographyP className="truncate text-sm font-semibold leading-tight text-foreground [&:not(:first-child)]:mt-0">
+            <TypographyP className="truncate text-sm font-medium leading-tight text-foreground [&:not(:first-child)]:mt-0">
               {partner.name}
             </TypographyP>
             <TypographyMuted

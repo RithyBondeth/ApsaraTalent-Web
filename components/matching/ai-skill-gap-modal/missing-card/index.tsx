@@ -28,14 +28,14 @@ export default function MissingCard(props: IMissingCardProps) {
 
   /* --------------------------- Render UI -------------------------- */
   return (
-    <div className="flex flex-col gap-2.5 rounded-none border border-l-[5px] border-border border-l-foreground bg-card px-4 py-4 shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
+    <div className="flex flex-col gap-2.5 rounded-none border border-l-[5px] border-border border-l-foreground bg-card px-4 py-4 duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
       {/* Skill Name and Criticality Badge Section */}
       <div className="flex items-start justify-between gap-3">
-        <p className="text-sm font-semibold leading-snug text-foreground">
+        <p className="text-sm font-medium leading-snug text-foreground">
           {skill}
         </p>
         <span
-          className={`border-current/15 inline-flex shrink-0 rounded-none border px-2.5 py-0.5 text-[11px] font-semibold ${chipColor}`}
+          className={`border-current/15 inline-flex shrink-0 rounded-none border px-2.5 py-0.5 text-[11px] font-medium ${chipColor}`}
         >
           {critLabel}
         </span>

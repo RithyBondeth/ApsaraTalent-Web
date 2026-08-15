@@ -9,11 +9,11 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      // The 5px solid primary rule along the top edge became a three-tile
-      // ramp in the corner (`.pixel-card`, globals.css). Same job — marking
-      // where the card starts — but it carries the ramp instead of restating
-      // the brand colour on every surface in the app at full width.
-      "pixel-card rounded-none border border-border bg-card text-card-foreground shadow-pixel",
+      // A bordered rectangle and nothing else. The ramp corner mark went with
+      // the offset shadow: on mistral.ai a card is a 1px rule over the page,
+      // and a decorative tab on every one of ~200 call sites was the app
+      // restating its brand where the design asks for silence.
+      "rounded-none border border-border bg-card text-card-foreground",
       className,
     )}
     {...props}
@@ -40,7 +40,7 @@ const CardTitle = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
+      "text-2xl font-medium leading-none tracking-tight",
       className,
     )}
     {...props}

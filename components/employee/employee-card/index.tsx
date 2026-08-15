@@ -224,7 +224,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
   // ─── Default Variant Section ──────────────────────────────────
   return (
-    <div className="flex h-fit w-full cursor-pointer flex-col items-start gap-4 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-foreground/40 hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+    <div className="hover: flex h-fit w-full cursor-pointer flex-col items-start gap-4 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-4 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-foreground/40">
       {/* Profile Section */}
       <div className="flex w-full flex-wrap items-start justify-between gap-3">
         {/* Avatar, Username, JobTitle and Location Section */}
@@ -241,7 +241,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             {props.username?.slice(0, 3)}
           </CachedAvatar>
           <div className="flex min-w-0 flex-col items-start gap-1">
-            <TypographyP className="max-w-full truncate font-semibold">
+            <TypographyP className="max-w-full truncate font-medium">
               {props.username}
             </TypographyP>
             <TypographyMuted>{props.job}</TypographyMuted>

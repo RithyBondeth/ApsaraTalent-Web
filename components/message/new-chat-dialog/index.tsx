@@ -101,7 +101,7 @@ export default function NewChatDialog(props: INewChatDialogProps) {
                       </Avatar>
 
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-foreground">
+                        <p className="truncate text-sm font-medium text-foreground">
                           {candidate.name}
                         </p>
                         {candidate.subtitle && (

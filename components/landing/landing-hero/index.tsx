@@ -63,7 +63,7 @@ export default function LandingHero() {
           {/* Heading Section */}
           <TypographyH1
             data-hero="heading"
-            className="max-w-3xl text-4xl font-bold !leading-[1.02] tracking-[-0.04em] opacity-0 sm:text-5xl md:text-6xl lg:text-[4.25rem]"
+            className="max-w-3xl text-4xl font-medium !leading-[1.02] tracking-[-0.04em] opacity-0 sm:text-5xl md:text-6xl lg:text-[4.25rem]"
           >
             {t("heroHeading1")} <br />
             {t("heroHeading2")} {t("heroHeadingTalent")} {t("heroHeadingAnd")}{" "}

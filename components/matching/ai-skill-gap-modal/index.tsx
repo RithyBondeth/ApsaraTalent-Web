@@ -199,7 +199,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
       {/* Dialog Section */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="flex flex-col gap-0 rounded-none border-t-[5px] border-t-foreground p-0 shadow-[6px_6px_0_hsl(var(--foreground)/0.1)] sm:max-w-2xl"
+          className="flex flex-col gap-0 rounded-none border-t-[5px] border-t-foreground p-0 sm:max-w-2xl"
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             triggerRef.current?.focus();
@@ -212,7 +212,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
                 <LucideTarget className="size-5 text-background" />
               </div>
               <div className="min-w-0 flex-1">
-                <DialogTitle className="truncate text-left text-base font-semibold leading-tight">
+                <DialogTitle className="truncate text-left text-base font-medium leading-tight">
                   {t("aiSkillGap", { name: companyName })}
                 </DialogTitle>
               </div>
@@ -330,7 +330,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
                 <p className="pixel-label mb-1.5 opacity-70">
                   {t("skillGapSummary")}
                 </p>
-                <p className="text-sm font-semibold leading-snug">{gapLabel}</p>
+                <p className="text-sm font-medium leading-snug">{gapLabel}</p>
                 {summary.estimatedWeeks > 0 && (
                   <p className="mt-1 text-xs opacity-70">
                     {t("estimatedTime", { weeks: summary.estimatedWeeks })}

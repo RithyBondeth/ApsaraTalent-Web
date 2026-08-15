@@ -135,7 +135,7 @@ export function LayoutTab() {
     <div className="flex flex-col gap-6">
       {/* Header Section */}
       <div className="space-y-1">
-        <h4 className="text-sm font-semibold">{t("sectionManagement")}</h4>
+        <h4 className="text-sm font-medium">{t("sectionManagement")}</h4>
         <p className="text-xs text-muted-foreground">
           {t("sectionManagementDesc")}
         </p>

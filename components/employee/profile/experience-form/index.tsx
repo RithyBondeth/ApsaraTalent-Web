@@ -56,7 +56,7 @@ export default function EmployeeExperienceForm(
     <div className="flex w-full flex-col items-start gap-3">
       {/* Header Section */}
       <div className="flex w-full items-center justify-between">
-        <TypographyMuted className="font-bold text-foreground">
+        <TypographyMuted className="font-medium text-foreground">
           {t("experienceIndex", { index: props.index + 1 })}
         </TypographyMuted>
         {props.isEdit && (

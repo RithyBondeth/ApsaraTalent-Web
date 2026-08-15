@@ -15,15 +15,15 @@ export function QuestionCard(props: IQuestionCardProps) {
 
   /* -------------------------- Render UI ------------------------- */
   return (
-    <div className="flex flex-col gap-3 overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card px-4 py-4 shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
+    <div className="flex flex-col gap-3 overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card px-4 py-4 duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
       {/* Question Section */}
       <div className="flex gap-3">
-        <span className="mt-0.5 w-5 shrink-0 text-right text-xs font-semibold leading-5 text-muted-foreground/50">
+        <span className="mt-0.5 w-5 shrink-0 text-right text-xs font-medium leading-5 text-muted-foreground/50">
           {index + 1}
         </span>
         <div className="flex-1">
           <span
-            className={`border-current/15 mb-2 inline-flex rounded-none border px-2.5 py-0.5 text-[11px] font-semibold ${interviewPrepChip}`}
+            className={`border-current/15 mb-2 inline-flex rounded-none border px-2.5 py-0.5 text-[11px] font-medium ${interviewPrepChip}`}
           >
             {item.category}
           </span>

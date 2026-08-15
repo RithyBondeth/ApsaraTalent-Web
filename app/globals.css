@@ -336,9 +336,15 @@
   .pixel-label {
     font-family: var(--font-space-mono), ui-monospace, monospace;
     font-size: 11px;
-    font-weight: 700;
+    /* 500, not 700. Nothing on mistral.ai is bold — the display face runs at
+       500, Inter at 400, Space Mono at 400. Weight is not how that design
+       creates emphasis; the mono face and the caps already do it. */
+    font-weight: 500;
     line-height: 1.2;
-    letter-spacing: 0.14em;
+    /* Their 12px mono labels sit at letter-spacing: normal. 0.14em was me
+       reaching for a "small caps label" idiom they do not actually use, and
+       at 11px it opened the words up until they stopped reading as words. */
+    letter-spacing: 0.02em;
     text-transform: uppercase;
     font-variant-ligatures: none;
   }
@@ -348,19 +354,30 @@
      a mono here rather than just tracking out the sans. */
   .pixel-numeral {
     font-family: var(--font-space-mono), ui-monospace, monospace;
-    font-weight: 700;
+    font-weight: 500;
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
 
   /* Display type. Tight negative tracking at large sizes only — the same
      -0.02em that looks purposeful at 56px closes up 14px body copy into an
      unreadable block, so this is deliberately not a body-text class. */
   .pixel-display {
-    font-weight: 700;
-    line-height: 0.98;
-    letter-spacing: -0.03em;
+    /* 500 and near-normal tracking. Measured: their 24px H2 runs 500 weight,
+       letter-spacing: normal, line-height 32px — 1.33, not the 0.98 I had.
+       Negative tracking only appears at true display sizes (-0.02em at 96px),
+       so it scales down here rather than being applied flat at every size. */
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
     text-wrap: balance;
+  }
+
+  /* Only genuine hero type gets the tight tracking, matching the -0.02em
+     they use at 96px. Opt in; it is wrong below roughly 40px. */
+  .pixel-display-xl {
+    line-height: 1.02;
+    letter-spacing: -0.02em;
   }
 
   /* ── 1. The tile ──────────────────────────────────────────────────────── */
@@ -389,8 +406,11 @@
     border: 1px solid hsl(var(--border));
   }
 
+  /* The page shows through the cells; only the 1px bed between them is
+     border-coloured. Their pricing cards are transparent over the page for
+     exactly this reason. */
   .pixel-ruled > * {
-    background: hsl(var(--card));
+    background: hsl(var(--background));
   }
 
   /* Ruled-paper texture. Sits behind hero and banner surfaces at the same
@@ -428,27 +448,29 @@
   }
 
   /* ── 4. The offset ────────────────────────────────────────────────────── */
-  .pixel-raise {
-    box-shadow: calc(var(--pixel-unit) * 1) calc(var(--pixel-unit) * 1) 0
-      hsl(var(--foreground) / 0.08);
-  }
-
+  /* Surfaces in the sheet are flat. This exists only so the intent is
+     explicit where a component used to be raised. */
+  .pixel-raise,
   .pixel-raise-lg {
-    box-shadow: calc(var(--pixel-unit) * 2) calc(var(--pixel-unit) * 2) 0
-      hsl(var(--foreground) / 0.09);
+    box-shadow: none;
   }
 
-  /* Interactive surfaces travel *into* their own shadow on press, so the
-     offset reads as real displacement rather than decoration. */
+  /* The one exception, and the only shadow mistral.ai actually ships: a
+     four-layer ambient at 2% alpha under floating overlays. It is almost
+     invisible by design — enough to detach a menu from the page beneath it,
+     nowhere near enough to read as elevation. */
+  .pixel-overlay-shadow {
+    box-shadow:
+      0 4px 8px hsl(var(--foreground) / 0.02),
+      0 2px 4px hsl(var(--foreground) / 0.02),
+      0 1px 2px hsl(var(--foreground) / 0.02),
+      0 0 1px hsl(var(--foreground) / 0.02);
+  }
+
+  /* Press is a fill change now, not displacement — nothing on their site
+     moves under the cursor. */
   .pixel-press {
-    transition:
-      transform 140ms cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 140ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .pixel-press:active {
-    transform: translate(var(--pixel-unit), var(--pixel-unit));
-    box-shadow: 0 0 0 hsl(var(--foreground) / 0);
+    transition: background-color 140ms ease;
   }
 
   /* ── The sheet ────────────────────────────────────────────────────────── */
@@ -469,7 +491,7 @@
     max-width: 1600px;
     margin-inline: auto;
     border-inline: 1px solid hsl(var(--border));
-    background: hsl(var(--card));
+    background: hsl(var(--background));
   }
 
   /* A full-width horizontal section of the sheet. Stacks flush against its
@@ -496,43 +518,9 @@
   }
 
   /* Inside a ruled grid a card is a cell, not an object: the grid already
-     draws every boundary, so the card's own border, shadow and corner mark
-     would double up on lines the sheet has drawn. */
-  .pixel-ruled .pixel-card,
-  .pixel-band .pixel-card.pixel-flush {
+     draws every boundary, so a card's own border would double the line. */
+  .pixel-ruled > .pixel-flush {
     border: 0;
-    box-shadow: none;
-  }
-
-  .pixel-ruled .pixel-card::before,
-  .pixel-band .pixel-card.pixel-flush::before {
-    content: none;
-  }
-
-  /* ── Card corner mark ─────────────────────────────────────────────────── */
-  /* Three tiles of the ramp sitting on the top-left corner, replacing the
-     full-width primary rule the card used to wear. Drawn as one gradient on
-     a pseudo-element rather than as child nodes, because Card is spread
-     across ~200 call sites and several of them index into `children`. */
-  .pixel-card {
-    position: relative;
-  }
-
-  .pixel-card::before {
-    position: absolute;
-    z-index: 1;
-    top: -1px;
-    left: -1px;
-    width: calc(var(--pixel-unit) * 9);
-    height: var(--pixel-unit);
-    content: "";
-    pointer-events: none;
-    background-image: linear-gradient(
-      to right,
-      hsl(var(--pixel-2)) 0 33.34%,
-      hsl(var(--pixel-3)) 33.34% 66.67%,
-      hsl(var(--pixel-5)) 66.67% 100%
-    );
   }
 
   /* ── Stepped divider ──────────────────────────────────────────────────── */
@@ -614,7 +602,7 @@
 }
 
 .profile-editorial .profile-section h3 {
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: -0.025em;
 }
 
@@ -1089,7 +1077,7 @@
   bottom: -2.5rem;
   color: hsl(var(--foreground));
   font-size: clamp(10rem, 20vw, 18rem);
-  font-weight: 900;
+  font-weight: 500;
   line-height: 0.8;
   letter-spacing: -0.1em;
   opacity: 0.025;
@@ -1696,7 +1684,7 @@ html.theme-fallback-transition body *::after {
     position: relative;
     z-index: 1;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.03em;
     line-height: 1;
     color: hsl(224 14% 10%);
@@ -2032,7 +2020,7 @@ html.theme-fallback-transition body *::after {
   z-index: 1;
   color: hsl(var(--foreground) / 0.72);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1;
   letter-spacing: 0.08em;
   white-space: nowrap;
@@ -2799,7 +2787,7 @@ body:has(.auth-scope),
 /* Eyebrow */
 .auth-eyebrow {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: hsl(var(--auth-ink) / 0.55);
@@ -4290,7 +4278,7 @@ body:has(.landing-scope),
 .apsara-toaster .apsara-toast-title {
   color: hsl(var(--apsara-toast-fg));
   font-size: 0.875rem;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1.35;
   letter-spacing: -0.01em;
 }
@@ -4316,7 +4304,7 @@ body:has(.landing-scope),
   outline: none;
   font: inherit;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 500;
   cursor: pointer;
   transition:
     transform 180ms cubic-bezier(0.22, 1, 0.36, 1),

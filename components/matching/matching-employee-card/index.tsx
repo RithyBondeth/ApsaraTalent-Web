@@ -48,14 +48,14 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <article className="group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+    <article className="hover: group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground">
       <div className="flex gap-4 p-4 sm:gap-5 sm:p-5">
         {/* Avatar Section */}
         <Avatar
           rounded="md"
           className="size-14 flex-shrink-0 !rounded-none border border-border sm:size-16"
         >
-          <AvatarFallback className="text-sm font-semibold">
+          <AvatarFallback className="text-sm font-medium">
             {getNameInitials(props.name)}
           </AvatarFallback>
           <AvatarImage src={props.avatar} />
@@ -76,7 +76,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
             <div className="flex flex-shrink-0 items-center gap-2">
               <MatchScoreBadge score={props.matchScore} />
               <span
-                className={`border-current/15 whitespace-nowrap rounded-none border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
+                className={`border-current/15 whitespace-nowrap rounded-none border px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
               >
                 {availabilityLabel}
               </span>

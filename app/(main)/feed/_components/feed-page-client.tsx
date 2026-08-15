@@ -697,7 +697,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
               <div className="flex w-full flex-col gap-5 border-y border-border py-6">
                 <div className="flex items-end justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+                    <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
                       01
                     </span>
                     <h2 className="pixel-display text-xl text-foreground sm:text-2xl">
@@ -744,7 +744,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
 
             return (
               <div className="flex w-full items-center gap-3 border-y border-border py-5">
-                <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+                <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
                   01
                 </span>
                 <TypographyMuted>{tFeed("recommendedForYou")}</TypographyMuted>
@@ -755,7 +755,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                       setRecsHasFetched(false);
                       retryFn(retryId).finally(() => setRecsHasFetched(true));
                     }}
-                    className="border-b border-foreground text-xs font-semibold text-foreground transition-opacity hover:opacity-60"
+                    className="border-b border-foreground text-xs font-medium text-foreground transition-opacity hover:opacity-60"
                   >
                     {tFeed("retry")}
                   </button>
@@ -770,7 +770,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
             <FadeIn className="flex w-full flex-col gap-5 border-y border-border py-6">
               <div className="flex items-end justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+                  <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
                     01
                   </span>
                   <h2 className="pixel-display text-xl text-foreground sm:text-2xl">
@@ -829,7 +829,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       ) : (
         <FadeIn className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+            <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
               02
             </span>
             <h2 className="pixel-display text-xl text-foreground sm:text-2xl">

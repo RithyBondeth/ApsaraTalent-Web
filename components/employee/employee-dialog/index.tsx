@@ -57,7 +57,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
               rounded="md"
             >
               <AvatarImage src={props.avatar!} />
-              <AvatarFallback className="text-lg font-semibold uppercase">
+              <AvatarFallback className="text-lg font-medium uppercase">
                 {getNameInitials(fullName)}
               </AvatarFallback>
             </Avatar>
@@ -66,7 +66,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
 
         {/* Name, JobTitle, Location, Years of Experience, Availability and Profile Progress Section */}
         <div className="shrink-0 px-4 pt-12">
-          <DialogTitle className="text-base font-bold leading-tight">
+          <DialogTitle className="text-base font-medium leading-tight">
             {fullName}
           </DialogTitle>
           <DialogDescription className="mt-0.5 text-sm text-muted-foreground">
@@ -105,7 +105,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           {/* About Section */}
           {props.description && (
             <section>
-              <TypographyP className="mb-1.5 text-sm font-semibold [&:not(:first-child)]:mt-0">
+              <TypographyP className="mb-1.5 text-sm font-medium [&:not(:first-child)]:mt-0">
                 {t("dialogAbout")}
               </TypographyP>
               <TypographyMuted className="text-sm leading-relaxed text-muted-foreground">
@@ -117,7 +117,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           {/* Skills Section */}
           {props.skills && props.skills.length > 0 && (
             <section>
-              <TypographyP className="mb-2 text-sm font-semibold [&:not(:first-child)]:mt-0">
+              <TypographyP className="mb-2 text-sm font-medium [&:not(:first-child)]:mt-0">
                 {t("dialogSkills")}
               </TypographyP>
               <div className="flex flex-wrap gap-1.5">
@@ -136,7 +136,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           {/* Education Section */}
           {props.educations && props.educations.length > 0 && (
             <section>
-              <TypographyP className="mb-2 text-sm font-semibold [&:not(:first-child)]:mt-0">
+              <TypographyP className="mb-2 text-sm font-medium [&:not(:first-child)]:mt-0">
                 {t("dialogEducation")}
               </TypographyP>
               <div className="space-y-2.5">

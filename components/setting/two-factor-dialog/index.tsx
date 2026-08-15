@@ -87,7 +87,7 @@ export function TwoFactorDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-sm rounded-none border-t-[5px] border-t-primary shadow-[6px_6px_0_hsl(var(--foreground)/0.09)]">
+      <DialogContent className="max-w-sm rounded-none border-t-[5px] border-t-primary">
         {/* Dialog Header Section */}
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">

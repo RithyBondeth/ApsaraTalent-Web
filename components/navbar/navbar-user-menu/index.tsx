@@ -138,21 +138,21 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
       <DropdownMenu>
         {/* User Menu Trigger Section */}
         <DropdownMenuTrigger asChild>
-          <button className="group flex h-11 items-center gap-2 border border-border bg-card/80 px-2 transition-[background-color,border-color,box-shadow,transform] duration-200 hover:border-foreground/35 hover:bg-muted/60 hover:shadow-[3px_3px_0_hsl(var(--foreground)/0.08)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px">
+          <button className="hover: group flex h-11 items-center gap-2 border border-border bg-card/80 px-2 transition-[background-color,border-color,box-shadow,transform] duration-200 hover:border-foreground/35 hover:bg-muted/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px">
             {/* Avatar Section */}
             <Avatar
               rounded="md"
               className="h-7 w-7 shrink-0 rounded-none border border-border transition-colors duration-200 group-hover:border-foreground/30"
             >
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="bg-foreground text-[10px] font-bold text-background">
+              <AvatarFallback className="bg-foreground text-[10px] font-medium text-background">
                 {getNameInitials(user.name)}
               </AvatarFallback>
             </Avatar>
 
             {/* Name and Role Section */}
             <div className="hidden min-w-0 flex-col gap-0.5 sm:flex">
-              <span className="max-w-[86px] truncate text-xs font-semibold leading-none lg:max-w-[104px]">
+              <span className="max-w-[86px] truncate text-xs font-medium leading-none lg:max-w-[104px]">
                 {user.name}
               </span>
               <span className="pixel-label text-[9px] text-muted-foreground">
@@ -180,12 +180,12 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
                 className="h-11 w-11 rounded-none border border-foreground/15"
               >
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="bg-foreground font-bold text-background">
+                <AvatarFallback className="bg-foreground font-medium text-background">
                   {getNameInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold leading-tight">
+                <p className="truncate text-sm font-medium leading-tight">
                   {user.name}
                 </p>
                 <p className="mt-0.5 truncate text-xs text-muted-foreground">

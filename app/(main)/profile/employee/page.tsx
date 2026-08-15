@@ -1333,7 +1333,7 @@ export default function EmployeeProfilePage() {
                   src={avatarPreview}
                   onError={() => setAvatarLoadError(true)}
                 />
-                <AvatarFallback className="text-lg font-semibold uppercase">
+                <AvatarFallback className="text-lg font-medium uppercase">
                   {employee.username?.slice(0, AVATAR_INITIALS_LENGTH)}
                 </AvatarFallback>
               </Avatar>
@@ -1699,7 +1699,7 @@ export default function EmployeeProfilePage() {
                           )}
                         </span>
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold">
+                          <p className="text-sm font-medium">
                             {tP("profileVisibility")}
                           </p>
                           <p className="mt-0.5 text-xs text-muted-foreground">
@@ -2106,7 +2106,7 @@ export default function EmployeeProfilePage() {
               {/* Description Section */}
               <div className="col-span-12 flex w-full flex-col items-start gap-1 tablet-md:col-span-1">
                 <div className="flex w-full items-center justify-between">
-                  <TypographyMuted className="text-xs font-bold text-foreground">
+                  <TypographyMuted className="text-xs font-medium text-foreground">
                     {tP("description")}
                   </TypographyMuted>
                   {isEdit && descValue && (

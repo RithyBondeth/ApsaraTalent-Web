@@ -52,7 +52,7 @@ export function InterviewCard({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <article className="group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+    <article className="hover: group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground">
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Row Section */}
         <div className="flex items-start justify-between gap-2">
@@ -66,7 +66,7 @@ export function InterviewCard({
           </div>
           <Badge
             variant="outline"
-            className={`border-current/15 flex-shrink-0 whitespace-nowrap rounded-none px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getStatusBadgeStyleClass(interview.status)}`}
+            className={`border-current/15 flex-shrink-0 whitespace-nowrap rounded-none px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.08em] ${getStatusBadgeStyleClass(interview.status)}`}
           >
             {t(`status.${interview.status}`)}
           </Badge>

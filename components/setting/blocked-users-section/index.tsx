@@ -88,7 +88,7 @@ export function BlockedUsersSection() {
                 <div className="flex min-w-0 items-center gap-3">
                   <Avatar className="h-9 w-9 shrink-0 rounded-none border border-border">
                     <AvatarImage src={u.avatar ?? ""} alt={u.name} />
-                    <AvatarFallback className="rounded-none text-xs font-bold">
+                    <AvatarFallback className="rounded-none text-xs font-medium">
                       {getNameInitials(u.name)}
                     </AvatarFallback>
                   </Avatar>

@@ -43,8 +43,8 @@ export function SectionTitle(props: {
         {/* Title Section */}
         <h3
           className={cn(
-            "truncate text-base font-semibold",
-            isDetail && "font-bold tracking-tight",
+            "truncate text-base font-medium",
+            isDetail && "font-medium tracking-tight",
           )}
         >
           {title}

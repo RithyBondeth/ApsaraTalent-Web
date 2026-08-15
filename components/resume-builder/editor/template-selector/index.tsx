@@ -40,7 +40,7 @@ export default function TemplateSelector({
           </div>
         </SelectTrigger>
         {/* Select Template Dropdown Section */}
-        <SelectContent className="rounded-none border-border shadow-[5px_5px_0_hsl(var(--foreground)/0.08)] [&_[role=option]]:rounded-none">
+        <SelectContent className="rounded-none border-border [&_[role=option]]:rounded-none">
           {RESUME_TEMPLATE_KEYS.map((templateKey) => (
             <SelectItem
               key={templateKey}

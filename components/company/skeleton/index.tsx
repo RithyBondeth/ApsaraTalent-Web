@@ -73,7 +73,7 @@ function SkeletonCard({
 }) {
   return (
     <div
-      className={`border border-border bg-card shadow-[4px_4px_0_hsl(var(--foreground)/0.035)] [&_.animate-shimmer]:rounded-none ${className ?? ""}`}
+      className={`border border-border bg-card [&_.animate-shimmer]:rounded-none ${className ?? ""}`}
     >
       {children}
     </div>

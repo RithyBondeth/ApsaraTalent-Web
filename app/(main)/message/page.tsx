@@ -376,7 +376,7 @@ export default function MessagePageContent() {
   );
 
   return (
-    <div className="message-editorial animate-page-in relative mx-auto flex h-full min-h-0 w-full max-w-[1500px] overflow-hidden border border-t-[5px] border-border border-t-primary bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <div className="message-editorial animate-page-in relative mx-auto flex h-full min-h-0 w-full max-w-[1500px] overflow-hidden border border-t-[5px] border-border border-t-primary bg-card">
       {/* Call Overlay + Incoming Modal Section */}
       <CallOrchestrator />
 

@@ -29,7 +29,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <article className="group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+    <article className="hover: group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground">
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Section: Avatar, Name, Job and Availability */}
         <div className="flex gap-4">
@@ -38,7 +38,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
             className="size-14 flex-shrink-0 !rounded-none border border-border sm:size-16"
           >
             <AvatarImage src={props.avatar} />
-            <AvatarFallback className="text-xs font-semibold">
+            <AvatarFallback className="text-xs font-medium">
               {props.username?.slice(0, AVATAR_INITIALS_LENGTH)?.toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -54,7 +54,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
                 </TypographyP>
               </div>
               <span
-                className={`border-current/15 flex-shrink-0 whitespace-nowrap rounded-none border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
+                className={`border-current/15 flex-shrink-0 whitespace-nowrap rounded-none border px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
               >
                 {formatAvailabilityWords(props.availability)}
               </span>
@@ -105,7 +105,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
               />
             ))}
             {props.skills.length > 6 && (
-              <span className="self-center text-[11px] font-semibold text-muted-foreground">
+              <span className="self-center text-[11px] font-medium text-muted-foreground">
                 +{props.skills.length - 6}
               </span>
             )}

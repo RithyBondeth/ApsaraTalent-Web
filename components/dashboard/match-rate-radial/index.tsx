@@ -51,7 +51,7 @@ export function MatchRateRadial({ rate }: IMatchRateRadialProps) {
 
       {/* Rate Section */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-bold tracking-tight" style={{ color }}>
+        <span className="text-3xl font-medium tracking-tight" style={{ color }}>
           {rate}%
         </span>
         <span className="mt-0.5 text-xs text-muted-foreground">Match Rate</span>

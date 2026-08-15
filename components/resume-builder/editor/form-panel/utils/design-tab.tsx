@@ -85,7 +85,7 @@ function AdvancedDesignSection({
       {/* Collapsible Triggrer Section */}
       <CollapsibleTrigger className="group flex w-full items-center justify-between gap-3 bg-muted/25 px-3 py-3 text-left transition-colors hover:bg-muted/50">
         <span>
-          <span className="block text-xs font-bold text-foreground">
+          <span className="block text-xs font-medium text-foreground">
             {title}
           </span>
           <span className="mt-0.5 block text-[10px] leading-4 text-muted-foreground">

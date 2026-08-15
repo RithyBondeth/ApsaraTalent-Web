@@ -33,7 +33,7 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
         onClick={() => setOpen(!open)}
         aria-expanded={open}
         aria-controls={answerId}
-        className="group flex w-full items-center justify-between gap-4 py-5 text-left text-sm font-semibold text-foreground transition-colors hover:text-muted-foreground"
+        className="group flex w-full items-center justify-between gap-4 py-5 text-left text-sm font-medium text-foreground transition-colors hover:text-muted-foreground"
       >
         <span>{question}</span>
         <LucideChevronDown className="static-page-faq-chevron size-4 shrink-0 text-muted-foreground transition-transform duration-300" />
@@ -367,7 +367,7 @@ export function SupportContent() {
               title={c.title}
               description={c.description}
               footer={
-                <span className="text-xs font-semibold text-foreground">
+                <span className="text-xs font-medium text-foreground">
                   {c.action}
                 </span>
               }

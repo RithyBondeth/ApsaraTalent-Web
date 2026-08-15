@@ -447,7 +447,7 @@ export default function EmployeeSearchPage() {
             <div className="relative">
               <LucideSlidersHorizontal className="h-4 w-4" />
               {activeFilterCount > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 flex size-3.5 items-center justify-center rounded-none bg-foreground text-[9px] font-bold leading-none text-background">
+                <span className="absolute -right-1.5 -top-1.5 flex size-3.5 items-center justify-center rounded-none bg-foreground text-[9px] font-medium leading-none text-background">
                   {activeFilterCount > 9 ? "9+" : activeFilterCount}
                 </span>
               )}
@@ -465,13 +465,13 @@ export default function EmployeeSearchPage() {
       <div className="flex w-full items-start gap-5 tablet-xl:flex-col">
         {/* Left Side: Filter Section */}
         <div
-          className={`search-filter-panel flex w-72 shrink-0 flex-col self-start rounded-none border border-t-[5px] border-border border-t-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] tablet-xl:w-full xl:w-80 ${
+          className={`search-filter-panel flex w-72 shrink-0 flex-col self-start rounded-none border border-t-[5px] border-border border-t-foreground bg-card tablet-xl:w-full xl:w-80 ${
             mobileFiltersOpen ? "tablet-xl:flex" : "tablet-xl:hidden"
           }`}
         >
           {/* Filter Header Section */}
           <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-4 sm:px-5">
-            <TypographyH4 className="font-semibold">
+            <TypographyH4 className="font-medium">
               {t("refineResult")}
             </TypographyH4>
             <Button
@@ -876,7 +876,7 @@ export default function EmployeeSearchPage() {
                         >
                           <SelectValue placeholder={t("sortBy")} />
                         </SelectTrigger>
-                        <SelectContent className="rounded-none border-border shadow-[5px_5px_0_hsl(var(--foreground)/0.08)] [&_[role=option]]:rounded-none">
+                        <SelectContent className="rounded-none border-border [&_[role=option]]:rounded-none">
                           <SelectItem value="createdAt-desc">
                             {t("newestFirst")}
                           </SelectItem>

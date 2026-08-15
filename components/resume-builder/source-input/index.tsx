@@ -18,7 +18,7 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <section className="w-full border border-t-[5px] border-border border-t-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-5">
+    <section className="w-full border border-t-[5px] border-border border-t-foreground bg-card p-4 sm:p-5">
       <div className="flex flex-col gap-5">
         {/* Header Section */}
         <div className="flex flex-col gap-3">
@@ -40,7 +40,7 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
           {/* Information Source Status Section */}
           <div
             className={cn(
-              "inline-flex w-full items-center gap-2 border px-3 py-2 text-xs font-semibold",
+              "inline-flex w-full items-center gap-2 border px-3 py-2 text-xs font-medium",
               usingPastedInfo
                 ? "border-foreground bg-foreground text-background"
                 : "border-border bg-muted/35 text-muted-foreground",

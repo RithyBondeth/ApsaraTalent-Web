@@ -750,7 +750,7 @@ export function PrivacyContent() {
       <Section id="contact" icon={<LucideMail />} title={c.s11.title}>
         <TypographyP>{c.s11.intro}</TypographyP>
         <div className="flex flex-col gap-1.5 border border-border bg-muted/30 p-5">
-          <TypographySmall className="font-semibold text-foreground">
+          <TypographySmall className="font-medium text-foreground">
             Apsara Talent
           </TypographySmall>
           <TypographyP>

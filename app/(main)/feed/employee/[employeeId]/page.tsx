@@ -285,7 +285,7 @@ export default function EmployeeDetailPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex h-10 shrink-0 items-center gap-2 border border-border bg-card px-3 text-sm font-semibold text-muted-foreground transition-[border-color,background-color,color,transform] hover:border-foreground/35 hover:bg-muted/60 hover:text-foreground active:translate-y-px"
+            className="flex h-10 shrink-0 items-center gap-2 border border-border bg-card px-3 text-sm font-medium text-muted-foreground transition-[border-color,background-color,color,transform] hover:border-foreground/35 hover:bg-muted/60 hover:text-foreground active:translate-y-px"
           >
             <LucideArrowLeft className="size-4" />
             <span className="hidden sm:inline">{tf("back")}</span>
@@ -294,7 +294,7 @@ export default function EmployeeDetailPage() {
             <p className="pixel-label text-[9px] text-muted-foreground">
               {tf("employeeDetail")}
             </p>
-            <p className="truncate text-sm font-semibold">
+            <p className="truncate text-sm font-medium">
               {fullName || tf("employeeDetail")}
             </p>
           </div>
@@ -325,7 +325,7 @@ export default function EmployeeDetailPage() {
         status={
           employeeData.availability ? (
             <span
-              className={`border-current/15 border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(employeeData.availability)}`}
+              className={`border-current/15 border px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.08em] ${getAvailabilityStyleClass(employeeData.availability)}`}
             >
               {formatAvailabilityWords(employeeData.availability)}
             </span>
@@ -458,8 +458,8 @@ export default function EmployeeDetailPage() {
                       <div
                         className={`min-w-0 flex-1 ${i < employeeData.experiences.length - 1 ? "pb-3" : ""}`}
                       >
-                        <div className="profile-detail-timeline-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-[3px_3px_0_hsl(var(--foreground)/0.05)]">
-                          <p className="text-base font-bold tracking-tight">
+                        <div className="profile-detail-timeline-card hover: border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30">
+                          <p className="text-base font-medium tracking-tight">
                             {item.title}
                           </p>
                           <p className="mt-0.5 text-xs text-muted-foreground">
@@ -494,7 +494,7 @@ export default function EmployeeDetailPage() {
                 {employeeData.educations.map((item: IEducation) => (
                   <div
                     key={item.id}
-                    className="flex items-start gap-3 border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-[3px_3px_0_hsl(var(--foreground)/0.05)]"
+                    className="hover: flex items-start gap-3 border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30"
                   >
                     <div className="flex size-9 flex-shrink-0 items-center justify-center border border-border bg-muted/60">
                       <LucideGraduationCap
@@ -503,7 +503,7 @@ export default function EmployeeDetailPage() {
                       />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold">{item.school}</p>
+                      <p className="text-sm font-medium">{item.school}</p>
                       <p className="mt-0.5 text-xs text-muted-foreground">
                         {item.degree}
                       </p>
@@ -651,7 +651,7 @@ export default function EmployeeDetailPage() {
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-semibold transition-colors hover:border-foreground/30 hover:bg-muted"
+                    className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-medium transition-colors hover:border-foreground/30 hover:bg-muted"
                   >
                     {getSocialPlatformTypeIcon(item.platform as TPlatform)}
                     {item.platform}

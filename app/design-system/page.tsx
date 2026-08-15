@@ -81,7 +81,9 @@ function Section({
   return (
     <section className="space-y-4">
       <div className="border-b border-border pb-2">
-        <h2 className="text-lg font-black uppercase tracking-tight">{title}</h2>
+        <h2 className="text-lg font-medium uppercase tracking-tight">
+          {title}
+        </h2>
         {note ? (
           <p className="mt-1 text-sm text-muted-foreground">{note}</p>
         ) : null}
@@ -276,8 +278,8 @@ export default function DesignSystemPage() {
           note="A hard offset shadow with zero blur, always a whole number of --pixel-unit. Raised controls travel exactly that offset on :active, so the shadow reads as real displacement — a blurred shadow would imply a lens, and this UI is drawn, not photographed."
         >
           <div className="flex flex-wrap items-center gap-6 border border-border bg-card p-6">
-            <div className="size-20 border border-border bg-background shadow-pixel" />
-            <div className="size-20 border border-border bg-background shadow-pixel-lg" />
+            <div className="size-20 border border-border bg-background" />
+            <div className="size-20 border border-border bg-background" />
             <Button>Press me</Button>
             <Button variant="outline">Flat, no travel</Button>
           </div>
@@ -313,7 +315,7 @@ export default function DesignSystemPage() {
           <div className="space-y-8">
             {STATUSES.map((status) => (
               <div key={status} className="space-y-3">
-                <h3 className="font-mono text-sm font-bold">{status}</h3>
+                <h3 className="font-mono text-sm font-medium">{status}</h3>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
                   {ROLES.map(({ suffix, role, use }) => (
                     <div key={suffix} className="space-y-1.5">
@@ -322,7 +324,7 @@ export default function DesignSystemPage() {
                         style={{ background: `hsl(var(--${status}${suffix}))` }}
                       />
                       <div className="space-y-0.5">
-                        <p className="text-[11px] font-semibold leading-tight">
+                        <p className="text-[11px] font-medium leading-tight">
                           {role}
                         </p>
                         <p className="font-mono text-[10px] leading-tight text-muted-foreground">
@@ -368,7 +370,7 @@ export default function DesignSystemPage() {
                   key={status}
                   className={`border border-l-[4px] p-3 text-sm ${CALLOUT[status]}`}
                 >
-                  <p className={`font-semibold ${ACCENT_TEXT[status]}`}>
+                  <p className={`font-medium ${ACCENT_TEXT[status]}`}>
                     {status} callout
                   </p>
                   <p className="mt-0.5 text-muted-foreground">
@@ -427,10 +429,10 @@ export default function DesignSystemPage() {
         >
           <div className="grid gap-4 sm:grid-cols-3">
             <Card className="p-4 text-sm">Card — 4px offset</Card>
-            <div className="border border-border bg-card p-4 text-sm shadow-[6px_6px_0_hsl(var(--foreground)/0.1)]">
+            <div className="border border-border bg-card p-4 text-sm">
               Dialog — 6px offset
             </div>
-            <div className="border border-border bg-popover p-4 text-sm shadow-[4px_4px_0_hsl(var(--foreground)/0.08)]">
+            <div className="border border-border bg-popover p-4 text-sm">
               Popover — 4px offset
             </div>
           </div>

@@ -1299,7 +1299,7 @@ export default function ProfilePage() {
                   src={avatarOrCoverPreview.avatar}
                   onError={() => setAvatarLoadError(true)}
                 />
-                <AvatarFallback className="text-lg font-semibold uppercase">
+                <AvatarFallback className="text-lg font-medium uppercase">
                   {getNameInitials(company.name)}
                 </AvatarFallback>
               </Avatar>
@@ -1511,7 +1511,7 @@ export default function ProfilePage() {
 
               <div className="col-span-12 flex w-full flex-col items-start gap-1 tablet-md:col-span-1">
                 <div className="flex w-full items-center justify-between">
-                  <TypographyMuted className="text-xs font-bold text-foreground">
+                  <TypographyMuted className="text-xs font-medium text-foreground">
                     {tP("companyDescription")}
                   </TypographyMuted>
                   {isEdit && descValue && (

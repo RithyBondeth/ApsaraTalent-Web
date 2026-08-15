@@ -9,7 +9,7 @@ export default function BadgePill(props: IBadgePillProps) {
 
   /* ------------------------------- Render UI ------------------------------- */
   return (
-    <span className="absolute -right-2 -top-2 flex h-[17px] min-w-[17px] items-center justify-center border border-background bg-destructive px-1 text-[9px] font-extrabold leading-none text-destructive-foreground shadow-[1px_1px_0_hsl(var(--foreground)/0.18)]">
+    <span className="absolute -right-2 -top-2 flex h-[17px] min-w-[17px] items-center justify-center border border-background bg-destructive px-1 text-[9px] font-medium leading-none text-destructive-foreground">
       {count > 99 ? "99+" : count}
     </span>
   );

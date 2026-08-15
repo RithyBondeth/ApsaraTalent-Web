@@ -304,7 +304,7 @@ export default function SmartResumeUpload({
 
         {/* Copy Section */}
         <div>
-          <p className="text-sm font-semibold">{t("smartUploadTitle")}</p>
+          <p className="text-sm font-medium">{t("smartUploadTitle")}</p>
           <p className="mt-0.5 max-w-xs text-xs text-muted-foreground">
             {t("smartUploadSubtitle")}
           </p>

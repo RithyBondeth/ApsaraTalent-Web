@@ -35,7 +35,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <article className="group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+    <article className="hover: group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground">
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Section: Avatar, Title, Name and Industry */}
         <div className="flex gap-4">
@@ -43,7 +43,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
             rounded="md"
             className="size-14 flex-shrink-0 !rounded-none border border-border sm:size-16"
           >
-            <AvatarFallback className="text-xs font-semibold">
+            <AvatarFallback className="text-xs font-medium">
               {props.company.name.slice(0, 3).toUpperCase()}
             </AvatarFallback>
             <AvatarImage src={props.company.avatar} alt={props.company.name} />
@@ -114,7 +114,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
               />
             ))}
             {props.skills.length > 6 && (
-              <span className="self-center text-[11px] font-semibold text-muted-foreground">
+              <span className="self-center text-[11px] font-medium text-muted-foreground">
                 +{props.skills.length - 6}
               </span>
             )}

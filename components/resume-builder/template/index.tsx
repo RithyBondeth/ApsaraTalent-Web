@@ -23,15 +23,15 @@ export default function TemplateCard(props: ITemplateCardProps) {
     <article
       className={`group h-full w-full cursor-pointer overflow-hidden border bg-card transition-[border-color,box-shadow,transform] duration-200 ease-out ${
         props.selected
-          ? "-translate-y-0.5 border-foreground shadow-[7px_7px_0_hsl(var(--foreground)/0.12)]"
-          : "border-border shadow-[4px_4px_0_hsl(var(--foreground)/0.045)] hover:-translate-y-0.5 hover:border-foreground/35 hover:shadow-[7px_7px_0_hsl(var(--foreground)/0.07)]"
+          ? "-translate-y-0.5 border-foreground"
+          : "hover: border-border hover:-translate-y-0.5 hover:border-foreground/35"
       }`}
     >
       {/* Preview Area Section */}
       <div className="relative h-52 w-full overflow-hidden border-b border-border bg-muted/30">
         {/* Selection State Section */}
         <div
-          className={`absolute left-3 top-3 z-20 flex h-7 items-center gap-1.5 border px-2 text-[10px] font-black uppercase tracking-[0.12em] transition-colors ${
+          className={`absolute left-3 top-3 z-20 flex h-7 items-center gap-1.5 border px-2 text-[10px] font-medium uppercase tracking-[0.12em] transition-colors ${
             props.selected
               ? "border-foreground bg-foreground text-background"
               : "border-border bg-background/90 text-muted-foreground backdrop-blur"
@@ -61,7 +61,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
           <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
             <button
               type="button"
-              className="flex items-center gap-2 border border-white bg-black/75 px-4 py-2 text-xs font-semibold text-white transition hover:bg-black"
+              className="flex items-center gap-2 border border-white bg-black/75 px-4 py-2 text-xs font-medium text-white transition hover:bg-black"
               onClick={(e) => {
                 e.stopPropagation();
                 setPopupResume(true);

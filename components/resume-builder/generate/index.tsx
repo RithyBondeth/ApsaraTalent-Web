@@ -22,7 +22,7 @@ export default function ResumeBuilderGenerate({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <section className="w-full border border-border bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <section className="w-full border border-border bg-card">
       {/* Selection Summary Section */}
       <div className="flex min-w-0 items-center gap-3 border-b border-border p-4">
         {theme ? (
@@ -46,7 +46,7 @@ export default function ResumeBuilderGenerate({
           <span className="pixel-label text-[10px] text-muted-foreground">
             {t("templateLabel")}
           </span>
-          <span className="truncate text-sm font-bold text-foreground">
+          <span className="truncate text-sm font-medium text-foreground">
             {selectedTemplateLabel ?? t("selectTemplateFirst")}
           </span>
         </div>

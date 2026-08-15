@@ -34,7 +34,7 @@ export default function NotificationMessageCard(
       title={t("newMessage")}
       description={
         <p className="line-clamp-2 sm:line-clamp-3">
-          <span className="font-bold text-foreground">{props.user.name}</span>
+          <span className="font-medium text-foreground">{props.user.name}</span>
           {" — "}
           {props.preview}
         </p>
@@ -62,7 +62,7 @@ export default function NotificationMessageCard(
               <AvatarImage src={props.user.avatar} />
             </Avatar>
             <div className="flex min-w-0 flex-col">
-              <TypographySmall className="line-clamp-1 font-bold text-foreground">
+              <TypographySmall className="line-clamp-1 font-medium text-foreground">
                 {props.user.name}
               </TypographySmall>
               {(props.user.position || props.user.industry) && (

@@ -59,7 +59,7 @@ export default function RemoveAlertDialog(props: IRemoveAlertDialog) {
           </div>
 
           <div className="min-w-0 space-y-2 pr-8">
-            <DialogTitle className="text-xl font-bold leading-tight tracking-tight">
+            <DialogTitle className="text-xl font-medium leading-tight tracking-tight">
               {t("removeTitle", { type: itemLabel })}
             </DialogTitle>
             <DialogDescription className="leading-6">

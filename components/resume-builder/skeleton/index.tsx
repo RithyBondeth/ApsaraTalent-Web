@@ -63,7 +63,7 @@ export default function ResumeBuilderLoadingSkeleton() {
           <StepHeaderSkeleton />
 
           {/* Source Input Skeleton Section */}
-          <div className="flex w-full flex-col gap-5 border border-t-[5px] border-border border-t-foreground bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+          <div className="flex w-full flex-col gap-5 border border-t-[5px] border-border border-t-foreground bg-card p-5">
             <div className="flex items-start gap-3">
               <Skeleton className="size-9 shrink-0 rounded-none" />
               <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -81,7 +81,7 @@ export default function ResumeBuilderLoadingSkeleton() {
           </div>
 
           {/* Generate Action Skeleton Section */}
-          <div className="w-full border border-border bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+          <div className="w-full border border-border bg-card">
             <div className="flex items-center gap-3 border-b border-border p-4">
               <Skeleton className="size-10 shrink-0 rounded-none" />
               <div className="flex min-w-0 flex-1 flex-col gap-1.5">
@@ -105,7 +105,7 @@ export default function ResumeBuilderLoadingSkeleton() {
 /* ------------------------------------- Template Card Skeleton ------------------------------------ */
 export function TemplateCardSkeleton() {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden border border-border bg-card shadow-[4px_4px_0_hsl(var(--foreground)/0.045)]">
+    <div className="flex h-full w-full flex-col overflow-hidden border border-border bg-card">
       {/* Preview Area Section: Mirrors the live TemplateMiniPreview structure */}
       <div className="relative flex h-52 w-full flex-col border-b border-border bg-muted/30">
         {/* Mini Header Band Section */}
@@ -242,7 +242,7 @@ export function ResumeEditorLoadingSkeleton() {
 
           {/* Resume Canvas Skeleton Section */}
           <div className="resume-canvas-workspace flex h-full w-full justify-center overflow-hidden p-6">
-            <div className="h-full w-full max-w-[720px] space-y-4 overflow-hidden border border-border bg-white p-6 shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] dark:bg-card">
+            <div className="h-full w-full max-w-[720px] space-y-4 overflow-hidden border border-border bg-white p-6 dark:bg-card">
               <Skeleton className="h-6 w-2/5 rounded-none" />
               <Skeleton className="h-4 w-3/5 rounded-none" />
               <div className="space-y-4 border-t border-border/40 pt-4">

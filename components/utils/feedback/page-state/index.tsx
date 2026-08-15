@@ -60,7 +60,7 @@ export function PageState(props: IPageStateProps) {
       aria-label={title}
       aria-live={isError ? "assertive" : "polite"}
       className={cn(
-        "flex w-full flex-col items-center justify-center gap-4 border border-t-[5px] border-border bg-card px-4 text-center shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]",
+        "flex w-full flex-col items-center justify-center gap-4 border border-t-[5px] border-border bg-card px-4 text-center",
         isError
           ? "border-t-destructive bg-destructive/[0.025]"
           : "border-t-primary",

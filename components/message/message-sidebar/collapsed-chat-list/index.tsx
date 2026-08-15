@@ -57,7 +57,7 @@ export default function CollapsedChatList(props: IChatListProps) {
 
                   {/* Unread Badge Section */}
                   {chat.unread ? (
-                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-none bg-primary px-0.5 text-[9px] font-semibold text-primary-foreground">
+                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-none bg-primary px-0.5 text-[9px] font-medium text-primary-foreground">
                       {chat.unread > 9 ? "9+" : chat.unread}
                     </span>
                   ) : isUnread ? (
@@ -76,7 +76,7 @@ export default function CollapsedChatList(props: IChatListProps) {
                 <TypographyP
                   className={cn(
                     "[&:not(:first-child)]:mt-0",
-                    cn("font-medium", isUnread && "font-semibold"),
+                    cn("font-medium", isUnread && "font-medium"),
                   )}
                 >
                   {/* Chat Name Section */}

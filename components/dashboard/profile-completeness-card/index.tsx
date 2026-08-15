@@ -60,10 +60,10 @@ export function ProfileCompletenessCard({
       {/* Content Section */}
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-sm font-semibold leading-none">
+          <span className="text-sm font-medium leading-none">
             {t("profileCompletion")}
           </span>
-          <span className={`text-sm font-bold tabular-nums ${tone.text}`}>
+          <span className={`text-sm font-medium tabular-nums ${tone.text}`}>
             {percentage}%
           </span>
         </div>

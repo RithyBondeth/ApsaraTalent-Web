@@ -49,12 +49,12 @@ export function AccountSection(props: IAccountSectionProps) {
       <div className="flex items-center gap-4 bg-muted/30 px-4 py-5 sm:px-5">
         <Avatar className="size-14 shrink-0 rounded-none border border-border">
           <AvatarImage src={avatarSrc} alt={displayName} />
-          <AvatarFallback className="rounded-none text-base font-black">
+          <AvatarFallback className="rounded-none text-base font-medium">
             {getNameInitials(displayName)}
           </AvatarFallback>
         </Avatar>
         <div className="flex min-w-0 flex-col gap-1">
-          <TypographySmall className="block truncate font-semibold leading-none">
+          <TypographySmall className="block truncate font-medium leading-none">
             {displayName}
           </TypographySmall>
           <TypographyMuted className="truncate text-xs">

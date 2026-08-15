@@ -38,7 +38,7 @@ export default function ProfileCompletionCard({
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex items-center justify-between gap-2">
             <span className="pixel-label text-xs">{t("completion")}</span>
-            <span className={`text-xs font-bold tabular-nums ${textColor}`}>
+            <span className={`text-xs font-medium tabular-nums ${textColor}`}>
               {t("percentComplete", { percentage })}
             </span>
           </div>

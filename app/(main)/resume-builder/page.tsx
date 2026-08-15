@@ -40,7 +40,7 @@ import { PageState } from "@/components/utils/feedback/page-state";
 function StepHeader({ number, title }: { number: string; title: string }) {
   return (
     <div className="flex w-full items-center gap-3">
-      <div className="flex size-8 shrink-0 items-center justify-center border border-foreground bg-foreground text-xs font-black text-background shadow-[3px_3px_0_hsl(var(--foreground)/0.12)]">
+      <div className="flex size-8 shrink-0 items-center justify-center border border-foreground bg-foreground text-xs font-medium text-background">
         {number}
       </div>
       <span className="pixel-label shrink-0 text-xs text-foreground">

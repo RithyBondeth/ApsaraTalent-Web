@@ -196,7 +196,7 @@ export function CreateInterviewDialog({
         <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent className="flex max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-[520px]">
           <DialogHeader className="shrink-0 px-6 pb-4 pt-6">
-            <DialogTitle className="text-lg font-semibold">
+            <DialogTitle className="text-lg font-medium">
               {t("scheduleInterview")}
             </DialogTitle>
             {headerContent}
@@ -224,7 +224,7 @@ export function CreateInterviewDialog({
         className="flex h-[90vh] flex-col rounded-t-2xl p-0"
       >
         <SheetHeader className="shrink-0 px-6 pb-4 pt-6">
-          <SheetTitle className="text-lg font-semibold">
+          <SheetTitle className="text-lg font-medium">
             {t("scheduleInterview")}
           </SheetTitle>
           {headerContent}

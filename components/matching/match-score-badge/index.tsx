@@ -26,7 +26,7 @@ export default function MatchScoreBadge(props: IMatchScoreBadgeProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <span
-      className="pixel-numeral inline-flex shrink-0 items-center gap-1.5 rounded-none border px-2 py-1 text-xs font-bold"
+      className="pixel-numeral inline-flex shrink-0 items-center gap-1.5 rounded-none border px-2 py-1 text-xs font-medium"
       style={{ color, borderColor: color }}
       title={t("matchScoreHint")}
       aria-label={t("matchScoreLabel", { score: props.score })}

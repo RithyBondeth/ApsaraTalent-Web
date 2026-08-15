@@ -74,7 +74,7 @@ export function LogoutConfirmationDialog(
               <p className="pixel-label mb-2 text-[9px] opacity-60">
                 Apsara Talent
               </p>
-              <DialogTitle className="text-2xl font-bold leading-tight tracking-[-0.035em] sm:text-3xl">
+              <DialogTitle className="text-2xl font-medium leading-tight tracking-[-0.035em] sm:text-3xl">
                 {title}
               </DialogTitle>
             </div>

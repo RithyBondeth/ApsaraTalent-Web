@@ -53,7 +53,7 @@ function ContentEditorSection({
           {icon}
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-xs font-bold text-foreground">
+          <span className="block text-xs font-medium text-foreground">
             {title}
           </span>
           <span className="mt-0.5 block truncate text-[10px] text-muted-foreground">
@@ -109,7 +109,7 @@ export default function ResumeEditorFormPanel(
       {/* Content Editor Section */}
       <TabsContent value="content" className="mt-3 flex-1 overflow-y-auto pr-1">
         <div className="mb-3 border-l-2 border-foreground px-3 py-1">
-          <p className="text-xs font-bold text-foreground">
+          <p className="text-xs font-medium text-foreground">
             {t("contentEditorTitle")}
           </p>
           <p className="mt-0.5 text-[10px] leading-4 text-muted-foreground">

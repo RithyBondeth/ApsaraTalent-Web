@@ -9,7 +9,7 @@ export const TypographyH3 = forwardRef<
     <h3
       ref={ref}
       className={cn(
-        "scroll-m-20 text-2xl font-semibold tracking-tight",
+        "scroll-m-20 text-2xl font-medium tracking-tight",
         className,
       )}
       {...props}

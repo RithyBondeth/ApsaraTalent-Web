@@ -162,7 +162,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             {/* Open Positions Section */}
             {props.openPositions.length > 0 && (
               <div className="flex flex-col gap-1.5">
-                <TypographySmall className="flex items-center gap-1 text-[11px] font-semibold text-foreground/70">
+                <TypographySmall className="flex items-center gap-1 text-[11px] font-medium text-foreground/70">
                   <LucideBriefcaseBusiness className="size-3" />
                   {t("openPositionCount", {
                     count: props.openPositions.length,
@@ -281,7 +281,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             {props.name.slice(0, 3)}
           </CachedAvatar>
           <div className="flex min-w-0 flex-col items-start gap-1">
-            <TypographyP className="max-w-full truncate font-semibold">
+            <TypographyP className="max-w-full truncate font-medium">
               {props.name}
             </TypographyP>
             <TypographySmall className="flex items-center gap-1 text-xs text-muted-foreground">

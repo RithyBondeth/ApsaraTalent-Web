@@ -79,8 +79,8 @@ export default function ExpandedChatList(props: IChatListProps) {
                   className={cn(
                     "truncate text-sm",
                     isUnread
-                      ? "font-bold text-foreground"
-                      : "font-semibold text-foreground",
+                      ? "font-medium text-foreground"
+                      : "font-medium text-foreground",
                   )}
                 >
                   {chat.name}
@@ -117,7 +117,7 @@ export default function ExpandedChatList(props: IChatListProps) {
 
                 {/* Unread Count Badge Section */}
                 {chat.unread ? (
-                  <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-none bg-primary px-1 text-[11px] font-semibold leading-none text-primary-foreground">
+                  <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-none bg-primary px-1 text-[11px] font-medium leading-none text-primary-foreground">
                     {chat.unread > 99 ? "99+" : chat.unread}
                   </span>
                 ) : null}
