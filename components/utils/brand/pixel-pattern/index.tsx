@@ -22,16 +22,16 @@ import type { IPixelPatternProps } from "./props";
    tiles blend into a texture, and any stronger reads as a checkerboard the eye
    keeps trying to parse. */
 const NEUTRAL = [
-  "bg-foreground/[0.02]",
-  "bg-foreground/[0.035]",
-  "bg-foreground/[0.05]",
+  "fill-foreground/[0.02]",
+  "fill-foreground/[0.035]",
+  "fill-foreground/[0.05]",
 ] as const;
 
 /* The brand ground. Still low, but warm enough to register as the ramp. */
 const EMBER = [
-  "bg-pixel-3/[0.06]",
-  "bg-pixel-4/[0.08]",
-  "bg-pixel-5/[0.05]",
+  "fill-pixel-3/[0.06]",
+  "fill-pixel-4/[0.08]",
+  "fill-pixel-5/[0.05]",
 ] as const;
 
 function hash(input: string): number {
@@ -54,43 +54,67 @@ function generator(seed: number): () => number {
   };
 }
 
+/** Edge of the repeating block, in tiles. At 10 the 400px repeat was faintly
+ *  readable as horizontal rhythm across a 1440px band; 16 pushes it to ~700px,
+ *  which is under three repeats on a wide screen and reads as texture. The
+ *  cost is 256 rects in a <defs> rather than 100 — still nothing. */
+const BLOCK = 16;
+
 export function PixelPattern({
   seed,
   cell = 48,
   tone = "neutral",
   density = 0.38,
-  columns = 28,
   className,
 }: IPixelPatternProps) {
   const random = generator(hash(seed));
   const palette = tone === "ember" ? EMBER : NEUTRAL;
-  // Enough rows to overflow any banner-height container; the parent clips.
-  const rows = 14;
 
-  const tiles = Array.from({ length: columns * rows }, () => {
+  const tiles = Array.from({ length: BLOCK * BLOCK }, () => {
     if (random() > density) return null;
     return palette[Math.floor(random() * palette.length)];
   });
 
+  // Deterministic id from the inputs rather than useId(), so this stays a
+  // server component. Two instances with identical inputs would share an id,
+  // but they would also be pixel-identical, so the collision is harmless.
+  const patternId = `pixel-field-${hash(`${seed}|${cell}|${tone}|${density}`).toString(36)}`;
+
   return (
-    <div
+    <svg
       aria-hidden
+      // The previous version laid out a fixed 28 columns of `cell` px, so at
+      // cell=40 it was 1120px wide and simply stopped before the right edge of
+      // anything wider. An SVG pattern tiles to whatever it is given, which is
+      // what "fill the container" actually requires — and it is ~100 nodes
+      // instead of one per tile across the whole surface.
       className={cn(
-        "pointer-events-none absolute inset-0 overflow-hidden",
+        "pointer-events-none absolute inset-0 h-full w-full",
         className,
       )}
     >
-      <div
-        className="grid"
-        style={{
-          gridTemplateColumns: `repeat(${columns}, ${cell}px)`,
-          gridAutoRows: `${cell}px`,
-        }}
-      >
-        {tiles.map((tint, index) => (
-          <span key={index} className={tint ?? undefined} />
-        ))}
-      </div>
-    </div>
+      <defs>
+        <pattern
+          id={patternId}
+          width={cell * BLOCK}
+          height={cell * BLOCK}
+          patternUnits="userSpaceOnUse"
+        >
+          {tiles.map((tint, index) =>
+            tint ? (
+              <rect
+                key={index}
+                x={(index % BLOCK) * cell}
+                y={Math.floor(index / BLOCK) * cell}
+                width={cell}
+                height={cell}
+                className={tint}
+              />
+            ) : null,
+          )}
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill={`url(#${patternId})`} />
+    </svg>
   );
 }

@@ -80,7 +80,9 @@
   },
   "states": {
     "sessionErrorDescription": "We could not load your account. Check your connection and try again.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "emptyStateLabel": "Nothing yet",
+    "errorStateLabel": "Error"
   },
   "header": {
     "chat": "Chat",

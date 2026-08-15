@@ -186,7 +186,6 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
             variant="error"
             title={error}
             compact
-            className="my-6 sm:my-8"
             action={
               currentId && currentUser?.role
                 ? {
@@ -217,7 +216,6 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
               isEmployee ? t("noInterviewsEmployee") : t("noInterviewsCompany")
             }
             compact
-            className="my-6 sm:my-8"
           />
         )}
       </section>

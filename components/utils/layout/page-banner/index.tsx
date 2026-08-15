@@ -35,15 +35,17 @@ export function PageBanner({
   const hasStats = Boolean(stats?.length);
 
   return (
-    <section className={cn("pixel-band", className)}>
+    <section className={cn("pixel-band relative isolate", className)}>
+      {/* The field spans the whole band, stat cells included — it sat inside
+          the copy cell before, which left the readings on bare ground and made
+          the banner look half-finished. */}
+      <PixelPattern seed={eyebrow} cell={44} className="-z-10" />
+
       {/* Masthead Section — copy on the left, stats as their own ruled cells on
           the right, sharing one vertical rule rather than sitting in a
           gapped two-column grid. */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto]">
-        <div className="pixel-pad relative isolate min-w-0">
-          {/* The pixel field. Seeded from the eyebrow so each page keeps its
-              own arrangement and it stays put between renders. */}
-          <PixelPattern seed={eyebrow} cell={44} className="-z-10" />
+        <div className="pixel-pad min-w-0">
           {/* Eyebrow Section */}
           <div className="pixel-label flex items-center gap-2 text-muted-foreground">
             {/* Three tiles of the ramp — the same mark the sheet uses

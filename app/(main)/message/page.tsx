@@ -363,7 +363,7 @@ export default function MessagePageContent() {
 
   // Desktop Empty State View Section
   const desktopEmptyStateView = (
-    <div className="flex flex-1 items-center bg-muted/10 p-8">
+    <div className="flex min-h-0 flex-1">
       <PageState
         variant="empty"
         title={t("selectConversationTitle")}

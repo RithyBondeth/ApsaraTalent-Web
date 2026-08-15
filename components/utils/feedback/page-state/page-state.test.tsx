@@ -2,6 +2,14 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { PageState } from ".";
 
+// The state eyebrow ("Nothing yet" / "Error") is translated, so the component
+// needs an intl context. Mocked rather than wrapped in a provider, matching how
+// every other component test in the repo handles next-intl.
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string) =>
+    ({ emptyStateLabel: "Nothing yet", errorStateLabel: "Error" })[key] ?? key,
+}));
+
 describe("PageState", () => {
   it("announces errors and runs the recovery action", () => {
     const onRetry = vi.fn();

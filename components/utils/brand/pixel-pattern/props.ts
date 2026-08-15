@@ -18,7 +18,5 @@ export interface IPixelPatternProps {
   tone?: TPixelPatternTone;
   /** Share of tiles that are tinted at all. The rest stay page-coloured. */
   density?: number;
-  /** How many columns to lay out. Rows are derived to overflow the container. */
-  columns?: number;
   className?: string;
 }
