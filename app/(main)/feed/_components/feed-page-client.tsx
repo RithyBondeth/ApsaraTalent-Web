@@ -630,7 +630,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="feed-scope animate-page-in flex w-full flex-col items-start gap-7 sm:gap-9">
+    <div className="feed-scope animate-page-in w-full">
       {effectPortal}
       {/* First-Time User Onboarding Flow Section */}
       <OnboardingFlow />
@@ -693,17 +693,19 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
 
           if (recsLoading) {
             return (
-              <div className="flex w-full flex-col gap-5 border-y border-border py-6">
-                <div className="flex items-end justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
-                      01
+              <div className="pixel-band w-full">
+                <div className="flex items-end justify-between gap-4 border-b border-border px-6 py-5 sm:px-10">
+                  <div>
+                    <span className="pixel-label block text-muted-foreground">
+                      {tFeed("forYou")} · 01
                     </span>
-                    <h2 className="pixel-display text-xl text-foreground sm:text-2xl">
+                    <h2 className="pixel-display mt-3 text-2xl text-foreground sm:text-3xl">
                       {tFeed("recommendedForYou")}
                     </h2>
                   </div>
-                  <Sparkles className="size-5 text-foreground" />
+                  <span className="grid size-8 shrink-0 place-items-center bg-primary text-primary-foreground">
+                    <Sparkles className="size-4" />
+                  </span>
                 </div>
                 <div className={FEED_CARD_GRID_CLASS}>
                   {Array.from({ length: 3 }).map((_, i) =>
@@ -742,10 +744,8 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
               : queryCompanyRecommendations;
 
             return (
-              <div className="flex w-full items-center gap-3 border-y border-border py-5">
-                <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
-                  01
-                </span>
+              <div className="flex w-full items-center gap-3 border-y border-border px-6 py-5 sm:px-10">
+                <span className="pixel-label text-muted-foreground">01</span>
                 <TypographyMuted>{tFeed("recommendedForYou")}</TypographyMuted>
                 {retryId && (
                   <button
@@ -766,17 +766,19 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
           if (!recs || recs.length === 0) return null;
 
           return (
-            <FadeIn className="flex w-full flex-col gap-5 border-y border-border py-6">
-              <div className="flex items-end justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
-                    01
+            <FadeIn className="pixel-band w-full">
+              <div className="flex items-end justify-between gap-4 border-b border-border px-6 py-5 sm:px-10">
+                <div>
+                  <span className="pixel-label block text-muted-foreground">
+                    {tFeed("forYou")} · 01
                   </span>
-                  <h2 className="pixel-display text-xl text-foreground sm:text-2xl">
+                  <h2 className="pixel-display mt-3 text-2xl text-foreground sm:text-3xl">
                     {tFeed("recommendedForYou")}
                   </h2>
                 </div>
-                <Sparkles className="size-5 text-foreground" />
+                <span className="grid size-8 shrink-0 place-items-center bg-primary text-primary-foreground">
+                  <Sparkles className="size-4" />
+                </span>
               </div>
               <div className={FEED_CARD_GRID_CLASS}>
                 {isEmployee
@@ -826,16 +828,17 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       {isLoading ? (
         <FeedDividerSkeleton />
       ) : (
-        <FadeIn className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
+        <FadeIn className="flex w-full items-end justify-between gap-4 border-b border-border px-6 py-5 sm:px-10">
+          <div>
+            <span className="pixel-label block text-muted-foreground">
+              {isEmployee ? tFeed("companyNetwork") : tFeed("talentNetwork")} ·
               02
             </span>
-            <h2 className="pixel-display text-xl text-foreground sm:text-2xl">
+            <h2 className="pixel-display mt-3 text-2xl text-foreground sm:text-3xl">
               {isEmployee ? tFeed("allCompanies") : tFeed("allTalent")}
             </h2>
           </div>
-          <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
+          <div className="grid size-8 shrink-0 place-items-center bg-primary text-primary-foreground">
             {isEmployee ? (
               <Building2 className="size-4" />
             ) : (

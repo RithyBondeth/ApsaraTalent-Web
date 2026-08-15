@@ -279,24 +279,22 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
 
       {/* Matches Section */}
       <section className="pixel-band w-full">
-        <div className="flex w-full items-end justify-between gap-4 border-b border-border px-6 py-4 sm:px-8">
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
-              01
+        <div className="flex w-full items-end justify-between gap-4 border-b border-border px-6 py-5 sm:px-10">
+          <div>
+            <span className="pixel-label block text-muted-foreground">
+              {t("yourMatches")} · 01
             </span>
-            <div>
-              <h2 className="pixel-display text-xl text-foreground sm:text-2xl">
-                {t("yourMatches")}
-              </h2>
-              <p className="mt-1 text-xs font-medium text-muted-foreground">
-                <span className="pixel-numeral">
-                  <CountUp to={matchCount} duration={900} />
-                </span>{" "}
-                {t("connections")}
-              </p>
-            </div>
+            <h2 className="pixel-display mt-3 text-2xl text-foreground sm:text-3xl">
+              {t("yourMatches")}
+            </h2>
+            <p className="mt-2 text-xs text-muted-foreground">
+              <span className="pixel-numeral">
+                <CountUp to={matchCount} duration={900} />
+              </span>{" "}
+              {t("connections")}
+            </p>
           </div>
-          <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
+          <div className="grid size-8 shrink-0 place-items-center bg-primary text-primary-foreground">
             {isEmployee ? (
               <Building2 className="size-4" />
             ) : (

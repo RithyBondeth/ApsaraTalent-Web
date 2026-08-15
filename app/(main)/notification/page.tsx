@@ -165,23 +165,21 @@ export default function NotificationPage() {
       />
 
       <section className="pixel-band w-full">
-        <div className="flex w-full items-end justify-between gap-4 border-b border-border px-6 py-4 sm:px-8">
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
-              01
+        <div className="flex w-full items-end justify-between gap-4 border-b border-border px-6 py-5 sm:px-10">
+          <div>
+            <span className="pixel-label block text-muted-foreground">
+              {t("recentActivity")} · 01
             </span>
-            <div>
-              <h2 className="pixel-display text-xl text-foreground sm:text-2xl">
-                {t("recentActivity")}
-              </h2>
-              <p className="mt-1 text-xs font-medium text-muted-foreground">
-                {t("notificationCount", {
-                  count: filteredNotifications.length,
-                })}
-              </p>
-            </div>
+            <h2 className="pixel-display mt-3 text-2xl text-foreground sm:text-3xl">
+              {t("recentActivity")}
+            </h2>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {t("notificationCount", {
+                count: filteredNotifications.length,
+              })}
+            </p>
           </div>
-          <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
+          <div className="grid size-8 shrink-0 place-items-center bg-primary text-primary-foreground">
             <BellRing className="size-4" />
           </div>
         </div>
