@@ -154,7 +154,7 @@ export default function SettingPage() {
         </div>
       </header>
 
-      <div className="grid items-start gap-7 lg:grid-cols-2 lg:gap-8">
+      <div className="pixel-ruled items-start border-x-0 lg:grid-cols-2">
         {/* Appearance Section */}
         <AppearanceSection theme={theme} onThemeChange={handleThemeChange} />
 
@@ -181,7 +181,7 @@ export default function SettingPage() {
         onToggleTwoFactor={handleToggleTwoFactor}
       />
 
-      <div className="grid items-start gap-7 lg:grid-cols-2 lg:gap-8">
+      <div className="pixel-ruled items-start border-x-0 lg:grid-cols-2">
         {/* Blocked Users Section */}
         <BlockedUsersSection />
 

@@ -451,6 +451,64 @@
     box-shadow: 0 0 0 hsl(var(--foreground) / 0);
   }
 
+  /* ── The sheet ────────────────────────────────────────────────────────── */
+  /* The structural half of the redesign. The app used to be a centred column
+     of cards floating on a page with gaps between them — every card carried
+     its own border, its own offset shadow and its own corner. That reads as a
+     tray of objects.
+
+     A sheet reads as one ruled document instead: content runs edge to edge,
+     sections stack with no gap and are separated by a single hairline, and the
+     vertical rules run unbroken from the top of the page to the bottom. There
+     is exactly one border between any two things, never two borders and a gap.
+
+     .pixel-sheet is the page container — bounded, but with side rules so the
+     document has visible edges rather than dissolving into the viewport. */
+  .pixel-sheet {
+    width: 100%;
+    max-width: 1600px;
+    margin-inline: auto;
+    border-inline: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+  }
+
+  /* A full-width horizontal section of the sheet. Stacks flush against its
+     neighbours; the bottom rule is the only thing between them. */
+  .pixel-band {
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  .pixel-band:last-child {
+    border-bottom: 0;
+  }
+
+  /* Padding for content sitting directly in a band or a ruled cell. Declared
+     once here so the sheet has a single interior rhythm instead of each page
+     picking its own px-5 / p-6 / px-8. */
+  .pixel-pad {
+    padding: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .pixel-pad {
+      padding: 2rem;
+    }
+  }
+
+  /* Inside a ruled grid a card is a cell, not an object: the grid already
+     draws every boundary, so the card's own border, shadow and corner mark
+     would double up on lines the sheet has drawn. */
+  .pixel-ruled .pixel-card,
+  .pixel-band .pixel-card.pixel-flush {
+    border: 0;
+    box-shadow: none;
+  }
+
+  .pixel-ruled .pixel-card::before,
+  .pixel-band .pixel-card.pixel-flush::before {
+    content: none;
+  }
+
   /* ── Card corner mark ─────────────────────────────────────────────────── */
   /* Three tiles of the ramp sitting on the top-left corner, replacing the
      full-width primary rule the card used to wear. Drawn as one gradient on

@@ -66,7 +66,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
     return (
       <>
-        <article className="relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-none border border-t-[5px] border-border border-t-foreground bg-card transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:border-foreground/45 hover:border-t-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] active:translate-y-0 active:scale-[0.985] active:shadow-none">
+        <article className="relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-none bg-card transition-colors duration-200 ease-out hover:bg-muted/35">
           {/* Header Section: Avatar, Identity, Quick View and Like */}
           <div className="flex items-start gap-3 p-4 pb-3">
             <CachedAvatar

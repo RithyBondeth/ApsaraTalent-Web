@@ -15,21 +15,18 @@ export default function DesktopNavItem(props: IDesktopNavItemProps) {
       aria-current={active ? "page" : undefined}
       aria-label={label}
       className={cn(
-        "group relative flex h-11 min-w-11 items-center justify-center gap-2 border border-transparent px-2.5",
-        "text-xs font-semibold transition-[background-color,border-color,color,transform] duration-200",
+        "group relative flex h-full min-w-11 items-center justify-center gap-2 border-l border-border px-4",
+        "pixel-label transition-[background-color,color] duration-200",
         "focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         active
-          ? "animate-navbar-active-in border-primary bg-primary text-primary-foreground shadow-[3px_3px_0_hsl(var(--primary)/0.22)]"
-          : "text-muted-foreground hover:border-border hover:bg-muted/60 hover:text-foreground active:translate-y-px",
+          ? "animate-navbar-active-in bg-primary text-primary-foreground"
+          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
       )}
     >
       {/* Icon Section */}
       <span className="relative flex size-5 shrink-0 items-center justify-center">
         <Icon
-          className={cn(
-            "size-[18px] shrink-0 transition-transform duration-200 group-hover:-translate-y-0.5",
-            active && "text-background",
-          )}
+          className={cn("size-[18px] shrink-0", active && "text-background")}
           strokeWidth={active ? 2.2 : 1.6}
         />
         <BadgePill count={count} />
@@ -42,15 +39,6 @@ export default function DesktopNavItem(props: IDesktopNavItemProps) {
       <span className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 translate-y-1 whitespace-nowrap border border-foreground bg-foreground px-2.5 py-1.5 text-[10px] font-semibold tracking-wide text-background opacity-0 shadow-[3px_3px_0_hsl(var(--foreground)/0.12)] transition-all duration-150 group-hover:translate-y-0 group-hover:opacity-100 2xl:hidden">
         {label}
       </span>
-
-      {/* Active Edge Section */}
-      <span
-        aria-hidden="true"
-        className={cn(
-          "absolute -bottom-[11px] left-1/2 h-[3px] -translate-x-1/2 bg-foreground transition-[width,opacity] duration-200",
-          active ? "w-6 opacity-100" : "w-0 opacity-0",
-        )}
-      />
     </Link>
   );
 }

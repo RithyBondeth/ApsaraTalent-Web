@@ -215,7 +215,7 @@ export default function TopNavbar() {
       >
         <div className="app-top-navbar bg-background/92 relative border-b border-border backdrop-blur-xl">
           <div
-            className="relative mx-auto flex h-[60px] max-w-screen-2xl items-center justify-between px-3 sm:px-4 lg:h-16 lg:px-5"
+            className="relative mx-auto flex h-[60px] max-w-[1600px] items-stretch justify-between lg:h-16"
             style={{ paddingTop: "env(safe-area-inset-top)" }}
           >
             {/* Logo Section */}
@@ -223,7 +223,7 @@ export default function TopNavbar() {
               href="/feed"
               prefetch={true}
               aria-label="Apsara Talent"
-              className="group flex h-full shrink-0 items-center border-x border-transparent px-1 transition-colors hover:border-border hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-2 lg:min-w-[96px] lg:justify-center"
+              className="group flex h-full shrink-0 items-center border-r border-border px-4 transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-2 lg:min-w-[96px] lg:justify-center"
             >
               <LogoComponent
                 priority
@@ -234,7 +234,7 @@ export default function TopNavbar() {
             </Link>
 
             {/* Desktop Navigation Section */}
-            <div className="hidden min-w-0 flex-1 items-center justify-center gap-1 px-3 lg:flex">
+            <div className="hidden min-w-0 flex-1 items-stretch justify-center lg:flex">
               {sidebarList.map((item) => (
                 <DesktopNavItem
                   key={item.url}
@@ -257,7 +257,7 @@ export default function TopNavbar() {
             </div>
 
             {/* Right Section: User Menu */}
-            <div className="flex shrink-0 items-center border-l border-border/70 pl-2 lg:min-w-[156px] lg:justify-end">
+            <div className="flex shrink-0 items-center border-l border-border px-3 lg:min-w-[156px] lg:justify-end">
               {loading || !user ? (
                 <NavbarUserMenuSkeleton />
               ) : (

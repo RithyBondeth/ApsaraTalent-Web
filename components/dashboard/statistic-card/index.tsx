@@ -13,7 +13,7 @@ export default function StatisticCard({
 }: IStatisticCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <article className="group relative overflow-hidden border border-l-[5px] border-border border-l-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] sm:p-5">
+    <article className="group relative overflow-hidden bg-card p-5 transition-colors hover:bg-muted/40 sm:p-6">
       {/* Subtle Gradient bg on hover Section */}
       <div
         className={`absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${bgColor}`}
@@ -31,12 +31,12 @@ export default function StatisticCard({
           <TrendingUp className="h-4 w-4 text-muted-foreground/40" />
         </div>
         {/* Value Section */}
-        <TypographyP className="text-2xl font-bold tracking-tight sm:text-3xl [&:not(:first-child)]:mt-0">
+        <TypographyP className="pixel-numeral text-3xl sm:text-4xl [&:not(:first-child)]:mt-0">
           {typeof value === "number" ? value : 0}
           {suffix ?? ""}
         </TypographyP>
         {/* Label Section */}
-        <TypographyMuted className="mt-1 text-xs font-medium text-muted-foreground sm:text-sm">
+        <TypographyMuted className="pixel-label mt-2 text-[10px] text-muted-foreground">
           {label}
         </TypographyMuted>
       </div>

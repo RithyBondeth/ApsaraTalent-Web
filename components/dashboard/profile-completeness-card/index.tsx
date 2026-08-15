@@ -45,7 +45,7 @@ export function ProfileCompletenessCard({
 
   /* ---------------------------------- Render UI --------------------------------- */
   return (
-    <div className="flex w-full items-center gap-4 border border-l-[5px] border-border border-l-foreground bg-card px-5 py-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:gap-6 sm:px-6">
+    <div className="flex w-full items-center gap-5 border-b border-border bg-card px-6 py-5 sm:px-8">
       {/* Icon Section */}
       <div
         className={`border-current/10 hidden h-10 w-10 shrink-0 items-center justify-center border sm:flex ${tone.surface}`}

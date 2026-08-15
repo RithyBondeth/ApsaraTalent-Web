@@ -115,10 +115,13 @@ export default function MainLayout({
       <main
         id="main-content"
         tabIndex={-1}
+        // The sheet: no container padding, no gutter, no gap. Pages run edge to
+        // edge inside one bordered document and separate themselves with rules.
+        // `pb-24` on mobile clears the fixed bottom tab bar.
         className={
           isMessage
             ? "flex h-[calc(100dvh-8rem)] flex-col px-3 pb-3 sm:px-4 sm:pb-4 md:h-[calc(100dvh-4rem)] lg:px-5 lg:pb-5"
-            : "container mx-auto px-3 py-5 pb-24 sm:px-4 lg:px-6 lg:pb-8"
+            : "pixel-sheet animate-page-in min-h-[calc(100dvh-4rem)] pb-24 lg:pb-0"
         }
       >
         {children}

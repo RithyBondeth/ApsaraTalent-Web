@@ -34,65 +34,66 @@ export function PageBanner({
   const hasStats = Boolean(stats?.length);
 
   return (
-    <section
-      className={cn(
-        "pixel-graph-paper w-full border border-border bg-card px-6 py-6 shadow-pixel sm:px-8",
-        hasStats &&
-          "grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 gap-y-5 tablet-md:grid-cols-1",
-        className,
-      )}
-    >
-      <div className="min-w-0">
-        {/* Eyebrow Section */}
-        <div className="pixel-label flex items-center gap-2 text-muted-foreground">
-          {/* Three tiles of the ramp instead of a single primary rule — the
-              same mark the Card wears, so a banner and the cards beneath it
-              are recognisably the same stationery. */}
-          <span aria-hidden className="flex shrink-0">
-            <span className="size-1 bg-pixel-2" />
-            <span className="size-1 bg-pixel-3" />
-            <span className="size-1 bg-pixel-5" />
-          </span>
-          {eyebrow}
+    <section className={cn("pixel-band", className)}>
+      {/* Masthead Section — copy on the left, stats as their own ruled cells on
+          the right, sharing one vertical rule rather than sitting in a
+          gapped two-column grid. */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="pixel-graph-paper pixel-pad min-w-0">
+          {/* Eyebrow Section */}
+          <div className="pixel-label flex items-center gap-2 text-muted-foreground">
+            {/* Three tiles of the ramp — the same mark the sheet uses
+                throughout, so every header is recognisably one stationery. */}
+            <span aria-hidden className="flex shrink-0">
+              <span className="size-1 bg-pixel-2" />
+              <span className="size-1 bg-pixel-3" />
+              <span className="size-1 bg-pixel-5" />
+            </span>
+            {eyebrow}
+          </div>
+
+          {/* Title Section */}
+          <h1 className="pixel-display mt-4 max-w-[24ch] text-3xl text-foreground sm:text-4xl lg:text-5xl">
+            {title}
+          </h1>
+
+          {/* Subtitle Section */}
+          {subtitle ? (
+            <p className="mt-4 max-w-[58ch] text-sm leading-6 text-muted-foreground">
+              {subtitle}
+            </p>
+          ) : null}
         </div>
 
-        {/* Title Section */}
-        <h1 className="pixel-display mt-3 max-w-[26ch] text-2xl text-foreground sm:text-3xl">
-          {title}
-        </h1>
-
-        {/* Subtitle Section */}
-        {subtitle ? (
-          <p className="mt-2.5 max-w-[62ch] text-sm leading-6 text-muted-foreground">
-            {subtitle}
-          </p>
+        {/* Stats Section — one cell per figure, divided by rules. Each cell
+            fills the masthead's full height so the numbers form a column of
+            readings against the headline rather than a footnote under it. */}
+        {hasStats ? (
+          <dl className="grid grid-cols-3 border-t border-border lg:auto-cols-[minmax(8.5rem,auto)] lg:grid-flow-col lg:grid-cols-none lg:border-l lg:border-t-0">
+            {stats?.map(({ icon: Icon, value, label }) => (
+              <div
+                key={label}
+                className="flex min-w-0 flex-col justify-end border-border p-4 sm:p-5 [&+&]:border-l"
+              >
+                <dt className="flex items-center gap-1.5 text-muted-foreground">
+                  <Icon aria-hidden className="size-3.5 shrink-0" />
+                  <span className="pixel-label truncate text-[10px]">
+                    {label}
+                  </span>
+                </dt>
+                <dd className="pixel-numeral mt-2 text-2xl text-foreground sm:text-3xl">
+                  {value}
+                </dd>
+              </div>
+            ))}
+          </dl>
         ) : null}
       </div>
 
-      {/* Stats Section */}
-      {hasStats ? (
-        // items-end aligns the numbers to the copy's baseline in the desktop
-        // two-column layout. On mobile the block spans full width and stacks
-        // under the copy (grid-cols-1), so the row wraps — three long labels
-        // like "new this week" would otherwise collide at 375px.
-        <dl className="flex shrink-0 flex-wrap items-end gap-x-6 gap-y-3 tablet-md:items-start">
-          {stats?.map(({ icon: Icon, value, label }) => (
-            <div key={label} className="min-w-0">
-              <dt className="flex items-center gap-1.5 text-muted-foreground">
-                <Icon aria-hidden className="size-3.5 shrink-0" />
-                <span className="pixel-label text-[10px]">{label}</span>
-              </dt>
-              <dd className="pixel-numeral mt-1 text-2xl text-foreground">
-                {value}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      ) : null}
-
-      {/* Controls Section */}
+      {/* Controls Section — its own band under the masthead, so filters read as
+          a toolbar attached to the page rather than as more banner content. */}
       {children ? (
-        <div className={cn("w-full", hasStats && "col-span-full")}>
+        <div className="border-t border-border px-6 py-4 sm:px-8">
           {children}
         </div>
       ) : null}

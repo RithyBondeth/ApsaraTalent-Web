@@ -58,8 +58,12 @@ interface Props {
   initialIsEmployee: boolean;
 }
 
+// Cells of one ruled sheet rather than a gapped tray of cards: the 1px gap
+// over a border-coloured bed draws a single hairline between neighbours, so
+// adjacent cards share an edge instead of each drawing its own box and
+// leaving a channel of page between them.
 const FEED_CARD_GRID_CLASS =
-  "w-full grid grid-cols-3 gap-4 items-stretch laptop-sm:grid-cols-2 tablet-lg:!grid-cols-1 stagger-list [&>*]:min-w-0 [&>*]:h-full";
+  "pixel-ruled w-full grid-cols-3 items-stretch border-x-0 laptop-sm:grid-cols-2 tablet-lg:!grid-cols-1 stagger-list [&>*]:min-w-0 [&>*]:h-full";
 
 export default function FeedPageClient({ initialIsEmployee }: Props) {
   /* ---------------------------------- Utils --------------------------------- */

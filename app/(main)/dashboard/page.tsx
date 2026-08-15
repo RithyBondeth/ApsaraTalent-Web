@@ -55,16 +55,17 @@ function SectionHeader({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">
+    <div className="flex w-full items-center justify-between gap-4 border-b border-border px-6 py-4 sm:px-8">
       <div className="flex items-center gap-3">
-        <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
+        <span className="pixel-numeral text-xs text-muted-foreground">
           {number}
         </span>
-        <h2 className="pixel-display text-xl text-foreground sm:text-2xl">
+        <span aria-hidden className="h-3 w-px bg-border" />
+        <h2 className="pixel-display text-lg text-foreground sm:text-xl">
           {title}
         </h2>
       </div>
-      <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
+      <div className="grid size-7 shrink-0 place-items-center bg-primary text-primary-foreground">
         {icon}
       </div>
     </div>
@@ -120,7 +121,7 @@ export default function DashboardPage() {
   /* ----------------------------- Error State ------------------------------- */
   if (error)
     return (
-      <div className="mx-auto w-full max-w-[1500px] px-3 py-10 sm:px-4 lg:px-5">
+      <div className="w-full p-6 sm:p-8">
         <PageState
           variant="error"
           title={error}
@@ -142,7 +143,7 @@ export default function DashboardPage() {
 
   /* ------------------------------- Render UI ------------------------------- */
   return (
-    <div className="dashboard-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
+    <div className="dashboard-editorial w-full">
       {/* Banner Section */}
       <PageBanner
         eyebrow={t("insightCenter")}
@@ -158,7 +159,7 @@ export default function DashboardPage() {
         }`}
       />
 
-      <section className="flex w-full flex-col gap-5">
+      <section className="pixel-band w-full">
         <SectionHeader
           number="01"
           title={t("overview")}
@@ -173,8 +174,10 @@ export default function DashboardPage() {
           />
         )}
 
-        {/* Stat Cards Row Section */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        {/* Stat Cards Row Section — cells of one ruled strip. The 1px gap over
+            a border-coloured bed is what draws the hairlines, so the cells
+            share every edge instead of each carrying its own box. */}
+        <div className="pixel-ruled grid-cols-2 border-x-0 border-b-0 lg:grid-cols-4">
           {statisticCardConstants.map((card, index) => (
             <StatisticCard
               key={index}
@@ -190,15 +193,15 @@ export default function DashboardPage() {
       </section>
 
       {/* Charts Row Section */}
-      <section className="flex w-full flex-col gap-5">
+      <section className="pixel-band w-full">
         <SectionHeader
           number="02"
           title={t("performance")}
           icon={<BarChart3 className="size-4" />}
         />
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="pixel-ruled grid-cols-1 border-x-0 border-b-0 lg:grid-cols-3">
           {/* Weekly Activity Bar Chart Section */}
-          <div className="border border-t-[5px] border-border border-t-primary bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:col-span-2 sm:p-6 lg:col-span-2">
+          <div className="p-6 sm:p-8 lg:col-span-2">
             {/* Weekly Activity Header Section */}
             <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
               <div className="flex flex-col items-start gap-2">
@@ -227,7 +230,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Match Rate Radial Chart Section */}
-          <div className="flex flex-col border border-t-[5px] border-border border-t-primary bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
+          <div className="flex flex-col p-6 sm:p-8">
             {/* Match Rate Header Section */}
             <div className="flex flex-col items-start gap-2">
               <TypographyH4>{t("matchRate")}</TypographyH4>
@@ -244,13 +247,13 @@ export default function DashboardPage() {
       </section>
 
       {/* Recent Match Row Section */}
-      <section className="flex w-full flex-col gap-5">
+      <section className="pixel-band w-full">
         <SectionHeader
           number="03"
           title={t("recentMatches")}
           icon={<LucideUsers className="size-4" />}
         />
-        <div className="border border-t-[5px] border-border border-t-primary bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
+        <div className="p-6 sm:p-8">
           <RecentMatchesList
             matches={data.recentMatches}
             isEmployee={isEmployee}
