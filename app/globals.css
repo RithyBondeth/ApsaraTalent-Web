@@ -198,6 +198,19 @@
     /* thing hardcoded zinc could not do, and why those previews were    */
     /* still showing a grey app long after the app stopped being grey.   */
     /* ---------------------------------------------------------------- */
+    /* ---------------------------------------------------------------- */
+    /* Mascot                                                           */
+    /*                                                                  */
+    /* Neak's own colours. Like the pixel ramp and the theme previews,   */
+    /* these are declared once and never redefined in .dark: a character */
+    /* whose skin and hair changed with the theme would stop reading as  */
+    /* the same character. Gold and sampot reuse the ramp, so the mascot */
+    /* is visibly cut from the same palette as everything else.          */
+    /* ---------------------------------------------------------------- */
+    --pet-skin: 18 68% 76%;
+    --pet-hair: 236 24% 16%;
+    --pet-cloth: 36 55% 91%;
+
     --preview-dark-bg: 240 26% 11%;
     --preview-dark-surface: 240 20% 16%;
     --preview-dark-line: 240 15% 25%;
