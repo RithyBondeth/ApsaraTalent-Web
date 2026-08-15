@@ -65,7 +65,6 @@ export function LogoutConfirmationDialog(
       >
         {/* Dialog Header Section */}
         <header className="logout-dialog-header relative overflow-hidden border-b border-foreground bg-foreground p-5 text-background sm:p-6">
-          <div className="profile-detail-hero-grid" aria-hidden />
           <div className="relative z-[2] flex items-start gap-4 pr-10">
             <div className="flex size-12 shrink-0 items-center justify-center border border-background/25 bg-background/10 sm:size-14">
               <LogOut className="size-5 sm:size-6" strokeWidth={1.6} />

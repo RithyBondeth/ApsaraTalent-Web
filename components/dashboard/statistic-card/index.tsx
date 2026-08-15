@@ -1,11 +1,10 @@
-import { PixelIcon } from "@/components/utils/brand/pixel-icon";
 import { TrendingUp } from "lucide-react";
 import { IStatisticCardProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export default function StatisticCard({
-  icon,
+  icon: Icon,
   color,
   value,
   suffix,
@@ -26,7 +25,7 @@ export default function StatisticCard({
           <div
             className={`border-current/10 flex h-9 w-9 items-center justify-center border ${bgColor}`}
           >
-            <PixelIcon name={icon} size={18} className={color} />
+            <Icon className={`h-4.5 w-4.5 ${color}`} />
           </div>
           {/* Trending Up Icon Section */}
           <TrendingUp className="h-4 w-4 text-muted-foreground/40" />

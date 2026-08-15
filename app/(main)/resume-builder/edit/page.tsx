@@ -566,7 +566,6 @@ export default function ResumeEditorPage() {
       <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
         <DialogContent className="w-[calc(100%-1.5rem)] max-w-md rounded-none border border-foreground/20 bg-card p-0 shadow-[9px_9px_0_hsl(var(--foreground)/0.12),0_24px_70px_hsl(var(--foreground)/0.18)] sm:rounded-none">
           <header className="relative overflow-hidden border-b border-foreground bg-foreground p-5 text-background">
-            <div className="profile-detail-hero-grid" aria-hidden />
             <div className="relative z-[2] flex items-center gap-3 pr-8">
               <span className="flex size-11 shrink-0 items-center justify-center border border-background/25 bg-background/10">
                 <RotateCcw size={18} />

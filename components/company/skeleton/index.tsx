@@ -100,7 +100,6 @@ export function CompanyDetailPageLoadingSkeleton() {
       <SkeletonCard className="profile-detail-company-card overflow-hidden">
         {/* Brand Cover Section */}
         <section className="profile-detail-hero profile-detail-company-cover relative flex min-h-[300px] flex-col overflow-hidden bg-foreground p-5 sm:min-h-[360px] sm:p-8">
-          <div className="profile-detail-hero-grid" aria-hidden />
           <div className="relative z-[2] flex items-start justify-between gap-4">
             <Skeleton className="h-2.5 w-24 rounded-none opacity-25" />
             <Skeleton className="h-8 w-28 rounded-none opacity-25" />

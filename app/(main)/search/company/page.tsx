@@ -35,6 +35,7 @@ import {
   LucideBriefcaseBusiness,
   LucideGraduationCap,
   LucideSlidersHorizontal,
+  LucideUsers,
   LucideX,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -369,7 +370,7 @@ export default function CompanySearchPage() {
         stats={
           loading
             ? undefined
-            : [{ icon: "users", label: t("statTalent"), value: total }]
+            : [{ icon: LucideUsers, label: t("statTalent"), value: total }]
         }
       >
         <SearchBar

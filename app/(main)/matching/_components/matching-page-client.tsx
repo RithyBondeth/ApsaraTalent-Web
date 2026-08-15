@@ -19,7 +19,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { CountUp } from "@/components/utils/animations/count-up";
-import { Building2, Users } from "lucide-react";
+import { Building2, Handshake, Users } from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 
@@ -270,7 +270,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
         subtitle={`${t("bannerSubtitle1")} ${t("bannerSubtitle2")}`}
         stats={[
           {
-            icon: "users",
+            icon: Handshake,
             label: t("statMatches"),
             value: matchCount,
           },

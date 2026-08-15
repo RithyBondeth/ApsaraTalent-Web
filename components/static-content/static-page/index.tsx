@@ -1,4 +1,5 @@
 import Header from "@/components/landing/landing-header";
+import { PixelPattern } from "@/components/utils/brand/pixel-pattern";
 import LandingFooter from "@/components/landing/landing-footer";
 import { ScrollProgress } from "@/components/utils/animations/scroll-progress";
 import {
@@ -288,15 +289,15 @@ export function StaticPageArtworkSlot(props: IStaticPageArtworkSlotProps) {
   /* ----------------------------- Render UI ----------------------------- */
   return (
     <div
-      className="static-page-artwork-slot"
+      className="static-page-artwork-slot relative isolate"
       role="img"
       aria-label={`${label} artwork`}
     >
       {/* Static Artwork Slot Section */}
       {/* Artwork Background Section */}
-      <div className="static-page-artwork-slot-grid" />
 
       {/* Artwork Mark Section */}
+      <PixelPattern seed="apsara-static" cell={40} className="-z-10" />
       <div className="static-page-artwork-slot-mark">
         <span className="[&>svg]:size-8 [&>svg]:stroke-[1.25]">{icon}</span>
       </div>

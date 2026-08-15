@@ -128,7 +128,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { PixelIcon } from "@/components/utils/brand/pixel-icon";
 import Link from "next/link";
 import {
   Controller,
@@ -2255,11 +2254,7 @@ export default function EmployeeProfilePage() {
                 ) : (
                   <div className="flex w-full flex-col items-center justify-center p-3">
                     {/* Add New Experience Section */}
-                    <PixelIcon
-                      name="plus"
-                      size={54}
-                      className="text-muted-foreground/50"
-                    />
+                    <LucidePlus className="size-14 text-muted-foreground/50" />
                     <Button
                       className="text-xs"
                       variant={"secondary"}
@@ -2372,11 +2367,7 @@ export default function EmployeeProfilePage() {
                 ) : (
                   <div className="flex w-full flex-col items-center justify-center p-3">
                     {/* Add New Education Section */}
-                    <PixelIcon
-                      name="plus"
-                      size={54}
-                      className="text-muted-foreground/50"
-                    />
+                    <LucidePlus className="size-14 text-muted-foreground/50" />
                     <Button
                       variant={"secondary"}
                       className="text-xs"

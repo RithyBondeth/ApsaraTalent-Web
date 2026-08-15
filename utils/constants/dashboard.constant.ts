@@ -1,5 +1,11 @@
 import { TAnalyticsResponse } from "@/stores/apis/matching/analytics.store";
-import type { TPixelGlyph } from "@/components/utils/brand/pixel-icon/glyphs";
+import {
+  Bookmark,
+  Handshake,
+  Heart,
+  HeartHandshake,
+  LucideIcon,
+} from "lucide-react";
 
 /* ---------------------------------- Types --------------------------------- */
 type TStatisticCardConfig = {
@@ -8,7 +14,7 @@ type TStatisticCardConfig = {
     "totalLikesGiven" | "totalLikesReceived" | "totalMatches" | "totalFavorites"
   >;
   translationKey: string;
-  icon: TPixelGlyph;
+  icon: LucideIcon;
   color: string;
   bgColor: string;
   suffix?: string;
@@ -22,28 +28,28 @@ export const statisticCardConstants: TStatisticCardConfig[] = [
   {
     key: "totalLikesGiven",
     translationKey: "likesGiven",
-    icon: "heart",
+    icon: Heart,
     color: "text-category-magenta-accent",
     bgColor: "bg-category-magenta-subtle",
   },
   {
     key: "totalLikesReceived",
     translationKey: "likesReceived",
-    icon: "match",
+    icon: HeartHandshake,
     color: "text-category-violet-accent",
     bgColor: "bg-category-violet-subtle",
   },
   {
     key: "totalMatches",
     translationKey: "totalMatches",
-    icon: "users",
+    icon: Handshake,
     color: "text-category-teal-accent",
     bgColor: "bg-category-teal-subtle",
   },
   {
     key: "totalFavorites",
     translationKey: "savedFavorites",
-    icon: "bookmark",
+    icon: Bookmark,
     color: "text-category-orange-accent",
     bgColor: "bg-category-orange-subtle",
   },

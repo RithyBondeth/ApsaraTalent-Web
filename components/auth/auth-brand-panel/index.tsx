@@ -1,6 +1,7 @@
 "use client";
 
 import { PixelMosaic } from "@/components/utils/brand/pixel-mosaic";
+import { PixelPattern } from "@/components/utils/brand/pixel-pattern";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useCallback, useRef } from "react";
@@ -51,12 +52,19 @@ export default function AuthBrandPanel(props: IAuthBrandPanelProps) {
       ref={panelRef}
       onMouseMove={handlePointer}
       className={cn(
-        "auth-panel relative hidden flex-col p-12 lg:flex xl:p-14",
+        "auth-panel relative isolate hidden flex-col p-12 lg:flex xl:p-14",
         className,
       )}
     >
+      {/* The pixel field, ember-toned: this panel is a brand surface, so
+          the ground can carry the ramp rather than staying neutral. */}
+      <PixelPattern
+        seed="apsara-auth"
+        cell={52}
+        tone="ember"
+        className="-z-10"
+      />
       {/* Ambient Art Layers Section */}
-      <div className="auth-panel-grid" aria-hidden />
       <div className="auth-nimbus" aria-hidden />
       <div className="auth-spotlight" aria-hidden />
 

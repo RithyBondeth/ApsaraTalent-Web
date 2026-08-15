@@ -11,7 +11,7 @@ import InterviewLoadingSkeleton from "@/components/interview/skeleton";
 import { InterviewCard } from "@/components/interview/interview-card";
 import { CreateInterviewDialog } from "@/components/interview/create-interview-dialog";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
-import { CalendarCheck2 } from "lucide-react";
+import { CalendarCheck2, CalendarClock, CircleCheckBig } from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 
@@ -124,18 +124,18 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
             ? undefined
             : [
                 {
-                  icon: "calendar",
+                  icon: CalendarCheck2,
                   label: t("statScheduled"),
                   value: interviews.length,
                 },
                 {
-                  icon: "calendar",
+                  icon: CalendarClock,
                   label: t("statPending"),
                   value: interviews.filter((i) => i.status === "pending")
                     .length,
                 },
                 {
-                  icon: "check",
+                  icon: CircleCheckBig,
                   label: t("statAccepted"),
                   value: interviews.filter((i) => i.status === "accepted")
                     .length,

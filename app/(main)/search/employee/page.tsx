@@ -34,6 +34,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import debounce from "lodash.debounce";
 import {
   LucideBriefcaseBusiness,
+  LucideBuilding2,
   LucideCalendarDays,
   LucideCircleDollarSign,
   LucideGraduationCap,
@@ -421,7 +422,7 @@ export default function EmployeeSearchPage() {
         stats={
           loading
             ? undefined
-            : [{ icon: "briefcase", label: t("statJobs"), value: total }]
+            : [{ icon: LucideBuilding2, label: t("statJobs"), value: total }]
         }
       >
         <SearchBar

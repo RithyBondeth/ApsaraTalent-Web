@@ -95,7 +95,6 @@ export function EmployeeDetailPageLoadingSkeleton() {
         <div className="grid md:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
           {/* Editorial Identity Panel Section */}
           <section className="profile-detail-employee-intro relative flex min-h-[300px] flex-col overflow-hidden bg-foreground p-5 sm:min-h-[340px] sm:p-7 md:min-h-[410px]">
-            <div className="profile-detail-hero-grid" aria-hidden />
             <div className="relative z-[2] flex items-start justify-between gap-4">
               <Skeleton className="h-2.5 w-24 rounded-none opacity-25" />
               <Skeleton className="h-7 w-28 rounded-none opacity-25" />

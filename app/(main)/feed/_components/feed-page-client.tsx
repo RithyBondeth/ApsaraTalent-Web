@@ -658,12 +658,12 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
             }`}
             stats={[
               {
-                icon: isEmployee ? "briefcase" : "users",
+                icon: isEmployee ? Building2 : Users,
                 label: isEmployee ? tFeed("allCompanies") : tFeed("allTalent"),
                 value: allUsers.length,
               },
               {
-                icon: "pulse",
+                icon: Sparkles,
                 label: tFeed("recommendedForYou"),
                 value:
                   (isEmployee

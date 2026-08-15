@@ -16,7 +16,7 @@ import { FavoriteLoadingSkeleton } from "@/components/favorite/skeleton";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
-import { Building2, Users } from "lucide-react";
+import { Bookmark, Building2, Users } from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 
@@ -259,7 +259,7 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
         subtitle={`${tFav("bannerSubtitle1")} ${tFav("bannerSubtitle2")}`}
         stats={[
           {
-            icon: "bookmark",
+            icon: Bookmark,
             label: isEmployee ? tFav("companiesSaved") : tFav("talentSaved"),
             value: isEmployee
               ? (filteredEmployeeFavorites?.length ?? 0)

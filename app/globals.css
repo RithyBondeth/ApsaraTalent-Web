@@ -889,32 +889,6 @@
 }
 
 .app-top-navbar::before,
-.app-mobile-navbar::before {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  pointer-events: none;
-  content: "";
-  background-image:
-    linear-gradient(
-      to right,
-      hsl(var(--foreground) / 0.025) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      hsl(var(--foreground) / 0.02) 1px,
-      transparent 1px
-    );
-  background-size: 24px 24px;
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    black 14%,
-    black 86%,
-    transparent
-  );
-}
 
 /* ── Employee and company detail pages ───────────────────────────────── */
 .profile-detail-hero {
@@ -940,25 +914,6 @@
     rgb(15 14 13 / 0.56) 48%,
     rgb(15 14 13 / 0.26) 100%
   );
-}
-
-.profile-detail-hero-grid {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  background-image:
-    linear-gradient(
-      hsl(var(--profile-detail-hero-ink) / 0.1) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      hsl(var(--profile-detail-hero-ink) / 0.1) 1px,
-      transparent 1px
-    );
-  background-size: 36px 36px;
-  -webkit-mask-image: linear-gradient(90deg, #000, transparent 92%);
-  mask-image: linear-gradient(90deg, #000, transparent 92%);
 }
 
 .profile-detail-hero-brand {
@@ -1101,20 +1056,6 @@
   border: 1px solid hsl(var(--foreground) / 0.08);
   content: "";
   transform: rotate(26deg);
-}
-
-.profile-detail-company-about::after {
-  position: absolute;
-  right: 1.25rem;
-  bottom: 1.25rem;
-  width: 4rem;
-  height: 4rem;
-  content: "";
-  background-image:
-    linear-gradient(hsl(var(--foreground) / 0.11) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--foreground) / 0.11) 1px, transparent 1px);
-  background-size: 10px 10px;
-  opacity: 0.6;
 }
 
 .profile-detail-employee-skills {
@@ -2399,22 +2340,6 @@ body:has(.auth-scope),
 }
 
 /* Faint ruled-paper grid, masked to fade at the edges */
-.auth-panel-grid {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-image:
-    linear-gradient(hsl(var(--auth-ink) / 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--auth-ink) / 0.05) 1px, transparent 1px);
-  background-size: 44px 44px;
-  -webkit-mask-image: radial-gradient(
-    78% 68% at 50% 42%,
-    #000 22%,
-    transparent 80%
-  );
-  mask-image: radial-gradient(78% 68% at 50% 42%, #000 22%, transparent 80%);
-  opacity: 0.7;
-}
 
 /* Small light trails run directly along individual grid lines. Their cycles
    are intentionally staggered so the background feels alive, never busy. */
@@ -3222,20 +3147,6 @@ body:has(.landing-scope),
     14px 14px 0 hsl(var(--landing-panel-ink) / 0.04),
     -7px -7px 0 hsl(var(--landing-panel-ink) / 0.025);
   animation: static-page-orbit-drift 6.4s ease-in-out infinite;
-}
-
-.static-page-artwork-slot-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(hsl(var(--landing-panel-ink) / 0.055) 1px, transparent 1px),
-    linear-gradient(
-      90deg,
-      hsl(var(--landing-panel-ink) / 0.055) 1px,
-      transparent 1px
-    );
-  background-size: 28px 28px;
-  mask-image: linear-gradient(to bottom, #000, transparent 88%);
 }
 
 .static-page-artwork-slot-mark {
@@ -4288,19 +4199,8 @@ body:has(.auth-scope) [data-ui-button]:not(:disabled):active::after {
   }
 }
 
-.resume-canvas-workspace {
-  background-color: hsl(var(--muted) / 0.45);
-  background-image:
-    linear-gradient(hsl(var(--border) / 0.5) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--border) / 0.5) 1px, transparent 1px);
-  background-size: 28px 28px;
-}
-
 .dark .resume-canvas-workspace {
   background-color: hsl(var(--background));
-  background-image:
-    linear-gradient(hsl(var(--border) / 0.42) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--border) / 0.42) 1px, transparent 1px);
 }
 
 @media (prefers-reduced-motion: reduce) {
