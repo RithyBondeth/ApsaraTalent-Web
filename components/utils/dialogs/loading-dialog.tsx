@@ -62,7 +62,7 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
               </div>
 
               {/* Percentage Label Section */}
-              <TypographyMuted className="text-center text-xs tabular-nums text-muted-foreground">
+              <TypographyMuted className="pixel-numeral text-center text-xs text-muted-foreground">
                 {Math.round(progress)}%
               </TypographyMuted>
 

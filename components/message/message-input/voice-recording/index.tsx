@@ -33,8 +33,8 @@ export function VoiceRecordingUI(props: IVoiceRecordingUIProps) {
       {/* Recording Duration Section */}
       <div className="flex flex-1 items-center gap-2">
         <span className="relative flex h-2.5 w-2.5 shrink-0">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-destructive" />
         </span>
         <span className="font-mono text-sm tabular-nums text-foreground">
           {durationLabel}

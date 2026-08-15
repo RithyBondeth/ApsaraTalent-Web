@@ -39,20 +39,18 @@ export function QuestionCard(props: IQuestionCardProps) {
       </div>
 
       {/* Tip Section */}
-      <div className="ml-8 rounded-none border border-l-[4px] border-amber-100 border-l-amber-500 bg-amber-50 px-4 py-3 dark:border-amber-800/30 dark:bg-amber-900/20">
+      <div className="ml-8 rounded-none border border-l-[4px] border-warning-border border-l-warning bg-warning-subtle px-4 py-3">
         <div className="flex gap-2.5">
           {/* Icon Section */}
-          <LucideLightbulb className="mt-0.5 size-4 shrink-0 text-amber-500" />
+          <LucideLightbulb className="mt-0.5 size-4 shrink-0 text-warning" />
           {/* Content Section */}
           <div>
-            <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
-              {tipLabel}
-            </p>
+            <p className="pixel-label mb-1.5 text-warning-accent">{tipLabel}</p>
             <p className="text-sm leading-relaxed text-foreground/80">
               {item.tip}
             </p>
             {item.tipKm && (
-              <p className="mt-2 border-t border-amber-100 pt-2 text-xs leading-relaxed text-muted-foreground dark:border-amber-800/30">
+              <p className="mt-2 border-t border-warning-border pt-2 text-xs leading-relaxed text-muted-foreground">
                 {item.tipKm}
               </p>
             )}

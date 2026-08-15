@@ -34,13 +34,13 @@ export default function LandingFeatures() {
           <div>
             <span
               data-gsap="fade-up"
-              className="mb-4 block text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground"
+              className="pixel-label mb-4 block text-muted-foreground"
             >
               {t("featuresHeadingHighlight")} · 06
             </span>
             <TypographyH2
               data-gsap="split-chars"
-              className="max-w-2xl text-3xl font-semibold tracking-[-0.035em] [perspective:800px] sm:text-4xl lg:text-5xl"
+              className="pixel-display max-w-2xl text-3xl [perspective:800px] sm:text-4xl lg:text-5xl"
             >
               {t("featuresHeading")}{" "}
               <span className="landing-highlight">
@@ -72,7 +72,7 @@ export default function LandingFeatures() {
               )}
             >
               <div className="flex items-start justify-between">
-                <span className="text-xs tabular-nums text-muted-foreground/70">
+                <span className="pixel-numeral text-xs text-muted-foreground/70">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <div className="grid size-11 place-items-center border border-border bg-background text-foreground transition-colors group-hover:bg-foreground group-hover:text-background">

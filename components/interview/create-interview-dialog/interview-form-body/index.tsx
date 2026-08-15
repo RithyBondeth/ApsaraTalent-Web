@@ -270,7 +270,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
 
         {/* Optional Details Section */}
         <div className="flex flex-col gap-4">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <p className="pixel-label text-xs text-muted-foreground">
             {t("optional")}
           </p>
 

@@ -35,7 +35,7 @@ export default function EmployeeEducationForm(
         </TypographyMuted>
         {props.isEdit && (
           <LucideTrash2
-            className="cursor-pointer text-red-500 hover:text-red-600"
+            className="cursor-pointer text-destructive hover:text-destructive-accent"
             strokeWidth={"1.5px"}
             width={"18px"}
             onClick={props.onRemove}

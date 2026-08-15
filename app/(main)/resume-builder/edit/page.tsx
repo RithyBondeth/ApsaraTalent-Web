@@ -492,7 +492,7 @@ export default function ResumeEditorPage() {
             {/* Form Panel Section  */}
             <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-3 py-3 sm:px-4">
               <div className="min-w-0">
-                <TypographyP className="text-xs font-bold uppercase tracking-wider text-foreground">
+                <TypographyP className="pixel-label text-xs text-foreground">
                   {tRb("editorPanelTitle")}
                 </TypographyP>
                 <TypographySmall className="mt-0.5 block truncate text-[10px] text-muted-foreground">

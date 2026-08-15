@@ -155,7 +155,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
               <span className="max-w-[86px] truncate text-xs font-semibold leading-none lg:max-w-[104px]">
                 {user.name}
               </span>
-              <span className="text-[9px] font-semibold uppercase leading-none tracking-[0.12em] text-muted-foreground">
+              <span className="pixel-label text-[9px] text-muted-foreground">
                 {currentUser?.role ?? ""}
               </span>
             </div>
@@ -191,7 +191,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
                 <p className="mt-0.5 truncate text-xs text-muted-foreground">
                   {user.email}
                 </p>
-                <span className="mt-2 inline-flex items-center gap-1 border border-foreground/15 bg-background px-2 py-1 text-[9px] font-bold uppercase tracking-[0.1em] text-foreground">
+                <span className="pixel-label mt-2 inline-flex items-center gap-1 border border-foreground/15 bg-background px-2 py-1 text-[9px] text-foreground">
                   {isEmployee ? (
                     <LucideUser className="size-2.5" />
                   ) : (

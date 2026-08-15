@@ -43,8 +43,8 @@ export function SectionWrapper(props: ISectionWrapperProps) {
       className={[
         "group/section relative rounded-none transition-all duration-150",
         isSelected
-          ? "ring-2 ring-blue-500 ring-offset-2"
-          : "ring-0 hover:ring-1 hover:ring-blue-300/60 hover:ring-offset-1",
+          ? "ring-2 ring-ring ring-offset-2"
+          : "ring-0 hover:ring-1 hover:ring-ring/60 hover:ring-offset-1",
       ].join(" ")}
     >
       {/* Drag Handle Section: Only rendered for draggable sections */}
@@ -59,7 +59,7 @@ export function SectionWrapper(props: ISectionWrapperProps) {
             isSelected ? "!opacity-80" : "",
           ].join(" ")}
         >
-          <GripVertical size={14} className="text-blue-500" />
+          <GripVertical size={14} className="text-primary" />
         </div>
       )}
 

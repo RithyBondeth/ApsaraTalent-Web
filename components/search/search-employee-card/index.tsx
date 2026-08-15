@@ -46,7 +46,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
+                <h3 className="pixel-display truncate text-base sm:text-lg">
                   {props.job}
                 </h3>
                 <TypographyP className="mt-0.5 text-sm font-medium text-muted-foreground [&:not(:first-child)]:mt-0">
@@ -115,7 +115,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
 
       {/* Action Bar Section */}
       <div className="flex items-center justify-between gap-3 border-t border-border bg-muted/25 px-4 py-3 sm:px-5">
-        <span className="min-w-0 truncate text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+        <span className="pixel-label min-w-0 truncate text-[10px] text-muted-foreground">
           {props.username || `${props.firstname} ${props.lastname}`}
         </span>
         <Button

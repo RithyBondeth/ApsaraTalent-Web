@@ -696,7 +696,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                     <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
                       01
                     </span>
-                    <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">
+                    <h2 className="pixel-display text-xl text-foreground sm:text-2xl">
                       {tFeed("recommendedForYou")}
                     </h2>
                   </div>
@@ -769,7 +769,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                   <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
                     01
                   </span>
-                  <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">
+                  <h2 className="pixel-display text-xl text-foreground sm:text-2xl">
                     {tFeed("recommendedForYou")}
                   </h2>
                 </div>
@@ -828,7 +828,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
             <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
               02
             </span>
-            <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">
+            <h2 className="pixel-display text-xl text-foreground sm:text-2xl">
               {isEmployee ? tFeed("allCompanies") : tFeed("allTalent")}
             </h2>
           </div>

@@ -89,7 +89,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 disabled={props.onLikeClickDisable}
               >
                 {props.onLikeClickDisable ? (
-                  <LucideLoader2 className="!size-4 animate-spin text-rose-500" />
+                  <LucideLoader2 className="!size-4 animate-spin text-primary" />
                 ) : (
                   <LucideHeartHandshake className="!size-4" />
                 )}
@@ -125,7 +125,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
           <div className="flex flex-1 flex-col gap-3 px-4 pb-4 pt-3 tablet-md:gap-2.5">
             {/* Name and Meta Section */}
             <div className="flex flex-col gap-1">
-              <TypographyP className="!m-0 text-base font-black leading-tight tracking-[-0.02em]">
+              <TypographyP className="pixel-display !m-0 text-base">
                 {props.name}
               </TypographyP>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">

@@ -67,7 +67,7 @@ export default function ExpandedChatList(props: IChatListProps) {
 
               {/* Online Status Dot Section */}
               {chat.isOnline && (
-                <span className="absolute bottom-0.5 left-0.5 h-3 w-3 rounded-full border-2 border-background bg-green-500" />
+                <span className="absolute bottom-0.5 left-0.5 h-3 w-3 rounded-full border-2 border-background bg-success" />
               )}
             </div>
 
@@ -85,7 +85,7 @@ export default function ExpandedChatList(props: IChatListProps) {
                 >
                   {chat.name}
                 </span>
-                <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                <span className="pixel-numeral shrink-0 text-xs text-muted-foreground">
                   {chat.time}
                 </span>
               </div>
@@ -96,7 +96,7 @@ export default function ExpandedChatList(props: IChatListProps) {
                 {isLastFromMe && (
                   <span className="shrink-0">
                     {chat.isRead ? (
-                      <CheckCheck className="h-3.5 w-3.5 text-green-500" />
+                      <CheckCheck className="h-3.5 w-3.5 text-success" />
                     ) : (
                       <Check className="h-3.5 w-3.5 text-muted-foreground" />
                     )}

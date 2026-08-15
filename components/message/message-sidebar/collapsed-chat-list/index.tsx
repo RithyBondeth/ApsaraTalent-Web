@@ -61,12 +61,12 @@ export default function CollapsedChatList(props: IChatListProps) {
                       {chat.unread > 9 ? "9+" : chat.unread}
                     </span>
                   ) : isUnread ? (
-                    <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full border-2 border-background bg-green-500" />
+                    <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full border-2 border-background bg-success" />
                   ) : null}
 
                   {/* Online Dot Section */}
                   {chat.isOnline && (
-                    <span className="absolute bottom-1.5 left-1.5 h-2.5 w-2.5 rounded-full border-2 border-background bg-green-500" />
+                    <span className="absolute bottom-1.5 left-1.5 h-2.5 w-2.5 rounded-full border-2 border-background bg-success" />
                   )}
                 </button>
               </TooltipTrigger>
@@ -82,7 +82,7 @@ export default function CollapsedChatList(props: IChatListProps) {
                   {/* Chat Name Section */}
                   {chat.name}
                   {chat.isOnline && (
-                    <span className="ml-1.5 text-xs text-green-500">●</span>
+                    <span className="ml-1.5 text-xs text-success">●</span>
                   )}
                 </TypographyP>
                 {/* Chat Tag Section */}

@@ -76,7 +76,7 @@ export default function NotificationMessageCard(
           </div>
 
           {/* Message Badge Section */}
-          <div className="shrink-0 border border-category-lime/20 bg-category-lime-subtle px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-category-lime-accent">
+          <div className="pixel-label shrink-0 border border-category-lime/20 bg-category-lime-subtle px-3 py-1 text-[10px] text-category-lime-accent">
             {t("messageBadge")}
           </div>
         </div>

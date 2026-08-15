@@ -288,7 +288,7 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-1.5">
                         <span className="size-2 shrink-0 rounded-full bg-success" />
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-foreground">
+                        <p className="pixel-label text-foreground">
                           {t("strengths")}
                         </p>
                       </div>
@@ -313,7 +313,7 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-1.5">
                         <span className="size-2 shrink-0 rounded-full bg-warning" />
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-foreground">
+                        <p className="pixel-label text-foreground">
                           {t("areasToImprove")}
                         </p>
                       </div>

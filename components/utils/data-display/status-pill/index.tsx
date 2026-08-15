@@ -5,7 +5,7 @@ import type { IStatusPillProps, TStatus, TStatusPillVariant } from "./props";
  * One pill for every "this thing has a state" badge in the app.
  *
  * Before this existed, each caller hand-rolled its own four-class combination
- * (`text-green-800 bg-green-100 dark:text-green-300 dark:bg-green-900/30`),
+ * (a raw green-800 on green-100, with a hand-written dark twin),
  * which is how the same "success" ended up as green in one file and emerald in
  * the next. The classes here are written out in full rather than assembled from
  * the status name — Tailwind only sees class names it can find as literal
@@ -56,7 +56,7 @@ export function StatusPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 border px-2.5 py-1 text-xs font-semibold uppercase tracking-wide",
+        "pixel-label inline-flex items-center gap-1.5 border px-2.5 py-1 text-xs",
         VARIANTS[variant][status],
         className,
       )}

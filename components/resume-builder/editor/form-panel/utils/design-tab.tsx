@@ -255,7 +255,7 @@ export function DesignTab({
             />
             <span
               className={cn(
-                "text-[11px] font-medium tabular-nums",
+                "pixel-numeral text-[11px] font-medium",
                 activeDesign.customAccent
                   ? "text-primary"
                   : "text-muted-foreground",

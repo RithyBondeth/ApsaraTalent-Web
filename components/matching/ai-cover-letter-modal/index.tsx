@@ -411,7 +411,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
                     title={copied ? t("copied") : t("copy")}
                   >
                     {copied ? (
-                      <LucideCheck className="size-3.5 text-green-500" />
+                      <LucideCheck className="size-3.5 text-success" />
                     ) : (
                       <LucideCopy className="size-3.5" />
                     )}

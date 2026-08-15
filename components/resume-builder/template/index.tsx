@@ -78,7 +78,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
       <div className="flex min-h-[156px] w-full flex-col justify-between gap-4 p-4">
         {/* Title and Description Section */}
         <div className="flex flex-col gap-1">
-          <TypographyH4 className="!m-0 text-sm font-black leading-tight tracking-[-0.015em]">
+          <TypographyH4 className="pixel-display !m-0 text-sm">
             {props.title}
           </TypographyH4>
           <TypographyMuted className="line-clamp-3 text-xs leading-relaxed">

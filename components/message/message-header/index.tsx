@@ -88,19 +88,19 @@ export default function ChatHeader(props: IChatHeaderProps) {
           {isOnline && (
             <span
               aria-label="Online"
-              className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background bg-green-500"
+              className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background bg-success"
             />
           )}
         </div>
 
         {/* Chat Name and Status Section */}
         <div className="min-w-0 max-w-[52vw] sm:max-w-none">
-          <h2 className="truncate text-sm font-black leading-tight tracking-[-0.01em] text-foreground">
+          <h2 className="pixel-display truncate text-sm text-foreground">
             {chat.name}
           </h2>
           <TypographyMuted
             className={`text-xs leading-tight ${
-              isOnline ? "text-green-500" : "text-muted-foreground"
+              isOnline ? "text-success" : "text-muted-foreground"
             }`}
           >
             {presenceLabel}

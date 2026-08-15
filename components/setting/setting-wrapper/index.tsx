@@ -19,9 +19,7 @@ export function SettingWrapper(props: ISettingWrapperProps) {
 
         {/* Setting Wrapper Title and Description Section */}
         <div className="flex min-w-0 flex-col pt-0.5">
-          <TypographySmall className="font-black leading-none tracking-[-0.01em]">
-            {title}
-          </TypographySmall>
+          <TypographySmall className="pixel-display">{title}</TypographySmall>
           <TypographyMuted className="mt-1 text-xs leading-5">
             {description}
           </TypographyMuted>

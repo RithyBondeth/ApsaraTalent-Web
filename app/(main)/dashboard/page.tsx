@@ -60,7 +60,7 @@ function SectionHeader({
         <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">
           {number}
         </span>
-        <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">
+        <h2 className="pixel-display text-xl text-foreground sm:text-2xl">
           {title}
         </h2>
       </div>
@@ -213,11 +213,11 @@ export default function DashboardPage() {
                   {t("likes")}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <span className="size-2.5 bg-pink-500" />
+                  <span className="size-2.5 bg-chart-3" />
                   {t("received")}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <span className="size-2.5 bg-emerald-500" />
+                  <span className="size-2.5 bg-chart-4" />
                   {t("matches")}
                 </span>
               </div>

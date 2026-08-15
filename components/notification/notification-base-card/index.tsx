@@ -96,7 +96,7 @@ export default function NotificationBaseCard(
       {/* Content Section */}
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <div className="flex w-full items-center justify-between gap-2 pr-7">
-          <TypographyLead className="line-clamp-1 text-sm font-black tracking-[-0.02em] text-foreground sm:text-base">
+          <TypographyLead className="pixel-display line-clamp-1 text-sm text-foreground sm:text-base">
             {title}
           </TypographyLead>
           <div className="flex shrink-0 items-center gap-2">

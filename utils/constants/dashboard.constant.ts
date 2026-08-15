@@ -22,7 +22,7 @@ type TStatisticCardConfig = {
 
 /* -------------------------------- Constants ------------------------------- */
 // Four metrics, four categorical hues. Previously rose and pink sat side by
-// side — near-identical for two different metrics — and text-amber-500 on its
+// side — near-identical for two different metrics — and a raw amber swatch on its
 // own tint came to ~2:1, so the icon was barely visible.
 export const statisticCardConstants: TStatisticCardConfig[] = [
   {

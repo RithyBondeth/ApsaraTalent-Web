@@ -141,10 +141,10 @@ export default function SettingPage() {
             <LucideSettings2 className="size-5 sm:size-6" />
           </div>
           <div className="max-w-2xl">
-            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-primary">
+            <p className="pixel-label mb-2 text-[10px] text-primary">
               Apsara Talent
             </p>
-            <h1 className="text-3xl font-black tracking-[-0.045em] sm:text-4xl">
+            <h1 className="pixel-display text-3xl sm:text-4xl">
               {tS("title")}
             </h1>
             <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">

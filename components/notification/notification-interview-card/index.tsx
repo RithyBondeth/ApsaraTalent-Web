@@ -89,7 +89,7 @@ export default function NotificationInterviewCard(
           </div>
 
           {/* Interview Badge Section */}
-          <div className="shrink-0 border border-category-orange/20 bg-category-orange-subtle px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-category-orange-accent">
+          <div className="pixel-label shrink-0 border border-category-orange/20 bg-category-orange-subtle px-3 py-1 text-[10px] text-category-orange-accent">
             {t("interviewBadge")}
           </div>
         </div>

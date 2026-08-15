@@ -23,13 +23,13 @@ export function LandingHowItWorks() {
         <div className="mb-14 max-w-3xl sm:mb-20">
           <span
             data-gsap="fade-up"
-            className="mb-4 block text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground"
+            className="pixel-label mb-4 block text-muted-foreground"
           >
             {t("howItWorksHeading")} {t("howItWorksHeadingHighlight")} · 03
           </span>
           <TypographyH2
             data-gsap="split-chars"
-            className="text-3xl font-semibold tracking-[-0.035em] [perspective:800px] sm:text-4xl lg:text-5xl"
+            className="pixel-display text-3xl [perspective:800px] sm:text-4xl lg:text-5xl"
           >
             {t("howItWorksHeading")}{" "}
             <span className="landing-highlight">
@@ -55,10 +55,10 @@ export function LandingHowItWorks() {
               className="group relative min-h-[300px] border-b border-r border-border p-7 sm:p-9"
             >
               <div className="flex items-start justify-between">
-                <span className="text-6xl font-semibold tracking-[-0.06em] text-foreground/10 transition-colors group-hover:text-foreground/20 sm:text-7xl">
+                <span className="pixel-display text-6xl text-foreground/10 transition-colors group-hover:text-foreground/20 sm:text-7xl">
                   {step.number}
                 </span>
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                <span className="pixel-label text-[10px] text-muted-foreground">
                   0{index + 1} / 03
                 </span>
               </div>

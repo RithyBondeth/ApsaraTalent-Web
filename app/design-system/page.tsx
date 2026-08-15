@@ -308,7 +308,7 @@ export default function DesignSystemPage() {
 
         <Section
           title="Status"
-          note="Four families, five roles each. Reach for these instead of bg-green-100 / text-amber-700 — a token cannot drift between files, and it already knows both themes."
+          note="Four families, five roles each. Reach for these instead of raw palette shades — a token cannot drift between files, and it already knows both themes."
         >
           <div className="space-y-8">
             {STATUSES.map((status) => (

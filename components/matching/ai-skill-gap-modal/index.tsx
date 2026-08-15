@@ -26,14 +26,15 @@ import MissingCard from "./missing-card";
 import { IAiSkillGapModalProps } from "./props";
 
 /* ---------------------------------- Helpers ----------------------------------- */
+/* Gap size is a severity, so it maps onto the status families rather than onto
+ * hand-picked hues. Each token already carries its own dark value, which is why
+ * the `dark:` twin on every entry here is gone rather than translated. */
 const GAP_COLOR: Record<string, string> = {
-  none: "border-green-500/30 bg-green-50 dark:bg-green-900/10 text-green-800 dark:text-green-300",
-  small:
-    "border-blue-500/30 bg-blue-50 dark:bg-blue-900/10 text-blue-800 dark:text-blue-300",
-  moderate:
-    "border-amber-500/30 bg-amber-50 dark:bg-amber-900/10 text-amber-800 dark:text-amber-300",
+  none: "border-success-border bg-success-subtle text-success-accent",
+  small: "border-info-border bg-info-subtle text-info-accent",
+  moderate: "border-warning-border bg-warning-subtle text-warning-accent",
   large:
-    "border-red-500/30 bg-red-50 dark:bg-red-900/10 text-red-800 dark:text-red-300",
+    "border-destructive-border bg-destructive-subtle text-destructive-accent",
 };
 
 function isMissingSkill(
@@ -284,14 +285,14 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
             {/* Matched Skills Section */}
             {matched.length > 0 && (
               <div>
-                <p className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <p className="pixel-label mb-2.5 text-muted-foreground">
                   {t("matchedSkills")}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {matched.map((skill) => (
                     <span
                       key={skill}
-                      className="inline-flex items-center gap-1 rounded-none border border-green-200 bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700 duration-200 animate-in fade-in-0 dark:border-green-800 dark:bg-green-900/40 dark:text-green-300"
+                      className="pixel-label inline-flex items-center gap-1 rounded-none border border-success-border bg-success-subtle px-2.5 py-1 text-success-accent duration-200 animate-in fade-in-0"
                     >
                       <LucideCheckCircle2 className="size-3 shrink-0" />
                       {skill}
@@ -304,7 +305,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
             {/* Missing Skills Section */}
             {missing.length > 0 && (
               <div className="space-y-2.5">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <p className="pixel-label text-xs text-muted-foreground">
                   {t("missingSkills")}
                 </p>
                 {missing.map((item, i) => (
@@ -326,7 +327,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
               <div
                 className={`rounded-none border border-l-[5px] px-4 py-4 ${gapStyle} duration-300 animate-in fade-in-0 slide-in-from-bottom-2`}
               >
-                <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wider opacity-70">
+                <p className="pixel-label mb-1.5 opacity-70">
                   {t("skillGapSummary")}
                 </p>
                 <p className="text-sm font-semibold leading-snug">{gapLabel}</p>

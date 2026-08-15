@@ -57,7 +57,7 @@ export function InterviewCard({
         {/* Header Row Section */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
+            <h3 className="pixel-display truncate text-base sm:text-lg">
               {interview.title}
             </h3>
             <TypographyMuted className="mt-0.5 text-sm text-muted-foreground">

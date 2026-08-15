@@ -101,7 +101,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           <TypographySmall
             id={validationMessageId}
             role="alert"
-            className="field-validation-message field-validation-message-textarea text-xs text-red-500"
+            className="field-validation-message field-validation-message-textarea text-xs text-destructive"
             title={typeof message === "string" ? message : String(message)}
           >
             {typeof message === "string" ? message : String(message)}

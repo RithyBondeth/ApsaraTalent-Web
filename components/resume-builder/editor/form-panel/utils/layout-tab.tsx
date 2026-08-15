@@ -65,7 +65,7 @@ function SectionItem({
         {/* Section Name and Status Section */}
         <div className="flex flex-col">
           <span className="text-sm font-medium">{label}</span>
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          <span className="pixel-label text-[10px] text-muted-foreground">
             {isVisible ? t("visible") : t("hidden")}
           </span>
         </div>
@@ -182,9 +182,7 @@ export function LayoutTab() {
 
       {/* Pro Tip Section */}
       <div className="border border-primary/10 bg-primary/5 p-4">
-        <h5 className="mb-2 text-xs font-bold uppercase tracking-widest text-primary">
-          {t("proTip")}
-        </h5>
+        <h5 className="pixel-label mb-2 text-xs text-primary">{t("proTip")}</h5>
         <p className="text-xs leading-relaxed text-muted-foreground">
           {t("proTipDesc")}
         </p>

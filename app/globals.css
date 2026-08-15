@@ -185,6 +185,26 @@
     /* ---------------------------------------------------------------- */
     --pixel-unit: 4px;
     --pixel-rule: 24px; /* 6 units — the ruled-paper background pitch */
+
+    /* ---------------------------------------------------------------- */
+    /* Theme preview                                                    */
+    /*                                                                  */
+    /* The one place a colour must NOT follow the theme: the appearance  */
+    /* setting draws a miniature of each theme, so the dark preview has  */
+    /* to stay dark while you are looking at it in light mode.           */
+    /*                                                                  */
+    /* Declared here and deliberately never redefined in .dark. They     */
+    /* mirror the real --background/--card/--border of each theme, so    */
+    /* when the palette moves the previews move with it — which is the   */
+    /* thing hardcoded zinc could not do, and why those previews were    */
+    /* still showing a grey app long after the app stopped being grey.   */
+    /* ---------------------------------------------------------------- */
+    --preview-dark-bg: 240 26% 11%;
+    --preview-dark-surface: 240 20% 16%;
+    --preview-dark-line: 240 15% 25%;
+    --preview-light-bg: 60 33% 95%;
+    --preview-light-surface: 0 0% 100%;
+    --preview-light-line: 45 14% 86%;
   }
   .dark {
     /* Deep indigo-black. The page is a single flat ink the pixel ramp burns

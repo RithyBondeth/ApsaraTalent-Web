@@ -27,11 +27,11 @@ function DeviceChrome(props: IDeviceChromeProps) {
 
   /* ----------------------------- Render UI ----------------------------- */
   return (
-    <div className="landing-match-device relative w-full max-w-[280px] border border-white/[0.18] bg-[hsl(var(--auth-paper))] p-2.5 shadow-[0_28px_80px_hsl(var(--auth-paper)/0.42)]">
+    <div className="landing-match-device relative w-full max-w-[280px] border border-[hsl(var(--auth-ink)/0.18)] bg-[hsl(var(--auth-paper))] p-2.5 shadow-[0_28px_80px_hsl(var(--auth-paper)/0.42)]">
       {/* Device Frame Section */}
       {/* Device Speaker Section */}
       <div className="mb-2 flex h-4 items-center justify-center">
-        <span className="h-1 w-10 rounded-full bg-white/[0.18]" />
+        <span className="h-1 w-10 rounded-full bg-[hsl(var(--auth-ink)/0.18)]" />
       </div>
       {/* Device Screen Section */}
       <div className="overflow-hidden rounded-[14px] bg-[hsl(var(--auth-ink))] text-[hsl(var(--auth-paper))]">
@@ -51,7 +51,7 @@ function CompanyDevice() {
       {/* Company Device Header Section */}
       <div className="flex items-center justify-between border-b border-[hsl(var(--auth-paper)/0.1)] px-4 py-3">
         <div>
-          <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[hsl(var(--auth-paper)/0.48)]">
+          <p className="pixel-label text-[9px] text-[hsl(var(--auth-paper)/0.48)]">
             {t("matchVisualCompanyView")}
           </p>
           <p className="mt-0.5 text-xs font-semibold">Kiri Labs</p>
@@ -116,7 +116,7 @@ function EmployeeDevice() {
       {/* Employee Device Header Section */}
       <div className="flex items-center justify-between border-b border-[hsl(var(--auth-paper)/0.1)] px-4 py-3">
         <div>
-          <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[hsl(var(--auth-paper)/0.48)]">
+          <p className="pixel-label text-[9px] text-[hsl(var(--auth-paper)/0.48)]">
             {t("matchVisualEmployeeView")}
           </p>
           <p className="mt-0.5 text-xs font-semibold">Sophea Dara</p>
@@ -149,7 +149,7 @@ function EmployeeDevice() {
 
         {/* Open Position Section */}
         <div className="mb-5 border-y border-[hsl(var(--auth-paper)/0.1)] py-3">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[hsl(var(--auth-paper)/0.42)]">
+          <p className="pixel-label text-[9px] text-[hsl(var(--auth-paper)/0.42)]">
             {t("matchVisualHiringFor")}
           </p>
           <p className="mt-1.5 text-xs font-medium">Senior Product Designer</p>
@@ -375,13 +375,13 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
           <div>
             <span
               data-gsap="fade-up"
-              className="mb-4 block text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground"
+              className="pixel-label mb-4 block text-muted-foreground"
             >
               {t("matchVisualEyebrow")}
             </span>
             <TypographyH2
               data-gsap="split-chars"
-              className="max-w-2xl text-3xl font-semibold tracking-[-0.035em] [perspective:800px] sm:text-4xl lg:text-5xl"
+              className="pixel-display max-w-2xl text-3xl [perspective:800px] sm:text-4xl lg:text-5xl"
             >
               {t("matchVisualHeading")}
             </TypographyH2>
@@ -398,7 +398,7 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
         <div
           ref={matchStageRef}
           data-match-active={isMatchActive}
-          className="landing-dark-panel landing-match-stage relative overflow-hidden border border-white/10 px-5 py-12 sm:px-10 sm:py-16 lg:min-h-[680px] lg:px-14"
+          className="landing-dark-panel landing-match-stage relative overflow-hidden border border-[hsl(var(--auth-ink)/10)] px-5 py-12 sm:px-10 sm:py-16 lg:min-h-[680px] lg:px-14"
           role="img"
           aria-label={t("matchVisualAccessibleLabel")}
         >
@@ -406,7 +406,7 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
           <div className="landing-dark-grid pointer-events-none absolute inset-0" />
 
           {/* Stage Header Section */}
-          <div className="relative z-10 mb-10 flex items-center justify-between border-b border-white/[0.12] pb-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/[0.42] lg:mb-0">
+          <div className="pixel-label relative z-10 mb-10 flex items-center justify-between border-b border-[hsl(var(--auth-ink)/0.12)] pb-5 text-[10px] text-[hsl(var(--auth-ink)/0.42)] lg:mb-0">
             <span>{t("matchVisualMutualInterest")}</span>
             <span>Apsara Talent · Match</span>
           </div>
@@ -421,26 +421,26 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
             {/* Match Connection Section */}
             <div className="landing-match-connection relative flex flex-col items-center justify-center py-2 lg:h-full">
               <div className="landing-match-beam hidden lg:block" aria-hidden />
-              <span className="landing-match-arrow mb-4 grid size-12 place-items-center rounded-full border border-white/[0.16] bg-white/[0.06] text-white/[0.72] backdrop-blur-sm">
+              <span className="landing-match-arrow mb-4 grid size-12 place-items-center rounded-full border border-[hsl(var(--auth-ink)/0.16)] bg-[hsl(var(--auth-ink)/0.06)] text-[hsl(var(--auth-ink)/0.72)] backdrop-blur-sm">
                 <LucideArrowLeftRight className="size-5" strokeWidth={1.5} />
               </span>
               {/* Match Result Section */}
-              <div className="landing-match-result relative w-full max-w-[190px] border border-white/[0.18] bg-white/[0.07] px-4 py-5 text-center backdrop-blur-xl">
-                <span className="mx-auto mb-3 grid size-10 place-items-center rounded-full bg-white text-[hsl(var(--auth-paper))]">
+              <div className="landing-match-result relative w-full max-w-[190px] border border-[hsl(var(--auth-ink)/0.18)] bg-[hsl(var(--auth-ink)/0.07)] px-4 py-5 text-center backdrop-blur-xl">
+                <span className="mx-auto mb-3 grid size-10 place-items-center rounded-full bg-[hsl(var(--auth-ink))] text-[hsl(var(--auth-paper))]">
                   <LucideCheck className="size-5" strokeWidth={2} />
                 </span>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-sm font-semibold text-[hsl(var(--auth-ink))]">
                   {t("matchVisualMatchReady")}
                 </p>
-                <p className="mt-1.5 text-[10px] leading-relaxed text-white/[0.48]">
+                <p className="mt-1.5 text-[10px] leading-relaxed text-[hsl(var(--auth-ink)/0.48)]">
                   {t("matchVisualMatchReadyDescription")}
                 </p>
-                <div className="mt-4 flex items-center justify-center gap-2 border-t border-white/[0.12] pt-3 text-[10px] font-medium text-white/[0.68]">
+                <div className="mt-4 flex items-center justify-center gap-2 border-t border-[hsl(var(--auth-ink)/0.12)] pt-3 text-[10px] font-medium text-[hsl(var(--auth-ink)/0.68)]">
                   <LucideMessageCircle className="size-3.5" strokeWidth={1.6} />
                   {t("featureRealTimeChat")}
                 </div>
               </div>
-              <LucideSparkles className="landing-match-spark absolute right-3 top-1/4 size-4 text-white/30 lg:right-0" />
+              <LucideSparkles className="landing-match-spark absolute right-3 top-1/4 size-4 text-[hsl(var(--auth-ink)/30)] lg:right-0" />
             </div>
 
             {/* Employee Perspective Section */}

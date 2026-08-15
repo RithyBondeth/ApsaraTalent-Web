@@ -43,7 +43,7 @@ export default function NewChatDialog(props: INewChatDialogProps) {
       <DialogContent className="max-w-md gap-4 rounded-none border-t-[5px] border-border border-t-foreground">
         {/* Heading Section */}
         <DialogHeader>
-          <DialogTitle className="text-base font-black tracking-[-0.01em]">
+          <DialogTitle className="pixel-display text-base">
             {t("newChat")}
           </DialogTitle>
           <DialogDescription>{t("newChatDescription")}</DialogDescription>

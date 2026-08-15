@@ -323,7 +323,7 @@ function AnimatedParticle(props: { p: IParticle }) {
       {isLike && (
         <LucideHeart
           style={{ width: "100%", height: "100%" }}
-          className="fill-rose-500 text-rose-300"
+          className="fill-pixel-5 text-pixel-4"
         />
       )}
 
@@ -331,7 +331,7 @@ function AnimatedParticle(props: { p: IParticle }) {
       {p.kind === "bookmark" && (
         <LucideBookmark
           style={{ width: "100%", height: "100%" }}
-          className="fill-yellow-400 text-yellow-200"
+          className="fill-pixel-2 text-pixel-1"
         />
       )}
 
@@ -339,7 +339,7 @@ function AnimatedParticle(props: { p: IParticle }) {
       {isStar && (
         <LucideStar
           style={{ width: "100%", height: "100%" }}
-          className="fill-yellow-300 text-yellow-200"
+          className="fill-pixel-1 text-pixel-2"
         />
       )}
 
@@ -347,7 +347,7 @@ function AnimatedParticle(props: { p: IParticle }) {
       {isSparkle && (
         <LucideSparkles
           style={{ width: "100%", height: "100%" }}
-          className="fill-yellow-300 text-yellow-100"
+          className="fill-pixel-1 text-pixel-3"
         />
       )}
     </span>

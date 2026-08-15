@@ -144,7 +144,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
         {props.isEdit && (
           <LucideTrash2
             onClick={props.onRemove}
-            className="cursor-pointer text-red-500 hover:text-red-600"
+            className="cursor-pointer text-destructive hover:text-destructive-accent"
             width={"18px"}
           />
         )}
@@ -367,7 +367,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                       <Tag label={item} />
                       {props.isEdit && (
                         <LucideXCircle
-                          className="cursor-pointer text-red-500"
+                          className="cursor-pointer text-destructive"
                           width={"18px"}
                           onClick={() => removeSkill(item)}
                         />
@@ -544,7 +544,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                       calendarClassName="profile-calendar"
                     />
                     {fieldState.error && (
-                      <TypographyP className="mt-1 text-xs text-red-500 [&:not(:first-child)]:mt-0">
+                      <TypographyP className="mt-1 text-xs text-destructive [&:not(:first-child)]:mt-0">
                         {fieldState.error.message}
                       </TypographyP>
                     )}

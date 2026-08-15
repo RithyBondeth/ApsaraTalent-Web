@@ -31,7 +31,7 @@ export const MemoCompanyFeedCard = React.memo(function CompanyFeedCard({
       {isRecommended && (
         <div className="mb-2 flex items-center gap-1.5 border-l-2 border-foreground pl-2">
           <Sparkles className="size-3 text-foreground" />
-          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+          <span className="pixel-label text-[10px] text-muted-foreground">
             {t("recommended")}
           </span>
         </div>

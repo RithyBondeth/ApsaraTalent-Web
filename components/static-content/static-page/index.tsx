@@ -48,7 +48,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
           <div className="flex flex-col justify-center px-6 py-12 sm:px-10 sm:py-14 lg:px-14 lg:py-16">
             <div className="static-page-reveal flex items-center gap-3">
               <span className="h-px w-8 bg-foreground" />
-              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              <span className="pixel-label text-muted-foreground">
                 Apsara Talent · {pageNumber}
               </span>
             </div>
@@ -76,7 +76,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
             />
 
             {/* Visual Panel Header Section */}
-            <div className="relative z-10 flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--landing-panel-ink)/0.52)]">
+            <div className="pixel-label relative z-10 flex items-center justify-between text-[10px] text-[hsl(var(--landing-panel-ink)/0.52)]">
               <span>{title}</span>
               <span>
                 {pageNumber} / {pageTotal}
@@ -98,7 +98,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
 
             {/* Hero Table of Contents Section */}
             <div className="relative z-10 border-t border-[hsl(var(--landing-panel-ink)/0.16)]">
-              <div className="py-4 text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--landing-panel-ink)/0.45)]">
+              <div className="pixel-label py-4 text-[10px] text-[hsl(var(--landing-panel-ink)/0.45)]">
                 {tocHeading}
               </div>
               <div className="grid grid-cols-2 border-t border-[hsl(var(--landing-panel-ink)/0.16)]">
@@ -108,7 +108,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
                     href={`#${item.id}`}
                     className="group flex min-h-14 items-center gap-3 border-b border-[hsl(var(--landing-panel-ink)/0.16)] px-3 text-xs transition-colors odd:border-r hover:bg-[hsl(var(--landing-panel-ink)/0.06)]"
                   >
-                    <span className="text-[10px] tabular-nums text-[hsl(var(--landing-panel-ink)/0.35)]">
+                    <span className="pixel-numeral text-[10px] text-[hsl(var(--landing-panel-ink)/0.35)]">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <span className="line-clamp-1 text-[hsl(var(--landing-panel-ink)/0.75)] transition-colors group-hover:text-[hsl(var(--landing-panel-ink))]">
@@ -135,7 +135,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
               href={`#${item.id}`}
               className="shrink-0 border border-border px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/30 hover:bg-muted hover:text-foreground"
             >
-              <span className="mr-2 text-[10px] tabular-nums text-foreground">
+              <span className="pixel-numeral mr-2 text-[10px] text-foreground">
                 {String(index + 1).padStart(2, "0")}
               </span>
               {item.label}
@@ -148,7 +148,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
           {/* Desktop Table of Contents Section */}
           <aside className="hidden border-r border-border lg:block">
             <nav aria-label={tocHeading} className="sticky top-[104px] p-8">
-              <span className="mb-5 block text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              <span className="pixel-label mb-5 block text-[10px] text-muted-foreground">
                 {tocHeading}
               </span>
               <div className="border-t border-border">
@@ -158,7 +158,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
                     href={`#${item.id}`}
                     className="group grid grid-cols-[28px_1fr] gap-2 border-b border-border py-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    <span className="text-[10px] tabular-nums text-foreground">
+                    <span className="pixel-numeral text-[10px] text-foreground">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <span>{item.label}</span>
@@ -197,12 +197,10 @@ export function StaticSection(props: IStaticSectionProps) {
         </div>
         {/* Section Copy Section */}
         <div className="min-w-0">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          <span className="pixel-label text-[10px] text-muted-foreground">
             Section {number}
           </span>
-          <h2 className="mt-2 text-2xl font-semibold tracking-[-0.025em] sm:text-3xl">
-            {title}
-          </h2>
+          <h2 className="pixel-display mt-2 text-2xl sm:text-3xl">{title}</h2>
           <div className="static-page-copy mt-6 flex flex-col gap-5 text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
             {children}
           </div>
@@ -260,7 +258,7 @@ export function StaticStep(props: IStaticStepProps) {
     <div className="static-page-step relative grid grid-cols-[48px_1fr] gap-4 pb-6 last:pb-0">
       {/* Static Step Section */}
       {/* Step Number Section */}
-      <div className="relative z-10 flex size-10 items-center justify-center border border-foreground/25 bg-background text-xs font-semibold tabular-nums text-foreground">
+      <div className="pixel-numeral relative z-10 flex size-10 items-center justify-center border border-foreground/25 bg-background text-xs font-semibold text-foreground">
         {String(step).padStart(2, "0")}
       </div>
       {/* Step Content Section */}
@@ -315,7 +313,7 @@ export function StaticPageArtworkSlot(props: IStaticPageArtworkSlotProps) {
         <span className="text-xs font-medium text-[hsl(var(--landing-panel-ink)/0.8)]">
           {label}
         </span>
-        <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--landing-panel-ink)/0.38)]">
+        <span className="pixel-label text-[9px] text-[hsl(var(--landing-panel-ink)/0.38)]">
           Apsara Talent
         </span>
       </div>

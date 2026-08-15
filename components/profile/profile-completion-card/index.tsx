@@ -16,7 +16,7 @@ export default function ProfileCompletionCard({
   /* --------------------------------- Helpers --------------------------------- */
   const barColor = isComplete ? "bg-success" : "bg-foreground";
 
-  // text-emerald-500 before this: 2.3:1 on a white card, well under AA.
+  // text-success before this: 2.3:1 on a white card, well under AA.
   const textColor = isComplete ? "text-success-accent" : "text-foreground";
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -28,7 +28,7 @@ export default function ProfileCompletionCard({
           {isComplete ? (
             <LucideCheck className="size-6" />
           ) : (
-            <span className="text-lg font-black tabular-nums tracking-[-0.04em]">
+            <span className="pixel-numeral pixel-display text-lg">
               {percentage}%
             </span>
           )}
@@ -37,9 +37,7 @@ export default function ProfileCompletionCard({
         {/* Info Section */}
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <span className="text-xs font-black uppercase tracking-[0.14em]">
-              {t("completion")}
-            </span>
+            <span className="pixel-label text-xs">{t("completion")}</span>
             <span className={`text-xs font-bold tabular-nums ${textColor}`}>
               {t("percentComplete", { percentage })}
             </span>

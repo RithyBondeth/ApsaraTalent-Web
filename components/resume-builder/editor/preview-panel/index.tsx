@@ -113,9 +113,9 @@ export default function ResumeEditorPreviewPanel({
           {/* Page-Count Chip Section: Amber once the resume spills past one page */}
           <span
             className={cn(
-              "inline-flex items-center gap-1 border px-2 py-0.5 text-[10px] font-medium tabular-nums transition-colors",
+              "pixel-numeral inline-flex items-center gap-1 border px-2 py-0.5 text-[10px] font-medium transition-colors",
               pageCount > 1
-                ? "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                ? "border-warning-border bg-warning-subtle text-warning-accent"
                 : "border-border/60 bg-muted/50 text-muted-foreground",
             )}
             title={t("resumeCanvasPages", { count: pageCount })}
@@ -213,8 +213,8 @@ export default function ResumeEditorPreviewPanel({
               className="pointer-events-none absolute left-0 right-0 z-10"
               style={{ top: breakY * scale }}
             >
-              <div className="border-t-2 border-dashed border-amber-500/50" />
-              <span className="absolute right-1 top-1 bg-amber-500/90 px-1.5 py-0.5 text-[9px] font-semibold text-white shadow-sm">
+              <div className="border-t-2 border-dashed border-warning/50" />
+              <span className="pixel-label absolute right-1 top-1 bg-warning px-1.5 py-0.5 text-[9px] text-warning-foreground">
                 {t("resumeCanvasPageMarker", { number: index + 2 })}
               </span>
             </div>

@@ -92,7 +92,7 @@ export function TwoFactorDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {isEnableFlow ? (
-              <LucideShieldCheck className="size-5 text-emerald-500" />
+              <LucideShieldCheck className="size-5 text-success" />
             ) : (
               <LucideShieldOff className="size-5 text-destructive" />
             )}

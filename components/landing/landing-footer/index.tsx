@@ -96,7 +96,7 @@ export default function LandingFooter() {
             &copy; {new Date().getFullYear()} Apsara Talent.{" "}
             {t("footerAllRightsReserved")}
           </TypographyMuted>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          <span className="pixel-label text-[10px] text-muted-foreground">
             Apsara Talent · Cambodia
           </span>
         </div>

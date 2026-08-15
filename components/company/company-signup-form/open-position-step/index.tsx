@@ -216,7 +216,7 @@ export default function OpenPositionStepForm({
           >
             {/* Header With Remove Button Section */}
             <div className="flex min-h-8 w-full items-center justify-between gap-3">
-              <TypographyMuted className="text-xs font-semibold uppercase tracking-[0.12em] text-foreground">
+              <TypographyMuted className="pixel-label text-xs text-foreground">
                 {t("cmpOpenPositionLabel")} {index + 1}
               </TypographyMuted>
               {fields.length > 1 && (
@@ -542,7 +542,7 @@ export default function OpenPositionStepForm({
                       >
                         <Tag label={skill} />
                         <LucideXCircle
-                          className="cursor-pointer text-red-500"
+                          className="cursor-pointer text-destructive"
                           width="18px"
                           onClick={() => removeSkill(skill, index)}
                         />

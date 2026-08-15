@@ -597,7 +597,7 @@ export default function EmployeeSearchPage() {
                       <LucideUsers strokeWidth={"1.5px"} />
                       {t("companySize")}
                     </TypographyP>
-                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                    <span className="pixel-label shrink-0 text-[10px] text-muted-foreground">
                       {t("employees")}
                     </span>
                   </div>
@@ -660,7 +660,7 @@ export default function EmployeeSearchPage() {
                       <LucideCircleDollarSign strokeWidth={"1.5px"} />
                       {t("salaryRange")}
                     </TypographyP>
-                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                    <span className="pixel-label shrink-0 text-[10px] text-muted-foreground">
                       USD
                     </span>
                   </div>

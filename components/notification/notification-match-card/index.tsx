@@ -91,7 +91,7 @@ export default function NotificationMatchCard(
           </div>
 
           {/* Match Badge Section */}
-          <div className="shrink-0 border border-category-indigo/20 bg-category-indigo-subtle px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-category-indigo-accent">
+          <div className="pixel-label shrink-0 border border-category-indigo/20 bg-category-indigo-subtle px-3 py-1 text-[10px] text-category-indigo-accent">
             {t("matchBadge")}
           </div>
         </div>

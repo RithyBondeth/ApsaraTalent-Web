@@ -71,10 +71,8 @@ export default function ChatSidebar(props: IChatSidebarProps) {
       {isOpen ? (
         <div className="flex shrink-0 items-end justify-between border-b border-border px-3 pb-3 pt-4 md:px-4 md:pb-4 md:pt-5">
           <div className="flex items-center gap-3">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
-              01
-            </span>
-            <h1 className="text-xl font-black tracking-[-0.035em] text-foreground md:text-2xl">
+            <span className="pixel-label text-[10px] text-primary">01</span>
+            <h1 className="pixel-display text-xl text-foreground md:text-2xl">
               {t("chats")}
             </h1>
           </div>

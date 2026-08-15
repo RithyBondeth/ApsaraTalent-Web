@@ -3,11 +3,12 @@ import { useTranslations } from "next-intl";
 import { LucideBookOpen } from "lucide-react";
 
 /* ----------------------------- Helper ------------------------------ */
+/* Criticality is a severity — status tokens, not raw hues. Each resolves per
+ * theme on its own, so no `dark:` twin is needed alongside. */
 const CRITICALITY_COLOR: Record<string, string> = {
-  high: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
-  medium:
-    "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
-  low: "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300",
+  high: "bg-destructive-subtle text-destructive-accent",
+  medium: "bg-warning-subtle text-warning-accent",
+  low: "bg-info-subtle text-info-accent",
 };
 
 export default function MissingCard(props: IMissingCardProps) {
@@ -52,9 +53,7 @@ export default function MissingCard(props: IMissingCardProps) {
       <div className="flex gap-2 rounded-none border border-l-[4px] border-primary/10 border-l-primary bg-primary/5 px-3 py-2.5">
         <LucideBookOpen className="mt-0.5 size-3.5 shrink-0 text-primary" />
         <div>
-          <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-primary">
-            {t("learningTip")}
-          </p>
+          <p className="pixel-label mb-1 text-primary">{t("learningTip")}</p>
           <p className="text-xs leading-relaxed text-foreground/80">{tip}</p>
         </div>
       </div>

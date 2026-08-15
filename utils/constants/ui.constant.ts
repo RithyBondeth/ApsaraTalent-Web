@@ -811,13 +811,19 @@ export const RATE_COLOR = {
 } as const;
 
 export const CHART_COLOR = {
-  PINK: "#ec4899", // pink-500  — likes received bar
-  GREEN: "#10b981", // emerald-500 — matches bar
+  // Series 2 and 3 of the weekly activity chart. Series 1 is --primary,
+  // set inline on the bar. Tokens rather than hex so the chart follows the
+  // theme and stays inside the pixel ramp instead of beside it.
+  RECEIVED: "hsl(var(--chart-3))",
+  MATCHES: "hsl(var(--chart-4))",
 } as const;
 
 export const COMPANY_ICON_COLOR = {
-  BENEFIT: "#0073E6", // blue   — benefit check icon
-  VALUE: "#69B41E", // green  — value check icon
+  // Benefit and value differ in kind, not severity — categorical, never
+  // status. Spending success-green on "value" is what stops a real
+  // success from standing out.
+  BENEFIT: "hsl(var(--category-indigo))",
+  VALUE: "hsl(var(--category-teal))",
 } as const;
 
 /* Scroll progress bar decorative gradient (fixed top of page) */

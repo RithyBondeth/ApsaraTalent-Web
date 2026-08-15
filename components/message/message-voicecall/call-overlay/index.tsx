@@ -98,7 +98,7 @@ export function CallOverlay(props: ICallOverlayProps) {
             <TypographyMuted
               className={`text-xs tabular-nums leading-tight ${
                 status === "connected"
-                  ? "text-green-500"
+                  ? "text-success"
                   : status === "ended"
                     ? "text-destructive"
                     : "text-muted-foreground"
@@ -140,7 +140,7 @@ export function CallOverlay(props: ICallOverlayProps) {
             <button
               type="button"
               onClick={handleEndCall}
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-red-500 shadow-md transition-colors hover:bg-red-600 active:bg-red-700"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-destructive shadow-md transition-colors hover:bg-destructive/90 active:bg-destructive/80"
               aria-label="End call"
             >
               <PhoneOff className="h-5 w-5 text-white" />

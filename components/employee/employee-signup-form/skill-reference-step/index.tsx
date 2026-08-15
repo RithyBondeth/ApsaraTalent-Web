@@ -135,7 +135,7 @@ export default function SkillReferenceStepForm({
               >
                 <Tag label={skill} />
                 <LucideXCircle
-                  className="cursor-pointer text-muted-foreground text-red-500"
+                  className="cursor-pointer text-destructive"
                   width={"18px"}
                   onClick={() => removeSkill(skill)}
                 />

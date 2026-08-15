@@ -154,7 +154,7 @@ export const DragDropFile = <T extends FieldValues>({
   return (
     <div
       className={`relative flex h-60 w-full cursor-pointer flex-col items-center justify-center rounded-none border-2 border-l-[5px] border-dashed p-5 text-center ${
-        isDragging ? "border-blue-500 bg-blue-50" : "border-muted-foreground"
+        isDragging ? "border-primary bg-accent" : "border-muted-foreground"
       } ${className} h-64`}
       onDragEnter={handleDragEnter}
       onDragOver={handleDragOver}

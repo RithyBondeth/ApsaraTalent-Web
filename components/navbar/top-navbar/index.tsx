@@ -334,7 +334,7 @@ export default function TopNavbar() {
               style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
             >
               <div className="border-b border-border px-5 py-4 pr-14">
-                <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                <p className="pixel-label mb-1 text-[10px] text-muted-foreground">
                   Apsara Talent
                 </p>
                 <SheetTitle className="text-lg font-bold tracking-tight">

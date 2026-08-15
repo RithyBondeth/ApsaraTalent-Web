@@ -43,7 +43,7 @@ function StepHeader({ number, title }: { number: string; title: string }) {
       <div className="flex size-8 shrink-0 items-center justify-center border border-foreground bg-foreground text-xs font-black text-background shadow-[3px_3px_0_hsl(var(--foreground)/0.12)]">
         {number}
       </div>
-      <span className="shrink-0 text-xs font-black uppercase tracking-[0.14em] text-foreground">
+      <span className="pixel-label shrink-0 text-xs text-foreground">
         {title}
       </span>
       <div className="h-px flex-1 bg-border" />

@@ -57,10 +57,8 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
 
             {/* Employee Panel Header Section */}
             <div className="relative z-[2] flex items-start justify-between gap-4">
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.24em] opacity-65">
-                {eyebrow}
-              </p>
-              <span className="border border-background/20 bg-background/10 px-2.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[0.18em] opacity-75">
+              <p className="pixel-label text-[10px] opacity-65">{eyebrow}</p>
+              <span className="pixel-label border border-background/20 bg-background/10 px-2.5 py-1.5 text-[9px] opacity-75">
                 Apsara Talent
               </span>
             </div>
@@ -71,7 +69,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
                 {profileAvatar}
               </div>
               <div className="min-w-0 pb-1">
-                <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.2em] opacity-55">
+                <p className="pixel-label mb-2 text-[9px] opacity-55">
                   Apsara profile
                 </p>
                 <h1 className="text-3xl font-bold leading-[0.95] tracking-[-0.045em] sm:text-5xl">
@@ -90,7 +88,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
             {/* Employee Headline Section */}
             <div className="relative z-[1]">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-muted-foreground">
+                <p className="pixel-label text-[10px] text-muted-foreground">
                   {eyebrow}
                 </p>
                 {status}
@@ -138,10 +136,8 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
 
         {/* Company Cover Header Section */}
         <div className="relative z-[2] flex items-start justify-between gap-4">
-          <p className="text-[10px] font-extrabold uppercase tracking-[0.24em] opacity-65">
-            {eyebrow}
-          </p>
-          <span className="profile-detail-hero-brand border px-3 py-2 text-[9px] font-extrabold uppercase tracking-[0.2em]">
+          <p className="pixel-label text-[10px] opacity-65">{eyebrow}</p>
+          <span className="pixel-label profile-detail-hero-brand border px-3 py-2 text-[9px]">
             Apsara Talent
           </span>
         </div>
@@ -149,9 +145,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
         {/* Company Identity Section */}
         <div className="relative z-[2] mt-auto max-w-4xl pb-10 sm:pb-0">
           {headline && (
-            <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] opacity-70">
-              {headline}
-            </p>
+            <p className="pixel-label mb-4 text-xs opacity-70">{headline}</p>
           )}
           <h1 className="text-4xl font-bold leading-[0.9] tracking-[-0.055em] sm:text-6xl lg:text-7xl">
             {name}

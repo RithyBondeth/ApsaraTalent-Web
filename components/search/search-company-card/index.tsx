@@ -50,13 +50,13 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
           </Avatar>
 
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
+            <h3 className="pixel-display truncate text-base sm:text-lg">
               {props.title}
             </h3>
             <TypographyMuted className="mt-0.5 truncate text-sm text-muted-foreground">
               {props.company.name}
             </TypographyMuted>
-            <TypographyP className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-foreground [&:not(:first-child)]:mt-0">
+            <TypographyP className="pixel-label mt-0.5 text-[10px] text-foreground [&:not(:first-child)]:mt-0">
               {props.company.industry}
             </TypographyP>
           </div>

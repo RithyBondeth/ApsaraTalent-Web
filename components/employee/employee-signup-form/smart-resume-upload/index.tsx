@@ -116,12 +116,12 @@ export default function SmartResumeUpload({
   if (data) {
     const filled = countFilledFields(data);
     return (
-      <div className="w-full overflow-hidden rounded-none border border-l-[5px] border-green-500/30 border-l-green-500 bg-green-50/50 dark:bg-green-950/20">
+      <div className="w-full overflow-hidden rounded-none border border-l-[5px] border-success-border border-l-success bg-success-subtle">
         {/* Header Section */}
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <LucideCheckCircle2 className="size-4 shrink-0 text-green-600" />
-            <span className="text-sm font-medium text-green-700 dark:text-green-400">
+            <LucideCheckCircle2 className="size-4 shrink-0 text-success-accent" />
+            <span className="text-sm font-medium text-success-accent">
               {t("smartUploadSuccess", { count: filled })}
             </span>
           </div>
@@ -156,7 +156,7 @@ export default function SmartResumeUpload({
 
         {/* Details Panel Section */}
         {showDetails && (
-          <div className="space-y-3 border-t border-green-500/20 px-4 py-3">
+          <div className="space-y-3 border-t border-success/20 px-4 py-3">
             {/* Personal Info Found Section (Reference only) */}
             {(data.firstName || data.email || data.phone) && (
               <div>

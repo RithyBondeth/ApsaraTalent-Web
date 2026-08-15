@@ -66,7 +66,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
           {/* Header Section: Name, Industry, Founded Year and Score Badge */}
           <div>
             <div className="flex items-start justify-between gap-2">
-              <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
+              <h3 className="pixel-display truncate text-base sm:text-lg">
                 {props.name}
               </h3>
               <MatchScoreBadge score={props.matchScore} />

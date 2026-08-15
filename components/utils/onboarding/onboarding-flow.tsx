@@ -28,25 +28,25 @@ const STEPS: {
     icon: <LucideSparkles className="size-7" />,
     titleKey: "step1Title",
     descKey: "step1Desc",
-    accent: "from-violet-500/20 to-primary/10",
+    accent: "from-category-violet/20 to-primary/10",
   },
   {
     icon: <LucideHeartHandshake className="size-7" />,
     titleKey: "step2Title",
     descKey: "step2Desc",
-    accent: "from-rose-500/20 to-rose-400/5",
+    accent: "from-category-magenta/20 to-category-magenta/5",
   },
   {
     icon: <LucideBookmark className="size-7" />,
     titleKey: "step3Title",
     descKey: "step3Desc",
-    accent: "from-amber-500/20 to-amber-400/5",
+    accent: "from-category-orange/20 to-category-orange/5",
   },
   {
     icon: <LucideTrophy className="size-7" />,
     titleKey: "step4Title",
     descKey: "step4Desc",
-    accent: "from-emerald-500/20 to-emerald-400/5",
+    accent: "from-category-teal/20 to-category-teal/5",
   },
 ] as const;
 

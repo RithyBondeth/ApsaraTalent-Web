@@ -281,7 +281,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                 {/* Overall Feedback Section */}
                 {data.overallFeedback && (
                   <div className="rounded-none border border-l-[5px] border-border border-l-foreground bg-muted/50 p-4 duration-200 animate-in fade-in-0 slide-in-from-bottom-1">
-                    <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    <p className="pixel-label mb-1.5 text-xs text-muted-foreground">
                       {t("overallFeedback")}
                     </p>
                     <p className="text-sm leading-relaxed text-foreground">
@@ -294,11 +294,11 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                 {data.suggestedSummary && (
                   <div className="flex flex-col gap-2 duration-200 animate-in fade-in-0 slide-in-from-bottom-1">
                     <div className="flex items-center justify-between">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      <p className="pixel-label text-xs text-muted-foreground">
                         {t("improvedSummary")}
                       </p>
                       {appliedSummary ? (
-                        <span className="flex items-center gap-1 text-xs text-green-600">
+                        <span className="flex items-center gap-1 text-xs text-success-accent">
                           <LucideCheckCircle2 className="size-3" />{" "}
                           {t("applied")}
                         </span>
@@ -324,11 +324,11 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                 {data.suggestedSkills.length > 0 && (
                   <div className="flex flex-col gap-2 duration-200 animate-in fade-in-0 slide-in-from-bottom-1">
                     <div className="flex items-center justify-between">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      <p className="pixel-label text-xs text-muted-foreground">
                         {t("suggestedSkills")}
                       </p>
                       {appliedSkills ? (
-                        <span className="flex items-center gap-1 text-xs text-green-600">
+                        <span className="flex items-center gap-1 text-xs text-success-accent">
                           <LucideCheckCircle2 className="size-3" />{" "}
                           {t("applied")}
                         </span>
@@ -366,7 +366,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                 {/* Experience Suggestions Section */}
                 {data.experienceSuggestions.length > 0 && (
                   <div className="flex flex-col gap-3">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    <p className="pixel-label text-xs text-muted-foreground">
                       {t("experienceImprovements")}
                     </p>
                     {data.experienceSuggestions.map((s) => (
@@ -379,7 +379,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                             {t("positionNumber", { number: s.index + 1 })}
                           </p>
                           {appliedExp.has(s.index) ? (
-                            <span className="flex items-center gap-1 text-xs text-green-600">
+                            <span className="flex items-center gap-1 text-xs text-success-accent">
                               <LucideCheckCircle2 className="size-3" />{" "}
                               {t("applied")}
                             </span>

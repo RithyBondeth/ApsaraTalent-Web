@@ -291,7 +291,7 @@ export default function EmployeeDetailPage() {
             <span className="hidden sm:inline">{tf("back")}</span>
           </button>
           <div className="min-w-0 flex-1 border-l border-border pl-3">
-            <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+            <p className="pixel-label text-[9px] text-muted-foreground">
               {tf("employeeDetail")}
             </p>
             <p className="truncate text-sm font-semibold">
@@ -626,7 +626,7 @@ export default function EmployeeDetailPage() {
                       {row.icon}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                      <p className="pixel-label text-muted-foreground">
                         {row.label}
                       </p>
                       <p className="mt-0.5 break-words text-sm">{row.val}</p>

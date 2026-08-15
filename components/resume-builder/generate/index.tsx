@@ -43,7 +43,7 @@ export default function ResumeBuilderGenerate({
           </div>
         )}
         <div className="flex min-w-0 flex-col">
-          <span className="text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground">
+          <span className="pixel-label text-[10px] text-muted-foreground">
             {t("templateLabel")}
           </span>
           <span className="truncate text-sm font-bold text-foreground">

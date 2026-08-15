@@ -310,7 +310,7 @@ export default function SignupPage() {
   /* -------------------------------- Section divider helper ------------------------------- */
   const SectionLabel = ({ children }: { children: React.ReactNode }) => (
     <div className="flex items-center gap-3">
-      <span className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+      <span className="pixel-label whitespace-nowrap text-muted-foreground">
         {children}
       </span>
       <div className="h-px flex-1 bg-border" />

@@ -71,7 +71,7 @@ export function LogoutConfirmationDialog(
               <LogOut className="size-5 sm:size-6" strokeWidth={1.6} />
             </div>
             <div className="min-w-0 pt-0.5">
-              <p className="mb-2 text-[9px] font-extrabold uppercase tracking-[0.22em] opacity-60">
+              <p className="pixel-label mb-2 text-[9px] opacity-60">
                 Apsara Talent
               </p>
               <DialogTitle className="text-2xl font-bold leading-tight tracking-[-0.035em] sm:text-3xl">

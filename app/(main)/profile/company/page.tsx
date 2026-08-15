@@ -1243,7 +1243,7 @@ export default function ProfilePage() {
           )}
 
           <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/65 to-transparent" />
-          <span className="absolute bottom-4 left-5 text-[10px] font-bold uppercase tracking-[0.24em] text-white sm:left-6">
+          <span className="pixel-label absolute bottom-4 left-5 text-[10px] text-white sm:left-6">
             {tP("companyProfileLabel")}
           </span>
 
@@ -1427,10 +1427,10 @@ export default function ProfilePage() {
 
             {/* Name and Industry Section */}
             <div className="min-w-0 flex-1 pb-1 tablet-md:text-center">
-              <h1 className="truncate text-2xl font-black leading-tight tracking-[-0.04em] sm:text-3xl">
+              <h1 className="pixel-display truncate text-2xl sm:text-3xl">
                 {company.name}
               </h1>
-              <p className="mt-1 truncate text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+              <p className="pixel-label mt-1 truncate text-xs text-muted-foreground">
                 {company.industry}
               </p>
             </div>

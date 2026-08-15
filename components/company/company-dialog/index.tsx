@@ -133,7 +133,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                 {props.benefits.map((benefit, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center gap-1.5 rounded-none bg-blue-50 px-2.5 py-1.5 text-xs font-medium text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
+                    className="inline-flex items-center gap-1.5 rounded-none bg-category-indigo-subtle px-2.5 py-1.5 text-xs font-medium text-category-indigo-accent"
                   >
                     <LucideCircleCheck className="h-3.5 w-3.5 shrink-0" />
                     {benefit.label}
@@ -153,7 +153,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                 {props.values.map((value, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center gap-1.5 rounded-none bg-green-50 px-2.5 py-1.5 text-xs font-medium text-green-700 dark:bg-green-950/40 dark:text-green-300"
+                    className="inline-flex items-center gap-1.5 rounded-none bg-category-teal-subtle px-2.5 py-1.5 text-xs font-medium text-category-teal-accent"
                   >
                     <LucideCircleCheck className="h-3.5 w-3.5 shrink-0" />
                     {value.label}

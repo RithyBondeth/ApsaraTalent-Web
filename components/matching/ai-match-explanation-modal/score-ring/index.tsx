@@ -52,7 +52,7 @@ export default function ScoreRing(props: { score: number }) {
       {/* Score Label Section */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span
-          className="text-[18px] font-bold tabular-nums leading-none sm:text-[22px]"
+          className="pixel-numeral text-[18px] font-bold leading-none sm:text-[22px]"
           style={{ color }}
         >
           {score}

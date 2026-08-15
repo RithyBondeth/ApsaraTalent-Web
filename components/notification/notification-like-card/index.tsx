@@ -78,7 +78,7 @@ export default function NotificationLikeCard(
           </div>
 
           {/* Like Badge Section */}
-          <div className="shrink-0 border border-category-magenta/20 bg-category-magenta-subtle px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-category-magenta-accent">
+          <div className="pixel-label shrink-0 border border-category-magenta/20 bg-category-magenta-subtle px-3 py-1 text-[10px] text-category-magenta-accent">
             {t("likeBadge")}
           </div>
         </div>

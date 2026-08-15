@@ -219,13 +219,13 @@ export function SkillsEducationTab({
           {careerScopes.map((scope, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1 rounded-none border border-emerald-200/50 bg-emerald-50 px-2 py-0.5 text-[11px] text-emerald-700 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400"
+              className="inline-flex items-center gap-1 rounded-none border border-success-border bg-success-subtle px-2 py-0.5 text-[11px] text-success-accent"
             >
               {scope}
               <button
                 type="button"
                 onClick={() => removeScope(i)}
-                className="ml-0.5 text-emerald-500 transition-colors hover:text-destructive"
+                className="ml-0.5 text-success transition-colors hover:text-destructive"
               >
                 ×
               </button>

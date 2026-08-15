@@ -1309,7 +1309,7 @@ export default function EmployeeProfilePage() {
         <div className="profile-cover relative h-40 overflow-hidden bg-foreground sm:h-52">
           <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_48%,hsl(var(--background)/0.09)_48%,hsl(var(--background)/0.09)_50%,transparent_50%,transparent_100%)] bg-[length:34px_34px]" />
           <div className="absolute inset-x-5 top-5 flex items-start justify-between text-background sm:inset-x-6 sm:top-6">
-            <span className="text-[10px] font-bold uppercase tracking-[0.24em] opacity-80">
+            <span className="pixel-label text-[10px] opacity-80">
               {tP("employeeProfileLabel")}
             </span>
           </div>
@@ -1418,10 +1418,10 @@ export default function EmployeeProfilePage() {
 
             {/* Name and Job Section */}
             <div className="min-w-0 flex-1 pb-1 tablet-md:text-center">
-              <h1 className="truncate text-2xl font-black leading-tight tracking-[-0.04em] sm:text-3xl">
+              <h1 className="pixel-display truncate text-2xl sm:text-3xl">
                 {employee.username}
               </h1>
-              <p className="mt-1 truncate text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+              <p className="pixel-label mt-1 truncate text-xs text-muted-foreground">
                 {employee.job}
               </p>
             </div>

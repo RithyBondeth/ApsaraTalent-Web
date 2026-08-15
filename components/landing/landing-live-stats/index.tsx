@@ -52,10 +52,10 @@ export default function LandingLiveStats() {
     <div className="flex items-center gap-4 border-t border-border pt-5 sm:gap-7 2xl:gap-9">
       {/* Number of User Section */}
       <div className="flex flex-col">
-        <span className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+        <span className="pixel-numeral text-xl text-foreground sm:text-2xl">
           <StatValue value={users} loaded={loaded} />
         </span>
-        <TypographyMuted className="text-[10px] sm:text-xs">
+        <TypographyMuted className="pixel-label text-[10px]">
           {t("statsUsers")}
         </TypographyMuted>
       </div>
@@ -64,10 +64,10 @@ export default function LandingLiveStats() {
 
       {/* Number of Company Section */}
       <div className="flex flex-col">
-        <span className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+        <span className="pixel-numeral text-xl text-foreground sm:text-2xl">
           <StatValue value={companies} loaded={loaded} />
         </span>
-        <TypographyMuted className="text-[10px] sm:text-xs">
+        <TypographyMuted className="pixel-label text-[10px]">
           {t("statsCompanies")}
         </TypographyMuted>
       </div>
@@ -76,10 +76,10 @@ export default function LandingLiveStats() {
 
       {/* Number of Employee Section */}
       <div className="flex flex-col">
-        <span className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+        <span className="pixel-numeral text-xl text-foreground sm:text-2xl">
           <StatValue value={employees} loaded={loaded} />
         </span>
-        <TypographyMuted className="text-[10px] sm:text-xs">
+        <TypographyMuted className="pixel-label text-[10px]">
           {t("statsEmployees")}
         </TypographyMuted>
       </div>

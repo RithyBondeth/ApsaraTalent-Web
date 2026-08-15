@@ -149,7 +149,7 @@ export default function BenefitValueStepForm({
                     text={benefit}
                   />
                   <LucideXCircle
-                    className="cursor-pointer text-red-500"
+                    className="cursor-pointer text-destructive"
                     width={"18px"}
                     onClick={() => removeBenefit(benefit)}
                   />
@@ -230,7 +230,7 @@ export default function BenefitValueStepForm({
                     text={value}
                   />
                   <LucideXCircle
-                    className="cursor-pointer text-red-500"
+                    className="cursor-pointer text-destructive"
                     width={"18px"}
                     onClick={() => removeValue(value)}
                   />

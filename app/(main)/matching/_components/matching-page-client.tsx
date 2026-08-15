@@ -286,11 +286,11 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
               01
             </span>
             <div>
-              <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">
+              <h2 className="pixel-display text-xl text-foreground sm:text-2xl">
                 {t("yourMatches")}
               </h2>
               <p className="mt-1 text-xs font-medium text-muted-foreground">
-                <span className="tabular-nums">
+                <span className="pixel-numeral">
                   <CountUp to={matchCount} duration={900} />
                 </span>{" "}
                 {t("connections")}

@@ -100,7 +100,7 @@ export function PageState(props: IPageStateProps) {
       <div className="flex max-w-lg flex-col gap-2">
         <h2
           className={cn(
-            "text-lg font-black tracking-[-0.025em] sm:text-xl",
+            "pixel-display text-lg sm:text-xl",
             isError ? "text-destructive" : "text-foreground",
           )}
         >

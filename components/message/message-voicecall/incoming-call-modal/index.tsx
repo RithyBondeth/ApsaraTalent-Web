@@ -26,7 +26,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
       <div className="flex w-80 flex-col items-center gap-5 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-6 shadow-[7px_7px_0_hsl(var(--foreground)/0.14)] duration-200 animate-in zoom-in-95">
         {/* Incoming Voice Call Label Section */}
         <div className="space-y-1 text-center">
-          <TypographyMuted className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+          <TypographyMuted className="pixel-label text-xs text-muted-foreground">
             {t("incomingVoiceCall")}
           </TypographyMuted>
         </div>
@@ -39,7 +39,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
         <div className="relative flex items-center justify-center">
           <span
             aria-hidden
-            className="absolute h-16 w-16 border-2 border-green-500 opacity-0 motion-safe:animate-call-ring"
+            className="absolute h-16 w-16 border-2 border-success opacity-0 motion-safe:animate-call-ring"
           />
           <span
             aria-hidden
@@ -47,7 +47,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
             // animation-delay, so a `[animation-delay:…]` utility next to it is
             // silently overridden and both rings pulse as one.
             style={{ animationDelay: "0.9s" }}
-            className="absolute h-16 w-16 border-2 border-green-500 opacity-0 motion-safe:animate-call-ring"
+            className="absolute h-16 w-16 border-2 border-success opacity-0 motion-safe:animate-call-ring"
           />
           <Avatar className="relative z-10 h-16 w-16 rounded-none border-2 border-foreground motion-safe:animate-call-pulse">
             <AvatarImage src={caller.avatar} alt={caller.name} />
@@ -84,7 +84,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
             <button
               type="button"
               onClick={handleDeclineCall}
-              className="flex h-14 w-14 items-center justify-center rounded-full bg-red-500 shadow-lg transition-colors hover:bg-red-600 active:bg-red-700"
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive shadow-lg transition-colors hover:bg-destructive/90 active:bg-destructive/80"
               aria-label="Decline call"
             >
               <PhoneOff className="h-6 w-6 text-white" />
@@ -99,7 +99,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
             <button
               type="button"
               onClick={handleAcceptCall}
-              className="flex h-14 w-14 items-center justify-center rounded-full bg-green-500 shadow-lg transition-colors hover:bg-green-600 active:bg-green-700 motion-safe:animate-call-pulse"
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-success shadow-lg transition-colors hover:bg-success/90 active:bg-success/80 motion-safe:animate-call-pulse"
               aria-label="Accept call"
             >
               <Phone className="h-6 w-6 text-white" />

@@ -82,7 +82,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             </CachedAvatar>
 
             <div className="min-w-0 flex-1">
-              <TypographyP className="!m-0 text-base font-black leading-tight tracking-[-0.02em]">
+              <TypographyP className="pixel-display !m-0 text-base">
                 {props.username}
               </TypographyP>
               <TypographyMuted className="mt-0.5 block truncate text-xs font-medium">
@@ -114,7 +114,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 disabled={props.onLikeClickDisable}
               >
                 {props.onLikeClickDisable ? (
-                  <LucideLoader2 className="!size-4 animate-spin text-rose-500" />
+                  <LucideLoader2 className="!size-4 animate-spin text-primary" />
                 ) : (
                   <LucideHeartHandshake className="!size-4" />
                 )}

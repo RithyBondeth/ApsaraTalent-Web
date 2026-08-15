@@ -292,7 +292,7 @@ export default function CompanyDetailPage() {
             <span className="hidden sm:inline">{tf("back")}</span>
           </button>
           <div className="min-w-0 flex-1 border-l border-border pl-3">
-            <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+            <p className="pixel-label text-[9px] text-muted-foreground">
               {tf("companyDetail")}
             </p>
             <p className="truncate text-sm font-semibold">
@@ -469,7 +469,7 @@ export default function CompanyDetailPage() {
                         <div className="mt-4 space-y-3 border-t border-border/60 pt-4">
                           {item.description && (
                             <div>
-                              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                              <p className="pixel-label mb-1 text-muted-foreground">
                                 {tf("description")}
                               </p>
                               <TypographyMuted className="text-sm leading-relaxed">
@@ -479,7 +479,7 @@ export default function CompanyDetailPage() {
                           )}
                           {item.education && (
                             <div>
-                              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                              <p className="pixel-label mb-1 text-muted-foreground">
                                 {tf("dialogEducation")}
                               </p>
                               <TypographyMuted className="text-sm">
@@ -489,7 +489,7 @@ export default function CompanyDetailPage() {
                           )}
                           {item.skills && (
                             <div>
-                              <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                              <p className="pixel-label mb-2 text-muted-foreground">
                                 {tf("dialogSkills")}
                               </p>
                               <div className="flex flex-wrap gap-1.5">
@@ -505,7 +505,7 @@ export default function CompanyDetailPage() {
                             </div>
                           )}
                           <div>
-                            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                            <p className="pixel-label mb-1 text-muted-foreground">
                               {tf("salaryRange")}
                             </p>
                             <span className="text-sm font-semibold text-primary">
@@ -634,7 +634,7 @@ export default function CompanyDetailPage() {
                       {row.icon}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                      <p className="pixel-label text-muted-foreground">
                         {row.label}
                       </p>
                       <p className="mt-0.5 break-words text-sm">{row.val}</p>
@@ -656,14 +656,14 @@ export default function CompanyDetailPage() {
               <div className="space-y-4">
                 {companyData.values.length > 0 && (
                   <div>
-                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    <p className="pixel-label mb-2 text-muted-foreground">
                       {tf("dialogValues")}
                     </p>
                     <div className="flex flex-col gap-1.5">
                       {companyData.values.map((v) => (
                         <div
                           key={v.id}
-                          className="flex items-center gap-2 border border-green-700/15 bg-green-50 px-3 py-2 text-sm text-green-700 dark:bg-green-950/40 dark:text-green-300"
+                          className="flex items-center gap-2 border border-category-teal/20 bg-category-teal-subtle px-3 py-2 text-sm text-category-teal-accent"
                         >
                           <LucideCircleCheck className="size-4 flex-shrink-0" />
                           {v.label}
@@ -674,14 +674,14 @@ export default function CompanyDetailPage() {
                 )}
                 {companyData.benefits.length > 0 && (
                   <div>
-                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    <p className="pixel-label mb-2 text-muted-foreground">
                       {tf("dialogBenefits")}
                     </p>
                     <div className="flex flex-col gap-1.5">
                       {companyData.benefits.map((b: IBenefits) => (
                         <div
                           key={b.id}
-                          className="flex items-center gap-2 border border-blue-700/15 bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
+                          className="flex items-center gap-2 border border-category-indigo/20 bg-category-indigo-subtle px-3 py-2 text-sm text-category-indigo-accent"
                         >
                           <LucideCircleCheck className="size-4 flex-shrink-0" />
                           {b.label}

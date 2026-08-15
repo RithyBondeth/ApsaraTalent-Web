@@ -26,7 +26,7 @@ function DeliveryStatusIcon({
   if (status === "sending")
     return <Clock className="inline-block h-3 w-3 text-muted-foreground/60" />;
   if (status === "seen")
-    return <CheckCheck className="inline-block h-3 w-3 text-green-500" />;
+    return <CheckCheck className="inline-block h-3 w-3 text-success" />;
   return <Check className="inline-block h-3 w-3 text-muted-foreground/60" />;
 }
 

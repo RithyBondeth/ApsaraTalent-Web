@@ -14,7 +14,7 @@ export default function MessageTimeDivider({
       {/* Time Divider Line Section */}
       <div className="h-[1px] flex-1 bg-muted-foreground/10" />
       {/* Time Divider Label Section */}
-      <div className="whitespace-nowrap text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+      <div className="pixel-label whitespace-nowrap text-[10px] text-muted-foreground">
         {label}
       </div>
       {/* Time Divider Line Section */}

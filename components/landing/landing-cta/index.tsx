@@ -27,12 +27,12 @@ export default function LandingCta() {
         {/* CTA Heading Section */}
         <div className="relative z-10 grid gap-12 lg:grid-cols-[1fr_0.72fr] lg:items-end">
           <div>
-            <p className="mb-6 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/45">
+            <p className="pixel-label mb-6 text-[hsl(var(--auth-ink)/0.55)]">
               {t("badge")}
             </p>
             <TypographyH2
               data-gsap="split-chars"
-              className="max-w-3xl text-3xl font-semibold !leading-[1.05] tracking-[-0.04em] text-white [perspective:800px] sm:text-4xl lg:text-6xl"
+              className="pixel-display max-w-3xl text-3xl text-[hsl(var(--auth-ink))] [perspective:800px] sm:text-4xl lg:text-6xl"
             >
               {t("ctaHeading")} {t("ctaHeadingHighlight")}?
             </TypographyH2>
@@ -42,7 +42,7 @@ export default function LandingCta() {
           <div className="lg:justify-self-end">
             <p
               data-gsap="blur-reveal"
-              className="mb-7 max-w-lg text-sm leading-relaxed text-white/55 sm:text-base"
+              className="mb-7 max-w-lg text-sm leading-relaxed text-[hsl(var(--auth-ink)/0.62)] sm:text-base"
             >
               {t("ctaDescription")}
             </p>
@@ -55,7 +55,7 @@ export default function LandingCta() {
               <Link href="/signup/option" data-magnetic>
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-none bg-white px-7 text-black shadow-none hover:bg-white/90 sm:w-auto"
+                  className="h-12 w-full rounded-none bg-[hsl(var(--auth-ink))] px-7 text-[hsl(var(--auth-paper))] shadow-none hover:bg-[hsl(var(--auth-ink)/0.9)] sm:w-auto"
                 >
                   {t("getStartedFree")}
                   <LucideArrowRight className="size-4" />
@@ -65,7 +65,7 @@ export default function LandingCta() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="h-12 w-full rounded-none border-white/25 bg-transparent px-7 text-white shadow-none hover:bg-white/10 hover:text-white sm:w-auto"
+                  className="h-12 w-full rounded-none border-[hsl(var(--auth-ink)/0.3)] bg-transparent px-7 text-[hsl(var(--auth-ink))] shadow-none hover:bg-[hsl(var(--auth-ink)/0.1)] hover:text-[hsl(var(--auth-ink))] sm:w-auto"
                 >
                   {t("signIn")}
                 </Button>

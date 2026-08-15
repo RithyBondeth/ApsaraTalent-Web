@@ -423,7 +423,7 @@ export default function EmployeeSignup() {
     <div className="auth-wizard mx-auto flex w-full max-w-4xl flex-col gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* SmartResumeUpload Chip Title Section */}
       {!!parsedData && (
-        <div className="auth-wizard-notice flex w-fit items-center gap-1.5 rounded-none border border-l-[4px] border-emerald-200/50 border-l-emerald-500 bg-emerald-50 px-3 py-1.5 text-xs text-emerald-700 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400">
+        <div className="auth-wizard-notice flex w-fit items-center gap-1.5 rounded-none border border-l-[4px] border-success-border border-l-success bg-success-subtle px-3 py-1.5 text-xs text-success-accent">
           <LucideCheckCircle2 size={13} className="shrink-0" />
           {t("smartUploadDataApplied")}
         </div>

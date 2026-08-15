@@ -28,7 +28,7 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
               <Sparkles className="size-4" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-base font-black tracking-[-0.02em] text-foreground">
+              <h2 className="pixel-display text-base text-foreground">
                 {t("pasteInfoTitle")}
               </h2>
               <p className="mt-1 text-xs leading-5 text-muted-foreground">
@@ -60,7 +60,7 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
           <div className="flex items-center justify-between gap-3">
             <Label
               htmlFor="resume-source-text"
-              className="text-[10px] font-black uppercase tracking-[0.12em]"
+              className="pixel-label text-[10px]"
             >
               {t("pasteInfoLabel")}
             </Label>
@@ -93,10 +93,10 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
             className="flex flex-col gap-2 border-t border-border pt-3 text-[11px] leading-4 text-muted-foreground"
           >
             <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="size-3.5 shrink-0 text-emerald-500" />
+              <ShieldCheck className="size-3.5 shrink-0 text-success" />
               {t("pasteInfoPrivacy")}
             </span>
-            <span className="tabular-nums">
+            <span className="pixel-numeral">
               {t("pasteInfoCharacterCount", {
                 count: value.length,
                 max: maxLength,

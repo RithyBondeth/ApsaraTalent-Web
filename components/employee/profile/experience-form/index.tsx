@@ -61,7 +61,7 @@ export default function EmployeeExperienceForm(
         </TypographyMuted>
         {props.isEdit && (
           <LucideTrash2
-            className="cursor-pointer text-red-500 hover:text-red-600"
+            className="cursor-pointer text-destructive hover:text-destructive-accent"
             strokeWidth={"1.5px"}
             width={"18px"}
             onClick={props.onRemove}
@@ -154,7 +154,7 @@ export default function EmployeeExperienceForm(
                     calendarClassName="profile-calendar"
                   />
                   {fieldState.error && (
-                    <TypographyP className="mt-1 text-xs text-red-500 [&:not(:first-child)]:mt-0">
+                    <TypographyP className="mt-1 text-xs text-destructive [&:not(:first-child)]:mt-0">
                       {fieldState.error.message}
                     </TypographyP>
                   )}
