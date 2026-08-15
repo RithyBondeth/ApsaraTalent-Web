@@ -122,6 +122,11 @@ export const noticePeriodConstant: {
   { id: 3, label: "1 Month", value: "1_month" },
 ] as const;
 
+/**
+ * Suggested company types, not the allowed set — `companyType` is free text on
+ * both the API and the column, so employers outside this list (cooperatives,
+ * MFIs, social enterprises, branch offices) can enter their own.
+ */
 export const companyTypeConstant: {
   id: number;
   label: string;
@@ -133,6 +138,15 @@ export const companyTypeConstant: {
   { id: 4, label: "NGO", value: "ngo" },
   { id: 5, label: "Government", value: "government" },
 ] as const;
+
+/** Matches the API's `COMPANY_TYPE_MAX_LENGTH` (the varchar column width). */
+export const COMPANY_TYPE_MAX_LENGTH = 50;
+
+/**
+ * Earliest selectable founding year. Older than any company likely to register
+ * here, and far enough back that the list never needs revisiting.
+ */
+export const FOUNDED_YEAR_MIN = 1900;
 
 export const languageConstant: string[] = [
   "Khmer",
@@ -149,60 +163,29 @@ export const salaryCurrencyConstant: {
   id: number;
   label: string;
   value: string;
+  symbol: string;
 }[] = [
-  { id: 1, label: "USD ($)", value: "USD" },
-  { id: 2, label: "KHR (៛)", value: "KHR" },
+  { id: 1, label: "USD ($)", value: "USD", symbol: "$" },
+  { id: 2, label: "KHR (៛)", value: "KHR", symbol: "៛" },
 ] as const;
 
+/**
+ * Skill/tag chips pick a colour by hashing their label, purely so a wall of
+ * tags is scannable — the hue carries no meaning.
+ *
+ * These are the six categorical tokens, not raw palette shades: each already
+ * resolves per theme, so a chip no longer needs a hand-written `dark:` twin,
+ * and none of the six can be mistaken for a status colour (see globals.css).
+ * Twelve arbitrary hues became six deliberate ones; with a hash-based pick the
+ * repeat rate matters far less than not colliding with success/warning/danger.
+ */
 export const badgeRandomColorsClass: { bg: string; text: string }[] = [
-  {
-    bg: "bg-blue-100    dark:bg-blue-500/15",
-    text: "text-blue-800    dark:text-blue-300",
-  },
-  {
-    bg: "bg-green-100   dark:bg-green-500/15",
-    text: "text-green-800   dark:text-green-300",
-  },
-  {
-    bg: "bg-purple-100  dark:bg-purple-500/15",
-    text: "text-purple-800  dark:text-purple-300",
-  },
-  {
-    bg: "bg-yellow-100  dark:bg-yellow-500/15",
-    text: "text-yellow-800  dark:text-yellow-300",
-  },
-  {
-    bg: "bg-pink-100    dark:bg-pink-500/15",
-    text: "text-pink-800    dark:text-pink-300",
-  },
-  {
-    bg: "bg-indigo-100  dark:bg-indigo-500/15",
-    text: "text-indigo-800  dark:text-indigo-300",
-  },
-  {
-    bg: "bg-red-100     dark:bg-red-500/15",
-    text: "text-red-800     dark:text-red-300",
-  },
-  {
-    bg: "bg-teal-100    dark:bg-teal-500/15",
-    text: "text-teal-800    dark:text-teal-300",
-  },
-  {
-    bg: "bg-orange-100  dark:bg-orange-500/15",
-    text: "text-orange-800  dark:text-orange-300",
-  },
-  {
-    bg: "bg-emerald-100 dark:bg-emerald-500/15",
-    text: "text-emerald-800 dark:text-emerald-300",
-  },
-  {
-    bg: "bg-cyan-100    dark:bg-cyan-500/15",
-    text: "text-cyan-800    dark:text-cyan-300",
-  },
-  {
-    bg: "bg-rose-100    dark:bg-rose-500/15",
-    text: "text-rose-800    dark:text-rose-300",
-  },
+  { bg: "bg-category-indigo-subtle", text: "text-category-indigo-accent" },
+  { bg: "bg-category-teal-subtle", text: "text-category-teal-accent" },
+  { bg: "bg-category-violet-subtle", text: "text-category-violet-accent" },
+  { bg: "bg-category-orange-subtle", text: "text-category-orange-accent" },
+  { bg: "bg-category-magenta-subtle", text: "text-category-magenta-accent" },
+  { bg: "bg-category-lime-subtle", text: "text-category-lime-accent" },
 ] as const;
 
 export const careerScopesListConstant: {

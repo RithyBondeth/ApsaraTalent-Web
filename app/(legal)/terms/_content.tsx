@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import {
   LucideAlertTriangle,
@@ -22,9 +21,9 @@ import {
   StaticBullet,
   StaticNote,
   StaticPageShell,
+  StaticPageArtworkSlot,
   StaticSection,
 } from "@/components/static-content/static-page";
-import { termsBannerSvg } from "@/utils/constants/asset.constant";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
 /* -------------------------- Sub Components -------------------------- */
@@ -512,13 +511,7 @@ export function TermsContent() {
         </>
       }
       heroVisual={
-        <Image
-          src={termsBannerSvg}
-          alt="terms"
-          height={250}
-          width={350}
-          priority
-        />
+        <StaticPageArtworkSlot icon={<LucideFileText />} label={c.pageTitle} />
       }
     >
       <div className="border-b border-border px-6 py-6 sm:px-10 lg:px-14">

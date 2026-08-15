@@ -244,11 +244,7 @@
     "empProfessionNoticePeriodPlaceholder": "ជ្រើសរើសរយៈពេលជូនដំណឹង",
     "empProfessionLanguages": "ភាសាដែលស្គាល់",
     "empProfessionLanguagesPlaceholder": "បន្ថែមភាសា",
-    "empProfessionExpectedSalary": "ជួរប្រាក់ខែដែលរំពឹង",
-    "empProfessionExpectedSalaryMin": "ប្រាក់ខែអប្បបរមា",
-    "empProfessionExpectedSalaryMax": "ប្រាក់ខែអតិបរមា",
-    "empProfessionExpectedSalaryMinPlaceholder": "ឧ. ៥០០",
-    "empProfessionExpectedSalaryMaxPlaceholder": "ឧ. ១៥០០",
+    "empProfessionLanguagesEmpty": "រកមិនឃើញភាសា។",
     "workModeRemote": "ពីចម្ងាយ",
     "workModeOnSite": "នៅទីតាំង",
     "workModeHybrid": "ចំរុះ",
@@ -321,12 +317,14 @@
     "cmpBasicInfoCompanySizePlaceholder": "ចំនួនបុគ្គលិក",
     "cmpBasicInfoFoundedYear": "ឆ្នាំបង្កើត",
     "cmpBasicInfoFoundedYearPlaceholder": "ឆ្នាំបង្កើត",
+    "cmpBasicInfoFoundedYearEmpty": "រកមិនឃើញឆ្នាំ។",
     "cmpBasicInfoLocations": "ទីតាំង",
     "cmpBasicInfoLocationPlaceholder": "ទីតាំង",
     "cmpBasicInfoWebsiteUrl": "URL គេហទំព័រ",
     "cmpBasicInfoWebsiteUrlPlaceholder": "https://yourcompany.com",
     "cmpBasicInfoCompanyType": "ប្រភេទក្រុមហ៊ុន",
-    "cmpBasicInfoCompanyTypePlaceholder": "ជ្រើសរើសប្រភេទក្រុមហ៊ុន",
+    "cmpBasicInfoCompanyTypePlaceholder": "ជ្រើសរើស ឬវាយបញ្ចូលប្រភេទក្រុមហ៊ុន",
+    "cmpBasicInfoCompanyTypeEmpty": "វាយបញ្ចូលដើម្បីបន្ថែមដោយខ្លួនឯង",
     "companyTypeStartup": "ស្តាតអាប",
     "companyTypeSme": "អាជីវកម្មខ្នាតតូចនិងមធ្យម",
     "companyTypeEnterprise": "សហគ្រាស",
@@ -337,11 +335,16 @@
     "cmpOpenPositionFieldTitle": "ចំណងជើង",
     "cmpOpenPositionTitlePlaceholder": "ចំណងជើង",
     "cmpOpenPositionType": "ប្រភេទ",
-    "cmpOpenPositionTypePlaceholder": "ប្រភេទ",
+    "cmpOpenPositionTypePlaceholder": "ប្រភេទការងារ",
+    "cmpOpenPositionTypeEmpty": "វាយបញ្ចូលដើម្បីបន្ថែមដោយខ្លួនឯង",
+    "cmpOpenPositionLanguages": "ភាសាដែលត្រូវការ",
+    "cmpOpenPositionLanguagesPlaceholder": "ភាសាដែលត្រូវការ",
+    "cmpOpenPositionLanguagesEmpty": "រកមិនឃើញភាសា។",
     "cmpOpenPositionDescription": "ការពិពណ៌នា",
     "cmpOpenPositionDescriptionPlaceholder": "ការពិពណ៌នា",
     "cmpOpenPositionExpRequired": "តម្រូវការបទពិសោធន៍",
-    "cmpOpenPositionExpPlaceholder": "បទពិសោធន៍",
+    "cmpOpenPositionExpPlaceholder": "បទពិសោធន៍ដែលត្រូវការ",
+    "cmpOpenPositionExpEmpty": "វាយបញ្ចូលដើម្បីបន្ថែមដោយខ្លួនឯង",
     "cmpOpenPositionEduRequired": "តម្រូវការការអប់រំ",
     "cmpOpenPositionEduPlaceholder": "ការអប់រំ",
     "cmpOpenPositionSalary": "ប្រាក់ខែ (ចាស់)",
@@ -626,7 +629,8 @@
     "experienceLabel": "បទពិសោធន៍",
     "viewCompany": "មើលក្រុមហ៊ុន",
     "loadMore": "មើលបន្ថែម",
-    "loading": "កំពុងផ្ទុក..."
+    "loading": "កំពុងផ្ទុក...",
+    "statJobs": "ការងារបានចុះបញ្ជី"
   },
   "searchCompany": {
     "bannerTitle": "ជ្រើសរើសបុគ្គលិកឆ្លាតវៃ នៅគ្រប់ទីកន្លែង។",
@@ -664,7 +668,8 @@
     "yrsExp": "ឆ្នាំបទពិសោធន៍",
     "viewProfile": "មើលប្រវត្តិរូប",
     "loadMore": "មើលបន្ថែម",
-    "loading": "កំពុងផ្ទុក..."
+    "loading": "កំពុងផ្ទុក...",
+    "statTalent": "បេក្ខជនរកឃើញ"
   },
   "favorite": {
     "savedFavorites": "ការរក្សាទុក",
@@ -685,6 +690,9 @@
     "yrsExp": "{years} ឆ្នាំបទពិសោធន៍"
   },
   "matching": {
+    "matchScoreValue": "ផ្គូផ្គង {score}%",
+    "matchScoreLabel": "ពិន្ទុផ្គូផ្គងសរុប៖ {score} ក្នុងចំណោម 100",
+    "matchScoreHint": "ភាពស័ក្តិសមសរុបលើជំនាញ បទពិសោធន៍ ប្រភេទការងារ របៀបធ្វើការ ភាសា និងទីតាំង",
     "matchNetwork": "បណ្ដាញការផ្គូផ្គង",
     "yourMatches": "ការផ្គូផ្គងរបស់អ្នក",
     "connections": "ការតភ្ជាប់ទៅវិញទៅមក",
@@ -771,7 +779,8 @@
     "regenerateAnalysis": "វិភាគម្ដងទៀត",
     "skillGapBadge": "{count, plural, one {# គម្លាត} other {# គម្លាត}}",
     "learningTip": "របៀបរៀន",
-    "neededFor": "ត្រូវការសម្រាប់"
+    "neededFor": "ត្រូវការសម្រាប់",
+    "statMatches": "ការផ្គូផ្គង"
   },
   "feed": {
     "employeeBannerTitle": "ភ្ជាប់ជាមួយអ្នកជំនាញពីទូទាំងពិភពលោក ហើយពង្រីកបណ្ដាញរបស់អ្នក",
@@ -1149,7 +1158,6 @@
     "languages": "ភាសាដែលស្គាល់",
     "addLanguage": "បន្ថែមភាសា",
     "addMissingField": "បន្ថែម {field}",
-    "expectedSalary": "ជួរប្រាក់ខែដែលរំពឹង",
     "platform": "វេទិកា",
     "link": "តំណភ្ជាប់",
     "noSkillAvailable": "មិនមានជំនាញទេ",
@@ -1244,9 +1252,14 @@
     "industry": "ឧស្សាហកម្ម",
     "companySize": "ទំហំក្រុមហ៊ុន",
     "foundedYear": "ឆ្នាំបង្កើត",
+    "foundedYearEmpty": "រកមិនឃើញឆ្នាំ។",
     "websiteUrl": "URL គេហទំព័រ",
     "companyType": "ប្រភេទក្រុមហ៊ុន",
-    "companyTypePlaceholder": "ជ្រើសរើសប្រភេទក្រុមហ៊ុន",
+    "companyTypePlaceholder": "ជ្រើសរើស ឬវាយបញ្ចូលប្រភេទក្រុមហ៊ុន",
+    "companyTypeEmpty": "វាយបញ្ចូលដើម្បីបន្ថែមដោយខ្លួនឯង",
+    "languagesRequired": "ភាសាដែលត្រូវការ",
+    "languagesRequiredPlaceholder": "ភាសាដែលត្រូវការ",
+    "languagesRequiredEmpty": "រកមិនឃើញភាសា។",
     "profileVisibility": "ភាពមើលឃើញនៃប្រវត្តិរូប",
     "visibleToCompanies": "ប្រវត្តិរូបរបស់អ្នកអាចបង្ហាញក្នុងការស្វែងរក និងការផ្គូផ្គងរបស់ក្រុមហ៊ុន។",
     "hiddenFromCompanies": "ប្រវត្តិរូបរបស់អ្នកត្រូវបានលាក់ពីការស្វែងរក និងការផ្គូផ្គងរបស់ក្រុមហ៊ុន។",
@@ -1268,8 +1281,6 @@
       "portfolioUrl": "URL ផលប័ត្រ",
       "linkedinUrl": "ប្រវត្តិរូប LinkedIn",
       "languages": "ភាសាដែលស្គាល់",
-      "minimumSalary": "ប្រាក់ខែរំពឹងអប្បបរមា",
-      "maximumSalary": "ប្រាក់ខែរំពឹងអតិបរមា",
       "skills": "ជំនាញ",
       "experience": "បទពិសោធន៍",
       "education": "ការអប់រំ",
@@ -1358,7 +1369,9 @@
     "bannerTitle": "ការជូនដំណឹងរបស់អ្នក",
     "bannerSubtitle1": "ទទួលបានការអាប់ដេតចំពោះការផ្គូផ្គង ការចូលចិត្ត និងសារថ្មីៗ។",
     "bannerSubtitle2": "កុំខកខានការអាប់ដេតសំខាន់ — ការជូនដំណឹងទាំងអស់ក្នុងកន្លែងតែមួយ។",
-    "bannerMuted": "ការអាប់ដេតតាមពេលវេលាជាក់ស្ដែង ដែលបញ្ជូនផ្ទាល់ទៅអ្នក។"
+    "bannerMuted": "ការអាប់ដេតតាមពេលវេលាជាក់ស្ដែង ដែលបញ្ជូនផ្ទាល់ទៅអ្នក។",
+    "statAll": "ទាំងអស់",
+    "statUnread": "មិនទាន់អាន"
   },
   "moderation": {
     "moreOptions": "ជម្រើសបន្ថែម",
@@ -1438,6 +1451,9 @@
   "common": {
     "previous": "មុន",
     "next": "បន្ទាប់",
+    "salaryFrom": "ចាប់ពី {amount}",
+    "salaryUpTo": "រហូតដល់ {amount}",
+    "salaryNegotiable": "អាចចរចាបាន",
     "noResultsFound": "រករលទ្ធផលមិនឃើញ។",
     "loadingCareer": "កំពុងផ្ទុកអាជីព...",
     "noCareerFound": "រករអាជីពមិនឃើញ",
@@ -1552,7 +1568,10 @@
       "declined": "បានបដិសេធ",
       "cancelled": "បានបោះបង់",
       "completed": "បានបញ្ចប់"
-    }
+    },
+    "statScheduled": "បានកំណត់",
+    "statPending": "កំពុងរង់ចាំ",
+    "statAccepted": "បានទទួលយក"
   },
   "twoFactor": {
     "enableTitle": "បើកការផ្ទៀងផ្ទាត់ពីរជំហាន",

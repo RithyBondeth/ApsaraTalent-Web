@@ -14,14 +14,16 @@ import {
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { TNotificationFilterType } from "@/utils/types/app/notification.type";
-import { BellRing, LucideCheckCheck, LucideTrash2 } from "lucide-react";
-import Image from "next/image";
+import {
+  BellRing,
+  LucideCheckCheck,
+  LucideTrash2,
+  MailOpen,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import {
-  notificationEmptySvg,
-  notificationBannerSvg,
-} from "@/utils/constants/asset.constant";
+import { notificationEmptySvg } from "@/utils/constants/asset.constant";
+import { PageBanner } from "@/components/utils/layout/page-banner";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import NotificationLoadingSkeleton, {
   NotificationCardSkeleton,
@@ -139,63 +141,29 @@ export default function NotificationPage() {
   return (
     <div className="notification-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
-      <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
-        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6 sm:px-9 sm:py-10">
-          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            <span className="h-px w-7 bg-primary" />
-            {t("activityCenter")}
-          </div>
-          <div className="max-w-3xl">
-            <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.05] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl">
-              {t("bannerTitle")}
-            </h1>
-            <p className="mt-4 max-w-[60ch] text-sm leading-6 text-muted-foreground sm:text-base">
-              {t("bannerSubtitle1")} {t("bannerSubtitle2")}
-            </p>
-          </div>
-          <p className="max-w-[70ch] border-l-2 border-foreground pl-3 text-xs leading-5 text-muted-foreground">
-            {t("bannerMuted")}
-          </p>
-        </div>
-
-        <div className="feed-hero-visual">
-          <div aria-hidden className="feed-hero-visual-grid" />
-          <div className="feed-hero-network-chip">
-            <span className="feed-hero-network-icon" aria-hidden>
-              <BellRing />
-            </span>
-            <span>{t("activityCenter")}</span>
-            <span aria-hidden className="feed-hero-network-status" />
-          </div>
-          <div aria-hidden className="feed-hero-art-stage">
-            <span className="feed-hero-node feed-hero-node-one" />
-            <span className="feed-hero-node feed-hero-node-two" />
-            <span className="feed-hero-node feed-hero-node-three" />
-            <div className="feed-hero-art-frame">
-              <div className="feed-hero-art-grid" />
-              <div className="feed-hero-art-glow" />
-              <Image
-                src={notificationBannerSvg}
-                alt=""
-                height={260}
-                width={360}
-                className="feed-hero-artwork"
-                priority
-              />
-              <span className="feed-hero-corner feed-hero-corner-nw" />
-              <span className="feed-hero-corner feed-hero-corner-ne" />
-              <span className="feed-hero-corner feed-hero-corner-sw" />
-              <span className="feed-hero-corner feed-hero-corner-se" />
-            </div>
-          </div>
-          <div aria-hidden className="feed-hero-signal-bars">
-            <span />
-            <span />
-            <span />
-            <span />
-          </div>
-        </div>
-      </section>
+      <PageBanner
+        eyebrow={t("activityCenter")}
+        title={t("bannerTitle")}
+        subtitle={`${t("bannerSubtitle1")} ${t("bannerSubtitle2")}`}
+        // Withheld until the first fetch resolves — otherwise "0 unread" shows
+        // while the list is still loading and then jumps.
+        stats={
+          loading && notifications.length === 0
+            ? undefined
+            : [
+                {
+                  icon: BellRing,
+                  label: t("statAll"),
+                  value: notifications.length,
+                },
+                {
+                  icon: MailOpen,
+                  label: t("statUnread"),
+                  value: unreadCount,
+                },
+              ]
+        }
+      />
 
       <section className="flex w-full flex-col gap-5">
         <div className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">

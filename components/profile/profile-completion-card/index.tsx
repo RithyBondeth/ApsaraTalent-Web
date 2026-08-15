@@ -14,9 +14,10 @@ export default function ProfileCompletionCard({
   const isComplete = percentage >= 100;
 
   /* --------------------------------- Helpers --------------------------------- */
-  const barColor = isComplete ? "bg-emerald-500" : "bg-foreground";
+  const barColor = isComplete ? "bg-success" : "bg-foreground";
 
-  const textColor = isComplete ? "text-emerald-500" : "text-foreground";
+  // text-emerald-500 before this: 2.3:1 on a white card, well under AA.
+  const textColor = isComplete ? "text-success-accent" : "text-foreground";
 
   /* -------------------------------- Render UI -------------------------------- */
   return (

@@ -44,7 +44,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import { companySearchSchema, TCompanySearchSchema } from "./validation";
-import { companySearchBannerSvg } from "@/utils/constants/asset.constant";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { SearchEmployeeCardSkeleton } from "@/components/search/skeleton";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
@@ -369,10 +368,11 @@ export default function CompanySearchPage() {
         title={t("bannerTitle")}
         subtitle={t("bannerSubtitle1")}
         supportingText={t("bannerSubtitle2")}
-        mutedText={t("bannerMuted")}
-        image={companySearchBannerSvg}
-        imageAlt="company-search"
-        visualIcon={<LucideUsers />}
+        stats={
+          loading
+            ? undefined
+            : [{ icon: LucideUsers, label: t("statTalent"), value: total }]
+        }
       >
         <SearchBar
           isEmployee={false}

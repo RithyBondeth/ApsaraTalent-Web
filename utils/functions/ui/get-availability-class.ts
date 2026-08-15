@@ -1,15 +1,19 @@
 /* --------------------------------- Method ---------------------------------- */
 /**
- * Maps a job availability keyword to standardized utility colors (Tailwind classes).
- * Returns appropriate styles for pills and badges based on whether "full", "part", or "free" is matched.
+ * Maps a job availability keyword to its chip classes.
+ *
+ * Availability is a category, not a severity — a freelancer is not a warning —
+ * so this reads from the categorical ramp. The hues match
+ * `AvailabilityBadge`, which renders the same three values elsewhere; keep the
+ * two in step if you add a fourth.
  */
 export function getAvailabilityStyleClass(availability: string) {
   const s = availability.toLowerCase();
   if (s.includes("full"))
-    return "bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-300";
+    return "bg-category-teal-subtle text-category-teal-accent";
   if (s.includes("part"))
-    return "bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300";
+    return "bg-category-indigo-subtle text-category-indigo-accent";
   if (s.includes("free"))
-    return "bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300";
+    return "bg-category-violet-subtle text-category-violet-accent";
   return "bg-muted text-muted-foreground";
 }

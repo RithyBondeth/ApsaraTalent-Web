@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { MultiSelectCombobox } from "@/components/ui/multi-select-combobox";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -20,8 +21,10 @@ import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
   availabilityConstant,
+  languageConstant,
   salaryCurrencyConstant,
   workModeConstant,
+  yearOfExperienceConstant,
 } from "@/utils/constants/ui.constant";
 import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { Popover } from "@radix-ui/react-popover";
@@ -31,6 +34,7 @@ import {
   LucideCircleDollarSign,
   LucideClock3,
   LucideGraduationCap,
+  LucideLanguages,
   LucideMapPin,
   LucideMonitor,
   LucidePlus,
@@ -270,26 +274,58 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
               />
             }
           />
+
+          {/* Required Languages Section — mirrors the employee languages list
+              so a candidate's languages match a role's requirement. */}
+          <div className="col-span-12 flex flex-col gap-2 tablet-md:col-span-1">
+            <TypographyMuted className="text-xs">
+              {tP("languagesRequired")}
+            </TypographyMuted>
+            <Controller
+              control={control}
+              name={`openPositions.${props.index}.languagesRequired`}
+              render={({ field }) => (
+                <MultiSelectCombobox
+                  options={languageConstant}
+                  value={field.value ?? []}
+                  onChange={field.onChange}
+                  placeholder={tP("languagesRequiredPlaceholder")}
+                  emptyText={tP("languagesRequiredEmpty")}
+                  ariaLabel={tP("languagesRequired")}
+                  icon={<LucideLanguages />}
+                  contentClassName="profile-overlay profile-command-popover"
+                  disabled={!props.isEdit}
+                />
+              )}
+            />
+          </div>
         </div>
 
         {/* Experience and Education Requirements Section */}
         <div className="flex w-full flex-col gap-5 border-t border-border/70 pt-5">
           <div className="grid w-full grid-cols-2 gap-4 tablet-md:grid-cols-1">
+            {/* Experience Requirements Section — same scale as an employee's
+                years of experience, so the search filter can match. Creatable
+                so existing free-text values stay editable rather than blank. */}
             <LabelInput
               label={tP("experienceRequirements")}
               input={
-                <Input
-                  placeholder={
-                    props.isEdit
-                      ? tP("experienceRequirements")
-                      : props.experienceReqirement
-                  }
-                  id="experience-requirement"
-                  {...register(
-                    `openPositions.${props.index}.experienceRequirement`,
+                <Controller
+                  name={`openPositions.${props.index}.experienceRequirement`}
+                  control={control}
+                  render={({ field }) => (
+                    <CreatableCombobox
+                      options={yearOfExperienceConstant}
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      placeholder={tP("experienceRequirements")}
+                      ariaLabel={tP("experienceRequirements")}
+                      icon={<LucideBadgeCheck />}
+                      triggerId="experience-requirement"
+                      contentClassName="profile-overlay profile-command-popover"
+                      disabled={!props.isEdit}
+                    />
                   )}
-                  prefix={<LucideBadgeCheck />}
-                  disabled={!props.isEdit}
                 />
               }
             />

@@ -21,38 +21,39 @@ export function ProfileCompletenessCard({
   const t = useTranslations("dashboard");
 
   /* --------------------------------- Helpers --------------------------------- */
-  const barColor =
+  // Completion is a severity scale, so it reads from the status ramp. This
+  // used to mix emerald/amber/rose while the sibling card below the fold used
+  // green/amber/red for the same three bands.
+  const tone =
     percentage >= 80
-      ? "bg-emerald-500"
+      ? {
+          bar: "bg-success",
+          text: "text-success-accent",
+          surface: "bg-success-subtle",
+        }
       : percentage >= 50
-        ? "bg-amber-500"
-        : "bg-rose-500";
-
-  const textColor =
-    percentage >= 80
-      ? "text-emerald-700 dark:text-emerald-400"
-      : percentage >= 50
-        ? "text-amber-700 dark:text-amber-400"
-        : "text-rose-700 dark:text-rose-400";
-
-  const bgColor =
-    percentage >= 80
-      ? "bg-emerald-500/10"
-      : percentage >= 50
-        ? "bg-amber-500/10"
-        : "bg-rose-500/10";
+        ? {
+            bar: "bg-warning",
+            text: "text-warning-accent",
+            surface: "bg-warning-subtle",
+          }
+        : {
+            bar: "bg-destructive",
+            text: "text-destructive-accent",
+            surface: "bg-destructive-subtle",
+          };
 
   /* ---------------------------------- Render UI --------------------------------- */
   return (
     <div className="flex w-full items-center gap-4 border border-l-[5px] border-border border-l-foreground bg-card px-5 py-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:gap-6 sm:px-6">
       {/* Icon Section */}
       <div
-        className={`border-current/10 hidden h-10 w-10 shrink-0 items-center justify-center border sm:flex ${bgColor}`}
+        className={`border-current/10 hidden h-10 w-10 shrink-0 items-center justify-center border sm:flex ${tone.surface}`}
       >
         {isComplete ? (
-          <LucideCheckCircle2 className={`h-5 w-5 ${textColor}`} />
+          <LucideCheckCircle2 className={`h-5 w-5 ${tone.text}`} />
         ) : (
-          <LucideShieldCheck className={`h-5 w-5 ${textColor}`} />
+          <LucideShieldCheck className={`h-5 w-5 ${tone.text}`} />
         )}
       </div>
 
@@ -62,14 +63,14 @@ export function ProfileCompletenessCard({
           <span className="text-sm font-semibold leading-none">
             {t("profileCompletion")}
           </span>
-          <span className={`text-sm font-bold tabular-nums ${textColor}`}>
+          <span className={`text-sm font-bold tabular-nums ${tone.text}`}>
             {percentage}%
           </span>
         </div>
         {/* Progress Bar Section */}
         <div className="h-1.5 w-full overflow-hidden bg-muted">
           <div
-            className={`h-full transition-all duration-500 ${barColor}`}
+            className={`h-full transition-all duration-500 ${tone.bar}`}
             style={{ width: `${percentage}%` }}
           />
         </div>

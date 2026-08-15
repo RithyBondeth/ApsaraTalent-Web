@@ -18,7 +18,11 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo } from "react";
 import { useTranslations } from "next-intl";
-import { translateLocation } from "@/utils/functions/text";
+import {
+  formatAvailabilityWords,
+  translateLocation,
+} from "@/utils/functions/text";
+import { useSalaryText } from "@/hooks/utils/use-salary-text";
 
 const SearchCompanyCard = memo(function SearchCompanyCard(
   props: ISearchCompanyCardProps,
@@ -27,6 +31,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
   const router = useRouter();
   const t = useTranslations("searchEmployee");
   const tl = useTranslations("locations");
+  const salaryText = useSalaryText();
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -71,7 +76,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
           />
           <MetaChip
             icon={<LucideBriefcaseBusiness />}
-            text={props.type}
+            text={formatAvailabilityWords(props.type)}
             className="rounded-none border border-border bg-muted/45"
           />
         </div>
@@ -122,7 +127,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <MetaChip
             icon={<LucideCircleDollarSign />}
-            text={props.salary}
+            text={salaryText(props)}
             className="rounded-none border border-border bg-card"
           />
           <MetaChip

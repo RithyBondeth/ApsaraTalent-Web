@@ -21,33 +21,36 @@ type TStatisticCardConfig = {
 };
 
 /* -------------------------------- Constants ------------------------------- */
+// Four metrics, four categorical hues. Previously rose and pink sat side by
+// side — near-identical for two different metrics — and text-amber-500 on its
+// own tint came to ~2:1, so the icon was barely visible.
 export const statisticCardConstants: TStatisticCardConfig[] = [
   {
     key: "totalLikesGiven",
     translationKey: "likesGiven",
     icon: Heart,
-    color: "text-rose-500",
-    bgColor: "bg-rose-500/10",
+    color: "text-category-magenta-accent",
+    bgColor: "bg-category-magenta-subtle",
   },
   {
     key: "totalLikesReceived",
     translationKey: "likesReceived",
     icon: HeartHandshake,
-    color: "text-pink-500",
-    bgColor: "bg-pink-500/10",
+    color: "text-category-violet-accent",
+    bgColor: "bg-category-violet-subtle",
   },
   {
     key: "totalMatches",
     translationKey: "totalMatches",
     icon: Handshake,
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
+    color: "text-category-teal-accent",
+    bgColor: "bg-category-teal-subtle",
   },
   {
     key: "totalFavorites",
     translationKey: "savedFavorites",
     icon: Bookmark,
-    color: "text-amber-500",
-    bgColor: "bg-amber-500/10",
+    color: "text-category-orange-accent",
+    bgColor: "bg-category-orange-subtle",
   },
 ];

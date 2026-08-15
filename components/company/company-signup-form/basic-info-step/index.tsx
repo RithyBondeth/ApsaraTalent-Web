@@ -2,6 +2,7 @@ import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import {
   Select,
   SelectContent,
@@ -16,7 +17,9 @@ import {
   companyTypeConstant,
   locationConstant,
 } from "@/utils/constants/ui.constant";
+import { getFoundedYearOptions } from "@/utils/functions/date";
 import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import {
@@ -70,6 +73,25 @@ export default function BasicInfoStepForm({
     Takeo: tLoc("takeo"),
     "Tbong Khmum": tLoc("tbongKhmum"),
   };
+
+  // Built once per mount — the year list is ~125 entries and never changes
+  // while the form is open.
+  const foundedYearOptions = useMemo(() => getFoundedYearOptions(), []);
+
+  const companyTypeOptions = companyTypeConstant.map((item) => ({
+    ...item,
+    label: t(
+      item.value === "startup"
+        ? "companyTypeStartup"
+        : item.value === "sme"
+          ? "companyTypeSme"
+          : item.value === "enterprise"
+            ? "companyTypeEnterprise"
+            : item.value === "ngo"
+              ? "companyTypeNgo"
+              : "companyTypeGovernment",
+    ),
+  }));
 
   /* ----------------------------- API Integration ---------------------------- */
   const { isRefining, refineContent } = useAIRefine();
@@ -158,15 +180,29 @@ export default function BasicInfoStepForm({
         />
       </div>
       <div className="field-row w-full">
-        <Input
-          type="number"
-          placeholder={`${t("cmpBasicInfoFoundedYearPlaceholder")} *`}
-          prefix={<CalendarDays />}
-          aria-required="true"
-          id="founded-year"
-          {...register("basicInfo.foundedYear")}
-          validationMessage={errors!.basicInfo?.foundedYear?.message}
-        />
+        {/* Founded Year Section */}
+        <div className="flex w-full flex-col items-start gap-2">
+          <Controller
+            name="basicInfo.foundedYear"
+            control={control!}
+            render={({ field }) => (
+              <CreatableCombobox
+                options={foundedYearOptions}
+                value={field.value || ""}
+                onChange={field.onChange}
+                placeholder={`${t("cmpBasicInfoFoundedYearPlaceholder")} *`}
+                emptyText={t("cmpBasicInfoFoundedYearEmpty")}
+                ariaLabel={t("cmpBasicInfoFoundedYear")}
+                icon={<CalendarDays />}
+                triggerId="founded-year"
+                allowCreate={false}
+                required
+              />
+            )}
+          />
+          <ErrorMessage>{errors!.basicInfo?.foundedYear?.message}</ErrorMessage>
+        </div>
+
         <div className="flex w-full flex-col items-start gap-2">
           <div className="flex w-full flex-col items-start gap-2">
             <Controller
@@ -218,21 +254,16 @@ export default function BasicInfoStepForm({
             name="basicInfo.companyType"
             control={control!}
             render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value ?? ""}>
-                <SelectTrigger className="h-12 text-muted-foreground">
-                  <Shapes className="mr-2 size-[18px] shrink-0" />
-                  <SelectValue
-                    placeholder={t("cmpBasicInfoCompanyTypePlaceholder")}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {companyTypeConstant.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <CreatableCombobox
+                options={companyTypeOptions}
+                value={field.value ?? ""}
+                onChange={field.onChange}
+                placeholder={t("cmpBasicInfoCompanyTypePlaceholder")}
+                emptyText={t("cmpBasicInfoCompanyTypeEmpty")}
+                ariaLabel={t("cmpBasicInfoCompanyType")}
+                icon={<Shapes />}
+                triggerId="company-type"
+              />
             )}
           />
           <ErrorMessage>{errors!.basicInfo?.companyType?.message}</ErrorMessage>

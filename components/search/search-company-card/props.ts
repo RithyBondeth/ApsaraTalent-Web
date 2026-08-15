@@ -5,7 +5,11 @@ export interface ISearchCompanyCardProps {
   title: string;
   description: string;
   type: string;
-  salary: string;
+  /** Legacy free-text range; only used when the structured fields are absent. */
+  salary?: string | null;
+  salaryMin?: number | string | null;
+  salaryMax?: number | string | null;
+  salaryCurrency?: string | null;
   experience: string;
   education: string;
   skills: string[];

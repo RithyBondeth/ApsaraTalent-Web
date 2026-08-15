@@ -299,8 +299,8 @@ describe("application validation schemas", () => {
         profession: {
           portfolioUrl: "https://portfolio.example.com",
           linkedinUrl: "https://linkedin.com/in/candidate",
-          expectedSalaryMin: 500,
-          expectedSalaryMax: 1500,
+          workMode: "remote",
+          languages: ["Khmer", "English"],
         },
         experiences: [{ startDate: "2024-01-01", endDate: "2025-01-01" }],
         references: { resume, coverLetter: resume },

@@ -81,9 +81,6 @@ const professionInfoSchema = z.object({
         .nullable()
         .or(z.literal("")),
       languages: z.array(z.string()).optional().nullable(),
-      expectedSalaryMin: z.coerce.number().positive().optional().nullable(),
-      expectedSalaryMax: z.coerce.number().positive().optional().nullable(),
-      salaryCurrency: z.string().optional().default("USD"),
     })
     .optional(),
 });

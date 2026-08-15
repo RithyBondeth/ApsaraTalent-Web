@@ -100,24 +100,24 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
   };
 
   // ── Verdict Color ────────────────────────────────
+  // A verdict is a severity judgement, so it maps onto the status ramp.
+  // "good" sits on info rather than a second green, so the four verdicts stay
+  // distinguishable at a glance instead of reading as two greens and two reds.
   const verdictColor = (verdict: string) => {
     const v = verdict.toLowerCase();
-    if (v.includes("strong"))
-      return "text-green-800 bg-green-100 dark:text-green-300 dark:bg-green-900/30";
-    if (v.includes("good"))
-      return "text-blue-700 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30";
-    if (v.includes("partial"))
-      return "text-amber-700 bg-amber-100 dark:text-amber-400 dark:bg-amber-900/30";
-    return "text-red-700 bg-red-100 dark:text-red-400 dark:bg-red-900/30";
+    if (v.includes("strong")) return "text-success-accent bg-success-subtle";
+    if (v.includes("good")) return "text-info-accent bg-info-subtle";
+    if (v.includes("partial")) return "text-warning-accent bg-warning-subtle";
+    return "text-destructive-accent bg-destructive-subtle";
   };
 
   // ── Hero Background ───────────────────────────────
   const heroBg = (score: number) =>
     score >= 75
-      ? "bg-green-50/70 dark:bg-green-900/15"
+      ? "bg-success-subtle"
       : score >= 50
-        ? "bg-amber-50/70 dark:bg-amber-900/15"
-        : "bg-red-50/70 dark:bg-red-900/15";
+        ? "bg-warning-subtle"
+        : "bg-destructive-subtle";
 
   /* ---------------------------------- Render UI ---------------------------------- */
   return (
@@ -187,20 +187,20 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
                   {/* Strengths Section */}
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-1.5">
-                      <span className="size-2 shrink-0 rounded-full bg-green-400/80" />
+                      <span className="size-2 shrink-0 rounded-full bg-success/80" />
                       <Skeleton className="h-3 w-20 rounded-none" />
                     </div>
                     <div className="flex flex-col gap-1.5">
                       {[0, 1, 2].map((i) => (
                         <div
                           key={i}
-                          className="flex animate-pulse items-start gap-2.5 rounded-none border border-l-[4px] border-green-200 border-l-green-500 bg-green-50/80 px-3 py-2.5 dark:border-green-800 dark:bg-green-900/20"
+                          className="flex animate-pulse items-start gap-2.5 rounded-none border border-l-[4px] border-success-border border-l-success bg-success-subtle px-3 py-2.5"
                         >
-                          <div className="mt-0.5 size-3.5 shrink-0 rounded-full bg-green-200 dark:bg-green-700/50" />
+                          <div className="mt-0.5 size-3.5 shrink-0 rounded-full bg-success/40" />
                           <div className="flex flex-1 flex-col gap-1.5">
-                            <div className="h-3 w-full rounded-none bg-green-100 dark:bg-green-900/30" />
+                            <div className="h-3 w-full rounded-none bg-success/20" />
                             <div
-                              className={`h-3 rounded-none bg-green-100 dark:bg-green-900/30 ${i === 0 ? "w-3/4" : i === 1 ? "w-4/5" : "w-2/3"}`}
+                              className={`h-3 rounded-none bg-success/20 ${i === 0 ? "w-3/4" : i === 1 ? "w-4/5" : "w-2/3"}`}
                             />
                           </div>
                         </div>
@@ -211,20 +211,20 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
                   {/* Gaps Section */}
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-1.5">
-                      <span className="size-2 shrink-0 rounded-full bg-amber-400/80" />
+                      <span className="size-2 shrink-0 rounded-full bg-warning/80" />
                       <Skeleton className="h-3 w-28 rounded-none" />
                     </div>
                     <div className="flex flex-col gap-1.5">
                       {[0, 1].map((i) => (
                         <div
                           key={i}
-                          className="flex animate-pulse items-start gap-2.5 rounded-none border border-l-[4px] border-amber-200 border-l-amber-500 bg-amber-50/80 px-3 py-2.5 dark:border-amber-800 dark:bg-amber-900/20"
+                          className="flex animate-pulse items-start gap-2.5 rounded-none border border-l-[4px] border-warning-border border-l-warning bg-warning-subtle px-3 py-2.5"
                         >
-                          <div className="mt-0.5 size-3.5 shrink-0 rounded-full bg-amber-200 dark:bg-amber-700/50" />
+                          <div className="mt-0.5 size-3.5 shrink-0 rounded-full bg-warning/40" />
                           <div className="flex flex-1 flex-col gap-1.5">
-                            <div className="h-3 w-full rounded-none bg-amber-100 dark:bg-amber-900/30" />
+                            <div className="h-3 w-full rounded-none bg-warning/20" />
                             <div
-                              className={`h-3 rounded-none bg-amber-100 dark:bg-amber-900/30 ${i === 0 ? "w-4/5" : "w-3/5"}`}
+                              className={`h-3 rounded-none bg-warning/20 ${i === 0 ? "w-4/5" : "w-3/5"}`}
                             />
                           </div>
                         </div>
@@ -287,7 +287,7 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
                   {data.strengths.length > 0 && (
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-1.5">
-                        <span className="size-2 shrink-0 rounded-full bg-green-500" />
+                        <span className="size-2 shrink-0 rounded-full bg-success" />
                         <p className="text-[11px] font-semibold uppercase tracking-wider text-foreground">
                           {t("strengths")}
                         </p>
@@ -296,9 +296,9 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
                         {data.strengths.map((s, i) => (
                           <li
                             key={i}
-                            className="flex items-start gap-2.5 rounded-none border border-l-[4px] border-green-200 border-l-green-500 bg-green-50/80 px-3 py-2.5 dark:border-green-800 dark:bg-green-900/20"
+                            className="flex items-start gap-2.5 rounded-none border border-l-[4px] border-success-border border-l-success bg-success-subtle px-3 py-2.5"
                           >
-                            <LucideCheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-green-500" />
+                            <LucideCheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-success-accent" />
                             <span className="text-sm leading-snug text-foreground/85">
                               {s}
                             </span>
@@ -312,7 +312,7 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
                   {data.gaps.length > 0 && (
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-1.5">
-                        <span className="size-2 shrink-0 rounded-full bg-amber-500" />
+                        <span className="size-2 shrink-0 rounded-full bg-warning" />
                         <p className="text-[11px] font-semibold uppercase tracking-wider text-foreground">
                           {t("areasToImprove")}
                         </p>
@@ -321,9 +321,9 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
                         {data.gaps.map((g, i) => (
                           <li
                             key={i}
-                            className="flex items-start gap-2.5 rounded-none border border-l-[4px] border-amber-200 border-l-amber-500 bg-amber-50/80 px-3 py-2.5 dark:border-amber-800 dark:bg-amber-900/20"
+                            className="flex items-start gap-2.5 rounded-none border border-l-[4px] border-warning-border border-l-warning bg-warning-subtle px-3 py-2.5"
                           >
-                            <LucideAlertCircle className="mt-0.5 size-3.5 shrink-0 text-amber-500" />
+                            <LucideAlertCircle className="mt-0.5 size-3.5 shrink-0 text-warning-accent" />
                             <span className="text-sm leading-snug text-foreground/85">
                               {g}
                             </span>

@@ -39,7 +39,7 @@ function calculateCompletion(fields: IFieldCheck[]): IProfileCompletionResult {
 
 /* --------------------------------- Methods ---------------------------------- */
 /**
- * Employee profile completion uses 27 weighted fields totaling 100%.
+ * Employee profile completion uses 25 weighted fields totaling 100%.
  * Keep the weights and the boundary tests in sync when fields change.
  */
 export function getEmployeeProfileCompletion(
@@ -133,18 +133,10 @@ export function getEmployeeProfileCompletion(
       weight: 4,
       isFilled: isArrayFilled(employee.languages ?? undefined),
     },
-    {
-      label: "minimumSalary",
-      weight: 2,
-      isFilled: isNumberFilled(employee.expectedSalaryMin ?? undefined),
-    },
-    {
-      label: "maximumSalary",
-      weight: 2,
-      isFilled: isNumberFilled(employee.expectedSalaryMax ?? undefined),
-    },
 
-    { label: "skills", weight: 6, isFilled: isArrayFilled(employee.skills) },
+    // Absorbs the 4% that expected salary used to carry. Skills are what
+    // companies actually match on, so the weight belongs here.
+    { label: "skills", weight: 10, isFilled: isArrayFilled(employee.skills) },
     {
       label: "experience",
       weight: 6,

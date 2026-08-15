@@ -1,35 +1,47 @@
 import { formatAvailabilityWords } from "@/utils/functions/text";
 
+/* ---------------------------------------------------------------------------
+ * Availability is a category, not a state — a freelancer is not "warning" —
+ * so this reads from the categorical ramp rather than the status one. Each
+ * entry is a literal class string because Tailwind only compiles class names
+ * it can see spelled out.
+ * ------------------------------------------------------------------------- */
+
+const VARIANTS = {
+  full: {
+    surface: "bg-category-teal-subtle text-category-teal-accent",
+    dot: "bg-category-teal",
+  },
+  part: {
+    surface: "bg-category-indigo-subtle text-category-indigo-accent",
+    dot: "bg-category-indigo",
+  },
+  free: {
+    surface: "bg-category-violet-subtle text-category-violet-accent",
+    dot: "bg-category-violet",
+  },
+  other: {
+    surface: "bg-muted text-muted-foreground",
+    dot: "bg-muted-foreground",
+  },
+} as const;
+
+function resolveVariant(availability: string) {
+  const lower = availability.toLowerCase();
+  if (lower.includes("full")) return VARIANTS.full;
+  if (lower.includes("part")) return VARIANTS.part;
+  if (lower.includes("free")) return VARIANTS.free;
+  return VARIANTS.other;
+}
+
 export function AvailabilityBadge({ availability }: { availability: string }) {
   /* ---------------------------------- Utils --------------------------------- */
-  const lower = availability.toLowerCase();
-  const config = lower.includes("full")
-    ? {
-        color:
-          "bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-300",
-        dot: "bg-green-500",
-      }
-    : lower.includes("part")
-      ? {
-          color:
-            "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300",
-          dot: "bg-blue-500",
-        }
-      : lower.includes("free")
-        ? {
-            color:
-              "bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300",
-            dot: "bg-purple-500",
-          }
-        : {
-            color: "bg-muted text-muted-foreground",
-            dot: "bg-muted-foreground",
-          };
+  const config = resolveVariant(availability);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <span
-      className={`border-current/15 inline-flex items-center gap-1.5 rounded-none border px-2.5 py-1 text-xs font-medium ${config.color}`}
+      className={`border-current/15 inline-flex items-center gap-1.5 rounded-none border px-2.5 py-1 text-xs font-medium ${config.surface}`}
     >
       {/* Availability Dot Section */}
       <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${config.dot}`} />

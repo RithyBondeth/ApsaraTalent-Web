@@ -16,7 +16,10 @@ import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
-import { translateLocation } from "@/utils/functions/text";
+import {
+  formatAvailabilityWords,
+  translateLocation,
+} from "@/utils/functions/text";
 
 export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -53,7 +56,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
               <span
                 className={`border-current/15 flex-shrink-0 whitespace-nowrap rounded-none border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
               >
-                {props.availability}
+                {formatAvailabilityWords(props.availability)}
               </span>
             </div>
           </div>
@@ -73,7 +76,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
           />
           <MetaChip
             icon={<LucideClock />}
-            text={props.availability}
+            text={formatAvailabilityWords(props.availability)}
             className="rounded-none border border-border bg-muted/45"
           />
           <MetaChip
