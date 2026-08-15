@@ -1271,7 +1271,7 @@ export default function EmployeeProfilePage() {
   return (
     <form
       data-profile-editing={isEdit}
-      className="profile-editorial profile-employee animate-page-in flex !min-w-full flex-col gap-6 sm:gap-7"
+      className="profile-editorial profile-employee !min-w-full"
       onSubmit={handleSubmit}
       onKeyDown={(e) => {
         if (
@@ -1301,7 +1301,7 @@ export default function EmployeeProfilePage() {
       />
 
       {/* Header Section */}
-      <section className="profile-hero profile-employee-hero overflow-hidden border border-border bg-card">
+      <section className="profile-hero profile-employee-hero pixel-band overflow-hidden bg-card">
         {/* Gradient Banner Section */}
         <div className="profile-cover relative h-40 overflow-hidden bg-foreground sm:h-52">
           <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_48%,hsl(var(--background)/0.09)_48%,hsl(var(--background)/0.09)_50%,transparent_50%,transparent_100%)] bg-[length:34px_34px]" />
@@ -1441,11 +1441,11 @@ export default function EmployeeProfilePage() {
       </section>
 
       {/* Content Section */}
-      <div className="profile-grid grid grid-cols-[minmax(0,1.55fr)_minmax(280px,0.75fr)] items-start gap-5 tablet-lg:grid-cols-1">
+      <div className="profile-grid pixel-ruled grid-cols-[minmax(0,1.55fr)_minmax(280px,0.75fr)] items-start border-x-0 border-b-0 tablet-lg:grid-cols-1">
         {/* LEFT Side Section */}
-        <div className="profile-main-column flex min-w-0 flex-col gap-5">
+        <div className="profile-main-column flex min-w-0 flex-col">
           {/* Personal Information Section: Firstname, Lastname, Username, DOB, Location, Gender, Email and Phone Number */}
-          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
+          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card p-6 sm:p-8">
             <SectionTitle
               icon={<LucideUser />}
               title={tP("personalInformation")}
@@ -1720,7 +1720,7 @@ export default function EmployeeProfilePage() {
           </section>
 
           {/* Professional Information Section */}
-          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
+          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card p-6 sm:p-8">
             <SectionTitle
               icon={<LucideBriefcaseBusiness />}
               title={tP("professionalInformation")}
@@ -2165,7 +2165,7 @@ export default function EmployeeProfilePage() {
 
           {/* Experience Information Section */}
           {employee.experiences && (
-            <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
+            <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card p-6 sm:p-8">
               <SectionTitle
                 icon={<LucideBriefcaseBusiness />}
                 title={tP("experienceInformation")}
@@ -2299,7 +2299,7 @@ export default function EmployeeProfilePage() {
 
           {/* Education Information Section */}
           {employee.educations && (
-            <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
+            <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card p-6 sm:p-8">
               <SectionTitle
                 icon={<LucideGraduationCap />}
                 title={tP("educationInformation")}
@@ -2672,7 +2672,7 @@ export default function EmployeeProfilePage() {
           </section>
 
           {/* References Section */}
-          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
+          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card p-6 sm:p-8">
             <SectionTitle
               icon={<LucideFileText />}
               title={tP("referencesInformation")}
@@ -2902,7 +2902,7 @@ export default function EmployeeProfilePage() {
           </section>
 
           {/* Socials Section */}
-          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
+          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card p-6 sm:p-8">
             <SectionTitle
               icon={<LucideGlobe />}
               title={tP("socialInformation")}

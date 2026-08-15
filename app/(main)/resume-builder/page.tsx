@@ -168,14 +168,14 @@ export default function ResumeBuilder() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="resume-builder-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-6 px-3 pb-8 sm:px-4 lg:px-5">
+    <div className="resume-builder-editorial w-full">
       {/* Banner Section */}
       <ResumeBuilderBanner />
 
       {/* Builder Workspace Section */}
-      <div className="grid w-full items-start gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="pixel-ruled w-full items-start border-x-0 border-b-0 xl:grid-cols-[minmax(0,1fr)_380px]">
         {/* Step 1: Template Selection Section */}
-        <section className="flex min-w-0 flex-col gap-4">
+        <section className="flex min-w-0 flex-col gap-4 p-6 sm:p-8">
           <StepHeader number="1" title={t("chooseTemplate")} />
 
           {/* Template Grid Section */}

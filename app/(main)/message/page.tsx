@@ -312,7 +312,7 @@ export default function MessagePageContent() {
 
   if (loadingTimedOut && (!isConnected || !isChatsLoaded))
     return (
-      <div className="mx-auto flex h-full w-full max-w-[1500px] items-center px-3 sm:px-4 lg:px-5">
+      <div className="flex h-full w-full items-center">
         <PageState
           variant="error"
           title={t("connectionError")}
@@ -374,7 +374,7 @@ export default function MessagePageContent() {
   );
 
   return (
-    <div className="message-editorial animate-page-in relative mx-auto flex h-full min-h-0 w-full max-w-[1500px] overflow-hidden border border-t-[5px] border-border border-t-primary bg-card">
+    <div className="message-editorial relative flex h-full min-h-0 w-full overflow-hidden border border-border bg-card">
       {/* Call Overlay + Incoming Modal Section */}
       <CallOrchestrator />
 

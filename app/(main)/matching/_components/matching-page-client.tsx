@@ -216,7 +216,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
 
   if (mounted && currentUser && matchingError)
     return (
-      <div className="mx-auto w-full max-w-[1500px] px-3 py-10 sm:px-4 lg:px-5">
+      <div className="w-full p-6 sm:p-8">
         <PageState
           variant="error"
           title={matchingError}
@@ -262,7 +262,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="matching-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
+    <div className="matching-editorial w-full">
       {/* Banner Section */}
       <PageBanner
         eyebrow={t("matchNetwork")}
@@ -278,8 +278,8 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
       />
 
       {/* Matches Section */}
-      <section className="flex w-full flex-col gap-5">
-        <div className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">
+      <section className="pixel-band w-full">
+        <div className="flex w-full items-end justify-between gap-4 border-b border-border px-6 py-4 sm:px-8">
           <div className="flex items-center gap-3">
             <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
               01

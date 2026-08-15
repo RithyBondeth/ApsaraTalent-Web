@@ -105,7 +105,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="interview-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
+    <div className="interview-editorial w-full">
       {/* Banner Section */}
       <PageBanner
         eyebrow={t("interviewDesk")}
@@ -152,8 +152,8 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
       )}
 
       {/* Interview Schedule Section */}
-      <section className="flex w-full flex-col gap-5">
-        <div className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">
+      <section className="pixel-band w-full">
+        <div className="flex w-full items-end justify-between gap-4 border-b border-border px-6 py-4 sm:px-8">
           <div className="flex items-center gap-3">
             <span className="text-xs font-medium tracking-[0.16em] text-muted-foreground">
               01

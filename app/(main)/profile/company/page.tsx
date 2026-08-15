@@ -1226,7 +1226,7 @@ export default function ProfilePage() {
       />
 
       {/* Header Section */}
-      <section className="profile-hero profile-company-hero overflow-hidden border border-border bg-card">
+      <section className="profile-hero profile-company-hero pixel-band overflow-hidden bg-card">
         {/* Cover Image Section */}
         <div
           className={`profile-cover relative h-48 bg-cover bg-center bg-no-repeat sm:h-64 ${!company.cover ? "bg-foreground" : ""}`}
@@ -1452,11 +1452,11 @@ export default function ProfilePage() {
       </section>
 
       {/* Content Section */}
-      <div className="profile-grid grid grid-cols-[minmax(0,1.55fr)_minmax(280px,0.75fr)] items-start gap-5 tablet-lg:grid-cols-1">
+      <div className="profile-grid pixel-ruled grid-cols-[minmax(0,1.55fr)_minmax(280px,0.75fr)] items-start border-x-0 border-b-0 tablet-lg:grid-cols-1">
         {/* LEFT Side Section */}
-        <div className="profile-main-column flex min-w-0 flex-col gap-5">
+        <div className="profile-main-column flex min-w-0 flex-col">
           {/* Company Information Section */}
-          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
+          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card p-6 sm:p-8">
             <SectionTitle
               icon={<LucideBuilding />}
               title={tP("companyInformation")}
@@ -1790,7 +1790,7 @@ export default function ProfilePage() {
 
           {/* OpenPosition Information Section */}
           {company.openPositions && (
-            <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
+            <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card p-6 sm:p-8">
               <SectionTitle
                 icon={<LucideUsers />}
                 title={tP("openPositionInformation")}
@@ -2338,7 +2338,7 @@ export default function ProfilePage() {
           </section>
 
           {/* Social Section */}
-          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
+          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card p-6 sm:p-8">
             <SectionTitle
               icon={<LucideGlobe />}
               title={tP("socialInformation")}

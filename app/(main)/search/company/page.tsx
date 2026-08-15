@@ -358,7 +358,7 @@ export default function CompanySearchPage() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <form
-      className="search-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-6 px-3 sm:px-4 lg:px-5"
+      className="search-editorial w-full"
       onSubmit={handleSubmit((data) => runSearch(data))}
     >
       {/* Responsive Search Hero Section */}

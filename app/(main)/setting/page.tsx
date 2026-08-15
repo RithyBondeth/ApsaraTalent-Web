@@ -132,7 +132,7 @@ export default function SettingPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="animate-page-in mx-auto flex w-full max-w-[1200px] flex-col gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
+    <div className="w-full">
       {/* Header Section */}
       <header className="relative overflow-hidden border border-t-[5px] border-border border-t-primary bg-card px-5 py-7 sm:px-7 sm:py-9">
         <div className="pointer-events-none absolute -right-10 -top-16 size-52 rotate-12 border-[28px] border-primary/5" />
