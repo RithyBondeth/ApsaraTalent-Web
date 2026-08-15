@@ -6,6 +6,10 @@ import type { Metadata } from "next";
 import "@fontsource/preahvihear/khmer-400.css";
 import "@fontsource/ubuntu/latin-400.css";
 import "@fontsource/ubuntu/latin-700.css";
+// The label tier — every eyebrow, stat caption and column header. 400 and 700
+// only; Space Mono ships no other weights and the tier never uses italics.
+import "@fontsource/space-mono/latin-400.css";
+import "@fontsource/space-mono/latin-700.css";
 import "./globals.css";
 
 export const metadata: Metadata = {

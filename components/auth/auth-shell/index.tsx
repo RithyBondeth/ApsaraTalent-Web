@@ -6,8 +6,6 @@ export default function AuthShell(props: IAuthShellProps) {
   /* ----------------------------------- Props ----------------------------------- */
   const {
     children,
-    image,
-    imageAlt,
     eyebrowKey,
     titleKey,
     subtitleKey,
@@ -43,8 +41,6 @@ export default function AuthShell(props: IAuthShellProps) {
 
       {/* Brand Panel Section: Pinned to the viewport as the form scrolls */}
       <AuthBrandPanel
-        image={image}
-        imageAlt={imageAlt}
         eyebrowKey={eyebrowKey}
         titleKey={titleKey}
         subtitleKey={subtitleKey}

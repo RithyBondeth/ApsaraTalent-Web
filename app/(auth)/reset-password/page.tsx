@@ -15,7 +15,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { makeResetPasswordSchema, TResetPasswordForm } from "./validation";
-import { resetPasswordSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
@@ -100,8 +99,6 @@ export default function ResetPasswordPage() {
   /* -------------------------------- Render UI --------------------------------- */
   return (
     <AuthShell
-      image={resetPasswordSvg}
-      imageAlt={t("resetPageTitle")}
       eyebrowKey="resetPanelEyebrow"
       titleKey="resetPanelTitle"
       subtitleKey="resetPanelSubtitle"

@@ -18,7 +18,6 @@ import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { makePhoneLoginSchema, TPhoneLoginForm } from "./validation";
-import { phoneNumberSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
@@ -124,8 +123,6 @@ export default function PhoneNumberPage() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <AuthShell
-      image={phoneNumberSvg}
-      imageAlt={t("phoneLoginTitle")}
       eyebrowKey="phonePanelEyebrow"
       titleKey="phonePanelTitle"
       subtitleKey="phonePanelSubtitle"

@@ -46,7 +46,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { makeLoginSchema, TLoginForm } from "./validation";
-import { loginSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
@@ -463,8 +462,6 @@ function LoginPage() {
   return (
     <>
       <AuthShell
-        image={loginSvg}
-        imageAlt={t("loginPageTitle")}
         eyebrowKey="loginPanelEyebrow"
         titleKey="loginPanelTitle"
         subtitleKey="loginPanelSubtitle"

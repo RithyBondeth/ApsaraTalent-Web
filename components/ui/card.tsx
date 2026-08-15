@@ -9,7 +9,11 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-none border border-t-[5px] border-t-primary bg-card text-card-foreground shadow-[4px_4px_0_hsl(var(--foreground)/0.05)]",
+      // The 5px solid primary rule along the top edge became a three-tile
+      // ramp in the corner (`.pixel-card`, globals.css). Same job — marking
+      // where the card starts — but it carries the ramp instead of restating
+      // the brand colour on every surface in the app at full width.
+      "pixel-card rounded-none border border-border bg-card text-card-foreground shadow-pixel",
       className,
     )}
     {...props}

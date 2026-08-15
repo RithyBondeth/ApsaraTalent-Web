@@ -3,6 +3,7 @@
 import LandingLiveStats from "@/components/landing/landing-live-stats";
 import { Button } from "@/components/ui/button";
 import { GridRunners } from "@/components/ui/grid-runners";
+import { PixelMosaic } from "@/components/utils/brand/pixel-mosaic";
 import { TypographyH1 } from "@/components/utils/typography/typography-h1";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useGsapHeroAnimation } from "@/hooks/utils/use-gsap-animation";
@@ -48,8 +49,13 @@ export default function LandingHero() {
             data-hero="badge"
             className="mb-7 flex items-center gap-3 opacity-0"
           >
-            <span className="h-px w-8 bg-foreground" />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+            {/* The ramp mark, same three tiles the Card and PageBanner wear. */}
+            <span aria-hidden className="flex shrink-0">
+              <span className="size-1.5 bg-pixel-2" />
+              <span className="size-1.5 bg-pixel-3" />
+              <span className="size-1.5 bg-pixel-5" />
+            </span>
+            <span className="pixel-label text-muted-foreground">
               {t("badge")}
             </span>
           </div>
@@ -109,10 +115,20 @@ export default function LandingHero() {
         <div className="landing-dark-panel landing-swap-panel relative flex min-h-[560px] flex-col overflow-hidden border-t border-border p-6 sm:p-10 lg:min-h-0 lg:border-l lg:border-t-0 lg:p-12">
           <div className="landing-dark-grid pointer-events-none absolute inset-0" />
           <GridRunners className="landing-swap-grid-runners" density="quiet" />
-          <div className="relative z-10 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--landing-panel-ink)/0.55)]">
+          <div className="pixel-label relative z-10 flex items-center justify-between text-[hsl(var(--landing-panel-ink)/0.55)]">
             <span>Apsara Talent</span>
             <span>Phnom Penh · KH</span>
           </div>
+
+          {/* The mosaic. Seeded from a constant rather than from data because
+              this one is the product's own mark, not a portrait of a record —
+              it has to be the same square on every visit. */}
+          <PixelMosaic
+            seed="apsara-talent-hero"
+            columns={12}
+            density="dense"
+            className="relative z-10 mt-8 max-w-[280px]"
+          />
 
           <div className="relative z-10 my-auto py-14">
             <p className="mb-6 max-w-sm text-sm leading-relaxed text-[hsl(var(--landing-panel-ink)/0.55)]">
@@ -124,7 +140,7 @@ export default function LandingHero() {
                   key={feature.key}
                   className="group grid grid-cols-[40px_1fr_auto] items-center gap-4 border-b border-[hsl(var(--landing-panel-ink)/0.15)] py-5 transition-colors hover:bg-[hsl(var(--landing-panel-ink)/0.04)]"
                 >
-                  <span className="text-xs tabular-nums text-[hsl(var(--landing-panel-ink)/0.35)]">
+                  <span className="pixel-numeral text-xs text-[hsl(var(--landing-panel-ink)/0.35)]">
                     {feature.number}
                   </span>
                   <span className="text-base font-medium text-[hsl(var(--landing-panel-ink))] sm:text-lg">

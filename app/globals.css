@@ -6,23 +6,36 @@
   :root {
     --font-ubuntu: "Ubuntu";
     --font-preahvihear: "Preahvihear";
+    /* The label tier. Space Mono carries every eyebrow, stat caption, table
+       header and metadata run in the UI — see the `.pixel-label` component
+       below. It is a *typographic role*, not a decoration: mono at 11px in
+       caps is what separates machine-read data from human-read prose. */
+    --font-space-mono: "Space Mono";
 
-    /* Off-white page bg — pure white cards float above it */
-    --background: 220 20% 97%;
-    --foreground: 224 14% 10%;
+    /* Warm paper. The page is cream rather than blue-grey so the amber→red
+       pixel ramp reads as ink on paper instead of a warning on a cold sheet. */
+    /* 95%, not 97%: white cards have to stay visibly detached from the page,
+       and cream at 97% only separated 1.05:1 — below the surface-ladder floor. */
+    --background: 60 33% 95%;
+    --foreground: 240 32% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 224 14% 10%;
+    --card-foreground: 240 32% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 14% 10%;
-    /* Apsara Cobalt Accent Section */
-    --primary: 221 83% 53%;
+    --popover-foreground: 240 32% 12%;
+    /* Apsara Ember Accent Section.
+       Light mode cannot use the bright ramp orange for anything text-shaped —
+       #FF8204 is 2.6:1 on white. --primary is the deep end of the same hue
+       family so a link, a button label and a focus ring all clear AA, while
+       the bright tiles live in the --pixel-* ramp below where nothing sits
+       on top of them. */
+    --primary: 13 92% 38%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 94%;
-    --secondary-foreground: 224 14% 10%;
-    --muted: 220 14% 94%;
-    --muted-foreground: 220 8% 44%;
-    --accent: 214 95% 93%;
-    --accent-foreground: 224 64% 33%;
+    --secondary: 48 16% 93%;
+    --secondary-foreground: 240 32% 12%;
+    --muted: 48 16% 93%;
+    --muted-foreground: 240 8% 40%;
+    --accent: 32 92% 92%;
+    --accent-foreground: 13 84% 28%;
 
     /* ---------------------------------------------------------------- */
     /* Status colours                                                   */
@@ -89,7 +102,7 @@
     --category-magenta-subtle: 322 70% 95%;
 
     --category-teal: 168 70% 37%;
-    --category-teal-accent: 168 70% 29.5%;
+    --category-teal-accent: 168 70% 28%;
     --category-teal-subtle: 168 70% 95%;
 
     --category-orange: 28 70% 49%;
@@ -101,58 +114,104 @@
     --category-indigo-subtle: 240 70% 95%;
 
     --category-lime: 95 70% 37%;
-    --category-lime-accent: 95 70% 29.5%;
+    --category-lime-accent: 95 70% 28%;
     --category-lime-subtle: 95 70% 95%;
 
     /* --border is decorative (dividers, card edges) and stays quiet.
        --input bounds interactive controls, so it carries the 3:1 that
        WCAG 1.4.11 asks of a component boundary. They are deliberately
        different values; don't collapse them back together. */
-    --border: 220 13% 84%;
-    --input: 220 13% 58%;
-    --ring: 221 83% 53%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    /* ---------------------------------------------------------------- */
+    /* Pixel ramp                                                       */
+    /*                                                                  */
+    /* Six rungs of one hue sweep, yellow → deep red. This is the        */
+    /* signature: mosaics, tile grids, progress ladders, avatar          */
+    /* fallbacks, chart series, the loading state. Rungs are ordered by  */
+    /* *heat*, so index carries meaning — pixel-1 is the coolest tile,   */
+    /* pixel-6 the hottest, and a mosaic sorted by rung reads as a       */
+    /* gradient without ever being one.                                  */
+    /*                                                                  */
+    /* These are decorative fills. Nothing sets text directly on them —  */
+    /* use `.pixel-tile-ink` (below) when a tile has to carry a glyph,   */
+    /* which picks the one foreground that clears AA on all six rungs.   */
+    /* They are identical in both themes on purpose: the ramp is the     */
+    /* brand, and a mosaic that changed colour with the theme would stop */
+    /* being recognisable as the same object.                            */
+    /* ---------------------------------------------------------------- */
+    --pixel-1: 51 100% 50%;
+    --pixel-2: 41 100% 50%;
+    --pixel-3: 30 100% 51%;
+    --pixel-4: 11 100% 58%;
+    --pixel-5: 5 100% 45%;
+    --pixel-6: 5 100% 32%;
+    /* The single ink that clears 4.5:1 on every rung above. Solved
+       against pixel-1 (yellow, the lightest) — anything that works there
+       works on the rest. */
+    --pixel-ink: 20 90% 10%;
+
+    --border: 45 14% 86%;
+    --input: 45 8% 52%;
+    --ring: 13 92% 38%;
+    /* Charts draw from the pixel ramp so a bar chart and a mosaic are
+       visibly the same material, with two cool rungs for contrast series. */
+    --chart-1: 30 100% 51%;
+    --chart-2: 5 100% 45%;
+    --chart-3: 51 100% 50%;
+    --chart-4: 205 100% 45%;
+    --chart-5: 240 32% 25%;
     /* Square by design — the UI is hard-edged throughout (1100+
        rounded-none against a handful of rounded-lg). This token exists so
        the shadcn primitives that reference it agree with that, rather
        than reintroducing a 12px corner the rest of the app doesn't use.
        Pills and avatars opt in with rounded-full. */
     --radius: 0rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 221 83% 53%;
+    --sidebar-background: 60 24% 98%;
+    --sidebar-foreground: 240 10% 26%;
+    --sidebar-primary: 13 92% 38%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 214 95% 93%;
-    --sidebar-accent-foreground: 224 64% 33%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-accent: 32 92% 92%;
+    --sidebar-accent-foreground: 13 84% 28%;
+    --sidebar-border: 45 14% 88%;
+    --sidebar-ring: 13 92% 38%;
+
+    /* ---------------------------------------------------------------- */
+    /* Pixel geometry                                                   */
+    /*                                                                  */
+    /* One module size drives the whole layout: the mosaic tile, the     */
+    /* background rule spacing, and the offset on the hard shadow are    */
+    /* all derived from --pixel-unit, so the grid stays in register      */
+    /* across unrelated components instead of each picking its own       */
+    /* round number.                                                     */
+    /* ---------------------------------------------------------------- */
+    --pixel-unit: 4px;
+    --pixel-rule: 24px; /* 6 units — the ruled-paper background pitch */
   }
   .dark {
-    /* Deep blue-charcoal with clear layered depth and a cobalt finish Section */
-    --background: 226 22% 6%;
-    --foreground: 213 27% 94%;
-    /* Surfaces step up in lightness: page 6% → card 10% → popover 15% →
-       muted 19%. Dark mode has no usable drop shadow to lean on (the hard
+    /* Deep indigo-black. The page is a single flat ink the pixel ramp burns
+       through — no gradient, no glow, so a lit tile is the only warm thing
+       on screen and reads as emitted rather than painted. */
+    --background: 240 26% 11%;
+    --foreground: 240 15% 93%;
+    /* Surfaces step up in lightness: page 11% → card 16% → popover 22% →
+       muted 27%. Dark mode has no usable drop shadow to lean on (the hard
        offset shadow is near-white at 5% alpha), so the step itself is what
        separates one surface from the next. Popover and muted used to both
        sit at 13%, which made a muted chip inside a popover invisible. */
-    --card: 222 18% 10%;
-    --card-foreground: 213 27% 94%;
-    --popover: 222 16% 15%;
-    --popover-foreground: 213 27% 94%;
-    /* Apsara Cobalt Accent Section */
-    --primary: 213 94% 68%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 222 16% 14%;
-    --secondary-foreground: 213 27% 94%;
-    --muted: 222 14% 19%;
-    --muted-foreground: 220 11% 62%;
-    --accent: 217 42% 18%;
-    --accent-foreground: 213 94% 80%;
+    --card: 240 20% 16%;
+    --card-foreground: 240 15% 93%;
+    --popover: 240 18% 22%;
+    --popover-foreground: 240 15% 93%;
+    /* Apsara Ember Accent Section. Dark mode gets the true ramp orange —
+       it clears 7:1 on the indigo page, so unlike light mode the brand
+       colour and the pixel-3 tile are literally the same value here. */
+    --primary: 30 100% 51%;
+    --primary-foreground: 240 30% 8%;
+    --secondary: 240 18% 19%;
+    --secondary-foreground: 240 15% 93%;
+    --muted: 240 16% 27%;
+    --muted-foreground: 240 10% 68%;
+    --accent: 24 44% 21%;
+    --accent-foreground: 32 100% 74%;
 
     /* Status colours — dark. Same five roles as :root, re-solved against
        the dark surfaces, so component markup never needs a `dark:` twin. */
@@ -175,9 +234,10 @@
     --info-border: 192 40% 30%;
 
     /* Was 0 75% 52%, which only reached 3.8:1 as text on a dark card —
-       error copy sat below AA. 62% clears it while still taking a dark
-       foreground when used as a fill. */
-    --destructive: 0 72% 62%;
+       error copy sat below AA. 62% cleared it against the old 10% card;
+       the pixel palette lifts card to 16%, which put it back at 4.40, so
+       it steps to 66%. Still takes a dark foreground when used as a fill. */
+    --destructive: 0 72% 66%;
     --destructive-foreground: 0 45% 11%;
     --destructive-accent: 0 72% 74%;
     --destructive-subtle: 0 30% 15%;
@@ -208,22 +268,213 @@
     --category-lime-accent: 95 62% 74%;
     --category-lime-subtle: 95 28% 15%;
 
-    --border: 222 14% 19%;
-    --input: 220 13% 50%;
-    --ring: 213 94% 68%;
-    --chart-1: 217 91% 60%;
-    --chart-2: 142 71% 48%;
-    --chart-3: 25 95% 53%;
-    --chart-4: 271 84% 66%;
-    --chart-5: 338 84% 58%;
-    --sidebar-background: 226 22% 6%;
-    --sidebar-foreground: 213 27% 94%;
-    --sidebar-primary: 213 94% 68%;
-    --sidebar-primary-foreground: 222 47% 11%;
-    --sidebar-accent: 217 42% 18%;
-    --sidebar-accent-foreground: 213 94% 80%;
-    --sidebar-border: 222 14% 19%;
-    --sidebar-ring: 213 94% 68%;
+    /* The pixel ramp does not re-solve for dark — see the note in :root.
+       Only --pixel-ink changes nothing either; it is already the darkest
+       usable ink and the tiles it sits on are theme-independent. */
+
+    --border: 240 15% 25%;
+    --input: 240 10% 55%;
+    --ring: 30 100% 51%;
+    --chart-1: 30 100% 51%;
+    --chart-2: 5 100% 45%;
+    --chart-3: 51 100% 50%;
+    --chart-4: 205 100% 58%;
+    --chart-5: 240 12% 72%;
+    --sidebar-background: 240 26% 11%;
+    --sidebar-foreground: 240 15% 93%;
+    --sidebar-primary: 30 100% 51%;
+    --sidebar-primary-foreground: 240 30% 8%;
+    --sidebar-accent: 24 44% 21%;
+    --sidebar-accent-foreground: 32 100% 74%;
+    --sidebar-border: 240 15% 25%;
+    --sidebar-ring: 30 100% 51%;
+  }
+}
+
+/* ========================================================================== */
+/* Pixel UI                                                                   */
+/*                                                                            */
+/* The house style. Four ideas, and everything else is an application of one  */
+/* of them:                                                                   */
+/*                                                                            */
+/*   1. THE TILE. A square of one --pixel-* rung. Never rounded, never        */
+/*      shadowed, never gapped. Meaning comes from which rung and how many,   */
+/*      not from styling the tile itself.                                     */
+/*   2. THE RULE. Surfaces are divided by 1px hairlines, not by gaps and      */
+/*      soft shadows. Cells butt directly against each other so a layout      */
+/*      reads as one ruled sheet rather than a tray of floating cards.        */
+/*   3. THE LABEL. Space Mono, 11px, caps, tracked. Every eyebrow, stat       */
+/*      caption and column header. Mono marks machine-read data; the prose    */
+/*      stays in the sans.                                                    */
+/*   4. THE OFFSET. Elevation is a hard shadow with zero blur, always a       */
+/*      whole number of --pixel-unit. A blurred shadow would imply a lens;    */
+/*      this UI is drawn, not photographed.                                   */
+/* ========================================================================== */
+
+@layer components {
+  /* ── 3. The label tier ────────────────────────────────────────────────── */
+  .pixel-label {
+    font-family: var(--font-space-mono), ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-variant-ligatures: none;
+  }
+
+  /* Numerals in the same voice — stat values, counts, prices. Tabular so a
+     column of figures stays in register, which is the whole point of using
+     a mono here rather than just tracking out the sans. */
+  .pixel-numeral {
+    font-family: var(--font-space-mono), ui-monospace, monospace;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  /* Display type. Tight negative tracking at large sizes only — the same
+     -0.02em that looks purposeful at 56px closes up 14px body copy into an
+     unreadable block, so this is deliberately not a body-text class. */
+  .pixel-display {
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  /* ── 1. The tile ──────────────────────────────────────────────────────── */
+  .pixel-tile {
+    display: block;
+    aspect-ratio: 1;
+    border-radius: 0;
+  }
+
+  /* The one ink that clears AA on all six rungs. Set on a tile that has to
+     carry a glyph — an initial, a count, an icon. */
+  .pixel-tile-ink {
+    color: hsl(var(--pixel-ink));
+  }
+
+  /* ── 2. The rule ──────────────────────────────────────────────────────── */
+  /* A container whose direct children are cells of one ruled sheet. Borders
+     collapse onto shared edges, so no cell doubles up a 2px line against its
+     neighbour. `gap: 1px` over a border-coloured bed is what produces the
+     hairline — it survives wrapping and arbitrary child counts, which a
+     divide-x utility does not. */
+  .pixel-ruled {
+    display: grid;
+    gap: 1px;
+    background: hsl(var(--border));
+    border: 1px solid hsl(var(--border));
+  }
+
+  .pixel-ruled > * {
+    background: hsl(var(--card));
+  }
+
+  /* Ruled-paper texture. Sits behind hero and banner surfaces at the same
+     pitch as the module grid, so content lands on the lines rather than
+     across them. Masked at the edges so it fades instead of being cropped. */
+  .pixel-graph-paper {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .pixel-graph-paper::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    content: "";
+    pointer-events: none;
+    background-image:
+      linear-gradient(
+        to right,
+        hsl(var(--foreground) / 0.045) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        hsl(var(--foreground) / 0.045) 1px,
+        transparent 1px
+      );
+    background-size: var(--pixel-rule) var(--pixel-rule);
+    -webkit-mask-image: radial-gradient(
+      ellipse at 0% 0%,
+      #000 10%,
+      transparent 75%
+    );
+    mask-image: radial-gradient(ellipse at 0% 0%, #000 10%, transparent 75%);
+  }
+
+  /* ── 4. The offset ────────────────────────────────────────────────────── */
+  .pixel-raise {
+    box-shadow: calc(var(--pixel-unit) * 1) calc(var(--pixel-unit) * 1) 0
+      hsl(var(--foreground) / 0.08);
+  }
+
+  .pixel-raise-lg {
+    box-shadow: calc(var(--pixel-unit) * 2) calc(var(--pixel-unit) * 2) 0
+      hsl(var(--foreground) / 0.09);
+  }
+
+  /* Interactive surfaces travel *into* their own shadow on press, so the
+     offset reads as real displacement rather than decoration. */
+  .pixel-press {
+    transition:
+      transform 140ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 140ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .pixel-press:active {
+    transform: translate(var(--pixel-unit), var(--pixel-unit));
+    box-shadow: 0 0 0 hsl(var(--foreground) / 0);
+  }
+
+  /* ── Card corner mark ─────────────────────────────────────────────────── */
+  /* Three tiles of the ramp sitting on the top-left corner, replacing the
+     full-width primary rule the card used to wear. Drawn as one gradient on
+     a pseudo-element rather than as child nodes, because Card is spread
+     across ~200 call sites and several of them index into `children`. */
+  .pixel-card {
+    position: relative;
+  }
+
+  .pixel-card::before {
+    position: absolute;
+    z-index: 1;
+    top: -1px;
+    left: -1px;
+    width: calc(var(--pixel-unit) * 9);
+    height: var(--pixel-unit);
+    content: "";
+    pointer-events: none;
+    background-image: linear-gradient(
+      to right,
+      hsl(var(--pixel-2)) 0 33.34%,
+      hsl(var(--pixel-3)) 33.34% 66.67%,
+      hsl(var(--pixel-5)) 66.67% 100%
+    );
+  }
+
+  /* ── Stepped divider ──────────────────────────────────────────────────── */
+  /* A row of tiles instead of a line. Used where a section break should
+     carry the brand rather than just separate two blocks. */
+  .pixel-divider {
+    height: var(--pixel-unit);
+    background-image: repeating-linear-gradient(
+      to right,
+      hsl(var(--pixel-3)) 0 var(--pixel-unit),
+      transparent var(--pixel-unit) calc(var(--pixel-unit) * 2)
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-press,
+  .pixel-press:active {
+    transform: none;
+    transition: none;
   }
 }
 
@@ -2024,51 +2275,33 @@ html.theme-fallback-transition body *::after {
 /* a serif display headline, hairline borders, and calm ambient motion. The    */
 /* brand panel adapts to the theme and carries a soft Apsara relief.           */
 
-/* Warm neutral palette scoped to auth — removes the app's cool blue tint. */
+/* This block used to redefine the entire neutral palette plus --primary and
+ * --ring, because the app palette was cool cobalt and auth wanted warm paper.
+ * The pixel palette *is* warm paper, so the fork has no job left — and it was
+ * costing real things:
+ *
+ *   - check-contrast.mjs only parses :root and .dark. Every pair inside these
+ *     two blocks was unverified, which is how --input ended up identical to
+ *     --border here: a 1.3:1 field boundary against the page, well under the
+ *     3:1 WCAG 1.4.11 asks of a control edge, on the one screen in the product
+ *     where every element is a control.
+ *   - Two more palettes to keep in step with the first whenever a token moved.
+ *
+ * What survives is the pair that is genuinely local: the brand panel inverts
+ * against the form, and swaps which side is dark between themes. That's a
+ * layout decision, not a palette. */
 body:has(.auth-scope),
 .auth-scope {
-  --background: 43 24% 96%;
-  --foreground: 40 9% 18%;
-  --card: 40 33% 99%;
-  --popover: 40 33% 99%;
-  --muted: 43 18% 93%;
-  --muted-foreground: 40 6% 44%;
-  --accent: 214 95% 93%;
-  --accent-foreground: 224 64% 33%;
-  --secondary: 43 18% 93%;
-  --secondary-foreground: 40 9% 18%;
-  --border: 40 14% 87%;
-  --input: 40 14% 87%;
-  --ring: 221 83% 53%;
-  --primary: 221 83% 53%;
-  --primary-foreground: 0 0% 100%;
-
   /* Light mode: warm form surface paired with a charcoal brand panel. */
-  --auth-paper: 34 8% 11%;
-  --auth-ink: 40 22% 92%;
+  --auth-paper: 240 30% 9%;
+  --auth-ink: 60 24% 96%;
 }
 
 .dark body:has(.auth-scope),
 .dark .auth-scope {
-  --background: 36 7% 10%;
-  --foreground: 40 11% 89%;
-  --card: 36 6% 13%;
-  --popover: 36 6% 14%;
-  --muted: 36 5% 16%;
-  --muted-foreground: 40 6% 58%;
-  --accent: 217 42% 18%;
-  --accent-foreground: 213 94% 80%;
-  --secondary: 36 5% 16%;
-  --secondary-foreground: 40 11% 89%;
-  --border: 36 5% 21%;
-  --input: 36 5% 21%;
-  --ring: 213 94% 68%;
-  --primary: 213 94% 68%;
-  --primary-foreground: 222 47% 11%;
-
   /* Dark mode deliberately reverses the split: dark form, white brand panel. */
-  --auth-paper: 40 33% 99%;
-  --auth-ink: 40 9% 18%;
+  --auth-paper: 60 24% 96%;
+  --auth-ink: 240 30% 12%;
 }
 
 /* Size container: auth fields respond to the form column width, not the      */
@@ -2991,50 +3224,21 @@ body:has(.auth-scope) .auth-dialog-footer > * {
 }
 
 /* ═════════════════════════ Landing Experience ═════════════════════════ */
-/* Mirrors the auth area's paper-and-ink system: restrained warm neutrals, */
-/* square editorial surfaces, fine rules, and charcoal feature panels.     */
+/* Square editorial surfaces, fine rules, and inverted feature panels.      */
+/* The palette fork this used to carry was a duplicate of the auth one and  */
+/* went the same way — see the note above .auth-scope. The landing page now */
+/* draws --primary from :root, which is what finally made the marketing     */
+/* site and the product the same colour.                                    */
 body:has(.landing-scope),
 .landing-scope {
-  --background: 43 24% 96%;
-  --foreground: 40 9% 18%;
-  --card: 40 33% 99%;
-  --card-foreground: 40 9% 18%;
-  --popover: 40 33% 99%;
-  --popover-foreground: 40 9% 18%;
-  --muted: 43 18% 93%;
-  --muted-foreground: 40 6% 42%;
-  --accent: 214 95% 93%;
-  --accent-foreground: 224 64% 33%;
-  --secondary: 43 18% 93%;
-  --secondary-foreground: 40 9% 18%;
-  --border: 40 14% 84%;
-  --input: 40 14% 84%;
-  --ring: 221 83% 53%;
-  --primary: 221 83% 53%;
-  --primary-foreground: 0 0% 100%;
-  --auth-paper: 34 8% 11%;
-  --auth-ink: 40 22% 92%;
+  --auth-paper: 240 30% 9%;
+  --auth-ink: 60 24% 96%;
 }
 
 .dark body:has(.landing-scope),
 .dark .landing-scope {
-  --background: 36 7% 10%;
-  --foreground: 40 11% 89%;
-  --card: 36 6% 13%;
-  --card-foreground: 40 11% 89%;
-  --popover: 36 6% 14%;
-  --popover-foreground: 40 11% 89%;
-  --muted: 36 5% 16%;
-  --muted-foreground: 40 6% 58%;
-  --accent: 217 42% 18%;
-  --accent-foreground: 213 94% 80%;
-  --secondary: 36 5% 16%;
-  --secondary-foreground: 40 11% 89%;
-  --border: 36 5% 24%;
-  --input: 36 5% 24%;
-  --ring: 213 94% 68%;
-  --primary: 213 94% 68%;
-  --primary-foreground: 222 47% 11%;
+  --auth-paper: 60 24% 96%;
+  --auth-ink: 240 30% 12%;
 }
 
 .landing-grid {
@@ -3076,10 +3280,11 @@ body:has(.landing-scope),
     hsl(var(--landing-panel-bg));
 }
 
+/* The bg/ink swap itself now comes free: --auth-paper and --auth-ink already
+   trade places between themes in the .landing-scope block, so this only has
+   to darken the edge where a cream panel meets a dark page. */
 .dark .landing-swap-panel {
-  --landing-panel-bg: 43 24% 96%;
-  --landing-panel-ink: 40 9% 18%;
-  border-color: hsl(40 14% 78%);
+  border-color: hsl(var(--landing-panel-ink) / 0.22);
 }
 
 /* ═════════════════════════ Static Editorial Pages ═══════════════════ */

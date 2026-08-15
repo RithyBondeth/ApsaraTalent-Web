@@ -4,19 +4,34 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+/* ---------------------------------------------------------------------------
+ * Buttons in the pixel language.
+ *
+ * The press is the whole idea: a raised button carries a hard offset shadow
+ * and, on :active, travels exactly that offset so it lands flush with the
+ * page. That is `.pixel-press` — displacement rather than the scale(0.95)
+ * this used to do, which shrank the hit target under the finger mid-tap.
+ *
+ * Only the two variants that commit to something (default, destructive) are
+ * raised. Outline, secondary and ghost stay flat, so a row of buttons reads
+ * its own hierarchy from elevation without needing colour to do all of it.
+ * ------------------------------------------------------------------------- */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-[color,background-color,border-color,box-shadow,transform] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.95] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none text-sm font-bold ring-offset-background transition-[color,background-color,border-color,box-shadow,transform] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
+      // `pixel-press` rides along with the shadow, never on its own: the
+      // press animates a button *into* its offset, so a flat variant that
+      // travelled the same 4px would just look like it slipped.
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-[0_4px_14px_hsl(var(--primary)/0.4)]",
+          "pixel-press bg-primary text-primary-foreground shadow-pixel hover:bg-primary/90",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-[0_4px_14px_hsl(var(--destructive)/0.35)]",
+          "pixel-press bg-destructive text-destructive-foreground shadow-pixel hover:bg-destructive/90",
         outline:
-          "border border-input bg-background hover:border-primary/40 hover:bg-accent hover:text-accent-foreground hover:shadow-sm",
+          "border border-input bg-background hover:border-primary hover:bg-accent hover:text-accent-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:shadow-sm",
+          "bg-secondary text-secondary-foreground hover:bg-muted hover:text-foreground",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },

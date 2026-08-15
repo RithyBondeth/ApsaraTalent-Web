@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { emailVerificationSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
@@ -61,8 +60,6 @@ export default function EmailVerificationPage() {
   /* ------------------------------ Render UI ------------------------------ */
   return (
     <AuthShell
-      image={emailVerificationSvg}
-      imageAlt={t("emailVerificationTitle")}
       eyebrowKey="verifyPanelEyebrow"
       titleKey="verifyPanelTitle"
       subtitleKey="verifyPanelSubtitle"

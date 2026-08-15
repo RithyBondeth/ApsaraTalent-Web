@@ -29,7 +29,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { phoneOTPSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
@@ -259,8 +258,6 @@ export default function PhoneOTPPage() {
   /* --------------------------------------------- Render UI ---------------------------------------------- */
   return (
     <AuthShell
-      image={phoneOTPSvg}
-      imageAlt={t("otpTitle")}
       eyebrowKey="otpPanelEyebrow"
       titleKey="otpPanelTitle"
       subtitleKey="otpPanelSubtitle"

@@ -1,9 +1,6 @@
-import type { StaticImageData } from "next/image";
-
 export interface IAuthBrandPanelProps {
-  image?: StaticImageData;
-  imageAlt?: string;
   eyebrowKey?: string;
+  /** Also seeds the panel's mosaic, so each auth route gets its own mark. */
   titleKey?: string;
   subtitleKey?: string;
   className?: string;

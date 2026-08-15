@@ -31,6 +31,25 @@ export default {
   // content globs above already scan.
   theme: {
     extend: {
+      fontFamily: {
+        // The label tier. `font-mono` is the escape hatch for one-off uses;
+        // prefer the `.pixel-label` component class, which also carries the
+        // size, weight, caps and tracking that make the tier legible.
+        mono: [
+          "var(--font-space-mono)",
+          "ui-monospace",
+          "SFMono-Regular",
+          "monospace",
+        ],
+      },
+      // Whole multiples of --pixel-unit, for the hard offset shadows. Named
+      // by unit count rather than pixel value so the ladder still reads
+      // correctly if --pixel-unit is ever retuned.
+      boxShadow: {
+        pixel: "4px 4px 0 hsl(var(--foreground) / 0.08)",
+        "pixel-lg": "8px 8px 0 hsl(var(--foreground) / 0.09)",
+        "pixel-brand": "4px 4px 0 hsl(var(--primary))",
+      },
       keyframes: {
         "caret-blink": {
           "0%,70%,100%": {
@@ -155,6 +174,19 @@ export default {
             accent: "hsl(var(--category-lime-accent))",
             subtle: "hsl(var(--category-lime-subtle))",
           },
+        },
+        // The pixel ramp — six rungs of one hue sweep, ordered by heat.
+        // Decorative fills for mosaics, tile grids and chart series; see the
+        // note in globals.css for why they don't re-solve per theme. `ink`
+        // is the single foreground that clears AA on every rung.
+        pixel: {
+          1: "hsl(var(--pixel-1))",
+          2: "hsl(var(--pixel-2))",
+          3: "hsl(var(--pixel-3))",
+          4: "hsl(var(--pixel-4))",
+          5: "hsl(var(--pixel-5))",
+          6: "hsl(var(--pixel-6))",
+          ink: "hsl(var(--pixel-ink))",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

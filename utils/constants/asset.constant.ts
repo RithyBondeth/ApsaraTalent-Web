@@ -4,15 +4,6 @@ import githubIcon from "@/assets/socials/github.png";
 import googleIcon from "@/assets/socials/google.png";
 import linkedInIcon from "@/assets/socials/linkedin.png";
 
-// ─── Auth ─────────────────────────────────────────────────────────────────────
-import signupSvg from "@/assets/auth/signup.svg";
-import loginSvg from "@/assets/auth/login.svg";
-import forgotPasswordSvg from "@/assets/auth/forgot-password.svg";
-import resetPasswordSvg from "@/assets/auth/reset-password.svg";
-import emailVerificationSvg from "@/assets/auth/email-verification.svg";
-import phoneNumberSvg from "@/assets/auth/phone-number.svg";
-import phoneOTPSvg from "@/assets/auth/phone-otp.svg";
-
 // ─── Feed ─────────────────────────────────────────────────────────────────────
 
 // ─── Notification ─────────────────────────────────────────────────────────────
@@ -50,14 +41,6 @@ export {
   githubIcon,
   googleIcon,
   linkedInIcon,
-  // Auth
-  signupSvg,
-  loginSvg,
-  forgotPasswordSvg,
-  resetPasswordSvg,
-  emailVerificationSvg,
-  phoneNumberSvg,
-  phoneOTPSvg,
   // Feed
   // Notification
   notificationEmptySvg,

@@ -3,8 +3,11 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+/* A badge is a label, not a pill — so it takes the mono label tier and squares
+ * off. `rounded-full` stays reserved for avatars and bare status dots, which
+ * are the two things in this UI that genuinely are round. */
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "pixel-label inline-flex items-center rounded-none border px-2 py-1 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
@@ -14,7 +17,7 @@ const badgeVariants = cva(
           "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive:
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
+        outline: "border-border text-foreground",
       },
     },
     defaultVariants: {

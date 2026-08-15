@@ -38,9 +38,11 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
           data-error={hasError}
           className={cn(
             "flex h-12 w-full items-center rounded-none border border-input bg-background px-3 text-base transition-[color,border-color,box-shadow] duration-200",
-            "hover:border-foreground/25",
-            "focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/20",
-            "data-[error=true]:border-destructive data-[error=true]:focus-within:border-destructive data-[error=true]:focus-within:ring-destructive/20",
+            "hover:border-foreground/40",
+            // A hard 2px ring with no alpha falloff. The old 3px/20% ring read
+            // as a soft glow, which is the one lighting effect this UI avoids.
+            "focus-within:border-ring focus-within:ring-2 focus-within:ring-ring",
+            "data-[error=true]:border-destructive data-[error=true]:focus-within:border-destructive data-[error=true]:focus-within:ring-destructive",
             "disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
             className,
           )}

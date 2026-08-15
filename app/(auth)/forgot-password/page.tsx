@@ -16,7 +16,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { makeForgotPasswordSchema, TForgotPasswordForm } from "./validation";
-import { forgotPasswordSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
@@ -96,8 +95,6 @@ export default function ForgotPasswordPage() {
   /* -------------------------------- Render UI ------------------------------- */
   return (
     <AuthShell
-      image={forgotPasswordSvg}
-      imageAlt={t("forgotPageTitle")}
       eyebrowKey="forgotPanelEyebrow"
       titleKey="forgotPanelTitle"
       subtitleKey="forgotPanelSubtitle"

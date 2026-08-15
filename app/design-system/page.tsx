@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { LucideBriefcase, LucideSparkles, LucideUsers } from "lucide-react";
 
+import { PixelMosaic } from "@/components/utils/brand/pixel-mosaic";
 import { StatusPill } from "@/components/utils/data-display/status-pill";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,16 @@ export const metadata: Metadata = { title: "Design system" };
  * ------------------------------------------------------------------------- */
 
 const STATUSES = ["success", "warning", "info", "destructive"] as const;
+
+// Literal class names — Tailwind never sees `bg-pixel-${n}`.
+const PIXEL_RUNGS = [
+  { swatch: "bg-pixel-1", name: "pixel-1" },
+  { swatch: "bg-pixel-2", name: "pixel-2" },
+  { swatch: "bg-pixel-3", name: "pixel-3" },
+  { swatch: "bg-pixel-4", name: "pixel-4" },
+  { swatch: "bg-pixel-5", name: "pixel-5" },
+  { swatch: "bg-pixel-6", name: "pixel-6" },
+] as const;
 
 type TStatusName = (typeof STATUSES)[number];
 
@@ -103,12 +114,18 @@ export default function DesignSystemPage() {
   return (
     <main className="min-h-screen bg-background px-6 py-10 text-foreground">
       <div className="mx-auto max-w-5xl space-y-12">
-        <header className="flex items-start justify-between gap-6 border-b-[5px] border-primary pb-4">
+        <header className="flex items-start justify-between gap-6 border-b border-border pb-4">
           <div>
-            <h1 className="text-3xl font-black uppercase tracking-tight">
-              Design system
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <div aria-hidden className="mb-3 flex">
+              <span className="size-2 bg-pixel-1" />
+              <span className="size-2 bg-pixel-2" />
+              <span className="size-2 bg-pixel-3" />
+              <span className="size-2 bg-pixel-4" />
+              <span className="size-2 bg-pixel-5" />
+              <span className="size-2 bg-pixel-6" />
+            </div>
+            <h1 className="pixel-display text-3xl uppercase">Design system</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
               Every colour below resolves per theme on its own. Toggle the theme
               — nothing on this page carries a <code>dark:</code> variant.
             </p>
@@ -164,7 +181,7 @@ export default function DesignSystemPage() {
 
         <Section
           title="Brand"
-          note="Cobalt carries every primary action. Accent is its tinted companion for hover and active states."
+          note="Ember carries every primary action. Accent is its tinted companion for hover and active states. In dark mode --primary is literally the pixel-3 tile; in light mode it is the deep end of the same hue, because the bright ramp orange is 2.6:1 on white and cannot hold text."
         >
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
             <Swatch token="primary" label="actions, links" />
@@ -173,6 +190,96 @@ export default function DesignSystemPage() {
             <Swatch token="accent-foreground" label="on accent" />
             <Swatch token="secondary" label="secondary button" />
             <Swatch token="ring" label="focus ring" />
+          </div>
+        </Section>
+
+        <Section
+          title="Pixel ramp"
+          note="Six rungs of one hue sweep, ordered by heat, identical in both themes — the ramp is the brand, and a mosaic that changed colour with the theme would stop reading as the same object. These are decorative fills: nothing sets text on them except --pixel-ink, the one foreground that clears AA on all six."
+        >
+          <div className="space-y-6">
+            <div className="grid grid-cols-6">
+              {PIXEL_RUNGS.map(({ swatch, name }) => (
+                <div key={name} className="min-w-0">
+                  <div
+                    className={`pixel-tile-ink flex aspect-square items-end p-2 ${swatch}`}
+                  >
+                    <span className="pixel-label text-[9px]">{name}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <p className="pixel-label mb-3 text-muted-foreground">
+                Mosaics — same component, three seeds
+              </p>
+              <div className="flex flex-wrap items-start gap-6">
+                {["Apsara Talent", "Sokha Chan", "Mekong Logistics"].map(
+                  (seed) => (
+                    <div key={seed} className="w-32 space-y-2">
+                      <PixelMosaic seed={seed} columns={8} />
+                      <p className="pixel-label text-[9px] text-muted-foreground">
+                        {seed}
+                      </p>
+                    </div>
+                  ),
+                )}
+              </div>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Deterministic from the seed, so a company&rsquo;s mark is the
+                same square on every render and different from everyone
+                else&rsquo;s. Costs a few hundred bytes of markup — the hero
+                illustrations it replaced ran 146–320 KB and could not follow
+                the theme.
+              </p>
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          title="Type tiers"
+          note="Three voices. The sans is for prose. The mono is for anything machine-read — labels, counts, codes — and is what makes a stat legible as an instrument reading rather than as more sentence."
+        >
+          <div className="space-y-5 border border-border bg-card p-6">
+            <div>
+              <p className="pixel-label text-muted-foreground">
+                .pixel-label — eyebrows, captions, column headers
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Space Mono 11px, caps, 0.14em. Always a label, never a sentence.
+              </p>
+            </div>
+            <div className="border-t border-border pt-5">
+              <p className="pixel-display text-4xl">
+                Display, tight at -0.03em
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                <code>.pixel-display</code> is for headlines only. The tracking
+                that looks deliberate at 40px closes 14px body copy into a
+                block, so it is deliberately not a body-text class.
+              </p>
+            </div>
+            <div className="border-t border-border pt-5">
+              <p className="pixel-numeral text-3xl">1,248 · 38 · 6</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                <code>.pixel-numeral</code> — tabular, so a column of figures
+                stays in register. That alignment is the reason the tier uses a
+                mono rather than just tracking out the sans.
+              </p>
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          title="Elevation & the press"
+          note="A hard offset shadow with zero blur, always a whole number of --pixel-unit. Raised controls travel exactly that offset on :active, so the shadow reads as real displacement — a blurred shadow would imply a lens, and this UI is drawn, not photographed."
+        >
+          <div className="flex flex-wrap items-center gap-6 border border-border bg-card p-6">
+            <div className="size-20 border border-border bg-background shadow-pixel" />
+            <div className="size-20 border border-border bg-background shadow-pixel-lg" />
+            <Button>Press me</Button>
+            <Button variant="outline">Flat, no travel</Button>
           </div>
         </Section>
 
