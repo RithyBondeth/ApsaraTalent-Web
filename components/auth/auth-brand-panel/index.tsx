@@ -1,6 +1,7 @@
 "use client";
 
 import { PixelMosaic } from "@/components/utils/brand/pixel-mosaic";
+import { PixelPet } from "@/components/utils/brand/pixel-pet";
 import { PixelPattern } from "@/components/utils/brand/pixel-pattern";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -79,6 +80,13 @@ export default function AuthBrandPanel(props: IAuthBrandPanelProps) {
                 signup and reset each get their own mark without another prop
                 to keep in sync at seven call sites. */}
             <PixelMosaic seed={titleKey} columns={12} density="medium" />
+          </div>
+          {/* Neak greets, once, at first contact with the product. Centred
+              under the mosaic rather than tucked into its corner, and this is
+              the only place she appears besides empty states — a mascot seen
+              constantly stops being an event. */}
+          <div className="mt-7 flex justify-center">
+            <PixelPet expression="smiling" height={136} />
           </div>
         </div>
       </div>

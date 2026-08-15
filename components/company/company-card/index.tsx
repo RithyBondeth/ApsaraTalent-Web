@@ -299,14 +299,14 @@ export default function CompanyCard(props: ICompanyCardProps) {
         <div className="flex shrink-0 items-center gap-1">
           <Button
             aria-label="Quick view"
-            className="size-10 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95 sm:size-12"
+            className="size-10 rounded-none sm:size-12"
             onClick={handleClickDialog}
           >
             <LucideEye className="!size-5 transition-all duration-300 ease-in-out sm:!size-6" />
           </Button>
           <Button
             aria-label="Like"
-            className="size-10 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95 sm:size-12"
+            className="size-10 rounded-none sm:size-12"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
           >

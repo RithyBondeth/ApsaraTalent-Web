@@ -229,7 +229,9 @@ export default function TopNavbar() {
                 priority
                 height={48}
                 width={80}
-                className="h-12 w-20 transition-transform duration-300 group-hover:-translate-y-0.5"
+                /* The wordmark stays put — the cell around it takes the wash.
+                   A logo that moves on hover reads as a button. */
+                className="h-12 w-20"
               />
             </Link>
 

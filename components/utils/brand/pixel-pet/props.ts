@@ -1,20 +1,22 @@
-import type { TPixelPetPose } from "./sprites";
+import type { TPixelPetExpression } from "./sprites";
 
 export interface IPixelPetProps {
   /**
-   * Which sprite to draw. Pick by what the surface means: `rest` for an empty
-   * list, `wave` for a greeting, `cheer` for a match or a completed profile,
-   * `idle` for everything else.
+   * Which face to draw. `smiling` is the default and the only one that still
+   * reads once shrunk to display size; `serene` and `resting` are for calmer
+   * surfaces where she is larger.
+   *
+   * There are no poses — this is a bust, so there are no arms to gesture with.
    */
-  pose?: TPixelPetPose;
+  expression?: TPixelPetExpression;
   /**
    * Rendered height in px. Multiples of 34 keep cell edges on whole pixels
-   * (68, 102, 136); the sprite is 24 wide × 34 tall, so width follows.
+   * (68, 102, 136); the sprite is 32 wide × 34 tall, so width follows.
    */
   height?: number;
   /**
    * Accessible name. Omit for decoration beside copy that already names her —
-   * the sprite then renders aria-hidden rather than being announced twice.
+   * she then renders aria-hidden rather than being announced twice.
    */
   label?: string;
   className?: string;

@@ -208,7 +208,9 @@
     /* is visibly cut from the same palette as everything else.          */
     /* ---------------------------------------------------------------- */
     --pet-skin: 18 68% 76%;
+    --pet-skin-shade: 18 58% 66%;
     --pet-hair: 236 24% 16%;
+    --pet-hair-lit: 236 21% 25%;
     --pet-cloth: 36 55% 91%;
 
     --preview-dark-bg: 240 26% 11%;
@@ -326,7 +328,7 @@
 /* ========================================================================== */
 /* Pixel UI                                                                   */
 /*                                                                            */
-/* The house style. Four ideas, and everything else is an application of one  */
+/* The house style. Five ideas, and everything else is an application of one  */
 /* of them:                                                                   */
 /*                                                                            */
 /*   1. THE TILE. A square of one --pixel-* rung. Never rounded, never        */
@@ -341,6 +343,10 @@
 /*   4. THE OFFSET. Elevation is a hard shadow with zero blur, always a       */
 /*      whole number of --pixel-unit. A blurred shadow would imply a lens;    */
 /*      this UI is drawn, not photographed.                                   */
+/*   5. THE HOVER. Motion is horizontal and quantised: content travels a      */
+/*      whole number of --pixel-unit sideways, or a rule fills the width one  */
+/*      step at a time. A surface never lifts, scales or casts a shadow       */
+/*      under the cursor.                                                     */
 /* ========================================================================== */
 
 @layer components {
@@ -445,10 +451,140 @@
       0 0 1px hsl(var(--foreground) / 0.02);
   }
 
-  /* Press is a fill change now, not displacement — nothing on their site
-     moves under the cursor. */
+  /* Press is a fill change, not displacement: the only :active rules they
+     ship set a background or a colour. Motion belongs to hover instead —
+     see the hover tier below. */
   .pixel-press {
     transition: background-color 140ms ease;
+  }
+
+  /* ── 5. The hover tier ────────────────────────────────────────────────── */
+  /* Measured, not invented. Of the 56 hover rules in mistral.ai's own
+     stylesheets, 20 set translate (all of them on the x-axis), 11 set
+     background-color, 5 opacity, 3 scale, 2 border-color, 1 box-shadow and
+     1 grows a rule from zero width to full. So hover is horizontal travel
+     and fill — a card that rises 2px and casts a 24px blur is answering a
+     different design.
+
+     Three behaviours cover every interactive surface here. The pixel half of
+     the translation is that both the distances and the timing snap to the
+     grid: travel is a whole number of --pixel-unit, and the sweep advances
+     in discrete steps rather than gliding. Their travel is already on our
+     grid — the 28px and 24px they use are 7 and 6 units exactly. */
+
+  /* (a) THE SHUTTLE. A button or card whose content slides one slot right
+     while a fresh arrow enters from the clipped left edge. Mark up three
+     parts inside a .pixel-shuttle host:
+
+       <span class="pixel-shuttle">
+         <ArrowIcon class="pixel-shuttle-in" />
+         <span class="pixel-shuttle-label">View profile</span>
+         <ArrowIcon class="pixel-shuttle-out" />
+       </span>
+
+     The host clips, so `-in` parked at -7u is invisible until it arrives. */
+  .pixel-shuttle {
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--pixel-unit) * 2);
+    overflow: hidden;
+  }
+
+  .pixel-shuttle-in,
+  .pixel-shuttle-label,
+  .pixel-shuttle-out {
+    /* 300ms on their standard easing, both measured. */
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* One icon width (5u) plus the flex gap (2u). The arrow that leaves and
+     the arrow that arrives therefore travel the same distance, which is why
+     the exchange reads as one object moving rather than two fading. */
+  .pixel-shuttle-in {
+    position: absolute;
+    left: 0;
+    transform: translateX(calc(var(--pixel-unit) * -7));
+  }
+
+  /* ── The sweep ────────────────────────────────────────────────────────── */
+  /* (b) THE SWEEP. Their inline links carry a 1px rule that grows from zero
+     to full width. Ours advances in whole steps instead of gliding, which is
+     the same gesture drawn on a grid — a progress bar built of tiles rather
+     than a line being stretched. Sits at 2px (half a unit) so it holds its
+     weight against the hairlines it shares a page with. */
+  .pixel-sweep {
+    position: relative;
+  }
+
+  .pixel-sweep::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: calc(var(--pixel-unit) * -1);
+    height: calc(var(--pixel-unit) / 2);
+    width: 0;
+    background: currentColor;
+    /* 6 steps at 240ms is 40ms a step — slow enough to see the rule land
+       tile by tile. Fewer steps over a shorter duration reads as a stutter,
+       more reads as the smooth sweep this is deliberately not. */
+    transition: width 240ms steps(6, end);
+    pointer-events: none;
+  }
+
+  /* ── The wash ─────────────────────────────────────────────────────────── */
+  /* (c) THE WASH. A whole cell taking a fill, for rows and cards that are
+     themselves the link. This is the plain background-color change that is
+     their single most common hover after translate, at their 150ms. */
+  .pixel-wash {
+    transition:
+      background-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Hover states are gated behind a real pointer. On a touch screen :hover
+     latches after a tap and the arrow would stay parked mid-shuttle. */
+  @media (hover: hover) and (pointer: fine) {
+    /* The group is how a card drives content nested inside it; the bare
+       a/button case covers a shuttle that is the whole control. Written out
+       rather than wrapped in :where() so these keep their specificity over
+       the resting rules above. */
+    .group:hover .pixel-shuttle-in,
+    a:hover .pixel-shuttle-in,
+    button:hover .pixel-shuttle-in {
+      transform: translateX(0);
+      /* The arrow arrives last: out leaves at 0ms, the label follows at
+         75ms, and the slot is only refilled at 100ms. Simultaneous motion
+         reads as the whole button sliding. */
+      transition-delay: 100ms;
+    }
+
+    .group:hover .pixel-shuttle-label,
+    a:hover .pixel-shuttle-label,
+    button:hover .pixel-shuttle-label {
+      transform: translateX(calc(var(--pixel-unit) * 6));
+      transition-delay: 75ms;
+    }
+
+    .group:hover .pixel-shuttle-out,
+    a:hover .pixel-shuttle-out,
+    button:hover .pixel-shuttle-out {
+      transform: translateX(calc(var(--pixel-unit) * 7));
+    }
+
+    .group:hover .pixel-sweep::after,
+    a:hover .pixel-sweep::after,
+    button:hover .pixel-sweep::after,
+    .pixel-sweep:hover::after {
+      width: 100%;
+    }
+
+    .pixel-wash:hover,
+    .group:hover .pixel-wash {
+      background-color: hsl(var(--muted));
+    }
   }
 
   /* ── The sheet ────────────────────────────────────────────────────────── */
@@ -519,6 +655,33 @@
   .pixel-press:active {
     transform: none;
     transition: none;
+  }
+
+  /* The shuttle is travel and nothing else, so under reduced motion it has
+     no reduced form — it simply doesn't run, and the label stays put with
+     its resting arrow. The sweep keeps its rule but lands in one frame:
+     that is an appearance change, not motion. */
+  .pixel-shuttle-in,
+  .pixel-shuttle-label,
+  .pixel-shuttle-out,
+  .pixel-sweep::after,
+  .pixel-wash {
+    transition: none;
+  }
+
+  .group:hover .pixel-shuttle-label,
+  a:hover .pixel-shuttle-label,
+  button:hover .pixel-shuttle-label,
+  .group:hover .pixel-shuttle-out,
+  a:hover .pixel-shuttle-out,
+  button:hover .pixel-shuttle-out {
+    transform: none;
+  }
+
+  .group:hover .pixel-shuttle-in,
+  a:hover .pixel-shuttle-in,
+  button:hover .pixel-shuttle-in {
+    transform: translateX(calc(var(--pixel-unit) * -7));
   }
 }
 
@@ -4059,70 +4222,50 @@ body:has(.landing-scope),
   }
 }
 
-/* Shared landing/auth button motion: calm lift on hover, tactile press on
-   pointer-down, and a brief centered flash as the click releases. */
+/* Shared landing/auth button motion.
+
+   This used to be a lift: translate3d(0, -2px) with scale(1.01), a 24px
+   blurred shadow, a radial flash on release and svg { scale(1.08) }. Four
+   different soft-UI gestures on a design whose reference does none of them —
+   it was the last place in the app still animating elevation. What replaces
+   it is what the reference actually does on hover: the icon shuttles
+   sideways by one slot and the fill changes. Nothing rises off the page.
+
+   The shuttle here is the automatic version, keyed off any svg the button
+   already carries, so the hundred-odd landing and auth buttons get it
+   without restructuring their children. Buttons that want the full
+   three-part exchange (an arrow leaving, another arriving) opt in with
+   .pixel-shuttle markup instead. */
 .landing-scope [data-ui-button],
 body:has(.auth-scope) [data-ui-button] {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  transform: translate3d(0, 0, 0) scale(1);
-  transform-origin: center;
   transition:
-    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.24s ease,
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease !important;
-}
-
-.landing-scope [data-ui-button]::after,
-body:has(.auth-scope) [data-ui-button]::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  border-radius: inherit;
-  background: radial-gradient(circle at center, currentColor, transparent 68%);
-  opacity: 0;
-  pointer-events: none;
-  transform: scale(0.55);
-  transition:
-    opacity 0.38s ease-out,
-    transform 0.46s cubic-bezier(0.22, 1, 0.36, 1);
+    background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .landing-scope [data-ui-button] svg,
 body:has(.auth-scope) [data-ui-button] svg {
-  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .landing-scope [data-ui-button]:not(:disabled):hover,
-  body:has(.auth-scope) [data-ui-button]:not(:disabled):hover {
-    transform: translate3d(0, -2px, 0) scale(1.01);
-    box-shadow: 0 10px 24px hsl(var(--foreground) / 0.13);
-  }
-
+  /* One unit. The full shuttle travels 7 because it has to clear a whole
+     icon slot; an icon that stays put in its own row only needs to read as
+     having moved, and 4px on a 20px glyph is legible without the label
+     having to reflow around it. */
   .landing-scope [data-ui-button]:not(:disabled):hover svg,
   body:has(.auth-scope) [data-ui-button]:not(:disabled):hover svg {
-    transform: scale(1.08);
+    transform: translateX(var(--pixel-unit));
   }
 }
 
-.landing-scope [data-ui-button]:not(:disabled):active,
-body:has(.auth-scope) [data-ui-button]:not(:disabled):active {
-  transform: translate3d(0, 1px, 0) scale(0.965);
-  box-shadow: 0 3px 8px hsl(var(--foreground) / 0.08);
-  transition-duration: 70ms !important;
-}
-
-.landing-scope [data-ui-button]:not(:disabled):active::after,
-body:has(.auth-scope) [data-ui-button]:not(:disabled):active::after {
-  opacity: 0.14;
-  transform: scale(1);
-  transition-duration: 0ms;
-}
+/* Press stays a fill change — see .pixel-press. The only :active rules the
+   reference ships set background-color or color, so there is nothing here
+   to displace. */
 
 /* ═════════════════════════ Search Experience ═════════════════════════ */
 .search-editorial
@@ -4217,18 +4360,13 @@ body:has(.auth-scope) [data-ui-button]:not(:disabled):active::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .landing-scope [data-ui-button],
-  .landing-scope [data-ui-button]:hover,
-  .landing-scope [data-ui-button]:active,
-  body:has(.auth-scope) [data-ui-button],
-  body:has(.auth-scope) [data-ui-button]:hover,
-  body:has(.auth-scope) [data-ui-button]:active {
+  /* The button itself no longer transforms; the icon shuttle inside it is
+     the only motion left to suppress. */
+  .landing-scope [data-ui-button] svg,
+  .landing-scope [data-ui-button]:hover svg,
+  body:has(.auth-scope) [data-ui-button] svg,
+  body:has(.auth-scope) [data-ui-button]:hover svg {
     transform: none !important;
-  }
-
-  .landing-scope [data-ui-button]::after,
-  body:has(.auth-scope) [data-ui-button]::after {
-    display: none;
   }
 
   html {

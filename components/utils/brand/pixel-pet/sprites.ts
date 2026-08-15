@@ -1,178 +1,145 @@
 /* ---------------------------------------------------------------------------
  * Neak — the pixel Apsara.
  *
- * A 24×34 sprite of the celestial dancer the product is named after, drawn to
- * the same reference the brand illustration uses: three-spire mokot, hair
- * framing the face and falling to the shoulder, gold collar and armbands, a
- * cream top over a coral sampot.
+ * A 32×34 bust of the celestial dancer the product is named after: mokot,
+ * face, collar and shoulders. A portrait rather than a full figure, because
+ * the Apsara identity lives almost entirely in the crown — spending the whole
+ * canvas on it buys five spires, a jewelled band and side pendants, none of
+ * which survive on a figure small enough to fit beside body and legs.
  *
- * The first attempt at this was 16×18 and read as uncanny. Three things were
- * wrong and all three are fixed here:
- *   - too small. A face needs more than three rows or the eyes become a skull's.
- *   - no hair. The head was a bare block of skin; the hair frame is most of
- *     what makes a small face read as a face.
- *   - skin painted from the ramp. Bright orange skin is a monster, not a
- *     dancer — it now has its own token.
+ * It took several rounds to stop the face reading as uncanny. What was wrong,
+ * in the order it mattered:
+ *   - brows. Three cells of dark mass above the eye *is* a scowl at this
+ *     scale. Removing them removed the anger; there are no brows now.
+ *   - the mouth was a dark 5-cell bar, which reads as a grimace. It is two
+ *     cells in a shade close to skin.
+ *   - the face was a flat ±6 slab with square corners, which reads as a mask.
+ *     It has a rounded hairline, a tapering jaw and a chin.
+ *   - the face was so wide the hair was a sliver. Ceding two columns let the
+ *     hair register and fall past the shoulders.
  *
- * Poses are picked by what a surface means, not animated as a sequence.
+ * A bust has no arms, so the set is expressions rather than poses. `smiling`
+ * is the default and the only one whose expression survives being shrunk to
+ * display size; `serene` and `resting` exist for calmer surfaces.
  *
  * Palette keys:
- *   .  transparent   k  ink        g  gold light   G  gold deep
- *   h  hair          s  skin       w  cloth (top)  c/C  sampot
+ *   .  transparent   k  ink          g  gold lit    G  gold      o  gold deep
+ *   h  hair          H  hair lit     s  skin        S  skin shade
+ *   w  cloth         r  sampot
  * ------------------------------------------------------------------------- */
 
 export const PIXEL_PET_SPRITES = {
-  /* Standing, arms out with armbands showing — the resting pose. */
-  idle: [
-    "...........g............",
-    "...........g............",
-    "..........ggg...........",
-    "..........ggg...........",
-    ".......g..ggg..g........",
-    ".......g..ggg..g........",
-    "......ggg.ggg.ggg.......",
-    ".....GGGGGGGGGGGGG......",
-    ".....GggGGgggGGggG......",
-    ".....GGGGGGGGGGGGG......",
-    ".....hhhhhhhhhhhhh......",
-    ".....hhssssssssshh......",
-    ".....hhssssssssshh......",
-    ".....hhskssssskshh......",
-    ".....hhssssssssshh......",
-    ".....hhssskskssshh......",
-    ".....hh.sssssss.hh......",
-    "......GGGGGGGGGGG.......",
-    "....ssswwwwwwwwwsss.....",
-    "...s...wwwwwwwww...s....",
-    "...G...wwwwwwwww...G....",
-    ".......GGGGGGGGG........",
-    ".......ccccccccc........",
-    "......ccccccccccc.......",
-    "......ccccccccccc.......",
-    ".....ccccccccccccc......",
-    ".....ccccccccccccc......",
-    "....ccccccccccccccc.....",
-    "....CCCCCCCCCCCCCCC.....",
-    "...CCCCCCCCCCCCCCCCC....",
-    "...CCCCCCCCCCCCCCCCC....",
-    "........sssssss.........",
-    "........GGGGGGG.........",
-    ".......sssssssss........",
+  smiling: [
+    "...............g................",
+    "...............g................",
+    "...............g................",
+    "..............ggg...............",
+    "...........g..ggg..g............",
+    "...........g..ggg..g............",
+    "...........g..ggg..g............",
+    ".......g..ggg.ggg.ggg..g........",
+    ".......g..ggg.ggg.ggg..g........",
+    ".......g..ggg.ggg.ggg..g........",
+    "......ggg.ggg.ggg.ggg.ggg.......",
+    ".......G...G...G...G...G........",
+    ".....GGGGGGGGGGGGGGGGGGGGG......",
+    ".......g.o.g.o.g.o.g.o.g........",
+    ".....GGGGGGGGGGGGGGGGGGGGG......",
+    "......ggggggggggggggggggg.......",
+    ".....G.hhhhhhhhhhhhhhhhh.G......",
+    ".....GhhhhhssssssssshhhhhG......",
+    ".....GHhhhssssssssssshhhHG......",
+    ".....GhhhhssssssssssshhhhG......",
+    ".....GhhhhssssssssssshhhhG......",
+    ".....ohhhhskkssssskkshhhho......",
+    "......hhhgsssssssssssghhh.......",
+    "......hhhGsssSsssSsssGhhh.......",
+    "......hhhhssssSSSsssshhhh.......",
+    "......hhhh.sssssssss.hhhh.......",
+    "......hhhh..sssssss..hhhh.......",
+    "......hhhh..SSSSSSS..hhhh.......",
+    ".....hhhGGGGGGGGGGGGGGGhhh......",
+    ".....hhggoggoggoggoggogghh......",
+    ".....hGGGGGGGGGGGGGGGGGGGh......",
+    ".....wwwwwwwwwwwwwwwwwwwww......",
+    "....wwwwwwwwwwwwwwwwwwwwwww.....",
+    "....rrrrrrrrrrrrrrrrrrrrrrr.....",
   ],
-  /* One arm raised in a mudra — greetings and first run. */
-  wave: [
-    "...........g............",
-    "...........g............",
-    "..........ggg...........",
-    "..........ggg...........",
-    ".......g..ggg..g........",
-    ".......g..ggg..g........",
-    "......ggg.ggg.ggg.......",
-    ".....GGGGGGGGGGGGG......",
-    ".....GggGGgggGGggG......",
-    ".....GGGGGGGGGGGGG......",
-    ".....hhhhhhhhhhhhh......",
-    ".....hhssssssssshh......",
-    ".....hhssssssssshh......",
-    ".....hhskssssskshh...g..",
-    ".....hhssssssssshh..s...",
-    ".....hhssskskssshh.s....",
-    ".....hh.sssssss.hhs.....",
-    "......GGGGGGGGGGGs......",
-    ".......wwwwwwwww........",
-    "....ssswwwwwwwww........",
-    "...s...wwwwwwwww........",
-    ".......GGGGGGGGG........",
-    ".......ccccccccc........",
-    "......ccccccccccc.......",
-    "......ccccccccccc.......",
-    ".....ccccccccccccc......",
-    ".....ccccccccccccc......",
-    "....ccccccccccccccc.....",
-    "....CCCCCCCCCCCCCCC.....",
-    "...CCCCCCCCCCCCCCCCC....",
-    "...CCCCCCCCCCCCCCCCC....",
-    "........sssssss.........",
-    "........GGGGGGG.........",
-    ".......sssssssss........",
+  serene: [
+    "...............g................",
+    "...............g................",
+    "...............g................",
+    "..............ggg...............",
+    "...........g..ggg..g............",
+    "...........g..ggg..g............",
+    "...........g..ggg..g............",
+    ".......g..ggg.ggg.ggg..g........",
+    ".......g..ggg.ggg.ggg..g........",
+    ".......g..ggg.ggg.ggg..g........",
+    "......ggg.ggg.ggg.ggg.ggg.......",
+    ".......G...G...G...G...G........",
+    ".....GGGGGGGGGGGGGGGGGGGGG......",
+    ".......g.o.g.o.g.o.g.o.g........",
+    ".....GGGGGGGGGGGGGGGGGGGGG......",
+    "......ggggggggggggggggggg.......",
+    ".....G.hhhhhhhhhhhhhhhhh.G......",
+    ".....GhhhhhssssssssshhhhhG......",
+    ".....GHhhhssssssssssshhhHG......",
+    ".....GhhhhssssssssssshhhhG......",
+    ".....GhhhhssssssssssshhhhG......",
+    ".....ohhhhskkkssskkkshhhho......",
+    "......hhhgsssssssssssghhh.......",
+    "......hhhGssssSSSssssGhhh.......",
+    "......hhhhssssssssssshhhh.......",
+    "......hhhh.sssssssss.hhhh.......",
+    "......hhhh..sssssss..hhhh.......",
+    "......hhhh..SSSSSSS..hhhh.......",
+    ".....hhhGGGGGGGGGGGGGGGhhh......",
+    ".....hhggoggoggoggoggogghh......",
+    ".....hGGGGGGGGGGGGGGGGGGGh......",
+    ".....wwwwwwwwwwwwwwwwwwwww......",
+    "....wwwwwwwwwwwwwwwwwwwwwww.....",
+    "....rrrrrrrrrrrrrrrrrrrrrrr.....",
   ],
-  /* Eyes closed, arms lowered — nothing here yet. */
-  rest: [
-    "...........g............",
-    "...........g............",
-    "..........ggg...........",
-    "..........ggg...........",
-    ".......g..ggg..g........",
-    ".......g..ggg..g........",
-    "......ggg.ggg.ggg.......",
-    ".....GGGGGGGGGGGGG......",
-    ".....GggGGgggGGggG......",
-    ".....GGGGGGGGGGGGG......",
-    ".....hhhhhhhhhhhhh......",
-    ".....hhssssssssshh......",
-    ".....hhssssssssshh......",
-    ".....hhskkksskkkhh......",
-    ".....hhssssssssshh......",
-    ".....hhssssssssshh......",
-    ".....hh.sssssss.hh......",
-    "......GGGGGGGGGGG.......",
-    ".......wwwwwwwww........",
-    "....ssswwwwwwwwwsss.....",
-    ".......wwwwwwwww........",
-    ".......GGGGGGGGG........",
-    ".......ccccccccc........",
-    "......ccccccccccc.......",
-    "......ccccccccccc.......",
-    ".....ccccccccccccc......",
-    ".....ccccccccccccc......",
-    "....ccccccccccccccc.....",
-    "....CCCCCCCCCCCCCCC.....",
-    "...CCCCCCCCCCCCCCCCC....",
-    "...CCCCCCCCCCCCCCCCC....",
-    "........sssssss.........",
-    "........GGGGGGG.........",
-    ".......sssssssss........",
-  ],
-  /* Both arms raised — a match, a completed profile. */
-  cheer: [
-    "...........g............",
-    "...........g............",
-    "..........ggg...........",
-    "..........ggg...........",
-    ".......g..ggg..g........",
-    ".......g..ggg..g........",
-    "......ggg.ggg.ggg.......",
-    ".....GGGGGGGGGGGGG......",
-    ".....GggGGgggGGggG......",
-    ".....GGGGGGGGGGGGG......",
-    ".....hhhhhhhhhhhhh......",
-    ".....hhssssssssshh......",
-    ".....hhssssssssshh......",
-    ".g...hhskssssskshh...g..",
-    "..s..hhssssssssshh..s...",
-    "...s.hhssskskssshh.s....",
-    "....shh.sssssss.hhs.....",
-    ".....sGGGGGGGGGGGs......",
-    ".......wwwwwwwww........",
-    ".......wwwwwwwww........",
-    ".......wwwwwwwww........",
-    ".......GGGGGGGGG........",
-    ".......ccccccccc........",
-    "......ccccccccccc.......",
-    "......ccccccccccc.......",
-    ".....ccccccccccccc......",
-    ".....ccccccccccccc......",
-    "....ccccccccccccccc.....",
-    "....CCCCCCCCCCCCCCC.....",
-    "...CCCCCCCCCCCCCCCCC....",
-    "...CCCCCCCCCCCCCCCCC....",
-    "........sssssss.........",
-    "........GGGGGGG.........",
-    ".......sssssssss........",
+  resting: [
+    "...............g................",
+    "...............g................",
+    "...............g................",
+    "..............ggg...............",
+    "...........g..ggg..g............",
+    "...........g..ggg..g............",
+    "...........g..ggg..g............",
+    ".......g..ggg.ggg.ggg..g........",
+    ".......g..ggg.ggg.ggg..g........",
+    ".......g..ggg.ggg.ggg..g........",
+    "......ggg.ggg.ggg.ggg.ggg.......",
+    ".......G...G...G...G...G........",
+    ".....GGGGGGGGGGGGGGGGGGGGG......",
+    ".......g.o.g.o.g.o.g.o.g........",
+    ".....GGGGGGGGGGGGGGGGGGGGG......",
+    "......ggggggggggggggggggg.......",
+    ".....G.hhhhhhhhhhhhhhhhh.G......",
+    ".....GhhhhhssssssssshhhhhG......",
+    ".....GHhhhssssssssssshhhHG......",
+    ".....GhhhhssssssssssshhhhG......",
+    ".....GhhhhssssssssssshhhhG......",
+    ".....ohhhhskkkssskkkshhhho......",
+    "......hhhgsSSSsssSSSsghhh.......",
+    "......hhhGssssSSSssssGhhh.......",
+    "......hhhhssssssssssshhhh.......",
+    "......hhhh.sssssssss.hhhh.......",
+    "......hhhh..sssssss..hhhh.......",
+    "......hhhh..SSSSSSS..hhhh.......",
+    ".....hhhGGGGGGGGGGGGGGGhhh......",
+    ".....hhggoggoggoggoggogghh......",
+    ".....hGGGGGGGGGGGGGGGGGGGh......",
+    ".....wwwwwwwwwwwwwwwwwwwww......",
+    "....wwwwwwwwwwwwwwwwwwwwwww.....",
+    "....rrrrrrrrrrrrrrrrrrrrrrr.....",
   ],
 } as const;
 
-export type TPixelPetPose = keyof typeof PIXEL_PET_SPRITES;
+export type TPixelPetExpression = keyof typeof PIXEL_PET_SPRITES;
 
-export const PET_WIDTH = 24;
+export const PET_WIDTH = 32;
 export const PET_HEIGHT = 34;

@@ -52,7 +52,7 @@ export function InterviewCard({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <article className="hover: group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground">
+    <article className="pixel-wash group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card hover:border-foreground/35">
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Row Section */}
         <div className="flex items-start justify-between gap-2">

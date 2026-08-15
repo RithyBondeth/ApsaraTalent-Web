@@ -33,7 +33,9 @@ export default function MoreSheetItem(props: IMoreSheetItemProps) {
         {/* Icon Section */}
         <Icon
           className={cn(
-            "size-[18px] transition-transform duration-200 group-hover:-translate-y-0.5",
+            /* One --pixel-unit sideways, not half a step up: hover motion in
+               this UI is horizontal. */
+            "ease-[cubic-bezier(0.4,0,0.2,1)] size-[18px] transition-transform duration-300 group-hover:translate-x-1",
             active ? "text-background" : "text-foreground/80",
           )}
           strokeWidth={active ? 2.3 : 1.7}

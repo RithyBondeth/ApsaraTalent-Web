@@ -224,7 +224,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
   // ─── Default Variant Section ──────────────────────────────────
   return (
-    <div className="hover: flex h-fit w-full cursor-pointer flex-col items-start gap-4 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-4 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-foreground/40">
+    <div className="pixel-wash flex h-fit w-full cursor-pointer flex-col items-start gap-4 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-4 hover:border-foreground/40">
       {/* Profile Section */}
       <div className="flex w-full flex-wrap items-start justify-between gap-3">
         {/* Avatar, Username, JobTitle and Location Section */}
@@ -255,14 +255,14 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         <div className="flex shrink-0 items-center gap-1">
           <Button
             aria-label="Quick view"
-            className="size-10 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95 sm:size-12"
+            className="size-10 rounded-none sm:size-12"
             onClick={handleClickDialog}
           >
             <LucideEye className="!size-5 transition-all duration-300 ease-in-out sm:!size-6" />
           </Button>
           <Button
             aria-label="Like"
-            className="size-10 rounded-none transition-all duration-300 ease-out hover:scale-105 active:scale-95 sm:size-12"
+            className="size-10 rounded-none sm:size-12"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
           >

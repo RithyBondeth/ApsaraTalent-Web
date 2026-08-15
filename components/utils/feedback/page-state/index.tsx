@@ -2,7 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { LucideInbox, LucideTriangleAlert } from "lucide-react";
+import { PixelPet } from "@/components/utils/brand/pixel-pet";
+import { LucideTriangleAlert } from "lucide-react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 
@@ -78,22 +79,18 @@ export function PageState(props: IPageStateProps) {
           width={200}
           className="animate-float h-28 w-28 object-contain grayscale motion-reduce:animate-none sm:h-40 sm:w-40"
         />
-      ) : (
+      ) : isError ? (
         <span
           aria-hidden
-          className={cn(
-            "grid size-14 place-items-center border",
-            isError
-              ? "border-destructive/25 bg-destructive/10 text-destructive"
-              : "border-primary/25 bg-primary/10 text-primary",
-          )}
+          className="grid size-14 place-items-center border border-destructive/25 bg-destructive/10 text-destructive"
         >
-          {isError ? (
-            <LucideTriangleAlert className="size-6" />
-          ) : (
-            <LucideInbox className="size-6" />
-          )}
+          <LucideTriangleAlert className="size-6" />
         </span>
+      ) : (
+        // An empty list is the one moment with nothing to show, so a character
+        // earns the space here in a way she would not anywhere else. `rest`,
+        // not `idle` — she is waiting, and the page is too.
+        <PixelPet expression="resting" height={compact ? 102 : 136} />
       )}
 
       {/* State Copy Section */}

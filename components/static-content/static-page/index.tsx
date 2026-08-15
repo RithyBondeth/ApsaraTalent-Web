@@ -226,7 +226,7 @@ export function StaticCard(props: IStaticCardProps) {
 
   /* ----------------------------- Render UI ----------------------------- */
   return (
-    <article className="static-page-card group flex min-h-full flex-col border border-border bg-card/45 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-foreground/25 hover:bg-card sm:p-6">
+    <article className="static-page-card pixel-wash group flex min-h-full flex-col border border-border bg-card/45 p-5 hover:border-foreground/25 sm:p-6">
       {/* Static Information Card Section */}
       {/* Card Icon Section */}
       <div className="flex size-10 items-center justify-center border border-border bg-muted/60 text-foreground transition-colors group-hover:border-foreground/25 group-hover:bg-foreground group-hover:text-background">

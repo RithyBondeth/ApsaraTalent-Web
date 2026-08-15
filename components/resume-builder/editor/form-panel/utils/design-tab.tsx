@@ -204,7 +204,7 @@ export function DesignTab({
                   "size-8 rounded-none border transition-all",
                   selected
                     ? "scale-105 border-transparent ring-2 ring-primary ring-offset-2 ring-offset-background"
-                    : "border-border/60 hover:scale-105",
+                    : "border-border/60 hover:border-foreground",
                 )}
                 style={{
                   background: `linear-gradient(135deg, ${colors.header} 50%, ${colors.accent} 50%)`,

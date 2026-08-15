@@ -45,7 +45,10 @@ export const ReactionPicker = (props: {
             <button
               key={emoji}
               onClick={() => handleReactionSelect(emoji)}
-              className={`rounded-none p-2 transition-all hover:scale-125 hover:bg-muted ${
+              /* Scale is the one hover the reference reserves for pictures,
+                 and an emoji is one — but it caps at 110, not the 125 this
+                 had. */
+              className={`rounded-none p-2 transition-[transform,background-color] duration-150 hover:scale-110 hover:bg-muted ${
                 currentReaction === emoji ? "scale-110 bg-primary/20" : ""
               }`}
             >

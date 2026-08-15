@@ -37,10 +37,16 @@ export function ScrollToTop() {
       className={cn(
         "fixed bottom-24 right-4 z-40 lg:bottom-8 lg:right-6",
         "flex size-10 items-center justify-center rounded-full",
-        "bg-foreground text-background shadow-[0_4px_20px_hsl(var(--foreground)/0.25)]",
+        /* pixel-overlay-shadow is the one shadow the design ships, and this
+           genuinely floats over scrolling content. */
+        "pixel-overlay-shadow bg-foreground text-background",
         "transition-all duration-300 ease-out",
-        "hover:scale-110 hover:shadow-[0_6px_28px_hsl(var(--foreground)/0.35)] active:scale-95",
-        "motion-reduce:transform-none motion-reduce:transition-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100",
+        /* Was scale-110 plus a 28px blurred shadow that deepened on hover.
+           The arrow inside travels one --pixel-unit instead — the one case
+           where the shuttle runs vertically, because the control's whole
+           meaning is "up". */
+        "[&>svg]:transition-transform [&>svg]:duration-300 hover:[&>svg]:-translate-y-1",
+        "motion-reduce:transition-none motion-reduce:hover:[&>svg]:translate-y-0",
         visible
           ? "translate-y-0 opacity-100"
           : "pointer-events-none translate-y-4 opacity-0",

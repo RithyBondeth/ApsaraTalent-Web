@@ -112,7 +112,7 @@ function Swatch({ token, label }: { token: string; label: string }) {
   );
 }
 
-const PET_POSES = Object.keys(
+const PET_EXPRESSIONS = Object.keys(
   PIXEL_PET_SPRITES,
 ) as (keyof typeof PIXEL_PET_SPRITES)[];
 
@@ -247,14 +247,17 @@ export default function DesignSystemPage() {
 
         <Section
           title="Neak — the pixel Apsara"
-          note="The dancer the product is named after, at 24×34. Drawn as one rect per cell like the mosaic and the field, so she is the same material as the page rather than an illustration on it. Her skin, hair and cloth are tokens declared once and never redefined per theme — a character whose colouring changed between light and dark would stop reading as the same character."
+          note="A 32×34 bust: mokot, face, collar, shoulders. A portrait rather than a full figure, because the Apsara identity lives almost entirely in the crown — spending the whole canvas on it buys five spires, a jewelled band and side pendants, none of which survive on a figure that also has to fit a body. No arms, so the set is expressions rather than poses. Her skin, hair and cloth are tokens declared once and never redefined per theme: a character whose colouring changed between light and dark would stop reading as the same character."
         >
           <div className="flex flex-wrap items-end gap-10">
-            {PET_POSES.map((pose) => (
-              <div key={pose} className="flex flex-col items-center gap-3">
-                <PixelPet pose={pose} height={136} />
+            {PET_EXPRESSIONS.map((expression) => (
+              <div
+                key={expression}
+                className="flex flex-col items-center gap-3"
+              >
+                <PixelPet expression={expression} height={136} />
                 <span className="pixel-label text-[9px] text-muted-foreground">
-                  {pose}
+                  {expression}
                 </span>
               </div>
             ))}

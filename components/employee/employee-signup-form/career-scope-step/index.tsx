@@ -130,7 +130,7 @@ export default function EmployeeCareerScopeStepForm({
           return (
             <Card
               key={index}
-              className={`flex cursor-pointer items-center gap-2 p-2 transition-all hover:scale-105 ${
+              className={`pixel-wash flex cursor-pointer items-center gap-2 p-2 ${
                 isChecked ? "border-primary" : ""
               }`}
             >

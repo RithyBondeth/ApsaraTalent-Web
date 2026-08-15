@@ -28,7 +28,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
   return (
     <article
       className={cn(
-        "hover: group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground",
+        "pixel-wash group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card hover:border-foreground/35",
         props.isRemoving && "animate-card-pop-shrink",
       )}
     >

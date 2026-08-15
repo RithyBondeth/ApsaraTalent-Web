@@ -40,7 +40,10 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-3 top-3 z-[110] flex size-8 items-center justify-center rounded-none border border-border bg-background/90 opacity-80 shadow-sm backdrop-blur-xl transition-all hover:scale-105 hover:opacity-100 focus:outline-none active:scale-95 disabled:pointer-events-none">
+      {/* Opacity, not scale: fading a control up to full strength is one of
+          the four hover behaviours the design uses, and a close button that
+          grows under the cursor moves its own hit target. */}
+      <DialogPrimitive.Close className="absolute right-3 top-3 z-[110] flex size-8 items-center justify-center rounded-none border border-border bg-background/90 opacity-80 backdrop-blur-xl transition-opacity duration-150 hover:opacity-100 focus:outline-none disabled:pointer-events-none">
         <X className="h-4.5 w-4.5 text-foreground" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>

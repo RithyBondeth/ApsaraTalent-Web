@@ -21,10 +21,10 @@ export default function TemplateCard(props: ITemplateCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <article
-      className={`group h-full w-full cursor-pointer overflow-hidden border bg-card transition-[border-color,box-shadow,transform] duration-200 ease-out ${
+      className={`pixel-wash group h-full w-full cursor-pointer overflow-hidden border bg-card ${
         props.selected
-          ? "-translate-y-0.5 border-foreground"
-          : "hover: border-border hover:-translate-y-0.5 hover:border-foreground/35"
+          ? "border-foreground"
+          : "border-border hover:border-foreground/35"
       }`}
     >
       {/* Preview Area Section */}
