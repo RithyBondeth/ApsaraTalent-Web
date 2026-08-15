@@ -31,7 +31,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   FEED_PAGE_SIZE,
@@ -659,12 +658,12 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
             }`}
             stats={[
               {
-                icon: isEmployee ? Building2 : Users,
+                icon: isEmployee ? "briefcase" : "users",
                 label: isEmployee ? tFeed("allCompanies") : tFeed("allTalent"),
                 value: allUsers.length,
               },
               {
-                icon: Sparkles,
+                icon: "pulse",
                 label: tFeed("recommendedForYou"),
                 value:
                   (isEmployee
@@ -927,7 +926,6 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
           title={
             isEmployee ? tFeed("companyListEmpty") : tFeed("employeeListEmpty")
           }
-          image={emptySvg}
           compact
           className="my-6 sm:my-8"
           action={{

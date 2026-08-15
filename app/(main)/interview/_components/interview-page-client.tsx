@@ -10,9 +10,8 @@ import { useSearchParams } from "next/navigation";
 import InterviewLoadingSkeleton from "@/components/interview/skeleton";
 import { InterviewCard } from "@/components/interview/interview-card";
 import { CreateInterviewDialog } from "@/components/interview/create-interview-dialog";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
-import { CalendarCheck2, CalendarClock, CircleCheckBig } from "lucide-react";
+import { CalendarCheck2 } from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 
@@ -125,18 +124,18 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
             ? undefined
             : [
                 {
-                  icon: CalendarCheck2,
+                  icon: "calendar",
                   label: t("statScheduled"),
                   value: interviews.length,
                 },
                 {
-                  icon: CalendarClock,
+                  icon: "calendar",
                   label: t("statPending"),
                   value: interviews.filter((i) => i.status === "pending")
                     .length,
                 },
                 {
-                  icon: CircleCheckBig,
+                  icon: "check",
                   label: t("statAccepted"),
                   value: interviews.filter((i) => i.status === "accepted")
                     .length,
@@ -217,7 +216,6 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
             title={
               isEmployee ? t("noInterviewsEmployee") : t("noInterviewsCompany")
             }
-            image={emptySvg}
             compact
             className="my-6 sm:my-8"
           />

@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -36,7 +35,6 @@ import {
   LucideBriefcaseBusiness,
   LucideGraduationCap,
   LucideSlidersHorizontal,
-  LucideUsers,
   LucideX,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -371,7 +369,7 @@ export default function CompanySearchPage() {
         stats={
           loading
             ? undefined
-            : [{ icon: LucideUsers, label: t("statTalent"), value: total }]
+            : [{ icon: "users", label: t("statTalent"), value: total }]
         }
       >
         <SearchBar
@@ -745,7 +743,6 @@ export default function CompanySearchPage() {
               <PageState
                 variant="empty"
                 title={t("emptyList")}
-                image={emptySvg}
                 compact
                 action={
                   activeFilterCount > 0

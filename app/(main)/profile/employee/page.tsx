@@ -128,6 +128,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import { PixelIcon } from "@/components/utils/brand/pixel-icon";
 import Link from "next/link";
 import {
   Controller,
@@ -138,10 +139,7 @@ import {
 } from "react-hook-form";
 import { PageState } from "@/components/utils/feedback/page-state";
 import type { TEmployeeProfileForm } from "./validation";
-import {
-  addNewEducationSvg,
-  addNewExperienceSvg,
-} from "@/utils/constants/asset.constant";
+import {} from "@/utils/constants/asset.constant";
 import { getEmployeeProfileCompletion } from "@/utils/functions/profile";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
@@ -2257,10 +2255,10 @@ export default function EmployeeProfilePage() {
                 ) : (
                   <div className="flex w-full flex-col items-center justify-center p-3">
                     {/* Add New Experience Section */}
-                    <Image
-                      alt="empty"
-                      src={addNewExperienceSvg}
-                      className="animate-float size-60"
+                    <PixelIcon
+                      name="plus"
+                      size={54}
+                      className="text-muted-foreground/50"
                     />
                     <Button
                       className="text-xs"
@@ -2374,10 +2372,10 @@ export default function EmployeeProfilePage() {
                 ) : (
                   <div className="flex w-full flex-col items-center justify-center p-3">
                     {/* Add New Education Section */}
-                    <Image
-                      alt="empty"
-                      src={addNewEducationSvg}
-                      className="animate-float size-60"
+                    <PixelIcon
+                      name="plus"
+                      size={54}
+                      className="text-muted-foreground/50"
                     />
                     <Button
                       variant={"secondary"}

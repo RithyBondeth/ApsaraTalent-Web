@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { GridRunners } from "@/components/ui/grid-runners";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { useGsapScrollAnimation } from "@/hooks/utils/use-gsap-animation";
 import { LucideArrowRight } from "lucide-react";
@@ -21,8 +20,6 @@ export default function LandingCta() {
         className="landing-dark-panel relative mx-auto max-w-7xl overflow-hidden px-6 py-16 sm:px-10 sm:py-20 lg:px-16 lg:py-24"
       >
         {/* Grid Background Section */}
-        <div className="landing-dark-grid pointer-events-none absolute inset-0" />
-        <GridRunners className="landing-dark-grid-runners" density="quiet" />
 
         {/* CTA Heading Section */}
         <div className="relative z-10 grid gap-12 lg:grid-cols-[1fr_0.72fr] lg:items-end">

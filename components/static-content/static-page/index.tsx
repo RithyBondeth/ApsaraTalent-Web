@@ -1,6 +1,5 @@
 import Header from "@/components/landing/landing-header";
 import LandingFooter from "@/components/landing/landing-footer";
-import { GridRunners } from "@/components/ui/grid-runners";
 import { ScrollProgress } from "@/components/utils/animations/scroll-progress";
 import {
   IStaticBulletProps,
@@ -39,8 +38,6 @@ export function StaticPageShell(props: IStaticPageShellProps) {
       {/* Page Hero Section */}
       <section className="relative overflow-hidden border-b border-border pt-[72px]">
         {/* Hero Background Animation Section */}
-        <div className="landing-grid pointer-events-none absolute inset-0" />
-        <GridRunners className="landing-grid-runners" density="quiet" />
 
         {/* Hero Content Grid Section */}
         <div className="relative mx-auto grid min-h-[420px] max-w-7xl border-x border-border lg:grid-cols-[1.08fr_0.92fr]">
@@ -69,11 +66,6 @@ export function StaticPageShell(props: IStaticPageShellProps) {
           {/* Hero Visual Panel Section */}
           <div className="landing-swap-panel relative flex min-h-[350px] flex-col overflow-hidden border-t border-border p-6 sm:p-8 lg:min-h-0 lg:border-l lg:border-t-0 lg:p-9">
             {/* Visual Panel Background Section */}
-            <div className="landing-dark-grid pointer-events-none absolute inset-0" />
-            <GridRunners
-              className="landing-swap-grid-runners"
-              density="quiet"
-            />
 
             {/* Visual Panel Header Section */}
             <div className="pixel-label relative z-10 flex items-center justify-between text-[10px] text-[hsl(var(--landing-panel-ink)/0.52)]">

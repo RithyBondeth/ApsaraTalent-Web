@@ -2,7 +2,6 @@
 
 import LandingLiveStats from "@/components/landing/landing-live-stats";
 import { Button } from "@/components/ui/button";
-import { GridRunners } from "@/components/ui/grid-runners";
 import { PixelMosaic } from "@/components/utils/brand/pixel-mosaic";
 import { TypographyH1 } from "@/components/utils/typography/typography-h1";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -35,8 +34,6 @@ export default function LandingHero() {
       className="relative min-h-[100dvh] overflow-hidden border-b border-border pt-[72px]"
     >
       {/* Grid Background Section */}
-      <div className="landing-grid pointer-events-none absolute inset-0" />
-      <GridRunners className="landing-grid-runners" density="quiet" />
 
       <div className="relative mx-auto grid min-h-[calc(100dvh-72px)] max-w-7xl border-x border-border lg:grid-cols-[1.08fr_0.92fr]">
         {/* Hero Content Section */}
@@ -113,8 +110,6 @@ export default function LandingHero() {
 
         {/* Feature Card Section */}
         <div className="landing-dark-panel landing-swap-panel relative flex min-h-[560px] flex-col overflow-hidden border-t border-border p-6 sm:p-10 lg:min-h-0 lg:border-l lg:border-t-0 lg:p-12">
-          <div className="landing-dark-grid pointer-events-none absolute inset-0" />
-          <GridRunners className="landing-swap-grid-runners" density="quiet" />
           <div className="pixel-label relative z-10 flex items-center justify-between text-[hsl(var(--landing-panel-ink)/0.55)]">
             <span>Apsara Talent</span>
             <span>Phnom Penh · KH</span>

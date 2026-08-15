@@ -184,7 +184,6 @@
     /* round number.                                                     */
     /* ---------------------------------------------------------------- */
     --pixel-unit: 4px;
-    --pixel-rule: 24px; /* 6 units — the ruled-paper background pitch */
 
     /* ---------------------------------------------------------------- */
     /* Theme preview                                                    */
@@ -411,40 +410,6 @@
      exactly this reason. */
   .pixel-ruled > * {
     background: hsl(var(--background));
-  }
-
-  /* Ruled-paper texture. Sits behind hero and banner surfaces at the same
-     pitch as the module grid, so content lands on the lines rather than
-     across them. Masked at the edges so it fades instead of being cropped. */
-  .pixel-graph-paper {
-    position: relative;
-    isolation: isolate;
-  }
-
-  .pixel-graph-paper::before {
-    position: absolute;
-    z-index: -1;
-    inset: 0;
-    content: "";
-    pointer-events: none;
-    background-image:
-      linear-gradient(
-        to right,
-        hsl(var(--foreground) / 0.045) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        to bottom,
-        hsl(var(--foreground) / 0.045) 1px,
-        transparent 1px
-      );
-    background-size: var(--pixel-rule) var(--pixel-rule);
-    -webkit-mask-image: radial-gradient(
-      ellipse at 0% 0%,
-      #000 10%,
-      transparent 75%
-    );
-    mask-image: radial-gradient(ellipse at 0% 0%, #000 10%, transparent 75%);
   }
 
   /* ── 4. The offset ────────────────────────────────────────────────────── */
@@ -996,13 +961,6 @@
   mask-image: linear-gradient(90deg, #000, transparent 92%);
 }
 
-.profile-detail-grid-runners {
-  z-index: 1;
-  --grid-runner-color: var(--profile-detail-hero-ink);
-  --grid-runner-blend: screen;
-  opacity: 0.66;
-}
-
 .profile-detail-hero-brand {
   border-color: hsl(var(--profile-detail-hero-ink) / 0.25);
   color: hsl(var(--profile-detail-hero-ink) / 0.76);
@@ -1012,11 +970,6 @@
 .profile-detail-hero-corner {
   border-color: hsl(var(--profile-detail-hero-ink) / 0.2);
   background: hsl(var(--profile-detail-hero-ink) / 0.05);
-}
-
-.dark .profile-detail-grid-runners {
-  --grid-runner-blend: multiply;
-  opacity: 0.5;
 }
 
 .profile-detail-meta > span {
@@ -2465,247 +2418,6 @@ body:has(.auth-scope),
 
 /* Small light trails run directly along individual grid lines. Their cycles
    are intentionally staggered so the background feels alive, never busy. */
-.grid-runners {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-  -webkit-mask-image: radial-gradient(
-    82% 72% at 50% 43%,
-    #000 25%,
-    transparent 84%
-  );
-  mask-image: radial-gradient(82% 72% at 50% 43%, #000 25%, transparent 84%);
-}
-
-.auth-grid-runners {
-  --grid-runner-color: var(--auth-ink);
-  --grid-runner-blend: screen;
-}
-
-.dark .auth-grid-runners {
-  --grid-runner-blend: multiply;
-  opacity: 0.62;
-}
-
-.landing-grid-runners {
-  --grid-runner-color: var(--foreground);
-  --grid-runner-blend: multiply;
-  opacity: 0.55;
-}
-
-.dark .landing-grid-runners {
-  --grid-runner-blend: screen;
-  opacity: 0.68;
-}
-
-.landing-dark-grid-runners {
-  --grid-runner-color: var(--auth-ink);
-  --grid-runner-blend: screen;
-  opacity: 0.78;
-}
-
-.landing-swap-grid-runners {
-  --grid-runner-color: var(--landing-panel-ink);
-  --grid-runner-blend: screen;
-  opacity: 0.78;
-}
-
-.dark .landing-swap-grid-runners {
-  --grid-runner-blend: multiply;
-  opacity: 0.58;
-}
-
-.grid-runner {
-  position: absolute;
-  display: block;
-  opacity: 0;
-  mix-blend-mode: var(--grid-runner-blend, screen);
-  will-change: transform, opacity;
-  animation-duration: var(--runner-cycle);
-  animation-delay: var(--runner-delay);
-  animation-timing-function: ease-out;
-  animation-iteration-count: infinite;
-}
-
-.grid-runner::after {
-  content: "";
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  background: hsl(var(--grid-runner-color));
-  border-radius: 999px;
-  box-shadow:
-    0 0 6px hsl(var(--grid-runner-color) / 0.95),
-    0 0 14px hsl(var(--grid-runner-color) / 0.62);
-}
-
-.grid-runner--horizontal {
-  top: var(--runner-line);
-  width: var(--runner-length);
-  height: 1px;
-  box-shadow:
-    0 0 10px hsl(var(--grid-runner-color) / 0.52),
-    0 0 22px hsl(var(--grid-runner-color) / 0.18);
-}
-
-.grid-runner--vertical {
-  left: var(--runner-line);
-  width: 1px;
-  height: var(--runner-length);
-  box-shadow:
-    0 0 10px hsl(var(--grid-runner-color) / 0.52),
-    0 0 22px hsl(var(--grid-runner-color) / 0.18);
-}
-
-.grid-runner--horizontal.grid-runner--forward {
-  left: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    hsl(var(--grid-runner-color) / 0.16) 24%,
-    hsl(var(--grid-runner-color) / 0.82) 76%,
-    hsl(var(--grid-runner-color)) 88%,
-    transparent
-  );
-  animation-name: auth-grid-run-horizontal-forward;
-}
-
-.grid-runner--horizontal.grid-runner--forward::after {
-  top: 50%;
-  right: 9%;
-  transform: translate(50%, -50%);
-}
-
-.grid-runner--horizontal.grid-runner--reverse {
-  right: 0;
-  background: linear-gradient(
-    270deg,
-    transparent,
-    hsl(var(--grid-runner-color) / 0.16) 24%,
-    hsl(var(--grid-runner-color) / 0.82) 76%,
-    hsl(var(--grid-runner-color)) 88%,
-    transparent
-  );
-  animation-name: auth-grid-run-horizontal-reverse;
-}
-
-.grid-runner--horizontal.grid-runner--reverse::after {
-  top: 50%;
-  left: 9%;
-  transform: translate(-50%, -50%);
-}
-
-.grid-runner--vertical.grid-runner--forward {
-  top: 0;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    hsl(var(--grid-runner-color) / 0.16) 24%,
-    hsl(var(--grid-runner-color) / 0.82) 76%,
-    hsl(var(--grid-runner-color)) 88%,
-    transparent
-  );
-  animation-name: auth-grid-run-vertical-forward;
-}
-
-.grid-runner--vertical.grid-runner--forward::after {
-  right: 50%;
-  bottom: 9%;
-  transform: translate(50%, 50%);
-}
-
-.grid-runner--vertical.grid-runner--reverse {
-  bottom: 0;
-  background: linear-gradient(
-    0deg,
-    transparent,
-    hsl(var(--grid-runner-color) / 0.16) 24%,
-    hsl(var(--grid-runner-color) / 0.82) 76%,
-    hsl(var(--grid-runner-color)) 88%,
-    transparent
-  );
-  animation-name: auth-grid-run-vertical-reverse;
-}
-
-.grid-runner--vertical.grid-runner--reverse::after {
-  top: 9%;
-  right: 50%;
-  transform: translate(50%, -50%);
-}
-
-@keyframes auth-grid-run-horizontal-forward {
-  0% {
-    opacity: 0;
-    transform: translate3d(-100%, 0, 0);
-  }
-  5% {
-    opacity: 1;
-  }
-  31% {
-    opacity: 1;
-  }
-  36%,
-  100% {
-    opacity: 0;
-    transform: translate3d(calc(100vw + 100%), 0, 0);
-  }
-}
-
-@keyframes auth-grid-run-horizontal-reverse {
-  0% {
-    opacity: 0;
-    transform: translate3d(100%, 0, 0);
-  }
-  5% {
-    opacity: 1;
-  }
-  31% {
-    opacity: 1;
-  }
-  36%,
-  100% {
-    opacity: 0;
-    transform: translate3d(calc(-100vw - 100%), 0, 0);
-  }
-}
-
-@keyframes auth-grid-run-vertical-forward {
-  0% {
-    opacity: 0;
-    transform: translate3d(0, -100%, 0);
-  }
-  5% {
-    opacity: 1;
-  }
-  31% {
-    opacity: 1;
-  }
-  36%,
-  100% {
-    opacity: 0;
-    transform: translate3d(0, calc(100vh + 100%), 0);
-  }
-}
-
-@keyframes auth-grid-run-vertical-reverse {
-  0% {
-    opacity: 0;
-    transform: translate3d(0, 100%, 0);
-  }
-  5% {
-    opacity: 1;
-  }
-  31% {
-    opacity: 1;
-  }
-  36%,
-  100% {
-    opacity: 0;
-    transform: translate3d(0, calc(-100vh - 100%), 0);
-  }
-}
 
 /* Soft ambient halo behind the artwork */
 .auth-nimbus {
@@ -2735,13 +2447,6 @@ body:has(.auth-scope),
   50% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.05);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .grid-runner {
-    animation: none;
-    opacity: 0;
   }
 }
 
@@ -3307,19 +3012,6 @@ body:has(.landing-scope),
   --auth-ink: 240 30% 12%;
 }
 
-.landing-grid {
-  background-image:
-    linear-gradient(hsl(var(--foreground) / 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--foreground) / 0.035) 1px, transparent 1px);
-  background-size: 44px 44px;
-  -webkit-mask-image: radial-gradient(
-    80% 75% at 50% 45%,
-    #000,
-    transparent 88%
-  );
-  mask-image: radial-gradient(80% 75% at 50% 45%, #000, transparent 88%);
-}
-
 .landing-dark-panel {
   color: hsl(var(--auth-ink));
   background:
@@ -3612,29 +3304,6 @@ body:has(.landing-scope),
   .static-page-faq-chevron {
     transition: none !important;
   }
-}
-
-.landing-dark-grid {
-  background-image:
-    linear-gradient(hsl(var(--auth-ink) / 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--auth-ink) / 0.05) 1px, transparent 1px);
-  background-size: 44px 44px;
-  -webkit-mask-image: radial-gradient(
-    78% 72% at 54% 42%,
-    #000 20%,
-    transparent 84%
-  );
-  mask-image: radial-gradient(78% 72% at 54% 42%, #000 20%, transparent 84%);
-}
-
-.landing-swap-panel .landing-dark-grid {
-  background-image:
-    linear-gradient(hsl(var(--landing-panel-ink) / 0.065) 1px, transparent 1px),
-    linear-gradient(
-      90deg,
-      hsl(var(--landing-panel-ink) / 0.065) 1px,
-      transparent 1px
-    );
 }
 
 @keyframes landing-match-float-left {

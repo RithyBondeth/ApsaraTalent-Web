@@ -2,10 +2,10 @@ import {
   IRecentMatch,
   IWeeklyActivity,
 } from "@/utils/interfaces/analytics/analytics.interface";
-import { LucideIcon } from "lucide-react";
+import type { TPixelGlyph } from "@/components/utils/brand/pixel-icon/glyphs";
 
 export interface IStatisticCardProps {
-  icon: LucideIcon;
+  icon: TPixelGlyph;
   value: number | IWeeklyActivity[] | IRecentMatch[];
   label: string;
   suffix?: string;

@@ -1,6 +1,5 @@
 "use client";
 
-import { GridRunners } from "@/components/ui/grid-runners";
 import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import Link from "next/link";
@@ -14,11 +13,6 @@ export default function LandingFooter() {
   return (
     <footer className="relative border-t border-border bg-background">
       {/* Grid Background Section */}
-      <div className="landing-grid pointer-events-none absolute inset-0" />
-      <GridRunners
-        className="landing-grid-runners opacity-35"
-        density="quiet"
-      />
       <div className="relative mx-auto max-w-7xl border-x border-border px-6 py-12 sm:px-10 sm:py-16 lg:px-14">
         <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
           {/* Brand Section */}

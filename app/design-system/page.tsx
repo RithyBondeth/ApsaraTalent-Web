@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { LucideBriefcase, LucideSparkles, LucideUsers } from "lucide-react";
 
 import { PixelMosaic } from "@/components/utils/brand/pixel-mosaic";
+import { PixelIcon } from "@/components/utils/brand/pixel-icon";
+import { PIXEL_GLYPHS } from "@/components/utils/brand/pixel-icon/glyphs";
 import { StatusPill } from "@/components/utils/data-display/status-pill";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 import { Badge } from "@/components/ui/badge";
@@ -110,6 +111,10 @@ function Swatch({ token, label }: { token: string; label: string }) {
   );
 }
 
+const PIXEL_GLYPH_NAMES = Object.keys(
+  PIXEL_GLYPHS,
+) as (keyof typeof PIXEL_GLYPHS)[];
+
 export default function DesignSystemPage() {
   if (process.env.NODE_ENV === "production") notFound();
 
@@ -145,9 +150,9 @@ export default function DesignSystemPage() {
               title="Find top talent from anywhere and grow your team"
               subtitle="Build your dream team effortlessly, no matter where you are."
               stats={[
-                { icon: LucideUsers, label: "candidates", value: "1,248" },
-                { icon: LucideSparkles, label: "new this week", value: "38" },
-                { icon: LucideBriefcase, label: "open roles", value: "6" },
+                { icon: "users", label: "candidates", value: "1,248" },
+                { icon: "pulse", label: "new this week", value: "38" },
+                { icon: "briefcase", label: "open roles", value: "6" },
               ]}
             />
             <PageBanner
@@ -155,8 +160,8 @@ export default function DesignSystemPage() {
               title="Your notifications"
               subtitle="Stay updated with your latest matches, likes, and messages."
               stats={[
-                { icon: LucideUsers, label: "all", value: "24" },
-                { icon: LucideSparkles, label: "unread", value: "3" },
+                { icon: "users", label: "all", value: "24" },
+                { icon: "pulse", label: "unread", value: "3" },
               ]}
             />
             <PageBanner
@@ -236,6 +241,22 @@ export default function DesignSystemPage() {
                 the theme.
               </p>
             </div>
+          </div>
+        </Section>
+
+        <Section
+          title="Pixel icons"
+          note="9×9 bitmaps drawn as one rect per inked cell, on currentColor. Rects rather than traced paths: a path lets the renderer antialias the outline, and a pixel icon with soft edges is just a small bad icon. Sizes should be multiples of 9 so cell edges land on whole pixels. These carry decorative and symbolic roles — empty states, section marks, stat headers; Lucide stays for dense functional UI where a 16px line icon out-reads a 9-cell bitmap."
+        >
+          <div className="grid grid-cols-4 gap-y-6 sm:grid-cols-8">
+            {PIXEL_GLYPH_NAMES.map((name) => (
+              <div key={name} className="flex flex-col items-center gap-2">
+                <PixelIcon name={name} size={36} className="text-foreground" />
+                <span className="pixel-label text-[9px] text-muted-foreground">
+                  {name}
+                </span>
+              </div>
+            ))}
           </div>
         </Section>
 

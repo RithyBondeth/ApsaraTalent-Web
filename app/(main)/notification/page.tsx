@@ -14,15 +14,9 @@ import {
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { TNotificationFilterType } from "@/utils/types/app/notification.type";
-import {
-  BellRing,
-  LucideCheckCheck,
-  LucideTrash2,
-  MailOpen,
-} from "lucide-react";
+import { BellRing, LucideCheckCheck, LucideTrash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { notificationEmptySvg } from "@/utils/constants/asset.constant";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import NotificationLoadingSkeleton, {
@@ -152,12 +146,12 @@ export default function NotificationPage() {
             ? undefined
             : [
                 {
-                  icon: BellRing,
+                  icon: "bell",
                   label: t("statAll"),
                   value: notifications.length,
                 },
                 {
-                  icon: MailOpen,
+                  icon: "message",
                   label: t("statUnread"),
                   value: unreadCount,
                 },
@@ -333,7 +327,6 @@ export default function NotificationPage() {
               variant="empty"
               title={t("emptyList")}
               description={t("emptyListDescription")}
-              image={notificationEmptySvg}
               compact
               className="my-6 sm:my-8"
               action={

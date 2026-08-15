@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { LucideInbox, LucideTriangleAlert } from "lucide-react";
 import Image, { type StaticImageData } from "next/image";
+import { PixelIcon } from "@/components/utils/brand/pixel-icon";
 import Link from "next/link";
 
 interface IPageStateAction {
@@ -88,11 +88,7 @@ export function PageState(props: IPageStateProps) {
               : "border-primary/25 bg-primary/10 text-primary",
           )}
         >
-          {isError ? (
-            <LucideTriangleAlert className="size-6" />
-          ) : (
-            <LucideInbox className="size-6" />
-          )}
+          <PixelIcon name={isError ? "alert" : "inbox"} size={27} />
         </span>
       )}
 

@@ -26,7 +26,6 @@ import MessageLoadingSkeleton, {
   MessagePaneSkeleton,
   MessageThreadSkeleton,
 } from "@/components/message/skeleton/index";
-import { messageEmptySvg } from "@/utils/constants/asset.constant";
 import { CHAT_LOADING_TIMEOUT_MS } from "@/utils/constants/chat.constant";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { useTranslations } from "next-intl";
@@ -369,7 +368,6 @@ export default function MessagePageContent() {
         variant="empty"
         title={t("selectConversationTitle")}
         description={t("selectConversation")}
-        image={messageEmptySvg}
         compact
       />
     </div>

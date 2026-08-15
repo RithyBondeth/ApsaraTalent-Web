@@ -2,7 +2,6 @@
 
 import { useAnalyticsStore } from "@/stores/apis/matching/analytics.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { Activity, BarChart3, LucideUsers } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { statisticCardConstants } from "@/utils/constants/dashboard.constant";
 import dynamic from "next/dynamic";
@@ -21,6 +20,8 @@ import {
 } from "@/utils/functions/profile";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
+import { PixelIcon } from "@/components/utils/brand/pixel-icon";
+import type { TPixelGlyph } from "@/components/utils/brand/pixel-icon/glyphs";
 
 const WeeklyActivityChart = dynamic(
   () =>
@@ -52,7 +53,7 @@ function SectionHeader({
 }: {
   number: string;
   title: string;
-  icon: React.ReactNode;
+  icon: TPixelGlyph;
 }) {
   return (
     <div className="flex w-full items-center justify-between gap-4 border-b border-border px-6 py-4 sm:px-8">
@@ -66,7 +67,7 @@ function SectionHeader({
         </h2>
       </div>
       <div className="grid size-7 shrink-0 place-items-center bg-primary text-primary-foreground">
-        {icon}
+        <PixelIcon name={icon} size={18} />
       </div>
     </div>
   );
@@ -160,11 +161,7 @@ export default function DashboardPage() {
       />
 
       <section className="pixel-band w-full">
-        <SectionHeader
-          number="01"
-          title={t("overview")}
-          icon={<Activity className="size-4" />}
-        />
+        <SectionHeader number="01" title={t("overview")} icon="pulse" />
 
         {/* Profile Completeness Card Section */}
         {profileCompletion && (
@@ -194,11 +191,7 @@ export default function DashboardPage() {
 
       {/* Charts Row Section */}
       <section className="pixel-band w-full">
-        <SectionHeader
-          number="02"
-          title={t("performance")}
-          icon={<BarChart3 className="size-4" />}
-        />
+        <SectionHeader number="02" title={t("performance")} icon="chart" />
         <div className="pixel-ruled grid-cols-1 border-x-0 border-b-0 lg:grid-cols-3">
           {/* Weekly Activity Bar Chart Section */}
           <div className="p-6 sm:p-8 lg:col-span-2">
@@ -248,11 +241,7 @@ export default function DashboardPage() {
 
       {/* Recent Match Row Section */}
       <section className="pixel-band w-full">
-        <SectionHeader
-          number="03"
-          title={t("recentMatches")}
-          icon={<LucideUsers className="size-4" />}
-        />
+        <SectionHeader number="03" title={t("recentMatches")} icon="users" />
         <div className="p-6 sm:p-8">
           <RecentMatchesList
             matches={data.recentMatches}

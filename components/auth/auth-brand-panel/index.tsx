@@ -1,6 +1,5 @@
 "use client";
 
-import { GridRunners } from "@/components/ui/grid-runners";
 import { PixelMosaic } from "@/components/utils/brand/pixel-mosaic";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -58,7 +57,6 @@ export default function AuthBrandPanel(props: IAuthBrandPanelProps) {
     >
       {/* Ambient Art Layers Section */}
       <div className="auth-panel-grid" aria-hidden />
-      <GridRunners className="auth-grid-runners" />
       <div className="auth-nimbus" aria-hidden />
       <div className="auth-spotlight" aria-hidden />
 

@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -35,7 +34,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import debounce from "lodash.debounce";
 import {
   LucideBriefcaseBusiness,
-  LucideBuilding2,
   LucideCalendarDays,
   LucideCircleDollarSign,
   LucideGraduationCap,
@@ -423,7 +421,7 @@ export default function EmployeeSearchPage() {
         stats={
           loading
             ? undefined
-            : [{ icon: LucideBuilding2, label: t("statJobs"), value: total }]
+            : [{ icon: "briefcase", label: t("statJobs"), value: total }]
         }
       >
         <SearchBar
@@ -994,7 +992,6 @@ export default function EmployeeSearchPage() {
               <PageState
                 variant="empty"
                 title={t("emptyList")}
-                image={emptySvg}
                 compact
                 action={
                   activeFilterCount > 0

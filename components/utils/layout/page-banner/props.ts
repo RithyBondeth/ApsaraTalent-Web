@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+import type { TPixelGlyph } from "@/components/utils/brand/pixel-icon/glyphs";
 import type { ReactNode } from "react";
 
 export interface IPageBannerStat {
@@ -6,7 +6,7 @@ export interface IPageBannerStat {
   label: string;
   /** Pre-formatted for display; the banner does not format numbers itself. */
   value: ReactNode;
-  icon: LucideIcon;
+  icon: TPixelGlyph;
 }
 
 export interface IPageBannerProps {

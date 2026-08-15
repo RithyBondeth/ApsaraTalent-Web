@@ -366,7 +366,6 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
     >
       {/* Landing Match Visual Section */}
       {/* Background Grid Section */}
-      <div className="landing-grid pointer-events-none absolute inset-0" />
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Match Visual Heading Section */}
         <div className="mb-12 grid gap-6 border-b border-border pb-10 sm:mb-16 md:grid-cols-[1fr_0.72fr] md:items-end">
@@ -401,7 +400,6 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
           aria-label={t("matchVisualAccessibleLabel")}
         >
           {/* Stage Background Grid Section */}
-          <div className="landing-dark-grid pointer-events-none absolute inset-0" />
 
           {/* Stage Header Section */}
           <div className="pixel-label relative z-10 mb-10 flex items-center justify-between border-b border-[hsl(var(--auth-ink)/0.12)] pb-5 text-[10px] text-[hsl(var(--auth-ink)/0.42)] lg:mb-0">

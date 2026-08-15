@@ -1,6 +1,5 @@
 "use client";
 
-import { GridRunners } from "@/components/ui/grid-runners";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -24,8 +23,6 @@ export default function LandingFeatures() {
       className="relative border-b border-border py-20 sm:py-28 lg:py-36"
     >
       {/* Grid Background Section */}
-      <div className="landing-grid pointer-events-none absolute inset-0" />
-      <GridRunners className="landing-grid-runners" density="quiet" />
 
       {/* Features Section */}
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

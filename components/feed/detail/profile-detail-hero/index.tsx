@@ -1,7 +1,6 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { GridRunners } from "@/components/ui/grid-runners";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { cn } from "@/lib/utils";
 import { User } from "lucide-react";
@@ -50,10 +49,6 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
           <section className="profile-detail-employee-intro relative flex min-h-[300px] flex-col overflow-hidden bg-foreground p-5 text-background sm:min-h-[340px] sm:p-7 md:min-h-[410px]">
             {/* Animated Grid Background Section */}
             <div className="profile-detail-hero-grid" aria-hidden />
-            <GridRunners
-              className="profile-detail-grid-runners"
-              density="quiet"
-            />
 
             {/* Employee Panel Header Section */}
             <div className="relative z-[2] flex items-start justify-between gap-4">
@@ -132,7 +127,6 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
       >
         {/* Animated Grid Background Section */}
         <div className="profile-detail-hero-grid" aria-hidden />
-        <GridRunners className="profile-detail-grid-runners" density="quiet" />
 
         {/* Company Cover Header Section */}
         <div className="relative z-[2] flex items-start justify-between gap-4">

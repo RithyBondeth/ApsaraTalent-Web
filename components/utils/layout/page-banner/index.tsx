@@ -1,3 +1,4 @@
+import { PixelIcon } from "@/components/utils/brand/pixel-icon";
 import { cn } from "@/lib/utils";
 import type { IPageBannerProps } from "./props";
 
@@ -17,7 +18,7 @@ import type { IPageBannerProps } from "./props";
  * stock drawing does not.
  *
  * The pixel redesign kept that decision. The only thing added back is
- * `.pixel-graph-paper` — a ruled texture drawn from --foreground at 4.5%,
+ * `.` — a ruled texture drawn from --foreground at 4.5%,
  * costing no bytes and following the theme, which is exactly what the deleted
  * SVGs could not do. Stats now set in the mono tier so the numbers read as
  * instrument output rather than as more prose.
@@ -39,7 +40,7 @@ export function PageBanner({
           the right, sharing one vertical rule rather than sitting in a
           gapped two-column grid. */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto]">
-        <div className="pixel-graph-paper pixel-pad min-w-0">
+        <div className="pixel-pad min-w-0">
           {/* Eyebrow Section */}
           <div className="pixel-label flex items-center gap-2 text-muted-foreground">
             {/* Three tiles of the ramp — the same mark the sheet uses
@@ -70,13 +71,13 @@ export function PageBanner({
             readings against the headline rather than a footnote under it. */}
         {hasStats ? (
           <dl className="grid grid-cols-3 border-t border-border lg:auto-cols-[minmax(8.5rem,auto)] lg:grid-flow-col lg:grid-cols-none lg:border-l lg:border-t-0">
-            {stats?.map(({ icon: Icon, value, label }) => (
+            {stats?.map(({ icon, value, label }) => (
               <div
                 key={label}
                 className="flex min-w-0 flex-col justify-end border-border p-4 sm:p-5 [&+&]:border-l"
               >
                 <dt className="flex items-center gap-1.5 text-muted-foreground">
-                  <Icon aria-hidden className="size-3.5 shrink-0" />
+                  <PixelIcon name={icon} size={12} />
                   <span className="pixel-label truncate text-[10px]">
                     {label}
                   </span>

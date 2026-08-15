@@ -112,6 +112,7 @@ import {
 } from "lucide-react";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import Image from "next/image";
+import { PixelIcon } from "@/components/utils/brand/pixel-icon";
 import Link from "next/link";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -122,7 +123,6 @@ import {
   useWatch,
 } from "react-hook-form";
 import type { TCompanyProfileForm } from "./validation";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import { getCompanyProfileCompletion } from "@/utils/functions/profile";
 import { CompanyProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
 import { SectionTitle } from "@/components/utils/layout/section-title";
@@ -1853,10 +1853,10 @@ export default function ProfilePage() {
                 ) : (
                   <div className="flex w-full flex-col items-center justify-center p-5">
                     {/* Add New OpenPosition Section */}
-                    <Image
-                      alt="empty"
-                      src={emptySvg}
-                      className="animate-float size-44"
+                    <PixelIcon
+                      name="briefcase"
+                      size={54}
+                      className="text-muted-foreground/50"
                     />
                     <TypographyMuted className="text-sm">
                       {tP("noOpenPositionAvailable")}
