@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   LucideCalendar,
   LucideDatabase,
@@ -18,9 +17,9 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import {
   StaticBullet,
   StaticPageShell,
+  StaticPageArtworkSlot,
   StaticSection,
 } from "@/components/static-content/static-page";
-import { privacyBannerSvg } from "@/utils/constants/asset.constant";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
 /* -------------------------- Sub Components -------------------------- */
@@ -584,12 +583,9 @@ export function PrivacyContent() {
         </>
       }
       heroVisual={
-        <Image
-          src={privacyBannerSvg}
-          alt="privacy"
-          height={250}
-          width={350}
-          priority
+        <StaticPageArtworkSlot
+          icon={<LucideShieldCheck />}
+          label={c.pageTitle}
         />
       }
     >

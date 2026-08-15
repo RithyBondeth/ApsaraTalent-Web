@@ -71,7 +71,6 @@ import {
   loginMethodConstant,
   noticePeriodConstant,
   platformConstant,
-  salaryCurrencyConstant,
   workModeConstant,
 } from "@/utils/constants/ui.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui";
@@ -99,7 +98,6 @@ import {
   LucideBriefcaseBusiness,
   LucideCamera,
   LucideCircleCheck,
-  LucideCircleDollarSign,
   LucideClock3,
   LucideCompass,
   LucideLoader2,
@@ -323,9 +321,6 @@ export default function EmployeeProfilePage() {
         portfolioUrl: "",
         linkedinUrl: "",
         languages: [],
-        expectedSalaryMin: null,
-        expectedSalaryMax: null,
-        salaryCurrency: "USD",
       },
       educations: [],
       experiences: [],
@@ -415,14 +410,6 @@ export default function EmployeeProfilePage() {
     control: form.control,
     name: "profession.languages",
   }) as string[] | undefined;
-  const salaryMinValue = useWatch({
-    control: form.control,
-    name: "profession.expectedSalaryMin",
-  });
-  const salaryMaxValue = useWatch({
-    control: form.control,
-    name: "profession.expectedSalaryMax",
-  });
 
   const [langPopoverOpen, setLangPopoverOpen] = useState<boolean>(false);
   const [skillDescriptionInput, setSkillDescriptionInput] =
@@ -457,9 +444,6 @@ export default function EmployeeProfilePage() {
         portfolioUrl: employee.portfolioUrl ?? "",
         linkedinUrl: employee.linkedinUrl ?? "",
         languages: employee.languages ?? [],
-        expectedSalaryMin: employee.expectedSalaryMin ?? null,
-        expectedSalaryMax: employee.expectedSalaryMax ?? null,
-        salaryCurrency: "USD",
       },
       experiences:
         employee.experiences?.map((exp) => ({
@@ -997,8 +981,6 @@ export default function EmployeeProfilePage() {
         "portfolioUrl",
         "linkedinUrl",
         "languages",
-        "expectedSalaryMin",
-        "expectedSalaryMax",
       ];
 
       professionKeys.forEach((key) => {
@@ -2121,100 +2103,6 @@ export default function EmployeeProfilePage() {
                 )}
               </div>
 
-              {/* Expected Salary Section */}
-              <div className="col-span-12 flex w-full flex-col items-start gap-2 tablet-md:col-span-1">
-                <TypographyMuted className="text-xs">
-                  {tP("expectedSalary")}
-                </TypographyMuted>
-                {!isEdit && salaryMinValue == null && salaryMaxValue == null ? (
-                  <MissingProfileFieldButton
-                    label={tP("addMissingField", {
-                      field: tP("expectedSalary"),
-                    })}
-                    onClick={() => beginEditingField("salary-min")}
-                  />
-                ) : (
-                  <div className="grid w-full grid-cols-[160px_minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 tablet-sm:grid-cols-1">
-                    <div className="min-w-0">
-                      <Controller
-                        name="profession.salaryCurrency"
-                        control={form.control}
-                        render={({ field }) => (
-                          <Select
-                            value={field.value ?? "USD"}
-                            onValueChange={field.onChange}
-                            disabled={!isEdit}
-                          >
-                            <SelectTrigger className="h-12 gap-2 text-muted-foreground [&>svg:last-child]:ml-auto">
-                              <div className="flex min-w-0 items-center gap-2">
-                                <LucideCircleDollarSign className="size-[18px] shrink-0" />
-                                <SelectValue placeholder="USD" />
-                              </div>
-                            </SelectTrigger>
-                            <SelectContent className="profile-overlay profile-select-content">
-                              {salaryCurrencyConstant.map((c) => (
-                                <SelectItem key={c.value} value={c.value}>
-                                  {c.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <Controller
-                        name="profession.expectedSalaryMin"
-                        control={form.control}
-                        render={({ field }) => (
-                          <Input
-                            id="salary-min"
-                            type="number"
-                            placeholder={tP("salaryMin")}
-                            {...field}
-                            value={field.value ?? ""}
-                            onChange={(e) =>
-                              field.onChange(
-                                e.target.value === ""
-                                  ? null
-                                  : parseFloat(e.target.value),
-                              )
-                            }
-                            disabled={!isEdit}
-                          />
-                        )}
-                      />
-                    </div>
-                    <TypographyMuted className="shrink-0 text-sm tablet-sm:hidden">
-                      —
-                    </TypographyMuted>
-                    <div className="flex-1">
-                      <Controller
-                        name="profession.expectedSalaryMax"
-                        control={form.control}
-                        render={({ field }) => (
-                          <Input
-                            id="salary-max"
-                            type="number"
-                            placeholder={tP("salaryMax")}
-                            {...field}
-                            value={field.value ?? ""}
-                            onChange={(e) =>
-                              field.onChange(
-                                e.target.value === ""
-                                  ? null
-                                  : parseFloat(e.target.value),
-                              )
-                            }
-                            disabled={!isEdit}
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-
               {/* Description Section */}
               <div className="col-span-12 flex w-full flex-col items-start gap-1 tablet-md:col-span-1">
                 <div className="flex w-full items-center justify-between">
@@ -2564,7 +2452,10 @@ export default function EmployeeProfilePage() {
                         onClick={() => removeSkill(skill.name)}
                         className="inline-flex items-center justify-center"
                       >
-                        <LucideXCircle className="text-red-500" width="18px" />
+                        <LucideXCircle
+                          className="text-destructive"
+                          width="18px"
+                        />
                       </button>
                     )}
                   </div>
@@ -2678,7 +2569,10 @@ export default function EmployeeProfilePage() {
                         onClick={() => removeCareerScope(career.name)}
                         className="inline-flex items-center justify-center"
                       >
-                        <LucideXCircle className="text-red-500" width="18px" />
+                        <LucideXCircle
+                          className="text-destructive"
+                          width="18px"
+                        />
                       </button>
                     )}
                   </div>
@@ -2861,7 +2755,7 @@ export default function EmployeeProfilePage() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      className="bg-red-100 text-red-500"
+                      className="bg-destructive-subtle text-destructive-accent"
                       onClick={() => setOpenRemoveResumeDialog(true)}
                     >
                       <LucideTrash2 />
@@ -2967,7 +2861,7 @@ export default function EmployeeProfilePage() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      className="bg-red-100 text-red-500"
+                      className="bg-destructive-subtle text-destructive-accent"
                       onClick={() => setOpenRemoveCoverLetterDialog(true)}
                     >
                       <LucideTrash2 />
@@ -3044,7 +2938,7 @@ export default function EmployeeProfilePage() {
                     </Link>
                     {isEdit && (
                       <LucideXCircle
-                        className="flex-shrink-0 cursor-pointer text-red-500 transition-colors hover:text-red-600"
+                        className="flex-shrink-0 cursor-pointer text-destructive transition-colors hover:text-destructive-accent"
                         size={18}
                         onClick={() => removeSocial(item.platform as TPlatform)}
                       />
@@ -3218,13 +3112,13 @@ export default function EmployeeProfilePage() {
                   {user.lastLoginMethod &&
                   user.lastLoginMethod.toUpperCase() ===
                     item.label.toUpperCase() ? (
-                    <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
+                    <div className="cursor-pointer border border-destructive-border bg-destructive-subtle px-3 py-1 text-destructive-accent">
                       <TypographySmall className="text-xs font-medium">
                         {tP("disconnect")}
                       </TypographySmall>
                     </div>
                   ) : (
-                    <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
+                    <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
                       <TypographySmall className="text-xs font-medium">
                         {tP("connect")}
                       </TypographySmall>
@@ -3240,13 +3134,13 @@ export default function EmployeeProfilePage() {
                   <TypographySmall>{tP("email")}</TypographySmall>
                 </div>
                 {user.email ? (
-                  <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
+                  <div className="cursor-pointer border border-destructive-border bg-destructive-subtle px-3 py-1 text-destructive-accent">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
+                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>
@@ -3261,13 +3155,13 @@ export default function EmployeeProfilePage() {
                   <TypographySmall>{tP("phoneOtp")}</TypographySmall>
                 </div>
                 {user.phone ? (
-                  <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
+                  <div className="cursor-pointer border border-destructive-border bg-destructive-subtle px-3 py-1 text-destructive-accent">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
+                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>

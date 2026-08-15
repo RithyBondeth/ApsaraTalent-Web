@@ -23,7 +23,6 @@ import { useModerationStore } from "@/stores/apis/moderation/moderation.store";
 import { ICompany } from "@/utils/interfaces/user/company.interface";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 import { Building2, Sparkles, Users } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, {
   useCallback,
@@ -32,11 +31,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  emptySvg,
-  feedCompanyBannerSvg,
-  feedEmployeeBannerSvg,
-} from "@/utils/constants/asset.constant";
+import { emptySvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   FEED_PAGE_SIZE,
@@ -53,6 +48,7 @@ import { MemoCompanyFeedCard } from "@/components/feed/memo-company-feed-card";
 import { MemoEmployeeFeedCard } from "@/components/feed/memo-employee-feed-card";
 import { useFeedActionEffect } from "@/components/utils/effects/feed-action-effect";
 import { PageState } from "@/components/utils/feedback/page-state";
+import { PageBanner } from "@/components/utils/layout/page-banner";
 import { FadeIn } from "@/components/utils/layout/fade-in";
 import { OnboardingFlow } from "@/components/utils/onboarding/onboarding-flow";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
@@ -641,84 +637,39 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       ) : (
         <FadeIn className="w-full">
           {/* Feed Banner Content Section */}
-          <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
-            <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6 sm:px-9 sm:py-10">
-              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                <span className="h-px w-7 bg-primary" />
-                {isEmployee ? tFeed("allCompanies") : tFeed("allTalent")}
-              </div>
-
-              <div className="max-w-3xl">
-                <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.05] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl">
-                  {isEmployee
-                    ? tFeed("employeeBannerTitle")
-                    : tFeed("companyBannerTitle")}
-                </h1>
-                <p className="mt-4 max-w-[60ch] text-sm leading-6 text-muted-foreground sm:text-base">
-                  {isEmployee
-                    ? tFeed("employeeBannerSubtitle1")
-                    : tFeed("companyBannerSubtitle1")}{" "}
-                  {isEmployee
-                    ? tFeed("employeeBannerSubtitle2")
-                    : tFeed("companyBannerSubtitle2")}
-                </p>
-              </div>
-
-              <p className="max-w-[70ch] border-l-2 border-foreground pl-3 text-xs leading-5 text-muted-foreground">
-                {isEmployee
-                  ? tFeed("employeeBannerMuted")
-                  : tFeed("companyBannerMuted")}
-              </p>
-            </div>
-
-            <div className="feed-hero-visual">
-              <div aria-hidden className="feed-hero-visual-grid" />
-
-              <div className="feed-hero-network-chip">
-                <span className="feed-hero-network-icon" aria-hidden>
-                  {isEmployee ? <Building2 /> : <Users />}
-                </span>
-                <span>
-                  {isEmployee
-                    ? tFeed("companyNetwork")
-                    : tFeed("talentNetwork")}
-                </span>
-                <span aria-hidden className="feed-hero-network-status" />
-              </div>
-
-              <div aria-hidden className="feed-hero-art-stage">
-                <span className="feed-hero-node feed-hero-node-one" />
-                <span className="feed-hero-node feed-hero-node-two" />
-                <span className="feed-hero-node feed-hero-node-three" />
-
-                <div className="feed-hero-art-frame">
-                  <div className="feed-hero-art-grid" />
-                  <div className="feed-hero-art-glow" />
-                  <Image
-                    src={
-                      isEmployee ? feedEmployeeBannerSvg : feedCompanyBannerSvg
-                    }
-                    alt=""
-                    height={260}
-                    width={360}
-                    className="feed-hero-artwork"
-                    priority
-                  />
-                  <span className="feed-hero-corner feed-hero-corner-nw" />
-                  <span className="feed-hero-corner feed-hero-corner-ne" />
-                  <span className="feed-hero-corner feed-hero-corner-sw" />
-                  <span className="feed-hero-corner feed-hero-corner-se" />
-                </div>
-              </div>
-
-              <div aria-hidden className="feed-hero-signal-bars">
-                <span />
-                <span />
-                <span />
-                <span />
-              </div>
-            </div>
-          </section>
+          <PageBanner
+            eyebrow={isEmployee ? tFeed("allCompanies") : tFeed("allTalent")}
+            title={
+              isEmployee
+                ? tFeed("employeeBannerTitle")
+                : tFeed("companyBannerTitle")
+            }
+            subtitle={`${
+              isEmployee
+                ? tFeed("employeeBannerSubtitle1")
+                : tFeed("companyBannerSubtitle1")
+            } ${
+              isEmployee
+                ? tFeed("employeeBannerSubtitle2")
+                : tFeed("companyBannerSubtitle2")
+            }`}
+            stats={[
+              {
+                icon: isEmployee ? Building2 : Users,
+                label: isEmployee ? tFeed("allCompanies") : tFeed("allTalent"),
+                value: allUsers.length,
+              },
+              {
+                icon: Sparkles,
+                label: tFeed("recommendedForYou"),
+                value:
+                  (isEmployee
+                    ? filteredEmployeeRecommendations
+                    : filteredCompanyRecommendations
+                  )?.length ?? 0,
+              },
+            ]}
+          />
         </FadeIn>
       )}
 

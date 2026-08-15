@@ -41,23 +41,25 @@ export function AiQuotaBadge({ className }: { className?: string }) {
     Math.min(100, Math.round(remainingRatio * 100)),
   );
 
+  // Quota really is a severity scale, so it reads from the status ramp. Each
+  // token already resolves per theme — no `dark:` twin needed.
   const tone =
     remainingRatio > 0.5
       ? {
-          text: "text-emerald-700 dark:text-emerald-300",
-          bar: "bg-emerald-500",
-          ring: "border-emerald-500/30 bg-emerald-50 dark:bg-emerald-900/10",
+          text: "text-success-accent",
+          bar: "bg-success",
+          ring: "border-success-border bg-success-subtle",
         }
       : remainingRatio > 0.2
         ? {
-            text: "text-amber-700 dark:text-amber-300",
-            bar: "bg-amber-500",
-            ring: "border-amber-500/30 bg-amber-50 dark:bg-amber-900/10",
+            text: "text-warning-accent",
+            bar: "bg-warning",
+            ring: "border-warning-border bg-warning-subtle",
           }
         : {
-            text: "text-red-700 dark:text-red-300",
-            bar: "bg-red-500",
-            ring: "border-red-500/30 bg-red-50 dark:bg-red-900/10",
+            text: "text-destructive-accent",
+            bar: "bg-destructive",
+            ring: "border-destructive-border bg-destructive-subtle",
           };
 
   /* -------------------------------- Render UI ------------------------------- */
@@ -78,7 +80,7 @@ export function AiQuotaBadge({ className }: { className?: string }) {
       <span className={cn("whitespace-nowrap text-xs font-medium", tone.text)}>
         {t("usesLeftToday", { remaining, limit })}
       </span>
-      <span className="h-1.5 w-10 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
+      <span className="h-1.5 w-10 overflow-hidden rounded-full bg-foreground/10">
         <span
           className={cn("block h-full rounded-full transition-all", tone.bar)}
           style={{ width: `${remainingPct}%` }}

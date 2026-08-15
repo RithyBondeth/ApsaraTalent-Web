@@ -2,8 +2,10 @@ import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
+import { MultiSelectCombobox } from "@/components/ui/multi-select-combobox";
 import {
   Popover,
   PopoverContent,
@@ -22,8 +24,11 @@ import Tag from "@/components/utils/data-display/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
+  availabilityConstant,
+  languageConstant,
   salaryCurrencyConstant,
   workModeConstant,
+  yearOfExperienceConstant,
 } from "@/utils/constants/ui.constant";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -35,6 +40,7 @@ import {
   CircleDollarSign,
   FileText,
   GraduationCap,
+  Languages,
   Laptop,
   ListChecks,
   LucidePlus,
@@ -61,6 +67,41 @@ export default function OpenPositionStepForm({
   const t = useTranslations("auth");
   const tr = useTranslations("resumeBuilder");
   const tToast = useTranslations("toast");
+
+  // Both lists are shared with the employee side on purpose: the job search
+  // filters compare these values to `employee.availability` and
+  // `employee.yearsOfExperience` by exact string equality.
+  const availabilityOptions = availabilityConstant.map((item) => ({
+    ...item,
+    label: t(
+      item.value === "full_time"
+        ? "availabilityFullTime"
+        : item.value === "part_time"
+          ? "availabilityPartTime"
+          : item.value === "internship"
+            ? "availabilityInternship"
+            : item.value === "contract"
+              ? "availabilityContract"
+              : "availabilityFreelance",
+    ),
+  }));
+
+  const experienceOptions = yearOfExperienceConstant.map((item) => ({
+    ...item,
+    label: t(
+      item.value === "No Experience"
+        ? "yearOfExpNoExperience"
+        : item.value === "Less than 1 year"
+          ? "yearOfExpLessThan1Year"
+          : item.value === "1 - 2 years"
+            ? "yearOfExp1To2Years"
+            : item.value === "3 - 5 years"
+              ? "yearOfExp3To5Years"
+              : item.value === "6 - 10 years"
+                ? "yearOfExp6To10Years"
+                : "yearOfExp10Plus",
+    ),
+  }));
 
   /* ----------------------------- API Integration ---------------------------- */
   const { isRefining, refineContent } = useAIRefine();
@@ -128,6 +169,7 @@ export default function OpenPositionStepForm({
       experienceRequirement: "",
       educationRequirement: "",
       skills: [],
+      languagesRequired: [],
       types: "",
       salaryMin: undefined,
       salaryMax: undefined,
@@ -202,16 +244,29 @@ export default function OpenPositionStepForm({
                   errors?.openPositions?.[index]?.title?.message
                 }
               />
-              <Input
-                prefix={<BadgeCheck />}
-                placeholder={`${t("cmpOpenPositionTypePlaceholder")} *`}
-                aria-label={t("cmpOpenPositionType")}
-                aria-required="true"
-                {...register(`openPositions.${index}.types`)}
-                validationMessage={errors?.openPositions?.[
-                  index
-                ]?.types?.message?.toString()}
-              />
+              {/* Position Type Section — same vocabulary as an employee's
+                  availability, so the job-type search filter can match. */}
+              <div className="flex w-full flex-col items-start gap-2">
+                <Controller
+                  control={control!}
+                  name={`openPositions.${index}.types`}
+                  render={({ field }) => (
+                    <CreatableCombobox
+                      options={availabilityOptions}
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      placeholder={`${t("cmpOpenPositionTypePlaceholder")} *`}
+                      emptyText={t("cmpOpenPositionTypeEmpty")}
+                      ariaLabel={t("cmpOpenPositionType")}
+                      icon={<BadgeCheck />}
+                      required
+                    />
+                  )}
+                />
+                <ErrorMessage>
+                  {errors?.openPositions?.[index]?.types?.message?.toString()}
+                </ErrorMessage>
+              </div>
             </div>
 
             {/* Description Section */}
@@ -248,16 +303,32 @@ export default function OpenPositionStepForm({
 
             {/* Experience and Education Section */}
             <div className="field-row w-full">
-              <Input
-                prefix={<BarChart3 />}
-                placeholder={`${t("cmpOpenPositionExpPlaceholder")} *`}
-                aria-label={t("cmpOpenPositionExpRequired")}
-                aria-required="true"
-                {...register(`openPositions.${index}.experienceRequirement`)}
-                validationMessage={
-                  errors?.openPositions?.[index]?.experienceRequirement?.message
-                }
-              />
+              {/* Experience Section — same scale as an employee's years of
+                  experience, so candidate and requirement compare directly. */}
+              <div className="flex w-full flex-col items-start gap-2">
+                <Controller
+                  control={control!}
+                  name={`openPositions.${index}.experienceRequirement`}
+                  render={({ field }) => (
+                    <CreatableCombobox
+                      options={experienceOptions}
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      placeholder={`${t("cmpOpenPositionExpPlaceholder")} *`}
+                      emptyText={t("cmpOpenPositionExpEmpty")}
+                      ariaLabel={t("cmpOpenPositionExpRequired")}
+                      icon={<BarChart3 />}
+                      required
+                    />
+                  )}
+                />
+                <ErrorMessage>
+                  {
+                    errors?.openPositions?.[index]?.experienceRequirement
+                      ?.message
+                  }
+                </ErrorMessage>
+              </div>
               <Input
                 prefix={<GraduationCap />}
                 placeholder={`${t("cmpOpenPositionEduPlaceholder")} *`}
@@ -399,6 +470,29 @@ export default function OpenPositionStepForm({
                   {errors?.openPositions?.[index]?.deadlineDate?.message}
                 </ErrorMessage>
               </div>
+            </div>
+
+            {/* Required Languages Section — mirrors the employee languages
+                list so a candidate's languages match a role's requirement. */}
+            <div className="flex w-full flex-col items-start gap-2">
+              <Controller
+                control={control!}
+                name={`openPositions.${index}.languagesRequired`}
+                render={({ field }) => (
+                  <MultiSelectCombobox
+                    options={languageConstant}
+                    value={field.value ?? []}
+                    onChange={field.onChange}
+                    placeholder={t("cmpOpenPositionLanguagesPlaceholder")}
+                    emptyText={t("cmpOpenPositionLanguagesEmpty")}
+                    ariaLabel={t("cmpOpenPositionLanguages")}
+                    icon={<Languages />}
+                  />
+                )}
+              />
+              <ErrorMessage>
+                {errors?.openPositions?.[index]?.languagesRequired?.message}
+              </ErrorMessage>
             </div>
 
             {/* Location and Openings Count Section */}

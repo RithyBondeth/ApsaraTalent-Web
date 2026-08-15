@@ -23,7 +23,10 @@ import {
   getAvailabilityStyleClass,
   getSocialPlatformTypeIcon,
 } from "@/utils/functions/ui";
-import { translateLocation } from "@/utils/functions/text";
+import {
+  formatAvailabilityWords,
+  translateLocation,
+} from "@/utils/functions/text";
 import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { formatShortDate } from "@/utils/functions/date";
 import { extractCleanFilename } from "@/utils/functions/file";
@@ -324,7 +327,7 @@ export default function EmployeeDetailPage() {
             <span
               className={`border-current/15 border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(employeeData.availability)}`}
             >
-              {employeeData.availability}
+              {formatAvailabilityWords(employeeData.availability)}
             </span>
           ) : undefined
         }

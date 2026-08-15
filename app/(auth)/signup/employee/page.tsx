@@ -105,9 +105,6 @@ export default function EmployeeSignup() {
         workMode: undefined,
         noticePeriod: undefined,
         languages: [],
-        expectedSalaryCurrency: "USD",
-        expectedSalaryMin: undefined,
-        expectedSalaryMax: undefined,
       },
       experience: parsedData?.experiences?.length
         ? parsedData.experiences.map((exp) => ({
@@ -168,6 +165,41 @@ export default function EmployeeSignup() {
   };
 
   /* --------------------------------- Methods --------------------------------- */
+  // ── Build Employee Payload ─────────────────────────────────────────
+  // Everything the wizard collects that is not tied to how the account was
+  // authenticated. Shared by the email and phone paths below so a field added
+  // to the wizard cannot reach one path and silently miss the other.
+  const buildEmployeePayload = (data: TEmployeeSignUp) => ({
+    job: data.profession.job,
+    yearsOfExperience: data.profession.yearOfExperience,
+    availability: data.profession.availability,
+    description: data.profession.description,
+    workMode: data.profession.workMode ?? null,
+    noticePeriod: data.profession.noticePeriod ?? null,
+    languages: data.profession.languages ?? [],
+    educations: data.educations.map((edu) => ({
+      school: edu.school,
+      degree: edu.degree,
+      year: new Date(edu.year, 0, 1).toISOString(),
+    })),
+    experiences: data.experience.map((exp) => ({
+      title: exp.title,
+      company: exp.company,
+      description: exp.description,
+      startDate: new Date(exp.startDate).toISOString(),
+      endDate: new Date(exp.endDate).toISOString(),
+    })),
+    skills: data.skillAndReference.skills.map((skill) => ({
+      name: skill,
+      description: skill,
+    })),
+    careerScopes: data.careerScopes.map((cs) => ({
+      name: cs,
+      description: cs,
+    })),
+    socials: [],
+  });
+
   // ── Navigation Helpers Function ────────────────────────────────────
   // Check if user has no experience (to skip step 2)
   const hasNoExperience = () =>
@@ -212,6 +244,7 @@ export default function EmployeeSignup() {
         if (basicSignupData) {
           // Signup employee first to get employeeID
           const employeeId = await empSignup.signup({
+            ...buildEmployeePayload(data),
             authEmail: true,
             email: basicSignupData.email ?? null,
             password: basicSignupData.password ?? null,
@@ -220,33 +253,8 @@ export default function EmployeeSignup() {
             dob: basicSignupData.dob ?? undefined,
             username: basicSignupData.username ?? null,
             gender: (basicSignupData.gender as TGender) ?? ("other" as TGender),
-            job: data.profession.job,
-            yearsOfExperience: data.profession.yearOfExperience,
-            availability: data.profession.availability,
-            description: data.profession.description,
             location: basicSignupData.selectedLocation ?? null,
             phone: basicSignupData.phone!,
-            educations: data.educations.map((edu) => ({
-              school: edu.school,
-              degree: edu.degree,
-              year: new Date(edu.year, 0, 1).toISOString(),
-            })),
-            experiences: data.experience.map((exp) => ({
-              title: exp.title,
-              company: exp.company,
-              description: exp.description,
-              startDate: new Date(exp.startDate).toISOString(),
-              endDate: new Date(exp.endDate).toISOString(),
-            })),
-            skills: data.skillAndReference.skills.map((skill) => ({
-              name: skill,
-              description: skill,
-            })),
-            careerScopes: data.careerScopes.map((cs) => ({
-              name: cs,
-              description: cs,
-            })),
-            socials: [],
           });
 
           if (!employeeId) {
@@ -287,6 +295,7 @@ export default function EmployeeSignup() {
         if (basicPhoneSignupData) {
           // Signup employee first to get employeeID
           const employeeId = await empSignup.signup({
+            ...buildEmployeePayload(data),
             authEmail: false,
             email: null,
             password: null,
@@ -295,33 +304,8 @@ export default function EmployeeSignup() {
             dob: undefined,
             username: null,
             gender: "other" as TGender,
-            job: data.profession.job,
-            yearsOfExperience: data.profession.yearOfExperience,
-            availability: data.profession.availability,
-            description: data.profession.description,
             location: null,
             phone: basicPhoneSignupData.phone!,
-            educations: data.educations.map((edu) => ({
-              school: edu.school,
-              degree: edu.degree,
-              year: new Date(edu.year).toISOString(),
-            })),
-            experiences: data.experience.map((exp) => ({
-              title: exp.title,
-              company: exp.company,
-              description: exp.description,
-              startDate: new Date(exp.startDate).toISOString(),
-              endDate: new Date(exp.endDate).toISOString(),
-            })),
-            skills: data.skillAndReference.skills.map((skill) => ({
-              name: skill,
-              description: skill,
-            })),
-            careerScopes: data.careerScopes.map((cs) => ({
-              name: cs,
-              description: cs,
-            })),
-            socials: [],
           });
 
           if (!employeeId) {

@@ -22,6 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { LazyAiMatchExplanationAction } from "@/components/matching/lazy-ai-actions";
+import MatchScoreBadge from "@/components/matching/match-score-badge";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
@@ -72,11 +73,14 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
                 @{props.username}
               </TypographyMuted>
             </div>
-            <span
-              className={`border-current/15 flex-shrink-0 whitespace-nowrap rounded-none border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
-            >
-              {availabilityLabel}
-            </span>
+            <div className="flex flex-shrink-0 items-center gap-2">
+              <MatchScoreBadge score={props.matchScore} />
+              <span
+                className={`border-current/15 whitespace-nowrap rounded-none border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
+              >
+                {availabilityLabel}
+              </span>
+            </div>
           </div>
 
           {/* Description Section */}

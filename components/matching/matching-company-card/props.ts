@@ -25,4 +25,6 @@ export interface IMatchingCompanyCardProps {
   employeeDescription?: string;
   /** Skill overlap score (0–100) from the matching algorithm */
   skillScore?: number | null;
+  /** Overall weighted fit (0–100): skills, experience, type, mode, languages, location */
+  matchScore?: number | null;
 }

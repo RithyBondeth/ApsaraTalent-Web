@@ -90,6 +90,9 @@ export default function CompanySignup() {
         selectRequired: (field) => {
           const labels: Record<string, string> = {
             location: tv("fieldLabelLocation"),
+            "founded year": tv("fieldLabelFoundedYear"),
+            "experience level": tv("fieldLabelExperienceReq"),
+            "position type": tv("fieldLabelType"),
           };
           return tv("selectRequired", { field: labels[field] ?? field });
         },
@@ -109,6 +112,8 @@ export default function CompanySignup() {
         companySize: "",
         foundedYear: "",
         location: "",
+        websiteUrl: "",
+        companyType: "",
       },
       openPositions: [
         {
@@ -117,6 +122,7 @@ export default function CompanySignup() {
           experienceRequirement: "",
           educationRequirement: "",
           skills: [],
+          languagesRequired: [],
           types: "",
           salaryMin: undefined,
           salaryMax: undefined,
@@ -158,6 +164,43 @@ export default function CompanySignup() {
   };
 
   /* --------------------------------- Methods --------------------------------- */
+  // ── Build Company Payload ──────────────────────────────────────
+  // Everything the form collects that is not tied to how the account was
+  // authenticated. Shared by the email and phone paths below so a field added
+  // to the wizard cannot reach one path and silently miss the other.
+  const buildCompanyPayload = (data: TCompanySignup) => ({
+    name: data.basicInfo.name,
+    description: data.basicInfo.description,
+    industry: data.basicInfo.industry,
+    location: data.basicInfo.location,
+    companySize: Number(data.basicInfo.companySize),
+    foundedYear: Number(data.basicInfo.foundedYear),
+    websiteUrl: data.basicInfo.websiteUrl || null,
+    companyType: data.basicInfo.companyType || null,
+    openPositions: data.openPositions?.map((job) => ({
+      title: job.title,
+      description: job.description,
+      type: job.types,
+      experience: job.experienceRequirement,
+      education: job.educationRequirement,
+      skills: job.skills,
+      languagesRequired: job.languagesRequired ?? [],
+      salaryMin: job.salaryMin ?? null,
+      salaryMax: job.salaryMax ?? null,
+      salaryCurrency: job.salaryCurrency ?? "USD",
+      workMode: job.workMode ?? null,
+      location: job.location || null,
+      openingsCount: job.openingsCount ?? null,
+      deadlineDate: job.deadlineDate.toISOString(),
+    })),
+    benefits:
+      data.benefitsAndValues.benefits?.map((bf) => ({ label: bf })) ?? [],
+    values:
+      data.benefitsAndValues.values?.map((value) => ({ label: value })) ?? [],
+    careerScopes: data.careerScopes.map((cs) => ({ name: cs })),
+    socials: [],
+  });
+
   // ── Navigation Helpers Function ────────────────────────────────
   // Handle Previous Step
   const prevStep = () => setStep((prev) => prev - 1);
@@ -176,37 +219,11 @@ export default function CompanySignup() {
           if (basicSignupData) {
             // Signup company first to get companyID
             const companyId = await cmpSignup.signup({
+              ...buildCompanyPayload(data),
               authEmail: true,
               email: basicSignupData.email!,
               password: basicSignupData.password!,
-              name: data.basicInfo.name,
-              description: data.basicInfo.description,
               phone: basicSignupData.phone!,
-              industry: data.basicInfo.industry,
-              location: data.basicInfo.location,
-              companySize: Number(data.basicInfo.companySize),
-              foundedYear: Number(data.basicInfo.foundedYear),
-              openPositions: data.openPositions?.map((job) => ({
-                title: job.title,
-                description: job.description,
-                type: job.types,
-                experience: job.experienceRequirement,
-                education: job.educationRequirement,
-                skills: job.skills,
-                deadlineDate: job.deadlineDate.toISOString(),
-              })),
-              benefits:
-                data.benefitsAndValues.benefits?.map((bf) => ({
-                  label: bf,
-                })) ?? [],
-              values:
-                data.benefitsAndValues.values?.map((value) => ({
-                  label: value,
-                })) ?? [],
-              careerScopes: data.careerScopes.map((cs) => ({
-                name: cs,
-              })),
-              socials: [],
             });
 
             if (!companyId) {
@@ -234,37 +251,11 @@ export default function CompanySignup() {
           if (basicPhoneSignupData) {
             // Signup company first to get companyID
             const companyId = await cmpSignup.signup({
+              ...buildCompanyPayload(data),
               authEmail: false,
               email: null,
               password: null,
-              name: data.basicInfo.name,
-              description: data.basicInfo.description,
               phone: basicPhoneSignupData.phone!,
-              industry: data.basicInfo.industry,
-              location: data.basicInfo.location,
-              companySize: Number(data.basicInfo.companySize),
-              foundedYear: Number(data.basicInfo.foundedYear),
-              openPositions: data.openPositions?.map((job) => ({
-                title: job.title,
-                description: job.description,
-                type: job.types,
-                experience: job.experienceRequirement,
-                education: job.educationRequirement,
-                skills: job.skills,
-                deadlineDate: job.deadlineDate.toISOString(),
-              })),
-              benefits:
-                data.benefitsAndValues.benefits?.map((bf) => ({
-                  label: bf,
-                })) ?? [],
-              values:
-                data.benefitsAndValues.values?.map((value) => ({
-                  label: value,
-                })) ?? [],
-              careerScopes: data.careerScopes.map((cs) => ({
-                name: cs,
-              })),
-              socials: [],
             });
 
             if (!companyId) {

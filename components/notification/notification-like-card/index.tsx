@@ -43,9 +43,9 @@ export default function NotificationLikeCard(
           : t("likedYourCompany", { name: props.user.name })
       }
       icon={<LucideHeart strokeWidth={1.5} className="size-full" />}
-      iconBgColor="bg-pink-100 dark:bg-pink-900/30"
-      iconColor="text-pink-500"
-      unreadColor="bg-pink-500"
+      iconBgColor="bg-category-magenta-subtle"
+      iconColor="text-category-magenta-accent"
+      unreadColor="bg-category-magenta"
       onDelete={props.onDelete}
       onClick={handleNavigate}
     >
@@ -78,7 +78,7 @@ export default function NotificationLikeCard(
           </div>
 
           {/* Like Badge Section */}
-          <div className="shrink-0 border border-pink-500/15 bg-pink-100 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-pink-500 dark:bg-pink-900/30">
+          <div className="shrink-0 border border-category-magenta/20 bg-category-magenta-subtle px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-category-magenta-accent">
             {t("likeBadge")}
           </div>
         </div>

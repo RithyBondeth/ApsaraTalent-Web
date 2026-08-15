@@ -37,14 +37,15 @@ describe("profile status components", () => {
     expect(screen.queryByText("100%", { exact: true })).not.toBeInTheDocument();
   });
 
+  // Asserts the token family, not the hue — see ui-functions.test.ts.
   it.each([
-    ["FULL_TIME", "Full Time", "green"],
-    ["PART_TIME", "Part Time", "blue"],
-    ["FREELANCE", "Freelance", "purple"],
+    ["FULL_TIME", "Full Time", "category-teal"],
+    ["PART_TIME", "Part Time", "category-indigo"],
+    ["FREELANCE", "Freelance", "category-violet"],
     ["CONTRACT", "Contract", "muted"],
-  ])("renders %s availability", (availability, label, color) => {
+  ])("renders %s availability", (availability, label, token) => {
     render(<AvailabilityBadge availability={availability} />);
-    expect(screen.getByText(label).className).toContain(color);
+    expect(screen.getByText(label).className).toContain(token);
   });
 
   it("renders a visible search failure", () => {

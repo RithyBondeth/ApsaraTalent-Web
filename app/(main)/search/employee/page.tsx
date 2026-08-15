@@ -48,7 +48,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
-import { employeeSearchBannerSvg } from "@/utils/constants/asset.constant";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { SearchCompanyCardSkeleton } from "@/components/search/skeleton";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
@@ -421,10 +420,11 @@ export default function EmployeeSearchPage() {
         title={t("bannerTitle")}
         subtitle={t("bannerSubtitle1")}
         supportingText={t("bannerSubtitle2")}
-        mutedText={t("bannerMuted")}
-        image={employeeSearchBannerSvg}
-        imageAlt="employee-search"
-        visualIcon={<LucideBuilding2 />}
+        stats={
+          loading
+            ? undefined
+            : [{ icon: LucideBuilding2, label: t("statJobs"), value: total }]
+        }
       >
         <SearchBar
           isEmployee={true}
@@ -929,6 +929,9 @@ export default function EmployeeSearchPage() {
                     description={item.description}
                     type={item.type}
                     salary={item.salary}
+                    salaryMin={item.salaryMin}
+                    salaryMax={item.salaryMax}
+                    salaryCurrency={item.salaryCurrency}
                     experience={item.experience}
                     education={item.education}
                     skills={item.skills}

@@ -19,7 +19,12 @@ import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui";
-import { translateLocation, getNameInitials } from "@/utils/functions/text";
+import {
+  formatAvailabilityWords,
+  translateLocation,
+  getNameInitials,
+} from "@/utils/functions/text";
+import { useSalaryText } from "@/hooks/utils/use-salary-text";
 import { formatDisplayDate } from "@/utils/functions/date";
 import { IBenefits } from "@/utils/interfaces/user/company.interface";
 import { IImage } from "@/utils/interfaces/user/company.interface";
@@ -43,6 +48,7 @@ import {
   LucideMapPinned,
   LucidePhone,
   LucideStar,
+  LucideLanguages,
   LucideUser,
   LucideUsers,
   User,
@@ -78,6 +84,7 @@ export default function CompanyDetailPage() {
   const t = useTranslations("toast");
   const tf = useTranslations("feed");
   const tl = useTranslations("locations");
+  const salaryText = useSalaryText();
 
   /* -------------------------------- All States ------------------------------- */
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -411,7 +418,7 @@ export default function CompanyDetailPage() {
                             {item.type && (
                               <Tag
                                 icon={<LucideAlarmClock />}
-                                label={item.type}
+                                label={formatAvailabilityWords(item.type)}
                                 neutral
                                 className="!rounded-none border border-border"
                               />
@@ -420,6 +427,14 @@ export default function CompanyDetailPage() {
                               <Tag
                                 icon={<LucideUser />}
                                 label={item.experience}
+                                neutral
+                                className="!rounded-none border border-border"
+                              />
+                            )}
+                            {!!item.languagesRequired?.length && (
+                              <Tag
+                                icon={<LucideLanguages />}
+                                label={item.languagesRequired.join(", ")}
                                 neutral
                                 className="!rounded-none border border-border"
                               />
@@ -448,7 +463,9 @@ export default function CompanyDetailPage() {
                       {(item.description ||
                         item.education ||
                         item.skills ||
-                        item.salary) && (
+                        item.salary ||
+                        item.salaryMin != null ||
+                        item.salaryMax != null) && (
                         <div className="mt-4 space-y-3 border-t border-border/60 pt-4">
                           {item.description && (
                             <div>
@@ -487,16 +504,14 @@ export default function CompanyDetailPage() {
                               </div>
                             </div>
                           )}
-                          {item.salary && (
-                            <div>
-                              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                                {tf("salaryRange")}
-                              </p>
-                              <span className="text-sm font-semibold text-primary">
-                                {item.salary}
-                              </span>
-                            </div>
-                          )}
+                          <div>
+                            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                              {tf("salaryRange")}
+                            </p>
+                            <span className="text-sm font-semibold text-primary">
+                              {salaryText(item)}
+                            </span>
+                          </div>
                         </div>
                       )}
                     </div>

@@ -13,8 +13,6 @@ import StatisticCard from "@/components/dashboard/statistic-card";
 import { ProfileCompletenessCard } from "@/components/dashboard/profile-completeness-card";
 import { DashboardLoadingSkeleton } from "@/components/dashboard/skeleton";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
-import { matchingBannerSvg } from "@/utils/constants/asset.constant";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
@@ -22,6 +20,7 @@ import {
   getCompanyProfileCompletion,
 } from "@/utils/functions/profile";
 import { PageState } from "@/components/utils/feedback/page-state";
+import { PageBanner } from "@/components/utils/layout/page-banner";
 
 const WeeklyActivityChart = dynamic(
   () =>
@@ -145,68 +144,19 @@ export default function DashboardPage() {
   return (
     <div className="dashboard-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
-      <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
-        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6 sm:px-9 sm:py-10">
-          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            <span className="h-px w-7 bg-primary" />
-            {t("insightCenter")}
-          </div>
-          <div className="max-w-3xl">
-            <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.05] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl">
-              {isEmployee ? t("bannerTitleEmployee") : t("bannerTitleCompany")}
-            </h1>
-            <p className="mt-4 max-w-[60ch] text-sm leading-6 text-muted-foreground sm:text-base">
-              {isEmployee
-                ? t("bannerSubtitle1Employee")
-                : t("bannerSubtitle1Company")}{" "}
-              {isEmployee
-                ? t("bannerSubtitle2Employee")
-                : t("bannerSubtitle2Company")}
-            </p>
-          </div>
-          <p className="max-w-[70ch] border-l-2 border-foreground pl-3 text-xs leading-5 text-muted-foreground">
-            {isEmployee ? t("bannerMutedEmployee") : t("bannerMutedCompany")}
-          </p>
-        </div>
-
-        <div className="feed-hero-visual">
-          <div aria-hidden className="feed-hero-visual-grid" />
-          <div className="feed-hero-network-chip">
-            <span className="feed-hero-network-icon" aria-hidden>
-              <Activity />
-            </span>
-            <span>{t("insightCenter")}</span>
-            <span aria-hidden className="feed-hero-network-status" />
-          </div>
-          <div aria-hidden className="feed-hero-art-stage">
-            <span className="feed-hero-node feed-hero-node-one" />
-            <span className="feed-hero-node feed-hero-node-two" />
-            <span className="feed-hero-node feed-hero-node-three" />
-            <div className="feed-hero-art-frame">
-              <div className="feed-hero-art-grid" />
-              <div className="feed-hero-art-glow" />
-              <Image
-                src={matchingBannerSvg}
-                alt=""
-                height={260}
-                width={360}
-                className="feed-hero-artwork"
-                priority
-              />
-              <span className="feed-hero-corner feed-hero-corner-nw" />
-              <span className="feed-hero-corner feed-hero-corner-ne" />
-              <span className="feed-hero-corner feed-hero-corner-sw" />
-              <span className="feed-hero-corner feed-hero-corner-se" />
-            </div>
-          </div>
-          <div aria-hidden className="feed-hero-signal-bars">
-            <span />
-            <span />
-            <span />
-            <span />
-          </div>
-        </div>
-      </section>
+      <PageBanner
+        eyebrow={t("insightCenter")}
+        title={isEmployee ? t("bannerTitleEmployee") : t("bannerTitleCompany")}
+        subtitle={`${
+          isEmployee
+            ? t("bannerSubtitle1Employee")
+            : t("bannerSubtitle1Company")
+        } ${
+          isEmployee
+            ? t("bannerSubtitle2Employee")
+            : t("bannerSubtitle2Company")
+        }`}
+      />
 
       <section className="flex w-full flex-col gap-5">
         <SectionHeader

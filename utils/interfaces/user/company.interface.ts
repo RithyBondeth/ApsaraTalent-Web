@@ -1,7 +1,11 @@
 import { ICareerScope } from "./career.interface";
 import { ISocialLink } from "./social.interface";
 
-type TCompanyType = "startup" | "sme" | "enterprise" | "ngo" | "government";
+/**
+ * Free text, not a union — `companyTypeConstant` is the list the UI suggests,
+ * but employers outside it may enter their own. Matches the API contract.
+ */
+type TCompanyType = string;
 
 export interface ICompany {
   id: string;
@@ -26,6 +30,7 @@ export interface ICompany {
   socials: ISocialLink[];
   createdAt?: string;
   skillScore?: number | null;
+  matchScore?: number | null;
 }
 
 export interface IBenefits {
@@ -50,6 +55,7 @@ export interface IJobPosition {
   salaryCurrency?: string | null;
   workMode?: TJobWorkMode | null;
   location?: string | null;
+  languagesRequired?: string[] | null;
   openingsCount?: number | null;
   type: string;
   experience: string;

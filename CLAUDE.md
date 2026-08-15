@@ -146,8 +146,57 @@ scripts/             # Node maintenance and verification scripts
 ### Styling
 - Use Tailwind CSS with the established design system
 - Custom breakpoints are defined for responsive design
-- Theme variables are managed through CSS custom properties
-- Color palette includes dynamic badge colors and comprehensive theme support
+- The UI is square: `rounded-none` everywhere, `rounded-full` only for avatars,
+  dots and pills. `--radius` is `0` so the shadcn primitives agree. Elevation is
+  a hard offset shadow with no blur (`4px 4px 0`), not a soft drop shadow.
+
+### Page banners
+- Every signed-in page's banner is `PageBanner`
+  (`components/utils/layout/page-banner`): an eyebrow, headline, subtitle, and up
+  to three optional `stats` (a page's already-loaded counts). Legal/landing pages
+  use `StaticPageShell` with a themeable `StaticPageArtworkSlot`, never a raster.
+- **No banner illustrations.** They were removed on purpose — the SVGs ran
+  146–320 KB, preloaded with `priority`, took ~68% of the mobile fold, and used
+  no `currentColor` so they couldn't follow the theme. Don't reintroduce a hero
+  image; give the space to real data via `stats` instead.
+- Withhold `stats` until the data has loaded (pass `undefined`, not zeroes) so a
+  placeholder "0" doesn't flash and reflow.
+
+### Colour
+All colour lives in CSS custom properties in `app/globals.css` and is exposed
+through `tailwind.config.ts`. **Never write a raw palette class** — `bg-green-100`,
+`text-amber-700`, `dark:bg-red-900/30`. They hardcode a hue, need a hand-written
+`dark:` twin, and drift between files.
+
+Three groups of tokens:
+
+- **Neutral** — `background`, `card`, `popover`, `muted`, `border`, `input`,
+  `primary`, `secondary`, `accent`. `--border` is decorative; `--input` bounds
+  interactive controls and is deliberately darker to hold 3:1 (WCAG 1.4.11).
+  Don't collapse them back into one value.
+- **Status** — `success`, `warning`, `info`, `destructive`, for severity.
+  Five roles each: the bare token is the solid fill, plus `-foreground` (on that
+  fill), `-accent` (text on page/card/subtle), `-subtle` (tinted surface) and
+  `-border`. Example: `bg-success-subtle text-success-accent border-success-border`.
+- **Categorical** — `category-{violet,magenta,teal,orange,indigo,lime}` with
+  `-accent` and `-subtle`, for labels that differ in *kind*: notification type,
+  employment type, skill tags. Never borrow a status colour for these — spending
+  amber on "freelance" is what stops a real warning from standing out.
+
+Every token resolves per theme on its own, so **token classes never take a
+`dark:` variant**. Seeing one is a sign someone reintroduced a second palette.
+
+Tailwind only compiles class names it can see spelled out, so build lookup maps
+with literal strings — `` `bg-${status}-subtle` `` silently compiles to nothing.
+`StatusPill` (`components/utils/data-display/status-pill`) already covers the
+common status-badge case.
+
+- `npm run check:design` gates both halves: `check:contrast` re-derives every
+  token pair's WCAG ratio from `globals.css` and fails if one drops below
+  threshold; `check:tokens` is a ratchet on raw palette classes that may go down
+  but never up (`--list` to see what's left, `--update` after migrating a file).
+- `app/design-system` renders every token and primitive in both themes. Dev
+  only — it `notFound()`s in production.
 
 ### API Development
 - API URLs are centralized in `utils/constants/apis/`

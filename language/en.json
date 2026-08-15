@@ -244,11 +244,7 @@
     "empProfessionNoticePeriodPlaceholder": "Select notice period",
     "empProfessionLanguages": "Languages Spoken",
     "empProfessionLanguagesPlaceholder": "Add a language",
-    "empProfessionExpectedSalary": "Expected Salary Range",
-    "empProfessionExpectedSalaryMin": "Min Salary",
-    "empProfessionExpectedSalaryMax": "Max Salary",
-    "empProfessionExpectedSalaryMinPlaceholder": "e.g. 500",
-    "empProfessionExpectedSalaryMaxPlaceholder": "e.g. 1500",
+    "empProfessionLanguagesEmpty": "No language found.",
     "workModeRemote": "Remote",
     "workModeOnSite": "On-site",
     "workModeHybrid": "Hybrid",
@@ -321,12 +317,14 @@
     "cmpBasicInfoCompanySizePlaceholder": "Number of employee",
     "cmpBasicInfoFoundedYear": "Founded Year",
     "cmpBasicInfoFoundedYearPlaceholder": "Founded Year",
+    "cmpBasicInfoFoundedYearEmpty": "No year found.",
     "cmpBasicInfoLocations": "Locations",
     "cmpBasicInfoLocationPlaceholder": "Location",
     "cmpBasicInfoWebsiteUrl": "Website URL",
     "cmpBasicInfoWebsiteUrlPlaceholder": "https://yourcompany.com",
     "cmpBasicInfoCompanyType": "Company Type",
-    "cmpBasicInfoCompanyTypePlaceholder": "Select company type",
+    "cmpBasicInfoCompanyTypePlaceholder": "Select or type company type",
+    "cmpBasicInfoCompanyTypeEmpty": "Type to add your own",
     "companyTypeStartup": "Startup",
     "companyTypeSme": "SME",
     "companyTypeEnterprise": "Enterprise",
@@ -337,11 +335,16 @@
     "cmpOpenPositionFieldTitle": "Title",
     "cmpOpenPositionTitlePlaceholder": "Title",
     "cmpOpenPositionType": "Type",
-    "cmpOpenPositionTypePlaceholder": "Type",
+    "cmpOpenPositionTypePlaceholder": "Employment type",
+    "cmpOpenPositionTypeEmpty": "Type to add your own",
+    "cmpOpenPositionLanguages": "Languages Required",
+    "cmpOpenPositionLanguagesPlaceholder": "Languages required",
+    "cmpOpenPositionLanguagesEmpty": "No language found.",
     "cmpOpenPositionDescription": "Description",
     "cmpOpenPositionDescriptionPlaceholder": "Description",
     "cmpOpenPositionExpRequired": "Experience Required",
-    "cmpOpenPositionExpPlaceholder": "Experience",
+    "cmpOpenPositionExpPlaceholder": "Experience required",
+    "cmpOpenPositionExpEmpty": "Type to add your own",
     "cmpOpenPositionEduRequired": "Education Required",
     "cmpOpenPositionEduPlaceholder": "Education",
     "cmpOpenPositionSalary": "Salary (legacy)",
@@ -626,7 +629,8 @@
     "experienceLabel": "Experience",
     "viewCompany": "View Company",
     "loadMore": "Load More",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "statJobs": "Jobs listed"
   },
   "searchCompany": {
     "bannerTitle": "Hire Smarter, Anywhere.",
@@ -664,7 +668,8 @@
     "yrsExp": "yrs exp",
     "viewProfile": "View Profile",
     "loadMore": "Load More",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "statTalent": "Talent found"
   },
   "favorite": {
     "savedFavorites": "Saved Favorites",
@@ -685,6 +690,9 @@
     "yrsExp": "{years} yrs exp"
   },
   "matching": {
+    "matchScoreValue": "{score}% match",
+    "matchScoreLabel": "Overall match score: {score} out of 100",
+    "matchScoreHint": "Overall fit across skills, experience, employment type, work mode, languages and location",
     "matchNetwork": "Match Network",
     "yourMatches": "Your Matches",
     "connections": "mutual connections",
@@ -771,7 +779,8 @@
     "regenerateAnalysis": "Re-analyze",
     "skillGapBadge": "{count, plural, one {# gap} other {# gaps}}",
     "learningTip": "How to learn",
-    "neededFor": "Needed for"
+    "neededFor": "Needed for",
+    "statMatches": "Matches"
   },
   "feed": {
     "employeeBannerTitle": "Connect with global professionals and grow your network",
@@ -1151,7 +1160,6 @@
     "languages": "Languages Spoken",
     "addLanguage": "Add a language",
     "addMissingField": "Add {field}",
-    "expectedSalary": "Expected Salary Range",
     "salaryMin": "Min Salary",
     "salaryMax": "Max Salary",
     "platform": "Platform",
@@ -1244,9 +1252,14 @@
     "industry": "Industry",
     "companySize": "Company Size",
     "foundedYear": "Founded Year",
+    "foundedYearEmpty": "No year found.",
     "websiteUrl": "Website URL",
     "companyType": "Company Type",
-    "companyTypePlaceholder": "Select company type",
+    "companyTypePlaceholder": "Select or type company type",
+    "companyTypeEmpty": "Type to add your own",
+    "languagesRequired": "Languages Required",
+    "languagesRequiredPlaceholder": "Languages required",
+    "languagesRequiredEmpty": "No language found.",
     "profileVisibility": "Profile Visibility",
     "visibleToCompanies": "Your profile can appear in company search and matching.",
     "hiddenFromCompanies": "Your profile is hidden from company search and matching.",
@@ -1268,8 +1281,6 @@
       "portfolioUrl": "Portfolio URL",
       "linkedinUrl": "LinkedIn Profile",
       "languages": "Languages Spoken",
-      "minimumSalary": "Minimum Expected Salary",
-      "maximumSalary": "Maximum Expected Salary",
       "skills": "Skills",
       "experience": "Experience",
       "education": "Education",
@@ -1358,7 +1369,9 @@
     "bannerTitle": "Your Notifications",
     "bannerSubtitle1": "Stay updated with your latest matches, likes, and messages.",
     "bannerSubtitle2": "Never miss an important update — all your alerts, all in one place.",
-    "bannerMuted": "Real-time updates, delivered directly to you."
+    "bannerMuted": "Real-time updates, delivered directly to you.",
+    "statAll": "All",
+    "statUnread": "Unread"
   },
   "moderation": {
     "moreOptions": "More options",
@@ -1438,6 +1451,9 @@
   "common": {
     "previous": "Previous",
     "next": "Next",
+    "salaryFrom": "From {amount}",
+    "salaryUpTo": "Up to {amount}",
+    "salaryNegotiable": "Negotiable",
     "noResultsFound": "No results found.",
     "loadingCareer": "Loading Career...",
     "noCareerFound": "No Career Found",
@@ -1552,7 +1568,10 @@
       "declined": "Declined",
       "cancelled": "Cancelled",
       "completed": "Completed"
-    }
+    },
+    "statScheduled": "Scheduled",
+    "statPending": "Pending",
+    "statAccepted": "Accepted"
   },
   "twoFactor": {
     "enableTitle": "Enable Two-Factor Authentication",

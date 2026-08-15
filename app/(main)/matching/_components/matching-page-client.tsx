@@ -9,7 +9,6 @@ import { useUnmatchStore } from "@/stores/apis/matching/unmatch.store";
 import { useInterviewStore } from "@/stores/apis/matching/interview.store";
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useInitiateChatStore } from "@/stores/apis/chat/initiate-chat.store";
 import { useChatStore } from "@/stores/features/chat/chat.store";
@@ -18,11 +17,12 @@ import { MatchingLoadingSkeleton } from "@/components/matching/skeleton";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { emptySvg, matchingBannerSvg } from "@/utils/constants/asset.constant";
+import { emptySvg } from "@/utils/constants/asset.constant";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { CountUp } from "@/components/utils/animations/count-up";
 import { Building2, Handshake, Users } from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
+import { PageBanner } from "@/components/utils/layout/page-banner";
 
 interface Props {
   initialIsEmployee: boolean;
@@ -265,63 +265,18 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
   return (
     <div className="matching-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
-      <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
-        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6 sm:px-9 sm:py-10">
-          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            <span className="h-px w-7 bg-primary" />
-            {t("matchNetwork")}
-          </div>
-          <div className="max-w-3xl">
-            <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.05] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl">
-              {t("bannerTitle")}
-            </h1>
-            <p className="mt-4 max-w-[60ch] text-sm leading-6 text-muted-foreground sm:text-base">
-              {t("bannerSubtitle1")} {t("bannerSubtitle2")}
-            </p>
-          </div>
-          <p className="max-w-[70ch] border-l-2 border-foreground pl-3 text-xs leading-5 text-muted-foreground">
-            {t("bannerMuted")}
-          </p>
-        </div>
-
-        <div className="feed-hero-visual">
-          <div aria-hidden className="feed-hero-visual-grid" />
-          <div className="feed-hero-network-chip">
-            <span className="feed-hero-network-icon" aria-hidden>
-              <Handshake />
-            </span>
-            <span>{t("matchNetwork")}</span>
-            <span aria-hidden className="feed-hero-network-status" />
-          </div>
-          <div aria-hidden className="feed-hero-art-stage">
-            <span className="feed-hero-node feed-hero-node-one" />
-            <span className="feed-hero-node feed-hero-node-two" />
-            <span className="feed-hero-node feed-hero-node-three" />
-            <div className="feed-hero-art-frame">
-              <div className="feed-hero-art-grid" />
-              <div className="feed-hero-art-glow" />
-              <Image
-                src={matchingBannerSvg}
-                alt=""
-                height={260}
-                width={360}
-                className="feed-hero-artwork"
-                priority
-              />
-              <span className="feed-hero-corner feed-hero-corner-nw" />
-              <span className="feed-hero-corner feed-hero-corner-ne" />
-              <span className="feed-hero-corner feed-hero-corner-sw" />
-              <span className="feed-hero-corner feed-hero-corner-se" />
-            </div>
-          </div>
-          <div aria-hidden className="feed-hero-signal-bars">
-            <span />
-            <span />
-            <span />
-            <span />
-          </div>
-        </div>
-      </section>
+      <PageBanner
+        eyebrow={t("matchNetwork")}
+        title={t("bannerTitle")}
+        subtitle={`${t("bannerSubtitle1")} ${t("bannerSubtitle2")}`}
+        stats={[
+          {
+            icon: Handshake,
+            label: t("statMatches"),
+            value: matchCount,
+          },
+        ]}
+      />
 
       {/* Matches Section */}
       <section className="flex w-full flex-col gap-5">
@@ -391,6 +346,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
                 employeeExperience={currentUser?.employee?.yearsOfExperience}
                 employeeDescription={currentUser?.employee?.description}
                 skillScore={cmp.skillScore}
+                matchScore={cmp.matchScore}
               />
             ))
           ) : getCurrentCmpStore.currentCompanyMatching &&
@@ -416,6 +372,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
                 isUnmatching={unmatchingId === emp.id}
                 companyId={currentUser?.company?.id ?? ""}
                 skillScore={emp.skillScore}
+                matchScore={emp.matchScore}
               />
             ))
           ) : (

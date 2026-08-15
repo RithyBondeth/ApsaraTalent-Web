@@ -25,26 +25,10 @@ export default {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./utils/**/*.{js,ts,jsx,tsx}",
   ],
-  safelist: [
-    {
-      pattern:
-        /bg-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-100/,
-    },
-    {
-      pattern:
-        /text-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-800/,
-    },
-    {
-      pattern:
-        /bg-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-500\/15/,
-      variants: ["dark"],
-    },
-    {
-      pattern:
-        /text-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-300/,
-      variants: ["dark"],
-    },
-  ],
+  // No safelist. It previously force-generated a 48-class matrix of raw palette
+  // shades for the tag chips; those chips now use categorical tokens that
+  // appear as literal strings in utils/constants/ui.constant.ts, which the
+  // content globs above already scan.
   theme: {
     extend: {
       keyframes: {
@@ -107,9 +91,70 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        // Status families. Each mirrors the five roles declared in
+        // globals.css and resolves per theme on its own, so `bg-success-subtle`
+        // is correct in both modes with no `dark:` variant alongside it.
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+          accent: "hsl(var(--success-accent))",
+          subtle: "hsl(var(--success-subtle))",
+          border: "hsl(var(--success-border))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+          accent: "hsl(var(--warning-accent))",
+          subtle: "hsl(var(--warning-subtle))",
+          border: "hsl(var(--warning-border))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+          accent: "hsl(var(--info-accent))",
+          subtle: "hsl(var(--info-subtle))",
+          border: "hsl(var(--info-border))",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+          accent: "hsl(var(--destructive-accent))",
+          subtle: "hsl(var(--destructive-subtle))",
+          border: "hsl(var(--destructive-border))",
+        },
+        // Categorical — for labels that differ in kind, not severity.
+        // Never borrow a status token for these; see globals.css.
+        category: {
+          violet: {
+            DEFAULT: "hsl(var(--category-violet))",
+            accent: "hsl(var(--category-violet-accent))",
+            subtle: "hsl(var(--category-violet-subtle))",
+          },
+          magenta: {
+            DEFAULT: "hsl(var(--category-magenta))",
+            accent: "hsl(var(--category-magenta-accent))",
+            subtle: "hsl(var(--category-magenta-subtle))",
+          },
+          teal: {
+            DEFAULT: "hsl(var(--category-teal))",
+            accent: "hsl(var(--category-teal-accent))",
+            subtle: "hsl(var(--category-teal-subtle))",
+          },
+          orange: {
+            DEFAULT: "hsl(var(--category-orange))",
+            accent: "hsl(var(--category-orange-accent))",
+            subtle: "hsl(var(--category-orange-subtle))",
+          },
+          indigo: {
+            DEFAULT: "hsl(var(--category-indigo))",
+            accent: "hsl(var(--category-indigo-accent))",
+            subtle: "hsl(var(--category-indigo-subtle))",
+          },
+          lime: {
+            DEFAULT: "hsl(var(--category-lime))",
+            accent: "hsl(var(--category-lime-accent))",
+            subtle: "hsl(var(--category-lime-subtle))",
+          },
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -132,10 +177,14 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      // --radius is 0 (the UI is square), so the shadcn ladder would otherwise
+      // compute negative values. max() floors them instead of leaning on
+      // browsers to clamp. The only consumer left is the Avatar `rounded`
+      // prop; everything else is rounded-none or rounded-full outright.
       borderRadius: {
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        md: "max(0px, calc(var(--radius) - 2px))",
+        sm: "max(0px, calc(var(--radius) - 4px))",
       },
     },
   },

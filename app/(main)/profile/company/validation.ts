@@ -1,4 +1,5 @@
 import { MAX_IMAGE_SIZE } from "@/utils/constants/config.constant";
+import { COMPANY_TYPE_MAX_LENGTH } from "@/utils/constants/ui.constant";
 import {
   dateValidation,
   emailValidation,
@@ -24,10 +25,13 @@ const basicInfoSchema = z.object({
         .optional()
         .nullable()
         .or(z.literal("")),
+      // Free text: `companyTypeConstant` is suggested, not enforced.
       companyType: z
-        .enum(["startup", "sme", "enterprise", "ngo", "government"])
+        .string()
+        .max(COMPANY_TYPE_MAX_LENGTH)
         .optional()
-        .nullable(),
+        .nullable()
+        .or(z.literal("")),
       avatar: z
         .union([
           z.instanceof(File).refine(
@@ -94,6 +98,8 @@ const openPositionSchema = z.object({
           .optional()
           .nullable(),
         location: z.string().optional().nullable().or(z.literal("")),
+        // Mirrors the employee `languages` list so the two are comparable.
+        languagesRequired: z.array(z.string()).optional().nullable(),
         openingsCount: z.number().int().positive().optional().nullable(),
         deadlineDate: dateValidation().optional(),
       }),

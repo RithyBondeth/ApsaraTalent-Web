@@ -21,6 +21,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
+import MatchScoreBadge from "@/components/matching/match-score-badge";
 import { IMatchingCompanyCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo, useState } from "react";
@@ -64,9 +65,12 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
         <div className="flex min-w-0 flex-1 flex-col gap-3">
           {/* Header Section: Name, Industry, Founded Year and Score Badge */}
           <div>
-            <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
-              {props.name}
-            </h3>
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
+                {props.name}
+              </h3>
+              <MatchScoreBadge score={props.matchScore} />
+            </div>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1">
                 <LucideBuilding className="size-3.5" />

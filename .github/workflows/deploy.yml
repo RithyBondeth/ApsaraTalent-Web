@@ -113,6 +113,12 @@ jobs:
       - name: Run TypeScript checks
         run: npm run typecheck
 
+      # Asserts every design token still clears WCAG AA against the surface it
+      # sits on, and that raw palette classes (bg-green-100 and friends) have
+      # not crept back past their baseline.
+      - name: Check design tokens
+        run: npm run check:design
+
   test:
     name: Unit tests
     runs-on: ubuntu-latest

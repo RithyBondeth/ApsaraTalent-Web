@@ -23,6 +23,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -76,7 +77,7 @@ import {
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui";
 import { capitalizeWords, getNameInitials } from "@/utils/functions/text";
 import { isUuid } from "@/utils/functions/validation";
-import { parseMaybeDate } from "@/utils/functions/date";
+import { getFoundedYearOptions, parseMaybeDate } from "@/utils/functions/date";
 import {
   isSupportedProfileImage,
   readImageFileAsDataUrl,
@@ -112,7 +113,7 @@ import {
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Controller,
   type Resolver,
@@ -154,6 +155,9 @@ export default function ProfilePage() {
   const tCommon = useTranslations("common");
   const tP = useTranslations("profile");
   const tr = useTranslations("resumeBuilder");
+
+  // Built once per mount — ~125 entries that never change while editing.
+  const foundedYearOptions = useMemo(() => getFoundedYearOptions(), []);
 
   /* -------------------------------- All States -------------------------------- */
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -428,6 +432,7 @@ export default function ProfilePage() {
             salaryCurrency: op.salaryCurrency ?? "USD",
             workMode: op.workMode ?? null,
             location: op.location ?? "",
+            languagesRequired: op.languagesRequired ?? [],
             openingsCount: op.openingsCount ?? null,
             deadlineDate: parseMaybeDate(op.deadlineDate),
             skills: Array.isArray(op.skills)
@@ -1660,30 +1665,18 @@ export default function ProfilePage() {
                         onClick={() => beginEditingField("company-type", true)}
                       />
                     ) : (
-                      <Select
+                      <CreatableCombobox
+                        options={companyTypeConstant}
                         value={field.value ?? ""}
-                        onValueChange={field.onChange}
+                        onChange={field.onChange}
+                        placeholder={tP("companyTypePlaceholder")}
+                        emptyText={tP("companyTypeEmpty")}
+                        ariaLabel={tP("companyType")}
+                        icon={<LucideShapes />}
+                        triggerId="company-type"
+                        contentClassName="profile-overlay profile-command-popover"
                         disabled={!isEdit}
-                      >
-                        <SelectTrigger
-                          id="company-type"
-                          className="h-12 gap-2 text-muted-foreground [&>svg:last-child]:ml-auto"
-                        >
-                          <div className="flex min-w-0 items-center gap-2">
-                            <LucideShapes className="size-[18px] shrink-0" />
-                            <SelectValue
-                              placeholder={tP("companyTypePlaceholder")}
-                            />
-                          </div>
-                        </SelectTrigger>
-                        <SelectContent className="profile-overlay profile-select-content">
-                          {companyTypeConstant.map((item) => (
-                            <SelectItem key={item.value} value={item.value}>
-                              {item.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      />
                     )
                   }
                 />
@@ -1723,16 +1716,29 @@ export default function ProfilePage() {
                       label={tP("addMissingField", {
                         field: tP("foundedYear"),
                       })}
-                      onClick={() => beginEditingField("company-founded-year")}
+                      onClick={() =>
+                        beginEditingField("company-founded-year", true)
+                      }
                     />
                   ) : (
-                    <Input
-                      type="number"
-                      placeholder={tP("foundedYear")}
-                      id="company-founded-year"
-                      {...form.register("basicInfo.foundedYear")}
-                      prefix={<LucideCalendarDays />}
-                      disabled={!isEdit}
+                    <Controller
+                      name="basicInfo.foundedYear"
+                      control={form.control}
+                      render={({ field }) => (
+                        <CreatableCombobox
+                          options={foundedYearOptions}
+                          value={field.value ? String(field.value) : ""}
+                          onChange={(value) => field.onChange(Number(value))}
+                          placeholder={tP("foundedYear")}
+                          emptyText={tP("foundedYearEmpty")}
+                          ariaLabel={tP("foundedYear")}
+                          icon={<LucideCalendarDays />}
+                          triggerId="company-founded-year"
+                          contentClassName="profile-overlay profile-command-popover"
+                          allowCreate={false}
+                          disabled={!isEdit}
+                        />
+                      )}
                     />
                   )
                 }
@@ -1915,7 +1921,7 @@ export default function ProfilePage() {
                       />
                       {isEdit && (
                         <LucideXCircle
-                          className="absolute right-1 top-3 cursor-pointer text-red-500"
+                          className="absolute right-1 top-3 cursor-pointer text-destructive"
                           type="button"
                           onClick={() => {
                             if (img?.id === "" || img?.id === undefined) {
@@ -2018,7 +2024,7 @@ export default function ProfilePage() {
                       />
                       {isEdit && (
                         <LucideXCircle
-                          className="cursor-pointer text-muted-foreground text-red-500"
+                          className="cursor-pointer text-destructive"
                           width={"18px"}
                           onClick={() => removeBenefit(benefit.label)}
                         />
@@ -2116,7 +2122,7 @@ export default function ProfilePage() {
                       {isEdit && (
                         // Remove Value Button Section
                         <LucideXCircle
-                          className="cursor-pointer text-muted-foreground text-red-500"
+                          className="cursor-pointer text-destructive"
                           width={"18px"}
                           onClick={() => removeValue(value.label)}
                         />
@@ -2223,7 +2229,10 @@ export default function ProfilePage() {
                         onClick={() => removeCareerScope(career.name)}
                         className="inline-flex items-center justify-center"
                       >
-                        <LucideXCircle className="text-red-500" width="18px" />
+                        <LucideXCircle
+                          className="text-destructive"
+                          width="18px"
+                        />
                       </button>
                     )}
                   </div>
@@ -2358,7 +2367,7 @@ export default function ProfilePage() {
                     </Link>
                     {isEdit && (
                       <LucideXCircle
-                        className="flex-shrink-0 cursor-pointer text-red-500 transition-colors hover:text-red-600"
+                        className="flex-shrink-0 cursor-pointer text-destructive transition-colors hover:text-destructive-accent"
                         size={18}
                         onClick={() => removeSocial(item.platform as TPlatform)}
                       />
@@ -2532,13 +2541,13 @@ export default function ProfilePage() {
                   {user.lastLoginMethod &&
                   user.lastLoginMethod.toUpperCase() ===
                     item.label.toUpperCase() ? (
-                    <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
+                    <div className="cursor-pointer border border-destructive-border bg-destructive-subtle px-3 py-1 text-destructive-accent">
                       <TypographySmall className="text-xs font-medium">
                         {tP("disconnect")}
                       </TypographySmall>
                     </div>
                   ) : (
-                    <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
+                    <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
                       <TypographySmall className="text-xs font-medium">
                         {tP("connect")}
                       </TypographySmall>
@@ -2554,13 +2563,13 @@ export default function ProfilePage() {
                   <TypographySmall>{tP("email")}</TypographySmall>
                 </div>
                 {user.email ? (
-                  <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
+                  <div className="cursor-pointer border border-destructive-border bg-destructive-subtle px-3 py-1 text-destructive-accent">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
+                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>
@@ -2575,13 +2584,13 @@ export default function ProfilePage() {
                   <TypographySmall>{tP("phoneOtp")}</TypographySmall>
                 </div>
                 {user.phone ? (
-                  <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
+                  <div className="cursor-pointer border border-destructive-border bg-destructive-subtle px-3 py-1 text-destructive-accent">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
+                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>
