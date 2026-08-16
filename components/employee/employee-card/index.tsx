@@ -1,15 +1,15 @@
 "use client";
 import { cn } from "@/lib/utils";
 import {
+  Eye,
   LucideBookmark,
   LucideBriefcase,
   LucideCircleArrowRight,
-  LucideEye,
   LucideGraduationCap,
   LucideHeartHandshake,
   LucideLoader2,
   LucideMapPin,
-  LucideTimer,
+  MoveUpRight,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../../ui/button";
@@ -66,13 +66,17 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
     return (
       <>
-        <article className="relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-none bg-card transition-colors duration-200 ease-out hover:bg-muted/35">
-          {/* Header Section: Avatar, Identity, Quick View and Like */}
-          <div className="flex items-start gap-3 p-4 pb-3">
+        <article className="relative flex h-full w-full cursor-pointer flex-col overflow-hidden bg-card transition-colors duration-200 ease-out hover:bg-muted/35">
+          {/* Header Section: Avatar, Identity, Quick View and Like
+              The name is the card's heading — 24px/500 on their model cards,
+              which lands at text-lg here. Years-of-experience moved out of
+              this row into the record strip below, so the header carries
+              identity only and stops competing with itself. */}
+          <div className="flex items-start gap-3 p-4">
             <CachedAvatar
               src={props.avatar}
               alt={props.username ?? "Profile"}
-              className="size-16 shrink-0 border border-border shadow-none"
+              className="size-14 shrink-0 border border-border shadow-none"
               rounded="none"
               onClick={props.onProfileImageClick}
               preload={true}
@@ -82,26 +86,20 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             </CachedAvatar>
 
             <div className="min-w-0 flex-1">
-              <TypographyP className="pixel-display !m-0 text-base">
+              <TypographyP className="pixel-display !m-0 truncate text-lg">
                 {props.username}
               </TypographyP>
-              <TypographyMuted className="mt-0.5 block truncate text-xs font-medium">
+              <TypographyMuted className="mt-1 block truncate text-xs">
                 {props.job}
               </TypographyMuted>
-              <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                {props.location && (
-                  <TypographySmall className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                    <LucideMapPin className="size-3 shrink-0" />
-                    <span className="truncate">
-                      {translateLocation(props.location, tl)}
-                    </span>
-                  </TypographySmall>
-                )}
-                <TypographySmall className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                  <LucideTimer className="size-3 shrink-0" />
-                  <span>{props.yearsOfExperience}</span>
+              {props.location && (
+                <TypographySmall className="mt-1.5 flex items-center gap-1 text-[11px] text-muted-foreground">
+                  <LucideMapPin className="size-3 shrink-0" />
+                  <span className="truncate">
+                    {translateLocation(props.location, tl)}
+                  </span>
                 </TypographySmall>
-              </div>
+              )}
             </div>
 
             <div className="flex shrink-0 items-center justify-end gap-1">
@@ -109,7 +107,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 size="icon"
                 variant="ghost"
                 aria-label="Like"
-                className="size-8 rounded-none border border-border text-muted-foreground transition-all duration-200 hover:bg-foreground hover:text-background"
+                className="size-8 border border-border text-muted-foreground transition-all duration-200 hover:bg-foreground hover:text-background"
                 onClick={props.onLikeClick}
                 disabled={props.onLikeClickDisable}
               >
@@ -123,44 +121,64 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 size="icon"
                 variant="ghost"
                 aria-label="Quick view"
-                className="size-8 rounded-none border border-border text-muted-foreground transition-all duration-200 hover:bg-foreground hover:text-background"
+                className="size-8 border border-border text-muted-foreground transition-all duration-200 hover:bg-foreground hover:text-background"
                 onClick={handleClickDialog}
               >
-                <LucideEye className="!size-4" />
+                <Eye className="!size-4" />
               </Button>
             </div>
           </div>
 
-          {/* Status Badges Section */}
-          <div className="flex flex-wrap items-center gap-1.5 px-4 pb-3">
-            <Tag
-              label={formatAvailabilityWords(props.availability)}
-              neutral
-              className="!rounded-none border border-border hover:shadow-none"
-            />
+          {/* Record Strip Section
+              Two ruled cells carrying the two facts a recruiter scans first.
+              Their model cards use exactly this: a divided strip of readings
+              under the identity, mono caption over mono value, cells sharing
+              one hairline rather than each drawing a box. */}
+          <div className="grid grid-cols-2 border-y border-border">
+            <div className="min-w-0 border-r border-border px-4 py-3">
+              <span className="pixel-label block text-[10px] text-muted-foreground">
+                {t("experience")}
+              </span>
+              <span className="pixel-numeral mt-1.5 block truncate text-sm text-foreground">
+                {props.yearsOfExperience}
+              </span>
+            </div>
+            <div className="min-w-0 px-4 py-3">
+              <span className="pixel-label block text-[10px] text-muted-foreground">
+                {t("availability")}
+              </span>
+              <span className="mt-1.5 block truncate text-sm text-foreground">
+                {formatAvailabilityWords(props.availability)}
+              </span>
+            </div>
           </div>
 
           {/* Skills Section */}
           {props.skills.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 px-4 pb-3">
-              {props.skills.slice(0, 4).map((skill) => (
-                <Tag
-                  key={skill.id}
-                  label={skill.name}
-                  neutral
-                  className="!rounded-none border border-border hover:shadow-none"
-                />
-              ))}
-              {props.skills.length > 4 && (
-                <span className="self-center text-[11px] font-medium text-muted-foreground">
-                  +{props.skills.length - 4}
-                </span>
-              )}
+            <div className="border-b border-border px-4 py-3">
+              <span className="pixel-label mb-2 block text-[10px] text-muted-foreground">
+                {t("skills")}
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {props.skills.slice(0, 4).map((skill) => (
+                  <Tag
+                    key={skill.id}
+                    label={skill.name}
+                    neutral
+                    className="border border-border hover:shadow-none"
+                  />
+                ))}
+                {props.skills.length > 4 && (
+                  <span className="pixel-numeral self-center text-[11px] text-muted-foreground">
+                    +{props.skills.length - 4}
+                  </span>
+                )}
+              </div>
             </div>
           )}
 
-          {/* Experience and Education Section */}
-          <div className="flex flex-col gap-1 px-4 pb-3">
+          {/* Background Section — latest role and school, and the summary. */}
+          <div className="flex flex-1 flex-col gap-1.5 px-4 py-3">
             {latestExp && (
               <TypographySmall className="flex items-start gap-1.5 text-[11px] text-muted-foreground">
                 <LucideBriefcase className="mt-0.5 size-3 shrink-0" />
@@ -175,11 +193,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 </span>
               </TypographySmall>
             )}
-          </div>
-
-          {/* Description Section */}
-          <div className="flex-1 px-4 pb-3">
-            <TypographyMuted className="line-clamp-2 text-xs leading-relaxed tablet-md:line-clamp-1">
+            <TypographyMuted className="mt-1 line-clamp-2 text-xs leading-relaxed tablet-md:line-clamp-1">
               {props.description}
             </TypographyMuted>
           </div>
@@ -188,7 +202,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           <div className="flex items-center justify-end gap-2 border-t border-border px-4 py-3">
             {!props.hideSaveButton && (
               <Button
-                className="h-8 gap-1 rounded-none px-3 text-[11px]"
+                className="h-8 gap-1 px-3 text-[11px]"
                 variant="outline"
                 size="sm"
                 onClick={props.onSaveClick}
@@ -203,7 +217,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
               </Button>
             )}
             <Button
-              className="h-8 gap-1 rounded-none px-3 text-[11px]"
+              className="h-8 gap-1 px-3 text-[11px]"
               size="sm"
               onClick={props.onViewClick}
             >
@@ -224,7 +238,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
   // ─── Default Variant Section ──────────────────────────────────
   return (
-    <div className="pixel-wash flex h-fit w-full cursor-pointer flex-col items-start gap-4 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-4 hover:border-foreground/40">
+    <div className="pixel-wash flex h-fit w-full cursor-pointer flex-col items-start gap-4 border border-border bg-card p-4 hover:border-foreground/40">
       {/* Profile Section */}
       <div className="flex w-full flex-wrap items-start justify-between gap-3">
         {/* Avatar, Username, JobTitle and Location Section */}
@@ -255,14 +269,14 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         <div className="flex shrink-0 items-center gap-1">
           <Button
             aria-label="Quick view"
-            className="size-10 rounded-none sm:size-12"
+            className="size-10 sm:size-12"
             onClick={handleClickDialog}
           >
-            <LucideEye className="!size-5 transition-all duration-300 ease-in-out sm:!size-6" />
+            <MoveUpRight className="!size-5 transition-all duration-300 ease-in-out sm:!size-6" />
           </Button>
           <Button
             aria-label="Like"
-            className="size-10 rounded-none sm:size-12"
+            className="size-10 sm:size-12"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
           >
@@ -305,7 +319,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
       <div className="flex w-full items-center justify-end gap-2 phone-xl:justify-stretch tablet-lg:justify-stretch sm:gap-3 phone-xl:[&>button]:flex-1 tablet-lg:[&>button]:flex-1">
         {!props.hideSaveButton && (
           <Button
-            className="rounded-none text-sm"
+            className="text-sm"
             variant="outline"
             onClick={props.onSaveClick}
           >
@@ -313,7 +327,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             <LucideBookmark />
           </Button>
         )}
-        <Button className="rounded-none text-sm" onClick={props.onViewClick}>
+        <Button className="text-sm" onClick={props.onViewClick}>
           {t("view")}
           <LucideCircleArrowRight />
         </Button>

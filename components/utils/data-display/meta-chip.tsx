@@ -15,7 +15,7 @@ export default function MetaChip(props: IMetaChipProps) {
   return (
     <span
       className={cn(
-        "inline-flex max-w-full items-center gap-1.5 rounded-none border border-border bg-muted/70 px-3 py-1.5 text-xs text-muted-foreground",
+        "inline-flex max-w-full items-center gap-1.5 border border-border bg-muted/70 px-3 py-1.5 text-xs text-muted-foreground",
         className,
       )}
     >

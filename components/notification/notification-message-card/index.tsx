@@ -54,7 +54,7 @@ export default function NotificationMessageCard(
           <div className="flex min-w-0 items-center gap-2">
             <Avatar
               rounded="md"
-              className="size-8 shrink-0 !rounded-none border border-border bg-secondary"
+              className="size-8 shrink-0 border border-border bg-secondary"
             >
               <AvatarFallback className="text-sm">
                 {getNameInitials(props.user.name)}
@@ -83,7 +83,7 @@ export default function NotificationMessageCard(
 
         {/* Button Section */}
         <Button
-          className="h-8 rounded-none text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
+          className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
           onClick={(e) => {
             e.stopPropagation();
             handleReply();

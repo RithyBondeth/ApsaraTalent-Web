@@ -439,14 +439,14 @@ export default function EmployeeSearchPage() {
         <Button
           type="button"
           variant="outline"
-          className="h-11 w-full justify-between rounded-none border-border"
+          className="h-11 w-full justify-between border-border"
           onClick={() => setMobileFiltersOpen((v) => !v)}
         >
           <div className="flex items-center gap-2">
             <div className="relative">
               <LucideSlidersHorizontal className="h-4 w-4" />
               {activeFilterCount > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 flex size-3.5 items-center justify-center rounded-none bg-foreground text-[9px] font-medium leading-none text-background">
+                <span className="absolute -right-1.5 -top-1.5 flex size-3.5 items-center justify-center bg-foreground text-[9px] font-medium leading-none text-background">
                   {activeFilterCount > 9 ? "9+" : activeFilterCount}
                 </span>
               )}
@@ -464,7 +464,7 @@ export default function EmployeeSearchPage() {
       <div className="flex w-full items-start gap-5 tablet-xl:flex-col">
         {/* Left Side: Filter Section */}
         <div
-          className={`search-filter-panel flex w-72 shrink-0 flex-col self-start rounded-none border border-t-[5px] border-border border-t-foreground bg-card tablet-xl:w-full xl:w-80 ${
+          className={`search-filter-panel flex w-72 shrink-0 flex-col self-start border border-border bg-card tablet-xl:w-full xl:w-80 ${
             mobileFiltersOpen ? "tablet-xl:flex" : "tablet-xl:hidden"
           }`}
         >
@@ -478,7 +478,7 @@ export default function EmployeeSearchPage() {
               variant="outline"
               size="sm"
               onClick={clearAllFilters}
-              className="h-8 rounded-none px-2 text-xs"
+              className="h-8 px-2 text-xs"
             >
               {t("clearFilters")}
             </Button>
@@ -491,10 +491,10 @@ export default function EmployeeSearchPage() {
               <div className="flex w-full flex-col gap-6">
                 {Array.from({ length: 4 }).map((_, i) => (
                   <div key={i} className="flex flex-col gap-3">
-                    <Skeleton className="h-4 w-32 rounded-none" />
-                    <Skeleton className="ml-3 h-3 w-24 rounded-none" />
-                    <Skeleton className="ml-3 h-3 w-28 rounded-none" />
-                    <Skeleton className="ml-3 h-3 w-20 rounded-none" />
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="ml-3 h-3 w-24" />
+                    <Skeleton className="ml-3 h-3 w-28" />
+                    <Skeleton className="ml-3 h-3 w-20" />
                   </div>
                 ))}
               </div>
@@ -621,7 +621,7 @@ export default function EmployeeSearchPage() {
                                 max,
                               });
                             }}
-                            className="h-10 min-w-0 rounded-none"
+                            className="h-10 min-w-0"
                           />
                           <span
                             aria-hidden
@@ -642,7 +642,7 @@ export default function EmployeeSearchPage() {
                                 max: numVal,
                               });
                             }}
-                            className="h-10 min-w-0 rounded-none"
+                            className="h-10 min-w-0"
                           />
                         </div>
                       );
@@ -684,7 +684,7 @@ export default function EmployeeSearchPage() {
                                 max,
                               });
                             }}
-                            className="h-10 min-w-0 rounded-none"
+                            className="h-10 min-w-0"
                           />
                           <span
                             aria-hidden
@@ -705,7 +705,7 @@ export default function EmployeeSearchPage() {
                                 max: numVal,
                               });
                             }}
-                            className="h-10 min-w-0 rounded-none"
+                            className="h-10 min-w-0"
                           />
                         </div>
                       );
@@ -743,7 +743,7 @@ export default function EmployeeSearchPage() {
                             >
                               <Checkbox
                                 id={`edu-${edu.value}`}
-                                className="rounded-none"
+                                className=""
                                 checked={selectedEdu.includes(edu.value)}
                                 onCheckedChange={(checked) => {
                                   let updated = [...selectedEdu];
@@ -798,7 +798,7 @@ export default function EmployeeSearchPage() {
                             handleRadioChange("experienceLevel", value)
                           }
                           value={field.value ?? ""}
-                          className="ml-1.5 flex flex-col gap-3 sm:ml-3 [&>div>button]:rounded-none"
+                          className="[&>div>button]: ml-1.5 flex flex-col gap-3 sm:ml-3"
                         >
                           {yearOfExperienceConstant.map((option) => (
                             <RadioGroupItemWithLabel
@@ -827,7 +827,7 @@ export default function EmployeeSearchPage() {
             <div className="flex min-w-fit shrink-0 flex-col gap-1">
               <TypographyH4 className="whitespace-nowrap text-lg">
                 {loading || filteredJobs === null ? (
-                  <Skeleton className="h-6 w-40 rounded-none bg-muted" />
+                  <Skeleton className="h-6 w-40 bg-muted" />
                 ) : error ? (
                   <TypographySmall className="text-destructive">
                     {t("zeroJobsListing")}
@@ -871,11 +871,11 @@ export default function EmployeeSearchPage() {
                       >
                         <SelectTrigger
                           aria-label={t("sortBy")}
-                          className="h-10 w-full rounded-none text-sm sm:w-[220px]"
+                          className="h-10 w-full text-sm sm:w-[220px]"
                         >
                           <SelectValue placeholder={t("sortBy")} />
                         </SelectTrigger>
-                        <SelectContent className="rounded-none border-border [&_[role=option]]:rounded-none">
+                        <SelectContent className="[&_[role=option]]: border-border">
                           <SelectItem value="createdAt-desc">
                             {t("newestFirst")}
                           </SelectItem>
@@ -981,7 +981,7 @@ export default function EmployeeSearchPage() {
                         });
                         syncPageToUrl(storePage + 1);
                       }}
-                      className="h-10 rounded-none px-6 text-sm"
+                      className="h-10 px-6 text-sm"
                     >
                       {loadingMore ? t("loading") : t("loadMore")}
                     </Button>

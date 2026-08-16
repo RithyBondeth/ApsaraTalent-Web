@@ -72,7 +72,7 @@ export function DatePicker({
           type="button"
           variant="outline"
           className={cn(
-            "w-full justify-between rounded-none border bg-primary-foreground px-4 py-6 text-left text-muted-foreground",
+            "w-full justify-between rounded-md border bg-primary-foreground px-4 py-6 text-left text-muted-foreground",
             !isValidDate && "text-muted-foreground",
             disabled && "cursor-not-allowed opacity-50",
             className,

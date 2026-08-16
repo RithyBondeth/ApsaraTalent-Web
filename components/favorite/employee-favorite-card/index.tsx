@@ -34,7 +34,7 @@ export default function FavoriteEmployeeCard(
   return (
     <article
       className={cn(
-        "pixel-wash group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card hover:border-foreground/35",
+        "pixel-wash group w-full overflow-hidden border border-border bg-card hover:border-foreground/35",
         props.isRemoving && "animate-card-pop-shrink",
       )}
     >
@@ -42,7 +42,7 @@ export default function FavoriteEmployeeCard(
         {/* Avatar Section */}
         <Avatar
           rounded="md"
-          className="size-14 flex-shrink-0 !rounded-none border border-border sm:size-16"
+          className="size-14 flex-shrink-0 border border-border sm:size-16"
         >
           <AvatarFallback className="text-sm font-medium">
             {getNameInitials(props.name)}
@@ -63,7 +63,7 @@ export default function FavoriteEmployeeCard(
               </TypographyMuted>
             </div>
             <span
-              className={`border-current/15 flex-shrink-0 whitespace-nowrap rounded-none border px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
+              className={`border-current/15 flex-shrink-0 whitespace-nowrap border px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
             >
               {availLabel}
             </span>
@@ -84,7 +84,7 @@ export default function FavoriteEmployeeCard(
                   label={skill}
                   key={index}
                   neutral
-                  className="!rounded-none border border-border hover:shadow-none"
+                  className="border border-border hover:shadow-none"
                 />
               ))}
             </div>
@@ -95,17 +95,17 @@ export default function FavoriteEmployeeCard(
             <MetaChip
               icon={<LucideBriefcaseBusiness />}
               text={props.position}
-              className="rounded-none border border-border bg-muted/45"
+              className="border border-border bg-muted/45"
             />
             <MetaChip
               icon={<LucideClock />}
               text={t("yrsExp", { years: props.experience })}
-              className="rounded-none border border-border bg-muted/45"
+              className="border border-border bg-muted/45"
             />
             <MetaChip
               icon={<LucideMapPin />}
               text={translateLocation(props.location, tl)}
-              className="rounded-none border border-border bg-muted/45"
+              className="border border-border bg-muted/45"
             />
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function FavoriteEmployeeCard(
         <Button
           variant="outline"
           size="sm"
-          className="rounded-none border-destructive/30 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+          className="border-destructive/30 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
           onClick={props.onRemoveFromFavorite}
         >
           <LucideBookmarkX className="size-3.5" />
@@ -124,7 +124,7 @@ export default function FavoriteEmployeeCard(
         </Button>
         <Button
           size="sm"
-          className="rounded-none text-xs"
+          className="text-xs"
           onClick={() => router.replace(`/feed/employee/${props.id}`)}
         >
           {t("viewDetail")}

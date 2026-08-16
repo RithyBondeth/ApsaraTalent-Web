@@ -2,9 +2,9 @@
 
 import {
   CircleCheck,
+  CircleX,
   Info,
   LoaderCircle,
-  OctagonX,
   TriangleAlert,
   X,
 } from "lucide-react";
@@ -36,13 +36,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
       containerAriaLabel={props.containerAriaLabel ?? "Notifications"}
       className={["apsara-toaster", props.className].filter(Boolean).join(" ")}
       icons={{
-        success: <CircleCheck aria-hidden className={statusIconClassName} />,
-        info: <Info aria-hidden className={statusIconClassName} />,
-        warning: <TriangleAlert aria-hidden className={statusIconClassName} />,
-        error: <OctagonX aria-hidden className={statusIconClassName} />,
+        success: <CircleCheck className={statusIconClassName} />,
+        info: <Info className={statusIconClassName} />,
+        warning: <TriangleAlert className={statusIconClassName} />,
+        error: <CircleX className={statusIconClassName} />,
         loading: (
           <LoaderCircle
-            aria-hidden
             className={`${statusIconClassName} apsara-toast-spinner`}
           />
         ),

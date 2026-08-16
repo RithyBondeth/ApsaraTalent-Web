@@ -144,6 +144,16 @@
     --pixel-4: 11 100% 58%;
     --pixel-5: 5 100% 45%;
     --pixel-6: 5 100% 32%;
+    /* Tonal field families. A field uses one family at a time; these are not
+       mixed into the warm brand ramp above. */
+    --pixel-blue-1: 198 100% 55%;
+    --pixel-blue-2: 202 100% 47%;
+    --pixel-blue-3: 205 94% 45%;
+    --pixel-blue-4: 209 86% 40%;
+    --pixel-paper-1: 60 33% 96%;
+    --pixel-paper-2: 48 30% 91%;
+    --pixel-paper-3: 45 18% 84%;
+    --pixel-paper-4: 42 12% 74%;
     /* The single ink that clears 4.5:1 on every rung above. Solved
        against pixel-1 (yellow, the lightest) — anything that works there
        works on the rest. */
@@ -159,12 +169,10 @@
     --chart-3: 51 100% 50%;
     --chart-4: 205 100% 45%;
     --chart-5: 240 32% 25%;
-    /* Square by design — the UI is hard-edged throughout (1100+
-       rounded-none against a handful of rounded-lg). This token exists so
-       the shadcn primitives that reference it agree with that, rather
-       than reintroducing a 12px corner the rest of the app doesn't use.
-       Pills and avatars opt in with rounded-full. */
-    --radius: 0rem;
+    /* The 8px base derives a compact control ladder: regular controls are
+       6px and small controls are 4px. Structural surfaces and overlays opt
+       into square corners; only genuinely circular elements use full radius. */
+    --radius: 0.5rem;
     --sidebar-background: 60 24% 98%;
     --sidebar-foreground: 240 10% 26%;
     --sidebar-primary: 13 92% 38%;
@@ -184,6 +192,10 @@
     /* round number.                                                     */
     /* ---------------------------------------------------------------- */
     --pixel-unit: 4px;
+    /* The module the visible lattice and PixelGridField share, so a
+       banner in the app and a colour block on the landing page are ruled
+       to one grid rather than two that nearly agree. */
+    --pixel-module: clamp(72px, 7.8vw, 100px);
 
     /* ---------------------------------------------------------------- */
     /* Theme preview                                                    */
@@ -402,7 +414,7 @@
   .pixel-tile {
     display: block;
     aspect-ratio: 1;
-    border-radius: 0;
+    border-radius: max(0px, calc(var(--radius) - 2px));
   }
 
   /* The one ink that clears AA on all six rungs. Set on a tile that has to
@@ -621,13 +633,21 @@
   /* Padding for content sitting directly in a band or a ruled cell. Declared
      once here so the sheet has a single interior rhythm instead of each page
      picking its own px-5 / p-6 / px-8. */
+  /* Roomier. Their wide content containers run `0 40px`; 24/32 left the sheet
+     feeling cramped against a 1440px viewport. */
   .pixel-pad {
-    padding: 1.5rem;
+    padding: 1.75rem 1.5rem;
   }
 
   @media (min-width: 640px) {
     .pixel-pad {
-      padding: 2rem;
+      padding: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .pixel-pad {
+      padding: 3rem 2.5rem;
     }
   }
 
@@ -635,6 +655,37 @@
      draws every boundary, so a card's own border would double the line. */
   .pixel-ruled > .pixel-flush {
     border: 0;
+  }
+
+  /* ── Module grid ──────────────────────────────────────────────────────── */
+  /* Just the positioning context. The grid itself is drawn by PixelGridDecor
+     as real `1fr` cells — a background-image lattice tiles at a fixed size and
+     therefore always clips mid-column against an arbitrary container width,
+     which is exactly why the rules and the lit cells never lined up. */
+  .pixel-module-grid {
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* Page-banner copy and stats share the same 12-column lattice on desktop.
+     Mobile must explicitly return both regions to the single explicit column;
+     an inline `span 8` on `grid-cols-1` silently created seven implicit tracks
+     and was the source of the compressed, imperfect banners. */
+  .page-banner-copy,
+  .page-banner-stats {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 1024px) {
+    .page-banner-copy {
+      grid-column: span var(--page-banner-copy-cols) / span
+        var(--page-banner-copy-cols);
+    }
+
+    .page-banner-stats {
+      grid-column: span var(--page-banner-stat-cols) / span
+        var(--page-banner-stat-cols);
+    }
   }
 
   /* ── Stepped divider ──────────────────────────────────────────────────── */
@@ -647,6 +698,18 @@
       hsl(var(--pixel-3)) 0 var(--pixel-unit),
       transparent var(--pixel-unit) calc(var(--pixel-unit) * 2)
     );
+  }
+
+  /* Chat belongs to the same warm sheet as every other signed-in page. The
+     old solid white canvas made it look like an embedded third-party tool;
+     this restrained module grid keeps the surface in the system without
+     competing with message bubbles. */
+  .message-editorial {
+    background-color: hsl(var(--background));
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.34) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.34) 1px, transparent 1px);
+    background-size: var(--pixel-module) var(--pixel-module);
   }
 }
 
@@ -754,19 +817,16 @@
 .profile-editorial .profile-hero button,
 .profile-editorial .profile-section a,
 .profile-editorial .profile-section div:has(> input:not([type="file"])) {
-  border-radius: 0 !important;
 }
 
 .profile-editorial
   .profile-section
   :is(.rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl),
 .profile-editorial .profile-section .rounded-full:not(img) {
-  border-radius: 0 !important;
 }
 
 .profile-editorial .profile-section div:has(> h3) > div:first-child {
   border: 1px solid hsl(var(--border));
-  border-radius: 0 !important;
   background: hsl(var(--foreground));
 }
 
@@ -806,7 +866,6 @@
 .profile-overlay {
   z-index: 70;
   border-color: hsl(var(--border)) !important;
-  border-radius: 0 !important;
   background: hsl(var(--popover)) !important;
   color: hsl(var(--popover-foreground)) !important;
   box-shadow: 6px 6px 0 hsl(var(--foreground) / 0.09) !important;
@@ -814,7 +873,6 @@
 
 .profile-overlay,
 .profile-overlay * {
-  border-radius: 0 !important;
 }
 
 .profile-select-content {
@@ -861,12 +919,10 @@
 }
 
 .profile-editorial-skeleton .animate-shimmer {
-  border-radius: 0 !important;
 }
 
 .profile-editorial-skeleton
   :is(.rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl, .rounded-full) {
-  border-radius: 0 !important;
 }
 
 .profile-editorial-skeleton .profile-social-icon-skeleton {
@@ -1067,16 +1123,23 @@
 .app-top-navbar::before,
 
 /* ── Employee and company detail pages ───────────────────────────────── */
+/* The hero used to invert — ink was --background, so with no cover it was a
+   near-white slab, and the detail page became the only surface that looked
+   like a different product. It is a band of the sheet now. */
 .profile-detail-hero {
-  --profile-detail-hero-ink: var(--background);
+  --profile-detail-hero-ink: var(--foreground);
+  background-color: hsl(var(--card));
   background-position: center;
   background-size: cover;
   color: hsl(var(--profile-detail-hero-ink));
 }
 
+/* With a real cover the ink does go light, because it sits on a photo. The
+   scrim was hardcoded #171513 / rgb(15 14 13) — the last raw colour in this
+   file — and reads from the ink token instead. */
 .profile-detail-hero-cover {
   --profile-detail-hero-ink: 0 0% 100%;
-  background-color: #171513;
+  background-color: hsl(var(--pixel-ink));
 }
 
 .profile-detail-hero-cover::before {
@@ -1086,9 +1149,9 @@
   content: "";
   background: linear-gradient(
     90deg,
-    rgb(15 14 13 / 0.82) 0%,
-    rgb(15 14 13 / 0.56) 48%,
-    rgb(15 14 13 / 0.26) 100%
+    hsl(var(--pixel-ink) / 0.86) 0%,
+    hsl(var(--pixel-ink) / 0.62) 48%,
+    hsl(var(--pixel-ink) / 0.3) 100%
   );
 }
 
@@ -1298,11 +1361,8 @@
   transform: scaleY(1);
 }
 
-.profile-detail-company-scope {
-  background:
-    linear-gradient(135deg, hsl(var(--foreground) / 0.045) 25%, transparent 25%)
-      0 0 / 18px 18px,
-    hsl(var(--card));
+.profile-detail-career-scope {
+  background: hsl(var(--card));
 }
 
 .profile-detail-company-gallery {
@@ -1320,7 +1380,7 @@
 .logout-dialog > button {
   top: 1rem;
   right: 1rem;
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
   border-color: hsl(var(--background) / 0.22);
   background: hsl(var(--background) / 0.1);
   color: hsl(var(--background));
@@ -2046,7 +2106,7 @@ html.theme-fallback-transition body *::after {
   right: auto;
   width: calc(50% - 2px);
   border: 1px solid hsl(var(--foreground) / 0.08);
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
   background: hsl(var(--foreground));
   box-shadow:
     0 2px 6px hsl(var(--foreground) / 0.16),
@@ -2073,7 +2133,7 @@ html.theme-fallback-transition body *::after {
   place-items: center;
   padding: 0 5px;
   border: 0;
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
   outline: none;
   background: transparent;
   cursor: pointer;
@@ -2447,6 +2507,34 @@ body:has(.auth-scope),
   container: auth-form / inline-size;
 }
 
+.auth-form-column {
+  overflow: hidden;
+  background:
+    linear-gradient(hsl(var(--border) / 0.38) 1px, transparent 1px) 0 0 / 100%
+      88px,
+    hsl(var(--background));
+}
+
+.auth-form-column::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  right: clamp(1.5rem, 5vw, 5rem);
+  width: 1px;
+  pointer-events: none;
+  background: hsl(var(--border) / 0.42);
+}
+
+.auth-mobile-logo {
+  color: hsl(var(--foreground));
+}
+
+.auth-form-kicker {
+  color: hsl(var(--muted-foreground));
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
 /* Two-up field row that collapses to a single column on a narrow form column. */
 .field-row {
   display: grid;
@@ -2476,121 +2564,56 @@ body:has(.auth-scope),
 }
 
 .auth-stagger > * {
-  animation: auth-rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: auth-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--d, 0ms);
 }
 
 .auth-rise {
-  animation: auth-rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: auth-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--d, 0ms);
 }
 
-/* ── Brand panel: warm editorial paper ── */
+/* ── Brand panel: a useful editorial product map ── */
 .auth-panel {
   position: relative;
   overflow: hidden;
   isolation: isolate;
   color: hsl(var(--auth-ink));
   background:
-    radial-gradient(
-      120% 80% at 82% 8%,
-      hsl(var(--auth-ink) / 0.05),
-      transparent 60%
-    ),
+    linear-gradient(hsl(var(--auth-ink) / 0.055) 1px, transparent 1px) 0 0 /
+      100% 96px,
     hsl(var(--auth-paper));
-  border-left: 1px solid hsl(var(--auth-ink) / 0.08);
+  border-left: 1px solid hsl(var(--auth-ink) / 0.14);
 }
 
-/* Soft bottom vignette so the caption stays legible over artwork */
 .auth-panel::before {
   content: "";
   position: absolute;
-  inset: 0;
-  z-index: 2;
+  inset: auto -8rem -7rem auto;
+  width: 19rem;
+  height: 19rem;
+  z-index: 0;
+  pointer-events: none;
+  border: 1px solid hsl(var(--auth-ink) / 0.1);
+  transform: rotate(45deg);
+}
+
+.auth-panel-rail {
+  position: absolute;
+  inset-block: 0;
+  left: 2.25rem;
+  width: 5px;
+  z-index: 0;
   pointer-events: none;
   background: linear-gradient(
-    to top,
-    hsl(var(--auth-paper)) 0%,
-    hsl(var(--auth-paper) / 0) 38%
+    to bottom,
+    hsl(var(--pixel-yellow, 43 96% 56%)) 0 25%,
+    hsl(var(--pixel-orange, 28 93% 54%)) 25% 50%,
+    hsl(var(--pixel-coral, 11 88% 57%)) 50% 75%,
+    hsl(var(--pixel-red, 1 76% 50%)) 75%
   );
 }
 
-/* Faint ruled-paper grid, masked to fade at the edges */
-
-/* Small light trails run directly along individual grid lines. Their cycles
-   are intentionally staggered so the background feels alive, never busy. */
-
-/* Soft ambient halo behind the artwork */
-.auth-nimbus {
-  position: absolute;
-  z-index: 0;
-  top: 44%;
-  left: 50%;
-  width: 72%;
-  aspect-ratio: 1;
-  translate: -50% -50%;
-  border-radius: 9999px;
-  background: radial-gradient(
-    circle,
-    hsl(var(--auth-ink) / 0.08),
-    transparent 62%
-  );
-  filter: blur(10px);
-  animation: auth-nimbus-breathe 10s ease-in-out infinite;
-}
-
-@keyframes auth-nimbus-breathe {
-  0%,
-  100% {
-    opacity: 0.7;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.05);
-  }
-}
-
-/* Hero artwork — the page's own illustration, gently floated + parallaxed */
-.auth-hero-wrap {
-  position: relative;
-  z-index: 1;
-  transform: translate(var(--img-x, 0px), var(--img-y, 0px));
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-}
-.auth-hero-float {
-  animation: auth-float-soft 7s ease-in-out infinite;
-}
-@keyframes auth-float-soft {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-/* Pointer-follow spotlight — a gentle paper highlight */
-.auth-spotlight {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: radial-gradient(
-    360px circle at var(--mx, 60%) var(--my, 40%),
-    hsl(var(--auth-ink) / 0.05),
-    transparent 60%
-  );
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-.auth-panel:hover .auth-spotlight {
-  opacity: 1;
-}
-
-/* Eyebrow */
 .auth-eyebrow {
   font-size: 11px;
   font-weight: 500;
@@ -2599,16 +2622,51 @@ body:has(.auth-scope),
   color: hsl(var(--auth-ink) / 0.55);
 }
 
-/* Trust points bullet */
-.auth-point-dot {
-  position: relative;
-  flex-shrink: 0;
-  width: 22px;
-  height: 22px;
-  border-radius: 9999px;
-  background: hsl(var(--auth-ink) / 0.07);
-  border: 1px solid hsl(var(--auth-ink) / 0.16);
-  color: hsl(var(--auth-ink) / 0.85);
+.auth-panel-title {
+  max-width: 12ch;
+  font-size: clamp(2.15rem, 3.3vw, 4.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.auth-panel-subtitle {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: hsl(var(--auth-ink) / 0.62);
+}
+
+.auth-panel-points {
+  border-top: 1px solid hsl(var(--auth-ink) / 0.17);
+}
+
+.auth-panel-point {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  align-items: center;
+  min-height: 3.5rem;
+  border-bottom: 1px solid hsl(var(--auth-ink) / 0.17);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: hsl(var(--auth-ink) / 0.76);
+}
+
+.auth-panel-number {
+  color: hsl(var(--auth-ink) / 0.4);
+}
+
+.auth-panel-footer {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: hsl(var(--auth-ink) / 0.5);
+}
+
+.auth-panel-footer-line {
+  height: 1px;
+  flex: 1;
+  margin-inline: 1rem;
+  background: hsl(var(--auth-ink) / 0.18);
 }
 
 /* ── Minimal auth controls ── */
@@ -2627,7 +2685,7 @@ body:has(.auth-scope),
   gap: 0.75rem;
   height: 52px;
   padding: 0 1rem;
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
   border: 1px solid hsl(var(--border));
   background: hsl(var(--card) / 0.72);
   transition:
@@ -2696,7 +2754,6 @@ body:has(.auth-scope),
   border: 0 !important;
   background: transparent !important;
   padding: 0 !important;
-  border-radius: 0 !important;
   box-shadow: none !important;
   font-size: 14px;
   color: hsl(var(--foreground)) !important;
@@ -2783,7 +2840,7 @@ body:has(.auth-scope),
 /* Primary auth button — calm, with a soft lift on hover */
 .auth-submit {
   min-height: 48px;
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
   transition:
     transform 0.18s ease,
     box-shadow 0.2s ease,
@@ -2796,7 +2853,6 @@ body:has(.auth-scope),
 /* Social buttons — quiet lift on hover */
 .auth-social {
   min-height: 48px;
-  border-radius: 0 !important;
   transition:
     transform 0.2s ease,
     border-color 0.2s ease,
@@ -2839,7 +2895,7 @@ body:has(.auth-scope),
     .auth-control-trigger
   ) {
   min-height: 46px;
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
 }
 
 /* Auth checkboxes remain compact and do not inherit action-button sizing. */
@@ -2848,7 +2904,7 @@ body:has(.auth-scope),
   height: 1.15rem;
   min-width: 1.15rem;
   min-height: 1.15rem;
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
   border-color: hsl(var(--foreground) / 0.48);
   background: hsl(var(--card) / 0.72);
   transition:
@@ -2869,7 +2925,7 @@ body:has(.auth-scope),
   overflow: hidden;
   border: 1px solid hsl(var(--border));
   border-top: 5px solid hsl(var(--foreground));
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
   background: hsl(var(--card) / 0.5);
   padding: 1.25rem;
   box-shadow: 5px 5px 0 hsl(var(--foreground) / 0.055);
@@ -2898,7 +2954,7 @@ body:has(.auth-scope),
 .auth-wizard-form textarea,
 .auth-wizard-form button[role="combobox"],
 .auth-wizard-form button[data-radix-collection-item] {
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
 }
 
 /* Keep every auth data-entry control square; action buttons retain their shape. */
@@ -2908,7 +2964,6 @@ body:has(.auth-scope),
 .auth-scope form button[aria-haspopup="listbox"],
 .auth-scope form button[aria-haspopup="dialog"],
 .auth-scope form .input-otp-slot {
-  border-radius: 0 !important;
 }
 
 .auth-wizard-form div:has(> input:not([type="file"])),
@@ -2928,12 +2983,12 @@ body:has(.auth-scope),
 /* Keep compact utility actions compact inside the wizard. */
 .auth-wizard-form button[class*="h-6"] {
   min-height: 1.5rem !important;
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
 }
 
 .auth-wizard-actions > button {
   min-height: 46px;
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
 }
 
 @media (min-width: 768px) {
@@ -3012,7 +3067,7 @@ body:has(.auth-scope),
 @media (max-width: 767px) {
   .auth-wizard-form {
     padding: 1rem;
-    border-radius: 0;
+    border-radius: max(0px, calc(var(--radius) - 2px));
   }
 
   .auth-wizard-actions > button {
@@ -3023,7 +3078,6 @@ body:has(.auth-scope),
 /* Square editorial treatment across the auth UI, excluding the brand artwork. */
 .auth-scope .auth-form-container,
 .auth-scope .auth-form-container * {
-  border-radius: 0 !important;
 }
 
 /* Social marks stay consistently circular inside the square auth system. */
@@ -3039,7 +3093,6 @@ body:has(.auth-scope),
 /* Auth dropdowns and popovers render in portals outside the form column. */
 body:has(.auth-scope) [data-radix-popper-content-wrapper],
 body:has(.auth-scope) [data-radix-popper-content-wrapper] * {
-  border-radius: 0 !important;
 }
 
 body:has(.auth-scope) .auth-select-content {
@@ -3062,7 +3115,6 @@ body:has(.auth-scope) .auth-popover-content {
 body:has(.auth-scope) .auth-select-content [role="option"],
 body:has(.auth-scope) .auth-popover-content [cmdk-item] {
   min-height: 40px;
-  border-radius: 0 !important;
 }
 
 body:has(.auth-scope) .auth-select-content [role="option"][data-highlighted],
@@ -3072,15 +3124,13 @@ body:has(.auth-scope) .auth-popover-content [cmdk-item][data-selected="true"] {
 }
 
 body:has(.auth-scope) .auth-dialog-surface {
-  border-radius: 0 !important;
   border-color: hsl(var(--border));
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
-  box-shadow: 0 24px 70px hsl(var(--foreground) / 0.2);
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  box-shadow: 8px 8px 0 hsl(var(--foreground) / 0.12);
 }
 
 body:has(.auth-scope) .auth-dialog-surface * {
-  border-radius: 0 !important;
 }
 
 body:has(.auth-scope) .auth-dialog-footer {
@@ -3111,6 +3161,494 @@ body:has(.landing-scope),
 .dark .landing-scope {
   --auth-paper: 60 24% 96%;
   --auth-ink: 240 30% 12%;
+}
+
+/* The hero is the brand's anchor and does not invert with the app theme. It
+   follows the current Mistral editorial pattern: a single ink canvas, ruled
+   into large cells, with one concentrated field of hot pixel colour. */
+.landing-hero-shell {
+  --landing-hero-bg: 240 30% 9%;
+  --landing-hero-ink: 60 24% 96%;
+  color: hsl(var(--landing-hero-ink));
+  background: hsl(var(--landing-hero-bg));
+}
+
+.landing-match-editorial {
+  --match-paper: 60 33% 95%;
+  --match-ink: 240 30% 9%;
+  --match-line: 45 14% 82%;
+  color: hsl(var(--match-ink));
+  background: hsl(var(--match-paper));
+}
+
+[data-utility-switcher][data-animating="language"]
+  > button:first-child
+  .landing-utility-icon,
+[data-utility-switcher][data-animating="theme"]
+  > button:last-child
+  .landing-utility-icon {
+  animation: landing-utility-confirm 0.52s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes landing-utility-confirm {
+  0% {
+    transform: scale(1);
+  }
+  38% {
+    transform: scale(0.78) rotate(-7deg);
+  }
+  72% {
+    transform: scale(1.08) rotate(2deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-utility-icon {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .landing-match-signal__content {
+    grid-template-columns:
+      calc(var(--grid-module) * 2) minmax(0, 1fr)
+      calc(var(--grid-module) * 2);
+  }
+}
+
+.pixel-grid-field {
+  --grid-base: var(--pixel-4);
+  --grid-soft: var(--pixel-3);
+  --grid-mid: var(--pixel-5);
+  --grid-deep: var(--pixel-6);
+  --grid-ink: var(--pixel-ink);
+  --grid-line: var(--pixel-ink);
+  --grid-module: clamp(72px, 7.8vw, 100px);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: hsl(var(--grid-ink));
+  background-color: hsl(var(--grid-base));
+}
+
+.pixel-grid-field::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(hsl(var(--grid-line) / 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--grid-line) / 0.14) 1px, transparent 1px);
+  background-size: var(--grid-module) var(--grid-module);
+}
+
+.pixel-grid-field--yellow {
+  --grid-base: var(--pixel-1);
+  --grid-soft: 48 100% 58%;
+  --grid-mid: var(--pixel-2);
+  --grid-deep: 39 100% 45%;
+}
+
+.pixel-grid-field--blue {
+  --grid-base: var(--pixel-blue-2);
+  --grid-soft: var(--pixel-blue-1);
+  --grid-mid: var(--pixel-blue-3);
+  --grid-deep: var(--pixel-blue-4);
+  --grid-ink: 220 58% 12%;
+  --grid-line: 0 0% 100%;
+}
+
+.pixel-grid-field--paper {
+  --grid-base: var(--pixel-paper-1);
+  --grid-soft: 0 0% 100%;
+  --grid-mid: var(--pixel-paper-2);
+  --grid-deep: var(--pixel-paper-3);
+  --grid-ink: 240 30% 9%;
+  --grid-line: 240 30% 9%;
+}
+
+.pixel-grid-field--compact::after {
+  background-size: 25% 25%;
+}
+
+.pixel-grid-field--hero::after {
+  background-size: 8.333% 25%;
+}
+
+.pixel-grid-field__mosaic {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  grid-template-columns: repeat(12, var(--grid-module));
+  grid-template-rows: repeat(10, var(--grid-module));
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.pixel-grid-field__block {
+  display: block;
+  background: hsl(var(--grid-mid));
+}
+
+.pixel-grid-field__block:nth-child(1) {
+  grid-column: 4;
+  grid-row: 1;
+  background: hsl(var(--grid-deep));
+}
+
+.pixel-grid-field__block:nth-child(2) {
+  grid-column: 6;
+  grid-row: 1;
+}
+
+.pixel-grid-field__block:nth-child(3) {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.pixel-grid-field__block:nth-child(4) {
+  grid-column: 5;
+  grid-row: 2;
+  background: hsl(var(--grid-deep));
+}
+
+.pixel-grid-field__block:nth-child(5) {
+  grid-column: 3;
+  grid-row: 3 / span 2;
+  background: hsl(var(--grid-deep));
+}
+
+.pixel-grid-field__block:nth-child(6) {
+  grid-column: 6;
+  grid-row: 3;
+}
+
+.pixel-grid-field__block:nth-child(7) {
+  grid-column: 5;
+  grid-row: 5;
+  background: hsl(var(--grid-deep));
+}
+
+.pixel-grid-field__block:nth-child(8) {
+  grid-column: 9;
+  grid-row: 1;
+}
+
+.pixel-grid-field__block:nth-child(9) {
+  grid-column: 1;
+  grid-row: 6;
+  background: hsl(var(--grid-deep));
+}
+
+.pixel-grid-field__block:nth-child(10) {
+  grid-column: 11;
+  grid-row: 2;
+}
+
+.pixel-grid-field__block:nth-child(11) {
+  grid-column: 5;
+  grid-row: 6;
+  background: hsl(var(--grid-deep));
+}
+
+.pixel-grid-field__block:nth-child(12) {
+  grid-column: 10;
+  grid-row: 4 / span 2;
+  background: hsl(var(--grid-deep));
+}
+
+.pixel-grid-field__block:nth-child(13) {
+  grid-column: 4;
+  grid-row: 7;
+}
+
+.pixel-grid-field__block:nth-child(14) {
+  grid-column: 12;
+  grid-row: 6;
+  background: hsl(var(--grid-deep));
+}
+
+.pixel-grid-field__block:nth-child(15) {
+  grid-column: 5;
+  grid-row: 9;
+  background: hsl(var(--grid-deep));
+}
+
+.pixel-grid-field__block:nth-child(16) {
+  grid-column: 9;
+  grid-row: 8;
+}
+
+.pixel-grid-field--hero .pixel-grid-field__mosaic {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+}
+
+.pixel-grid-field--hero .pixel-grid-field__block:nth-child(1) {
+  grid-column: 2 / span 2;
+  grid-row: 1;
+  background: hsl(var(--grid-soft));
+}
+
+.pixel-grid-field--hero .pixel-grid-field__block:nth-child(2) {
+  grid-column: 4 / span 2;
+  grid-row: 1 / span 2;
+}
+
+.pixel-grid-field--hero .pixel-grid-field__block:nth-child(3) {
+  grid-column: 9 / span 2;
+  grid-row: 1;
+  background: hsl(var(--grid-deep));
+}
+
+.pixel-grid-field--hero .pixel-grid-field__block:nth-child(4) {
+  grid-column: 1 / span 2;
+  grid-row: 3;
+}
+
+.pixel-grid-field--hero .pixel-grid-field__block:nth-child(5) {
+  grid-column: 6 / span 2;
+  grid-row: 2 / span 2;
+  background: hsl(var(--grid-soft));
+}
+
+.pixel-grid-field--hero .pixel-grid-field__block:nth-child(6) {
+  grid-column: 10 / span 2;
+  grid-row: 3;
+}
+
+.pixel-grid-field--hero .pixel-grid-field__block:nth-child(7) {
+  grid-column: 3;
+  grid-row: 4;
+}
+
+.pixel-grid-field--hero .pixel-grid-field__block:nth-child(8) {
+  grid-column: 11 / span 2;
+  grid-row: 4;
+  background: hsl(var(--grid-deep));
+}
+
+.pixel-grid-field--hero
+  .pixel-grid-field__block:nth-child(n + 9):nth-child(-n + 15) {
+  display: none;
+}
+
+.pixel-grid-field--hero .pixel-grid-field__block:nth-child(16) {
+  display: block;
+  grid-column: 8;
+  grid-row: 1 / span 2;
+  place-self: center;
+  width: 72%;
+  aspect-ratio: 1;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  background: hsl(var(--grid-mid));
+}
+
+.pixel-grid-field--compact .pixel-grid-field__block:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+
+.pixel-grid-field--compact .pixel-grid-field__block:nth-child(2) {
+  grid-column: 4;
+  grid-row: 1;
+  background: hsl(var(--grid-mid));
+}
+
+.pixel-grid-field--compact .pixel-grid-field__block:nth-child(3) {
+  grid-column: 4;
+  grid-row: 3 / span 2;
+  background: hsl(var(--grid-deep));
+}
+
+.pixel-grid-field--compact .pixel-grid-field__block:nth-child(4) {
+  grid-column: 2;
+  grid-row: 4;
+  background: hsl(var(--grid-soft));
+}
+
+.pixel-grid-field--compact .pixel-grid-field__block:nth-child(n + 5) {
+  display: none;
+}
+
+.pixel-grid-field--compact .pixel-grid-field__mosaic {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+}
+
+.pixel-grid-field__junctions {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.pixel-grid-field__junctions > span {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: hsl(var(--grid-ink));
+  transform: translate(-50%, -50%);
+}
+
+.pixel-grid-field__junctions > span:nth-child(1) {
+  top: 25%;
+  left: 25%;
+}
+
+.pixel-grid-field__junctions > span:nth-child(2) {
+  top: 50%;
+  left: 58.333%;
+}
+
+.pixel-grid-field__junctions > span:nth-child(3) {
+  top: 75%;
+  left: 83.333%;
+}
+
+.pixel-grid-field__junctions > span:nth-child(4) {
+  top: 75%;
+  left: 8.333%;
+}
+
+.pixel-grid-field--compact .pixel-grid-field__junctions {
+  display: none;
+}
+
+.pixel-grid-field__junctions {
+  display: none;
+}
+
+.pixel-grid-field--hero .pixel-grid-field__junctions {
+  display: block;
+}
+
+.pixel-grid-field--mirror .pixel-grid-field__mosaic {
+  transform: scaleX(-1);
+}
+
+.pixel-grid-field--mirror .pixel-grid-field__junctions {
+  transform: scaleX(-1);
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block {
+  animation:
+    pixel-grid-cell-enter 0.9s cubic-bezier(0.22, 1, 0.36, 1) both,
+    pixel-grid-cell-breathe 9s ease-in-out infinite;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(1) {
+  animation-delay: 0.1s, 2.1s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(2) {
+  animation-delay: 0.22s, 3.4s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(3) {
+  animation-delay: 0.34s, 4.8s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(4) {
+  animation-delay: 0.46s, 2.8s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(5) {
+  animation-delay: 0.58s, 5.5s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(6) {
+  animation-delay: 0.7s, 3.9s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(7) {
+  animation-delay: 0.82s, 6.2s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(8) {
+  animation-delay: 0.94s, 4.4s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(9) {
+  animation-delay: 1.06s, 5.1s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(10) {
+  animation-delay: 0.18s, 3.2s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(11) {
+  animation-delay: 0.3s, 5.8s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(12) {
+  animation-delay: 0.42s, 4.1s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(13) {
+  animation-delay: 0.54s, 6.4s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(14) {
+  animation-delay: 0.66s, 3.7s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(15) {
+  animation-delay: 0.78s, 5.3s;
+}
+
+.pixel-grid-field--animated .pixel-grid-field__block:nth-child(16) {
+  animation-delay: 0.9s, 4.6s;
+}
+
+.pixel-grid-field--hero.pixel-grid-field--animated
+  .pixel-grid-field__block:nth-child(16) {
+  animation:
+    pixel-grid-diamond-enter 0.9s cubic-bezier(0.22, 1, 0.36, 1) both,
+    pixel-grid-cell-breathe 9s ease-in-out infinite;
+  animation-delay: 1.06s, 5.1s;
+}
+
+@keyframes pixel-grid-cell-enter {
+  from {
+    opacity: 0;
+    clip-path: inset(100% 0 0);
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes pixel-grid-cell-breathe {
+  0%,
+  40%,
+  60%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.58;
+  }
+}
+
+@keyframes pixel-grid-diamond-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.66);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .landing-dark-panel {
@@ -3304,25 +3842,13 @@ body:has(.landing-scope),
 
 .static-page-artwork-slot {
   position: relative;
-  display: flex;
-  width: min(74vw, 350px);
+  width: 100%;
   min-height: 205px;
-  flex-direction: column;
-  align-items: center;
   overflow: hidden;
   border: 1px solid hsl(var(--landing-panel-ink) / 0.16);
-  padding: 18px;
-  background:
-    radial-gradient(
-      circle at 78% 18%,
-      hsl(var(--landing-panel-ink) / 0.07),
-      transparent 27%
-    ),
-    hsl(var(--landing-panel-bg) / 0.5);
   box-shadow:
     14px 14px 0 hsl(var(--landing-panel-ink) / 0.04),
     -7px -7px 0 hsl(var(--landing-panel-ink) / 0.025);
-  animation: static-page-orbit-drift 6.4s ease-in-out infinite;
 }
 
 .static-page-artwork-slot-mark {
@@ -3333,10 +3859,10 @@ body:has(.landing-scope),
   height: 78px;
   margin: auto;
   place-items: center;
-  border: 1px solid hsl(var(--landing-panel-ink) / 0.28);
-  color: hsl(var(--landing-panel-ink));
-  background: hsl(var(--landing-panel-bg) / 0.8);
-  box-shadow: 10px 10px 0 hsl(var(--landing-panel-ink) / 0.045);
+  border: 1px solid hsl(var(--grid-ink) / 0.28);
+  color: hsl(var(--grid-ink));
+  background: hsl(var(--grid-base) / 0.84);
+  box-shadow: 10px 10px 0 hsl(var(--grid-ink) / 0.07);
 }
 
 .static-page-step::after {
@@ -3358,6 +3884,152 @@ body:has(.landing-scope),
 
 .static-page-mobile-toc::-webkit-scrollbar {
   display: none;
+}
+
+/* Legal documents use the same ruled, modular composition as the landing
+   page while keeping the reading column deliberately narrow. */
+.static-page-scope--legal .static-page-mobile-toc {
+  position: sticky;
+  top: 64px;
+  z-index: 30;
+  background: hsl(var(--background) / 0.96);
+  backdrop-filter: blur(14px);
+}
+
+.static-page-scope--legal .static-page-toc-rail {
+  background: hsl(var(--foreground) / 0.025);
+}
+
+.static-page-scope--legal .static-page-toc-nav {
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  padding: 30px;
+  scrollbar-width: thin;
+}
+
+.static-page-scope--legal .static-page-toc-link {
+  margin-inline: -30px;
+  padding: 14px 30px;
+}
+
+.static-page-scope--legal .static-page-toc-link:hover {
+  background: hsl(var(--foreground) / 0.055);
+}
+
+.static-page-scope--legal .static-page-section {
+  position: relative;
+  padding: 0;
+  transition:
+    background-color 240ms ease,
+    box-shadow 240ms ease;
+}
+
+.static-page-scope--legal .static-page-section:nth-of-type(even) {
+  background: hsl(var(--foreground) / 0.018);
+}
+
+.static-page-scope--legal .static-page-section:target {
+  background: hsl(var(--foreground) / 0.04);
+  box-shadow: inset 4px 0 0 hsl(var(--foreground));
+}
+
+.static-page-scope--legal .static-page-section-grid {
+  gap: 0;
+}
+
+.static-page-scope--legal .static-page-section-rail {
+  display: flex;
+  min-height: 92px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid hsl(var(--border));
+  padding: 20px 24px;
+}
+
+.static-page-scope--legal .static-page-section-rail::before {
+  color: hsl(var(--muted-foreground));
+  content: attr(data-number);
+  font-family: var(--font-space-mono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.static-page-scope--legal .static-page-section-icon {
+  width: 48px;
+  height: 48px;
+  background: transparent;
+}
+
+.static-page-scope--legal .static-page-section-body {
+  padding: 34px 24px 52px;
+}
+
+.static-page-scope--legal .static-page-section-body > .pixel-label:first-child {
+  display: none;
+}
+
+.static-page-scope--legal .static-page-section-body > h2 {
+  margin-top: 0;
+  font-size: clamp(1.85rem, 3vw, 2.65rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.static-page-scope--legal .static-page-copy {
+  max-width: 820px;
+  margin-top: 28px;
+  gap: 24px;
+  line-height: 1.78;
+}
+
+.static-page-scope--legal .static-page-copy li {
+  padding-block: 14px;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.static-page-scope--legal .static-page-copy li:hover {
+  color: hsl(var(--foreground));
+  background: hsl(var(--foreground) / 0.025);
+}
+
+.static-page-scope--legal .static-page-note {
+  border-left-width: 4px;
+  background: hsl(var(--foreground) / 0.025);
+}
+
+@media (min-width: 640px) {
+  .static-page-scope--legal .static-page-section-grid {
+    grid-template-columns: 160px minmax(0, 1fr);
+  }
+
+  .static-page-scope--legal .static-page-section-rail {
+    min-height: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 30px;
+    border-right: 1px solid hsl(var(--border));
+    border-bottom: 0;
+    padding: 34px;
+  }
+
+  .static-page-scope--legal .static-page-section-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .static-page-scope--legal .static-page-section-body {
+    padding: 56px 48px 72px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .static-page-scope--legal .static-page-section-body {
+    padding: 72px 72px 88px;
+  }
 }
 
 .static-page-faq-answer {
@@ -3811,7 +4483,6 @@ body:has(.landing-scope),
 .auth-back-button {
   min-height: 46px !important;
   height: 46px;
-  border-radius: 0 !important;
   font-size: 0.875rem;
 }
 
@@ -3883,26 +4554,23 @@ body:has(.landing-scope),
    the palette local to the toaster gives every route the same warm editorial
    surface without changing the feature area's own theme tokens. */
 [data-sonner-toaster].apsara-toaster {
-  --width: 356px;
+  /* Mapped onto the app tokens. This carried its own warm-grey palette in
+     both themes — a fourth fork alongside the auth and landing ones — which
+     is why the toast still looked like the old design. */
+  --width: 380px;
   --border-radius: 0px;
-  --apsara-toast-bg: 42 33% 98%;
-  --apsara-toast-fg: 38 10% 17%;
-  --apsara-toast-muted: 38 7% 43%;
-  --apsara-toast-border: 38 14% 78%;
-  --apsara-toast-soft: 38 19% 92%;
-  --apsara-toast-shadow: 36 32% 13%;
-  --apsara-toast-accent: 38 9% 34%;
+  --apsara-toast-bg: var(--popover);
+  --apsara-toast-fg: var(--popover-foreground);
+  --apsara-toast-muted: var(--muted-foreground);
+  --apsara-toast-border: var(--border);
+  --apsara-toast-soft: var(--muted);
+  --apsara-toast-shadow: var(--foreground);
+  --apsara-toast-accent: var(--primary);
   font-family: var(--font-ubuntu), var(--font-preahvihear), sans-serif;
 }
 
 [data-sonner-toaster].apsara-toaster[data-sonner-theme="dark"] {
-  --apsara-toast-bg: 36 9% 11%;
-  --apsara-toast-fg: 40 24% 94%;
-  --apsara-toast-muted: 38 8% 66%;
-  --apsara-toast-border: 36 8% 28%;
-  --apsara-toast-soft: 36 8% 17%;
-  --apsara-toast-shadow: 0 0% 0%;
-  --apsara-toast-accent: 39 11% 72%;
+  /* The tokens above already flip per theme; nothing to restate here. */
 }
 
 .apsara-toaster [data-sonner-toast].apsara-toast {
@@ -3914,9 +4582,8 @@ body:has(.landing-scope),
   align-items: center;
   gap: 12px;
   overflow: hidden;
-  padding: 14px 46px 14px 14px;
+  padding: 16px 48px 16px 16px;
   border: 1px solid hsl(var(--apsara-toast-border));
-  border-left: 3px solid hsl(var(--apsara-toast-accent));
   border-radius: 0;
   background:
     linear-gradient(
@@ -4012,15 +4679,14 @@ body:has(.landing-scope),
   justify-content: center;
   margin: 0;
   border: 1px solid hsl(var(--apsara-toast-accent) / 0.38);
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
   background: hsl(var(--apsara-toast-accent) / 0.09);
   color: hsl(var(--apsara-toast-accent));
 }
 
 .apsara-toast-status-icon {
-  width: 18px;
-  height: 18px;
-  stroke-width: 1.8;
+  width: 22px;
+  height: 22px;
 }
 
 .apsara-toaster .apsara-toast-content {
@@ -4056,7 +4722,7 @@ body:has(.landing-scope),
   justify-content: center;
   padding: 0 12px;
   border: 1px solid hsl(var(--apsara-toast-fg));
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
   outline: none;
   font: inherit;
   font-size: 0.75rem;
@@ -4123,7 +4789,7 @@ body:has(.landing-scope),
   padding: 0;
   transform: none;
   border: 1px solid transparent;
-  border-radius: 0;
+  border-radius: max(0px, calc(var(--radius) - 2px));
   background: transparent;
   color: hsl(var(--apsara-toast-muted));
   opacity: 0.72;
@@ -4222,6 +4888,27 @@ body:has(.landing-scope),
   }
 }
 
+/* One static six-tile signature for every dialog. Motion belongs to state
+   changes inside a modal, not to decoration that keeps scanning forever. */
+.auth-dialog-surface::before {
+  position: absolute;
+  z-index: 120;
+  top: -1px;
+  left: -1px;
+  width: calc(var(--pixel-unit) * 24);
+  height: var(--pixel-unit);
+  content: "";
+  background-image: linear-gradient(
+    to right,
+    hsl(var(--pixel-1)) 0 16.666%,
+    hsl(var(--pixel-2)) 16.666% 33.333%,
+    hsl(var(--pixel-3)) 33.333% 50%,
+    hsl(var(--pixel-4)) 50% 66.666%,
+    hsl(var(--pixel-5)) 66.666% 83.333%,
+    hsl(var(--pixel-6)) 83.333% 100%
+  );
+}
+
 /* Shared landing/auth button motion.
 
    This used to be a lift: translate3d(0, -2px) with scale(1.01), a 24px
@@ -4277,7 +4964,6 @@ body:has(.auth-scope) [data-ui-button] svg {
     [role="radio"],
     [role="checkbox"]
   ) {
-  border-radius: 0 !important;
 }
 
 /* ════════════════════════ Resume Builder Experience ════════════════════════ */
@@ -4301,7 +4987,6 @@ body:has(.auth-scope) [data-ui-button] svg {
     [role="radio"],
     [role="checkbox"]
   ) {
-  border-radius: 0 !important;
 }
 
 .resume-builder-editorial
@@ -4322,7 +5007,6 @@ body:has(.auth-scope) [data-ui-button] svg {
     .rounded-2xl,
     .rounded-full
   ) {
-  border-radius: 0 !important;
 }
 
 .resume-template-strip {

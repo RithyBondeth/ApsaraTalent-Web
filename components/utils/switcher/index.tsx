@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import { setCookie } from "cookies-next";
-import { LucideMoon, LucideSun } from "lucide-react";
+import { LucideLanguages, LucideMoon, LucideSun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import type {
@@ -17,12 +17,12 @@ const SPARK_ANGLES = [0, 45, 90, 135, 180, 225, 270, 315] as const;
 
 export default function Switcher(props: ISwitcherProps) {
   /* ------------------------------- Props ------------------------------- */
-  const { className, inline = false } = props;
+  const { className, inline = false, variant = "pill" } = props;
 
   /* ------------------------------- Utils ------------------------------- */
   const { language, setLanguage } = useLanguageStore();
-  const { theme, setTheme: setStoredTheme } = useThemeStore();
-  const { resolvedTheme, setTheme } = useTheme();
+  const { theme, systemTheme, setTheme: setStoredTheme } = useThemeStore();
+  const { setTheme } = useTheme();
 
   /* ---------------------------- All States ---------------------------- */
   const [mounted, setMounted] = useState(false);
@@ -60,7 +60,9 @@ export default function Switcher(props: ISwitcherProps) {
   );
 
   /* -------------------------- Derived States -------------------------- */
-  const isDark = mounted && resolvedTheme === "dark";
+  const effectiveTheme = theme === "system" ? systemTheme : theme;
+  const isDark = mounted && effectiveTheme === "dark";
+  const nextLanguage = language === "en" ? "km" : "en";
 
   /* ----------------------------- Methods ------------------------------ */
   // ── Play Control Animation ───────────────────────────────────────────
@@ -89,14 +91,15 @@ export default function Switcher(props: ISwitcherProps) {
     ).matches;
 
     const applyTheme = () => {
-      root.classList.toggle("dark", nextTheme === "dark");
+      root.classList.remove("light", "dark");
+      root.classList.add(nextTheme);
       root.style.colorScheme = nextTheme;
       setTheme(nextTheme);
       setStoredTheme(nextTheme);
       setCookie("theme", nextTheme);
     };
 
-    if (reduceMotion) {
+    if (reduceMotion || variant === "grid") {
       applyTheme();
       return;
     }
@@ -154,6 +157,48 @@ export default function Switcher(props: ISwitcherProps) {
       isThemeTransitioning.current = false;
     });
   };
+
+  if (variant === "grid") {
+    return (
+      <div
+        data-utility-switcher
+        data-animating={animationKind ?? "idle"}
+        className={cn(
+          inline ? "relative" : "fixed right-4 top-4 z-50",
+          "flex h-full items-stretch",
+          className,
+        )}
+      >
+        <button
+          type="button"
+          onClick={() => handleLanguageChange(nextLanguage)}
+          className="group grid min-w-16 place-items-center border-r border-border bg-background text-foreground transition-colors hover:bg-muted focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:min-w-[72px]"
+          aria-label={nextLanguage === "km" ? "ប្រើភាសាខ្មែរ" : "Use English"}
+          title={nextLanguage === "km" ? "ភាសាខ្មែរ" : "English"}
+        >
+          <span className="landing-utility-icon grid size-8 place-items-center border border-border transition-[border-color,transform] group-hover:-translate-y-px group-hover:border-foreground/35">
+            <LucideLanguages className="size-4" strokeWidth={1.5} />
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={handleThemeToggle}
+          className="group grid min-w-16 place-items-center bg-background text-foreground transition-colors hover:bg-muted focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:min-w-[72px]"
+          aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+          title={isDark ? "Light theme" : "Dark theme"}
+        >
+          <span className="landing-utility-icon grid size-8 place-items-center border border-border transition-[border-color,transform] group-hover:-translate-y-px group-hover:border-foreground/35">
+            {isDark ? (
+              <LucideSun className="size-4" strokeWidth={1.5} />
+            ) : (
+              <LucideMoon className="size-4" strokeWidth={1.5} />
+            )}
+          </span>
+        </button>
+      </div>
+    );
+  }
 
   /* ----------------------------- Render UI ----------------------------- */
   return (

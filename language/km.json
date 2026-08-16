@@ -858,7 +858,11 @@
     "endOfResults": "អ្នកបានមើលទាំងអស់ហើយ",
     "exploreAllCompanies": "រុករកក្រុមហ៊ុនទាំងអស់",
     "exploreAllTalent": "រុករករ្ថបុគ្គលទាំងអស់",
-    "forYou": "សម្រាប់អ្នក"
+    "forYou": "សម្រាប់អ្នក",
+    "availability": "ភាពទំនេរ",
+    "skills": "ជំនាញ",
+    "people": "បុគ្គលិក",
+    "founded": "បង្កើតឡើង"
   },
   "locations": {
     "phnomPenh": "ភ្នំពេញ",

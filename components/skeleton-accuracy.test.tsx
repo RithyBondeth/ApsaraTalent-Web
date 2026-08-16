@@ -3,29 +3,48 @@ import { afterEach, describe, expect, it } from "vitest";
 import CompanyCardSkeleton, {
   CompanyDetailPageLoadingSkeleton,
 } from "@/components/company/skeleton";
-import { DashboardLoadingSkeleton } from "@/components/dashboard/skeleton";
+import {
+  DashboardChartSkeleton,
+  DashboardLoadingSkeleton,
+} from "@/components/dashboard/skeleton";
 import EmployeeCardSkeleton, {
   EmployeeDetailPageLoadingSkeleton,
 } from "@/components/employee/skeleton";
 import { FavoriteLoadingSkeleton } from "@/components/favorite/skeleton";
-import FeedPageLoadingSkeleton from "@/components/feed/skeleton";
+import FeedPageLoadingSkeleton, {
+  FeedBannerSkeleton,
+  FeedDividerSkeleton,
+  FeedRecommendationsSkeleton,
+} from "@/components/feed/skeleton";
 import InterviewLoadingSkeleton from "@/components/interview/skeleton";
 import { MatchingLoadingSkeleton } from "@/components/matching/skeleton";
-import MessageLoadingSkeleton from "@/components/message/skeleton";
-import NotificationLoadingSkeleton from "@/components/notification/skeleton";
+import MessageLoadingSkeleton, {
+  MessagePaneSkeleton,
+  MessageThreadSkeleton,
+} from "@/components/message/skeleton";
+import { NavbarUserMenuSkeleton } from "@/components/navbar/skeleton";
+import NotificationLoadingSkeleton, {
+  NotificationCardSkeleton,
+} from "@/components/notification/skeleton";
 import {
   CompanyProfilePageLoadingSkeleton,
   EmployeeProfilePageLoadingSkeleton,
 } from "@/components/profile/skeleton";
 import ResumeBuilderLoadingSkeleton, {
   ResumeEditorLoadingSkeleton,
+  TemplateCardSkeleton,
 } from "@/components/resume-builder/skeleton";
 import {
+  SearchCompanyCardSkeleton,
+  SearchEmployeeCardSkeleton,
   SearchCompanyLoadingSkeleton,
   SearchEmployeeLoadingSkeleton,
 } from "@/components/search/skeleton";
 import SettingLoadingSkeleton from "@/components/setting/skeleton";
 import StaticContentLoadingSkeleton from "@/components/static-content/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PageBannerSkeleton } from "@/components/utils/layout/page-banner";
+import { SectionTitleSkeleton } from "@/components/utils/layout/section-title";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 afterEach(cleanup);
@@ -34,12 +53,17 @@ const pageSkeletons = [
   ["company card", () => <CompanyCardSkeleton />],
   ["company detail", () => <CompanyDetailPageLoadingSkeleton />],
   ["dashboard", () => <DashboardLoadingSkeleton />],
+  ["dashboard activity chart", () => <DashboardChartSkeleton />],
+  ["dashboard rate chart", () => <DashboardChartSkeleton variant="rate" />],
   ["employee card", () => <EmployeeCardSkeleton />],
   ["employee detail", () => <EmployeeDetailPageLoadingSkeleton />],
   ["favorite employee", () => <FavoriteLoadingSkeleton isEmployee />],
   ["favorite company", () => <FavoriteLoadingSkeleton isEmployee={false} />],
   ["feed employee", () => <FeedPageLoadingSkeleton isEmployee />],
   ["feed company", () => <FeedPageLoadingSkeleton isEmployee={false} />],
+  ["feed banner", () => <FeedBannerSkeleton />],
+  ["feed recommendations", () => <FeedRecommendationsSkeleton isEmployee />],
+  ["feed divider", () => <FeedDividerSkeleton />],
   [
     "interview employee",
     () => <InterviewLoadingSkeleton role={USER_ROLE.EMPLOYEE} />,
@@ -51,15 +75,24 @@ const pageSkeletons = [
   ["matching employee", () => <MatchingLoadingSkeleton isEmployee />],
   ["matching company", () => <MatchingLoadingSkeleton isEmployee={false} />],
   ["message", () => <MessageLoadingSkeleton />],
+  ["message pane", () => <MessagePaneSkeleton />],
+  ["message thread", () => <MessageThreadSkeleton />],
+  ["navbar user menu", () => <NavbarUserMenuSkeleton />],
   ["notification", () => <NotificationLoadingSkeleton />],
+  ["notification card", () => <NotificationCardSkeleton />],
   ["company profile", () => <CompanyProfilePageLoadingSkeleton />],
   ["employee profile", () => <EmployeeProfilePageLoadingSkeleton />],
   ["resume builder", () => <ResumeBuilderLoadingSkeleton />],
   ["resume editor", () => <ResumeEditorLoadingSkeleton />],
+  ["resume template card", () => <TemplateCardSkeleton />],
   ["employee search", () => <SearchEmployeeLoadingSkeleton />],
   ["company search", () => <SearchCompanyLoadingSkeleton />],
+  ["employee search card", () => <SearchEmployeeCardSkeleton />],
+  ["company search card", () => <SearchCompanyCardSkeleton />],
   ["setting", () => <SettingLoadingSkeleton />],
   ["static content", () => <StaticContentLoadingSkeleton sectionCount={5} />],
+  ["page banner", () => <PageBannerSkeleton statCount={2} />],
+  ["section title", () => <SectionTitleSkeleton />],
 ] as const;
 
 describe.each(pageSkeletons)("%s skeleton", (_, createSkeleton) => {
@@ -84,6 +117,26 @@ describe.each(pageSkeletons)("%s skeleton", (_, createSkeleton) => {
 });
 
 describe("route-specific skeleton geometry", () => {
+  it("keeps individual shimmer shapes decorative", () => {
+    const { container } = render(<Skeleton className="h-4 w-20" />);
+
+    const shimmer = container.querySelector(".animate-shimmer");
+    expect(shimmer?.getAttribute("aria-hidden")).toBe("true");
+    expect(shimmer?.classList.contains("pointer-events-none")).toBe(true);
+  });
+
+  it("uses the production page-banner lattice and stat geometry", () => {
+    const { container } = render(<PageBannerSkeleton statCount={3} />);
+
+    expect(container.querySelector(".page-banner-grid")).not.toBeNull();
+    expect(
+      container.querySelector(".page-banner-copy.pixel-pad"),
+    ).not.toBeNull();
+    expect(container.querySelectorAll(".page-banner-stats > div")).toHaveLength(
+      3,
+    );
+  });
+
   it("matches legal section counts and metadata", () => {
     const { container } = render(
       <StaticContentLoadingSkeleton sectionCount={11} hasMeta />,

@@ -52,7 +52,7 @@ export function InterviewCard({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <article className="pixel-wash group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card hover:border-foreground/35">
+    <article className="pixel-wash group w-full overflow-hidden border border-border bg-card hover:border-foreground/35">
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Row Section */}
         <div className="flex items-start justify-between gap-2">
@@ -66,7 +66,7 @@ export function InterviewCard({
           </div>
           <Badge
             variant="outline"
-            className={`border-current/15 flex-shrink-0 whitespace-nowrap rounded-none px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.08em] ${getStatusBadgeStyleClass(interview.status)}`}
+            className={`border-current/15 flex-shrink-0 whitespace-nowrap px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.08em] ${getStatusBadgeStyleClass(interview.status)}`}
           >
             {t(`status.${interview.status}`)}
           </Badge>
@@ -130,7 +130,7 @@ export function InterviewCard({
               <Button
                 size="sm"
                 variant="outline"
-                className="rounded-none text-xs text-destructive hover:bg-destructive/10"
+                className="text-xs text-destructive hover:bg-destructive/10"
                 disabled={isUpdating}
                 onClick={() => {
                   setPendingAction("decline");
@@ -146,7 +146,7 @@ export function InterviewCard({
               </Button>
               <Button
                 size="sm"
-                className="rounded-none text-xs"
+                className="text-xs"
                 disabled={isUpdating}
                 onClick={() => {
                   setPendingAction("accept");

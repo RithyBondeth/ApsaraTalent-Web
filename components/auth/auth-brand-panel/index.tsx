@@ -1,24 +1,9 @@
 "use client";
 
-import { PixelMosaic } from "@/components/utils/brand/pixel-mosaic";
-import { PixelPet } from "@/components/utils/brand/pixel-pet";
-import { PixelPattern } from "@/components/utils/brand/pixel-pattern";
+import LogoComponent from "@/components/utils/brand/logo";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
-import { useCallback, useRef } from "react";
 import { IAuthBrandPanelProps } from "./props";
-
-/* ---------------------------------------------------------------------------
- * The artwork here used to be one of seven SVGs in assets/auth/, 34–86 KB each
- * and 387 KB in total, each loaded with `priority` and each `alt=""` — so the
- * browser was told to race for a decoration that carried no information. None
- * used currentColor, so they stayed lit the same way whichever theme the panel
- * was in, which is the whole reason the panel needed its own ink token.
- *
- * This is the same call the page banners already made (see PageBanner). The
- * mosaic replacing them is markup, follows the theme through --pixel-*, and is
- * seeded per route so each auth screen still has its own face.
- * ------------------------------------------------------------------------- */
 
 export default function AuthBrandPanel(props: IAuthBrandPanelProps) {
   /* ------------------------------- Props ------------------------------- */
@@ -31,75 +16,51 @@ export default function AuthBrandPanel(props: IAuthBrandPanelProps) {
 
   /* ------------------------------- Utils ------------------------------- */
   const t = useTranslations("auth");
-  const panelRef = useRef<HTMLDivElement>(null);
-
-  /* ------------------------------- Effects ------------------------------ */
-  // ── Handle Pointer Spotlight and Gentle Artwork Parallax ──────────────
-  const handlePointer = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const el = panelRef.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const relX = (e.clientX - r.left) / r.width - 0.5;
-    const relY = (e.clientY - r.top) / r.height - 0.5;
-    el.style.setProperty("--mx", `${(relX + 0.5) * 100}%`);
-    el.style.setProperty("--my", `${(relY + 0.5) * 100}%`);
-    el.style.setProperty("--img-x", `${relX * 16}px`);
-    el.style.setProperty("--img-y", `${relY * 12}px`);
-  }, []);
 
   /* ----------------------------- Render UI ----------------------------- */
   return (
     <div
-      ref={panelRef}
-      onMouseMove={handlePointer}
       className={cn(
-        "auth-panel relative isolate hidden flex-col p-12 lg:flex xl:p-14",
+        "auth-panel relative isolate hidden flex-col p-10 lg:flex xl:p-14",
         className,
       )}
     >
-      {/* The pixel field, ember-toned: this panel is a brand surface, so
-          the ground can carry the ramp rather than staying neutral. */}
-      <PixelPattern
-        seed="apsara-auth"
-        cell={52}
-        tone="ember"
-        className="-z-10"
-      />
-      {/* Ambient Art Layers Section */}
-      <div className="auth-nimbus" aria-hidden />
-      <div className="auth-spotlight" aria-hidden />
+      <div className="auth-panel-rail" aria-hidden />
 
-      {/* Hero Artwork Section */}
-      <div className="relative z-[1] flex flex-1 items-center justify-center py-8">
-        <div
-          className="auth-hero-wrap auth-rise w-full max-w-[380px]"
-          style={{ "--d": "120ms" } as React.CSSProperties}
-        >
-          <div className="auth-hero-float">
-            {/* Seeded from titleKey — already unique per auth route, so login,
-                signup and reset each get their own mark without another prop
-                to keep in sync at seven call sites. */}
-            <PixelMosaic seed={titleKey} columns={12} density="medium" />
-          </div>
-          {/* Neak greets, once, at first contact with the product. Centred
-              under the mosaic rather than tucked into its corner, and this is
-              the only place she appears besides empty states — a mascot seen
-              constantly stops being an event. */}
-          <div className="mt-7 flex justify-center">
-            <PixelPet expression="smiling" height={136} />
-          </div>
-        </div>
+      {/* The actual Apsara mark is the only pixel artwork in auth. */}
+      <div className="relative z-10 flex items-start">
+        <LogoComponent className="!h-14 w-auto text-[hsl(var(--auth-ink))]" />
       </div>
 
-      {/* Editorial Caption Section */}
-      <div className="relative z-10 max-w-md">
-        <p className="auth-eyebrow pixel-label mb-3.5">{t(eyebrowKey)}</p>
-        <h2 className="pixel-display text-[1.9rem] xl:text-[2.15rem]">
+      {/* Route-specific message replaces decorative artwork with useful context. */}
+      <div className="relative z-10 my-auto max-w-[34rem] py-10">
+        <p className="auth-eyebrow pixel-label mb-5">{t(eyebrowKey)}</p>
+        <h2 className="auth-panel-title pixel-display">
           {t(titleKey)}
         </h2>
-        <p className="mt-3.5 max-w-sm text-[14.5px] leading-relaxed text-[hsl(var(--auth-ink)/0.58)]">
+        <p className="auth-panel-subtitle mt-5 max-w-md">
           {t(subtitleKey)}
         </p>
+      </div>
+
+      {/* A compact product map makes the panel informative, not ornamental. */}
+      <div className="auth-panel-points relative z-10">
+        {[t("brandPoint1"), t("brandPoint2"), t("brandPoint3")].map(
+          (point, index) => (
+            <div className="auth-panel-point" key={point}>
+              <span className="auth-panel-number pixel-label">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <span>{point}</span>
+            </div>
+          ),
+        )}
+      </div>
+
+      <div className="auth-panel-footer relative z-10 mt-8 flex items-center justify-between">
+        <span>{t("brandStatTalent")}</span>
+        <span aria-hidden className="auth-panel-footer-line" />
+        <span>{t("brandStatCompanies")}</span>
       </div>
     </div>
   );

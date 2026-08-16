@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
@@ -14,7 +15,6 @@ import AuthShell from "@/components/auth/auth-shell";
 import { AuthField } from "@/components/auth/auth-field";
 import SocialButton from "@/components/utils/buttons/social-button";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
-import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
@@ -467,10 +467,12 @@ function LoginPage() {
         subtitleKey="loginPanelSubtitle"
       >
         <div className="auth-stagger flex w-full flex-col gap-6">
-          {/* Logo & Title Section */}
+          {/* Title Section */}
           <div style={{ "--d": "0ms" } as React.CSSProperties}>
-            <LogoComponent className="!h-16 w-auto self-start" priority />
-            <TypographyH2 className="mt-5 phone-xl:text-2xl">
+            <span className="auth-form-kicker pixel-label">
+              {t("loginPanelEyebrow")}
+            </span>
+            <TypographyH2 className="mt-3 phone-xl:text-2xl">
               {t("loginPageTitle")}
             </TypographyH2>
             <TypographyMuted className="text-md phone-xl:text-sm">
@@ -637,11 +639,13 @@ function LoginPage() {
         }}
       >
         <DialogContent>
-          <DialogTitle className="flex items-center gap-2">
-            <LucideShieldCheck className="size-5 text-primary" />
-            {t("twoFactorTitle")}
-          </DialogTitle>
-          <DialogDescription>{t("twoFactorDesc")}</DialogDescription>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <LucideShieldCheck className="size-5 text-primary" />
+              {t("twoFactorTitle")}
+            </DialogTitle>
+            <DialogDescription>{t("twoFactorDesc")}</DialogDescription>
+          </DialogHeader>
           <div className="flex flex-col items-center gap-3 py-2">
             <InputOTP
               maxLength={OTP_LENGTH}
@@ -686,8 +690,10 @@ function LoginPage() {
       {/* Remember Dialog Section */}
       <Dialog open={openRmbDialog} onOpenChange={setOpenRmbDialog}>
         <DialogContent>
-          <DialogTitle>{t("rememberMe")}</DialogTitle>
-          <DialogDescription>{t("rememberMeDescription")}</DialogDescription>
+          <DialogHeader>
+            <DialogTitle>{t("rememberMe")}</DialogTitle>
+            <DialogDescription>{t("rememberMeDescription")}</DialogDescription>
+          </DialogHeader>
           <DialogFooter>
             <Button
               variant={"outline"}

@@ -41,7 +41,7 @@ export function AvailabilityBadge({ availability }: { availability: string }) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <span
-      className={`border-current/15 inline-flex items-center gap-1.5 rounded-none border px-2.5 py-1 text-xs font-medium ${config.surface}`}
+      className={`border-current/15 inline-flex items-center gap-1.5 border px-2.5 py-1 text-xs font-medium ${config.surface}`}
     >
       {/* Availability Dot Section */}
       <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${config.dot}`} />

@@ -174,7 +174,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
         ref={triggerRef}
         size="sm"
         variant="outline"
-        className="gap-1.5 rounded-none text-xs"
+        className="gap-1.5 text-xs"
         onClick={handleOpen}
       >
         <LucideMessageCircleQuestion className="size-3.5 text-primary" />
@@ -183,11 +183,11 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
 
       {/* Modal Section */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="flex flex-col gap-0 rounded-none border-t-[5px] border-t-foreground p-0 sm:max-w-2xl">
+        <DialogContent className="flex flex-col gap-0 p-0 sm:max-w-2xl">
           {/* Header Section */}
           <DialogHeader className="shrink-0 border-b border-border/60 px-5 pb-4 pt-5">
             <div className="flex items-center gap-3 pr-8">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-none bg-foreground">
+              <div className="flex size-9 shrink-0 items-center justify-center bg-foreground">
                 <LucideMessageCircleQuestion className="size-5 text-background" />
               </div>
               <div className="min-w-0 flex-1">
@@ -202,7 +202,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
                 )}
               </div>
               {hasQuestions && (
-                <span className="shrink-0 rounded-none border border-border bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                <span className="shrink-0 border border-border bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
                   {generating
                     ? t("questionsBadgeSoFar", { count: questions.length })
                     : t("questionsBadge", { count: questions.length })}
@@ -223,16 +223,16 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
               [...Array(5)].map((_, i) => (
                 <div
                   key={i}
-                  className="flex gap-3 rounded-none border border-l-[5px] border-border border-l-foreground bg-card px-4 py-4"
+                  className="flex gap-3 border border-border bg-card px-4 py-4"
                 >
-                  <Skeleton className="mt-1 h-4 w-4 shrink-0 rounded-none" />
+                  <Skeleton className="mt-1 h-4 w-4 shrink-0" />
                   <div className="flex-1 space-y-2">
-                    <Skeleton className="h-5 w-24 rounded-none" />
-                    <Skeleton className="h-4 w-full rounded-none" />
+                    <Skeleton className="h-5 w-24" />
+                    <Skeleton className="h-4 w-full" />
                     <Skeleton
-                      className={`h-4 rounded-none ${i % 2 === 0 ? "w-4/5" : "w-3/4"}`}
+                      className={`h-4 ${i % 2 === 0 ? "w-4/5" : "w-3/4"}`}
                     />
-                    <Skeleton className="h-3 w-2/3 rounded-none" />
+                    <Skeleton className="h-3 w-2/3" />
                   </div>
                 </div>
               ))}
@@ -240,7 +240,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
             {/* Error Section (Only Shown if No Questions At All) */}
             {error && !generating && !hasQuestions && (
               <div className="flex flex-col items-center gap-4 py-16 text-center">
-                <div className="flex size-14 items-center justify-center rounded-none border border-destructive/20 bg-destructive/10">
+                <div className="flex size-14 items-center justify-center border border-destructive/20 bg-destructive/10">
                   <LucideAlertCircle className="size-7 text-destructive/70" />
                 </div>
                 <div>
@@ -254,7 +254,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="gap-1.5 rounded-none"
+                  className="gap-1.5"
                   onClick={handleRegenerate}
                 >
                   <LucideRotateCcw className="size-3.5" />
@@ -288,15 +288,15 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
             <div className="flex shrink-0 items-center justify-between gap-3 border-t border-border/60 bg-muted/20 px-5 py-4">
               {generating && !hasQuestions ? (
                 <>
-                  <Skeleton className="h-9 w-36 rounded-none" />
-                  <Skeleton className="h-9 w-36 rounded-none" />
+                  <Skeleton className="h-9 w-36" />
+                  <Skeleton className="h-9 w-36" />
                 </>
               ) : (
                 <>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="gap-1.5 rounded-none"
+                    className="gap-1.5"
                     onClick={handleRegenerate}
                     disabled={isBusy}
                   >
@@ -305,7 +305,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
                   </Button>
                   <Button
                     size="sm"
-                    className="gap-1.5 rounded-none"
+                    className="gap-1.5"
                     onClick={handleDownloadPdf}
                     disabled={!hasQuestions || isBusy}
                   >

@@ -31,8 +31,8 @@ import {
   Languages,
   Laptop,
   Loader2,
-  Sparkles,
 } from "lucide-react";
+import { Bot as Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ProfessionStepForm({

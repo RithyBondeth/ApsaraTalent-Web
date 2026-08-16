@@ -1,6 +1,7 @@
 "use client";
 
 import OpenPositionForm from "@/components/company/profile/open-position-form";
+import { PixelGridDecor } from "@/components/utils/brand/pixel-grid-decor";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -108,8 +109,8 @@ import {
   LucideUsers,
   LucideXCircle,
   LucideZap,
-  Sparkles,
 } from "lucide-react";
+import { Bot as Sparkles } from "lucide-react";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import Image from "next/image";
 import Link from "next/link";
@@ -1197,7 +1198,7 @@ export default function ProfilePage() {
     <form
       onSubmit={handleSubmit}
       data-profile-editing={isEdit}
-      className="profile-editorial profile-company animate-page-in flex flex-col gap-6 sm:gap-7"
+      className="profile-editorial profile-company animate-page-in flex flex-col"
       onKeyDown={(e) => {
         if (
           e.key === "Enter" &&
@@ -1229,20 +1230,30 @@ export default function ProfilePage() {
       <section className="profile-hero profile-company-hero pixel-band overflow-hidden bg-card">
         {/* Cover Image Section */}
         <div
-          className={`profile-cover relative h-48 bg-cover bg-center bg-no-repeat sm:h-64 ${!company.cover ? "bg-foreground" : ""}`}
+          className={`profile-cover relative h-32 overflow-hidden border-b border-border bg-cover bg-center bg-no-repeat sm:h-40 ${!company.cover ? "bg-muted/30" : ""}`}
           style={
             company.cover
               ? { backgroundImage: `url(${avatarOrCoverPreview.cover})` }
               : {}
           }
         >
-          {/* Overlay for Gradient Cover Section */}
+          {/* The pixel field stands in when there is no cover — the diagonal
+              hatch on a near-white slab was the last of the inverted heroes. */}
           {!company.cover && (
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_48%,hsl(var(--background)/0.09)_48%,hsl(var(--background)/0.09)_50%,transparent_50%,transparent_100%)] bg-[length:34px_34px]" />
+            <PixelGridDecor
+              seed="company-profile"
+              cells={8}
+              rows={2}
+              columns={12}
+            />
           )}
 
-          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/65 to-transparent" />
-          <span className="pixel-label absolute bottom-4 left-5 text-[10px] text-white sm:left-6">
+          {company.cover && (
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/80 to-transparent" />
+          )}
+          <span
+            className={`pixel-label absolute bottom-4 left-5 text-[10px] sm:left-6 ${company.cover ? "text-foreground" : "text-muted-foreground"}`}
+          >
             {tP("companyProfileLabel")}
           </span>
 
@@ -1250,7 +1261,7 @@ export default function ProfilePage() {
           {(isEdit || !company.cover) && (
             <div className="absolute bottom-3 right-3 flex items-center gap-2">
               <Button
-                className="flex h-8 items-center gap-1.5 rounded-none border border-white/30 bg-background/90 px-3 text-xs text-foreground backdrop-blur-sm hover:bg-background"
+                className="flex h-8 items-center gap-1.5 border border-white/30 bg-background/90 px-3 text-xs text-foreground backdrop-blur-sm hover:bg-background"
                 onClick={() => {
                   if (isEdit) {
                     coverInputRef.current?.click();
@@ -1270,7 +1281,7 @@ export default function ProfilePage() {
               </Button>
               {company.cover && (
                 <Button
-                  className="flex h-8 items-center gap-1.5 rounded-none bg-destructive/90 px-3 text-xs text-destructive-foreground backdrop-blur-sm"
+                  className="flex h-8 items-center gap-1.5 bg-destructive/90 px-3 text-xs text-destructive-foreground backdrop-blur-sm"
                   onClick={() => setOpenRemoveCoverDialog(true)}
                   type="button"
                 >
@@ -1284,11 +1295,11 @@ export default function ProfilePage() {
 
         {/* Identity Row Section */}
         <div className="px-5 pb-6 sm:px-6">
-          <div className="-mt-10 flex items-end gap-4 tablet-md:flex-col tablet-md:items-center sm:-mt-12">
+          <div className="-mt-9 flex items-end gap-4 tablet-md:flex-col tablet-md:items-center sm:-mt-10">
             {/* Avatar Section */}
             <div className="relative flex-shrink-0">
               <Avatar
-                className="size-24 cursor-pointer !rounded-none border-[6px] border-card bg-card shadow-none sm:size-28"
+                className="size-24 cursor-pointer border-[6px] border-card bg-card shadow-none sm:size-28"
                 rounded="md"
                 onClick={(e) => {
                   if (!isEdit && company.avatar) handleClickAvatarPopup(e);
@@ -1306,7 +1317,7 @@ export default function ProfilePage() {
               {(isEdit || !company.avatar) && (
                 <div className="absolute -bottom-1 -right-1 flex items-center gap-1">
                   <Button
-                    className="size-7 rounded-none bg-foreground p-0 text-primary-foreground shadow-none"
+                    className="size-7 bg-foreground p-0 text-primary-foreground shadow-none"
                     onClick={() => {
                       if (isEdit) {
                         avatarInputRef.current?.click();
@@ -1326,7 +1337,7 @@ export default function ProfilePage() {
                   </Button>
                   {company.avatar && !avatarFile && (
                     <Button
-                      className="size-7 rounded-none bg-destructive p-0 text-destructive-foreground shadow-none"
+                      className="size-7 bg-destructive p-0 text-destructive-foreground shadow-none"
                       type="button"
                       onClick={() => setOpenRemoveAvatarDialog(true)}
                     >
@@ -1335,7 +1346,7 @@ export default function ProfilePage() {
                   )}
                   {avatarFile && (
                     <Button
-                      className="size-7 rounded-none bg-destructive p-0 text-destructive-foreground shadow-none"
+                      className="size-7 bg-destructive p-0 text-destructive-foreground shadow-none"
                       onClick={() => {
                         setAvatarFile(null);
                         form.setValue(
@@ -1439,7 +1450,7 @@ export default function ProfilePage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="mb-1 shrink-0 rounded-none text-xs tablet-md:w-full"
+                className="mb-1 shrink-0 text-xs tablet-md:w-full"
                 type="button"
                 onClick={enableEditMode}
               >
@@ -1452,11 +1463,11 @@ export default function ProfilePage() {
       </section>
 
       {/* Content Section */}
-      <div className="profile-grid pixel-ruled grid-cols-[minmax(0,1.55fr)_minmax(280px,0.75fr)] items-start border-x-0 border-b-0 tablet-lg:grid-cols-1">
+      <div className="profile-grid pixel-ruled grid-cols-[minmax(0,1fr)_22rem] items-start border-x-0 border-b-0 tablet-lg:grid-cols-1">
         {/* LEFT Side Section */}
         <div className="profile-main-column flex min-w-0 flex-col">
           {/* Company Information Section */}
-          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card p-6 sm:p-8">
+          <section className="profile-section pixel-pad flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card">
             <SectionTitle
               icon={<LucideBuilding />}
               title={tP("companyInformation")}
@@ -1790,7 +1801,7 @@ export default function ProfilePage() {
 
           {/* OpenPosition Information Section */}
           {company.openPositions && (
-            <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card p-6 sm:p-8">
+            <section className="profile-section pixel-pad flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card">
               <SectionTitle
                 icon={<LucideUsers />}
                 title={tP("openPositionInformation")}
@@ -1990,7 +2001,7 @@ export default function ProfilePage() {
         {/* RIGHT SIDE Section */}
         <aside className="profile-side-column flex min-w-0 flex-col gap-5">
           {/* Benefits Section */}
-          <section className="profile-section flex flex-col items-start gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
+          <section className="profile-section pixel-pad flex flex-col items-start gap-5 overflow-hidden border-b border-border bg-card">
             <div className="w-full">
               <SectionTitle
                 icon={<LucideCircleCheck />}
@@ -2090,7 +2101,7 @@ export default function ProfilePage() {
           </section>
 
           {/* Values Section */}
-          <section className="profile-section flex flex-col items-start gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
+          <section className="profile-section pixel-pad flex flex-col items-start gap-5 overflow-hidden border-b border-border bg-card">
             <div className="w-full">
               <SectionTitle icon={<LucideZap />} title={tP("values")} />
             </div>
@@ -2186,7 +2197,7 @@ export default function ProfilePage() {
           </section>
 
           {/* Career Scopes Section */}
-          <section className="profile-section flex flex-col items-start gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
+          <section className="profile-section pixel-pad flex flex-col items-start gap-5 overflow-hidden border-b border-border bg-card">
             <div className="w-full">
               <SectionTitle
                 icon={<LucideCompass />}
@@ -2205,7 +2216,7 @@ export default function ProfilePage() {
                           <Tag
                             label={career.name}
                             neutral
-                            className="!rounded-none border border-border hover:shadow-none"
+                            className="border border-border hover:shadow-none"
                           />
                         </div>
                       </HoverCardTrigger>
@@ -2338,7 +2349,7 @@ export default function ProfilePage() {
           </section>
 
           {/* Social Section */}
-          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card p-6 sm:p-8">
+          <section className="profile-section pixel-pad flex w-full flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card">
             <SectionTitle
               icon={<LucideGlobe />}
               title={tP("socialInformation")}
@@ -2509,7 +2520,7 @@ export default function ProfilePage() {
           </section>
 
           {/* Authentication Section */}
-          <section className="profile-section flex flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
+          <section className="profile-section pixel-pad flex flex-col items-stretch gap-5 overflow-hidden border-b border-border bg-card">
             <SectionTitle
               icon={<LucideSettings />}
               title={tP("authentication")}

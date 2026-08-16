@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Sparkles } from "lucide-react";
+import { Bot as Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAiQuotaStore } from "@/stores/apis/ai/get-ai-quota.store";
 
@@ -20,14 +20,7 @@ export function AiQuotaBadge({ className }: { className?: string }) {
 
   /* ------------------------------ Loading State ----------------------------- */
   if (!data && loading) {
-    return (
-      <div
-        className={cn(
-          "h-6 w-36 animate-pulse rounded-none bg-muted",
-          className,
-        )}
-      />
-    );
+    return <div className={cn("h-6 w-36 animate-pulse bg-muted", className)} />;
   }
 
   /* ------------------------------- Empty State ------------------------------ */
@@ -66,7 +59,7 @@ export function AiQuotaBadge({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-2 rounded-none border px-2.5 py-1",
+        "inline-flex items-center gap-2 border px-2.5 py-1",
         tone.ring,
         className,
       )}

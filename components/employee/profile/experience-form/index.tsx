@@ -10,9 +10,9 @@ import {
   LucideBriefcaseBusiness,
   LucideBuilding2,
   LucideTrash2,
-  Sparkles,
   Loader2,
 } from "lucide-react";
+import { Bot as Sparkles } from "lucide-react";
 import { Controller, useWatch } from "react-hook-form";
 import { IEmployeeExperienceFormProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";

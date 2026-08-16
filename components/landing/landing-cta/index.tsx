@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { PixelGridField } from "@/components/utils/brand/pixel-grid-field";
+import { PixelPet } from "@/components/utils/brand/pixel-pet";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { useGsapScrollAnimation } from "@/hooks/utils/use-gsap-animation";
 import { LucideArrowRight } from "lucide-react";
@@ -14,32 +16,38 @@ export default function LandingCta() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <section ref={ctaRef} className="bg-background px-4 py-6 sm:px-6 sm:py-8">
+    <section ref={ctaRef} className="border-b border-border">
       <div
         data-gsap="scale-up"
-        className="landing-dark-panel relative mx-auto max-w-7xl overflow-hidden px-6 py-16 sm:px-10 sm:py-20 lg:px-16 lg:py-24"
+        className="relative mx-auto grid max-w-[1600px] overflow-hidden border-x border-border lg:grid-cols-[7fr_3fr]"
       >
-        {/* Grid Background Section */}
-
-        {/* CTA Heading Section */}
-        <div className="relative z-10 grid gap-12 lg:grid-cols-[1fr_0.72fr] lg:items-end">
-          <div>
-            <p className="pixel-label mb-6 text-[hsl(var(--auth-ink)/0.55)]">
-              {t("badge")}
-            </p>
+        <PixelGridField
+          tone="paper"
+          animated
+          className="min-h-[360px]"
+          contentClassName="min-h-[360px] overflow-hidden px-6 py-16 text-pixel-ink sm:px-10 sm:py-20 lg:px-14 lg:py-24"
+        >
+          <div className="relative z-10 max-w-4xl">
+            <p className="pixel-label mb-6 text-pixel-ink/50">{t("badge")}</p>
             <TypographyH2
-              data-gsap="split-chars"
-              className="pixel-display max-w-3xl text-3xl text-[hsl(var(--auth-ink))] [perspective:800px] sm:text-4xl lg:text-6xl"
+              data-gsap="split-words"
+              className="max-w-4xl text-4xl font-normal !leading-[1.02] tracking-[-0.045em] text-pixel-ink [perspective:800px] sm:text-5xl lg:text-7xl"
             >
               {t("ctaHeading")} {t("ctaHeadingHighlight")}?
             </TypographyH2>
           </div>
+          <PixelPet
+            expression="smiling"
+            height={136}
+            className="absolute -bottom-1 right-12 z-10 h-28 w-auto sm:right-20 sm:h-36"
+          />
+        </PixelGridField>
 
-          {/* CTA Description Section */}
-          <div className="lg:justify-self-end">
+        <div className="landing-hero-shell relative z-10 flex flex-col justify-end border-t border-[hsl(var(--landing-hero-ink)/0.14)] px-6 py-12 sm:px-10 lg:border-l lg:border-t-0 lg:p-10">
+          <div>
             <p
               data-gsap="blur-reveal"
-              className="mb-7 max-w-lg text-sm leading-relaxed text-[hsl(var(--auth-ink)/0.62)] sm:text-base"
+              className="mb-8 max-w-lg text-base leading-relaxed text-[hsl(var(--landing-hero-ink)/0.66)]"
             >
               {t("ctaDescription")}
             </p>
@@ -52,7 +60,7 @@ export default function LandingCta() {
               <Link href="/signup/option" data-magnetic>
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-none bg-[hsl(var(--auth-ink))] px-7 text-[hsl(var(--auth-paper))] shadow-none hover:bg-[hsl(var(--auth-ink)/0.9)] sm:w-auto"
+                  className="h-12 w-full rounded-none bg-[hsl(var(--landing-hero-ink))] px-7 text-[hsl(var(--landing-hero-bg))] shadow-none hover:bg-[hsl(var(--landing-hero-ink)/0.88)] sm:w-auto"
                 >
                   {t("getStartedFree")}
                   <LucideArrowRight className="size-4" />
@@ -62,7 +70,7 @@ export default function LandingCta() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="h-12 w-full rounded-none border-[hsl(var(--auth-ink)/0.3)] bg-transparent px-7 text-[hsl(var(--auth-ink))] shadow-none hover:bg-[hsl(var(--auth-ink)/0.1)] hover:text-[hsl(var(--auth-ink))] sm:w-auto"
+                  className="h-12 w-full rounded-none border-[hsl(var(--landing-hero-ink)/0.28)] bg-transparent px-7 text-[hsl(var(--landing-hero-ink))] shadow-none hover:bg-[hsl(var(--landing-hero-ink)/0.08)] hover:text-[hsl(var(--landing-hero-ink))] sm:w-auto"
                 >
                   {t("signIn")}
                 </Button>

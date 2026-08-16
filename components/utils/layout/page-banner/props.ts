@@ -1,12 +1,17 @@
-import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
+
+type TBannerStatIcon = (props: {
+  className?: string;
+  "aria-hidden"?: boolean;
+}) => ReactNode;
 
 export interface IPageBannerStat {
   /** Short lowercase noun — "candidates", "new this week". */
   label: string;
   /** Pre-formatted for display; the banner does not format numbers itself. */
   value: ReactNode;
-  icon: LucideIcon;
+  /** Lucide SVGs and branded raster icons share this small rendering contract. */
+  icon: TBannerStatIcon;
 }
 
 export interface IPageBannerProps {

@@ -50,9 +50,7 @@ export default function RemoveAlertDialog(props: IRemoveAlertDialog) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-      <DialogContent className="max-w-md rounded-none border-border/70 p-0 shadow-2xl sm:rounded-none [&>button]:right-4 [&>button]:top-4 [&>button]:rounded-none">
-        <div className="h-1 w-20 bg-destructive" />
-
+      <DialogContent className="max-w-md p-0">
         <DialogHeader className="flex-row items-start gap-4 space-y-0 px-6 pb-6 pt-5 text-left">
           <div className="flex size-12 shrink-0 items-center justify-center border border-destructive/25 bg-destructive/10 text-destructive">
             <Trash2 className="size-5" />
@@ -72,7 +70,7 @@ export default function RemoveAlertDialog(props: IRemoveAlertDialog) {
           <Button
             variant="outline"
             type="button"
-            className="min-w-24 rounded-none"
+            className="min-w-24"
             onClick={onNoClick}
           >
             {t("cancel")}
@@ -80,7 +78,7 @@ export default function RemoveAlertDialog(props: IRemoveAlertDialog) {
           <Button
             type="button"
             variant="destructive"
-            className="min-w-24 rounded-none"
+            className="min-w-24"
             onClick={onYesClick}
           >
             <Trash2 className="size-4" />

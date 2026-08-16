@@ -38,7 +38,7 @@ export function ScrollToTop() {
         "fixed bottom-24 right-4 z-40 lg:bottom-8 lg:right-6",
         "flex size-10 items-center justify-center rounded-full",
         /* pixel-overlay-shadow is the one shadow the design ships, and this
-           genuinely floats over scrolling content. */
+        genuinely floats over scrolling content. */
         "pixel-overlay-shadow bg-foreground text-background",
         "transition-all duration-300 ease-out",
         /* Was scale-110 plus a 28px blurred shadow that deepened on hover.

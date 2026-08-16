@@ -29,7 +29,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <article className="pixel-wash group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card hover:border-foreground/35">
+    <article className="pixel-wash group w-full overflow-hidden rounded-none border border-border bg-card hover:border-foreground/35">
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Section: Avatar, Name, Job and Availability */}
         <div className="flex gap-4">

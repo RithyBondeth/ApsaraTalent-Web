@@ -1,12 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import {
-  logo,
-  logoBlack,
-  logoWithoutTitle,
-} from "@/utils/constants/asset.constant";
-import Image from "next/image";
+import { PixelPet } from "@/components/utils/brand/pixel-pet";
 
 /* ----------------------------------- Helper ---------------------------------- */
 interface ILogoProps {
@@ -19,52 +14,35 @@ interface ILogoProps {
 
 export default function LogoComponent({
   withoutTitle = false,
-  height = 100,
-  width = 200,
+  height = 52,
+  width = 148,
   className,
-  priority = false,
 }: ILogoProps) {
-  if (withoutTitle) {
-    return (
-      <Image
-        src={logoWithoutTitle}
-        alt="Apsara Talent logo"
-        height={height}
-        width={width}
-        className={cn("h-auto w-auto", className)}
-        priority={priority}
-      />
-    );
-  }
-
   return (
     <span
       role="img"
       aria-label="Apsara Talent"
       className={cn(
-        "relative inline-grid aspect-[5/3] overflow-visible",
+        "inline-flex shrink-0 items-center overflow-visible text-foreground",
+        withoutTitle ? "aspect-[16/17]" : "gap-2.5",
         className,
       )}
       style={className ? undefined : { width, height }}
     >
-      <Image
-        src={logo}
-        alt=""
-        fill
-        sizes={`${width}px`}
-        aria-hidden
-        className="pointer-events-none object-contain opacity-100 blur-0 transition-[opacity,transform,filter] duration-500 ease-out dark:scale-[0.98] dark:opacity-0 dark:blur-[2px]"
-        priority={priority}
+      <PixelPet
+        expression="smiling"
+        height={34}
+        className="h-full max-h-[52px] w-auto shrink-0"
       />
-      <Image
-        src={logoBlack}
-        alt=""
-        fill
-        sizes={`${width}px`}
-        aria-hidden
-        className="pointer-events-none scale-[1.08] object-contain opacity-0 blur-[2px] transition-[opacity,transform,filter] duration-500 ease-out dark:scale-[1.11] dark:opacity-100 dark:blur-0"
-        priority={priority}
-      />
+      {!withoutTitle && (
+        <span
+          aria-hidden
+          className="flex flex-col text-[0.84rem] font-medium leading-[0.9] tracking-[-0.045em]"
+        >
+          <span>Apsara</span>
+          <span>Talent</span>
+        </span>
+      )}
     </span>
   );
 }

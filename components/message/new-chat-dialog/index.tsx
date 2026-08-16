@@ -40,7 +40,7 @@ export default function NewChatDialog(props: INewChatDialogProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md gap-4 rounded-none border-t-[5px] border-border border-t-foreground">
+      <DialogContent className="max-w-md gap-4 border-border">
         {/* Heading Section */}
         <DialogHeader>
           <DialogTitle className="pixel-display text-base">
@@ -56,7 +56,7 @@ export default function NewChatDialog(props: INewChatDialogProps) {
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
             placeholder={t("newChatSearch")}
-            className="rounded-none pl-9"
+            className="pl-9"
             aria-label={t("newChatSearch")}
           />
         </div>
@@ -90,12 +90,12 @@ export default function NewChatDialog(props: INewChatDialogProps) {
                       onClick={() => onSelect(candidate)}
                       className="flex w-full items-center gap-3 border-b border-border px-2 py-3 text-left transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      <Avatar className="h-9 w-9 shrink-0 rounded-none border border-border">
+                      <Avatar className="h-9 w-9 shrink-0 border border-border">
                         <AvatarImage
                           src={candidate.avatar}
                           alt={candidate.name}
                         />
-                        <AvatarFallback className="rounded-none text-xs font-medium">
+                        <AvatarFallback className="text-xs font-medium">
                           {getNameInitials(candidate.name)}
                         </AvatarFallback>
                       </Avatar>

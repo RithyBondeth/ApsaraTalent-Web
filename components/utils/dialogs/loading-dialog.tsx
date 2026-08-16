@@ -6,10 +6,9 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CheckCircle2, Loader2 } from "lucide-react";
-import ApsaraLoadingSpinner from "@/components/utils/feedback/apsara-loading-spinner";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TLoadingStep } from "@/utils/interfaces/ui/loading.interface";
+import { Check, LoaderCircle } from "lucide-react";
 
 /* --------------------------------- Helper --------------------------------- */
 interface ILoadingDialogProps {
@@ -30,21 +29,15 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
   return (
     <Dialog open={loading}>
       <DialogContent
-        className="max-w-sm overflow-hidden rounded-none border-border/60 bg-background/95 shadow-2xl backdrop-blur-sm sm:rounded-none [&>button]:hidden"
+        className="max-w-sm overflow-hidden [&>button]:hidden"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        {/* Background Orbs Section */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="loading-dialog-orb absolute -right-10 -top-16 h-32 w-32 rounded-full bg-primary/15 blur-2xl" />
-          <div className="loading-dialog-orb absolute -bottom-16 -left-10 h-32 w-32 rounded-full bg-primary/15 blur-2xl" />
-        </div>
-
         {/* Main Content Section */}
         <div className="relative z-10 flex w-full flex-col items-center justify-center gap-4 py-2">
           {/* Loading Spinner Section */}
-          <div className="loading-dialog-spinner-wrap">
-            <ApsaraLoadingSpinner size={64} loop />
+          <div className="loading-dialog-spinner-wrap border border-primary/30 bg-primary/5 p-3 text-primary">
+            <LoaderCircle className="size-10 animate-spin" />
           </div>
 
           {/* Title Section */}
@@ -88,15 +81,9 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
                       }`}
                     >
                       {done ? (
-                        <CheckCircle2
-                          size={14}
-                          className="shrink-0 text-primary"
-                        />
+                        <Check className="size-3.5 shrink-0 text-success-accent" />
                       ) : active ? (
-                        <Loader2
-                          size={14}
-                          className="shrink-0 animate-spin text-primary"
-                        />
+                        <LoaderCircle className="size-3.5 shrink-0 animate-spin text-primary" />
                       ) : (
                         <span className="inline-block h-3.5 w-3.5 shrink-0 border border-muted-foreground/40" />
                       )}

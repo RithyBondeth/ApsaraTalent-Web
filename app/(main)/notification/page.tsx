@@ -185,7 +185,7 @@ export default function NotificationPage() {
         </div>
 
         {/* Controls Section */}
-        <div className="flex w-full flex-col gap-3 border border-t-[5px] border-border border-t-primary bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex w-full flex-col gap-3 border border-border bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
           {/* Pill Tabs Filter Section */}
           <div className="scrollbar-none flex items-center gap-1 overflow-x-auto bg-muted/45 p-1 tablet-sm:hidden">
             {(

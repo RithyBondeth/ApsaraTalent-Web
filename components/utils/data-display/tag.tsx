@@ -20,7 +20,7 @@ export default function Tag(props: ITagInterface) {
     <div
       className={`flex w-fit items-center ${
         props.icon ? "gap-1 py-1.5" : "py-1.5"
-      } pixel-wash cursor-pointer rounded-none border border-border/60 px-3 hover:border-foreground/30 ${bg} ${props.className ?? ""}`}
+      } pixel-wash cursor-pointer border border-border/60 px-3 hover:border-foreground/30 ${bg} ${props.className ?? ""}`}
     >
       {/* Icon Section */}
       {props.icon && (

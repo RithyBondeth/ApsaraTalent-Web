@@ -87,7 +87,7 @@ export function TwoFactorDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-sm rounded-none border-t-[5px] border-t-primary">
+      <DialogContent className="max-w-sm">
         {/* Dialog Header Section */}
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -170,7 +170,7 @@ export function TwoFactorDialog({
         <DialogFooter className="gap-2 sm:gap-0">
           <Button
             variant="outline"
-            className="rounded-none"
+            className=""
             onClick={handleClose}
             disabled={loading}
           >
@@ -178,7 +178,7 @@ export function TwoFactorDialog({
           </Button>
           {isEnableFlow && step === 1 ? (
             <Button
-              className="rounded-none"
+              className=""
               onClick={() => setStep(2)}
               disabled={loading || !qrCodeUrl}
             >
@@ -189,7 +189,7 @@ export function TwoFactorDialog({
               onClick={handleVerify}
               disabled={loading || otp.length < OTP_LENGTH}
               variant={isEnableFlow ? "default" : "destructive"}
-              className="rounded-none"
+              className=""
             >
               {loading && (
                 <LucideLoader2 className="mr-1 size-4 animate-spin" />

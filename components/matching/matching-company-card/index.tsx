@@ -48,12 +48,12 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <article className="pixel-wash group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card hover:border-foreground/35">
+    <article className="pixel-wash group w-full overflow-hidden border border-border bg-card hover:border-foreground/35">
       <div className="flex gap-4 p-4 sm:gap-5 sm:p-5">
         {/* Avatar Section */}
         <Avatar
           rounded="md"
-          className="size-14 flex-shrink-0 !rounded-none border border-border sm:size-16"
+          className="size-14 flex-shrink-0 border border-border sm:size-16"
         >
           <AvatarFallback className="text-sm font-medium">
             {getNameInitials(props.name)}
@@ -98,7 +98,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
                   label={op.title}
                   key={op.id}
                   neutral
-                  className="!rounded-none border border-border hover:shadow-none"
+                  className="border border-border hover:shadow-none"
                 />
               ))}
             </div>
@@ -109,17 +109,17 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
             <MetaChip
               icon={<LucideUsers />}
               text={t("memberCount", { count: props.companySize })}
-              className="rounded-none border border-border bg-muted/45"
+              className="border border-border bg-muted/45"
             />
             <MetaChip
               icon={<LucideBriefcaseBusiness />}
               text={t("positionCount", { count: props.openPosition.length })}
-              className="rounded-none border border-border bg-muted/45"
+              className="border border-border bg-muted/45"
             />
             <MetaChip
               icon={<LucideMapPin />}
               text={translateLocation(props.location, tl)}
-              className="rounded-none border border-border bg-muted/45"
+              className="border border-border bg-muted/45"
             />
           </div>
         </div>
@@ -163,7 +163,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
           <Button
             size="sm"
             variant="ghost"
-            className="h-8 rounded-none px-2 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+            className="h-8 px-2 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
             aria-label={t("unmatch")}
             disabled={isUnmatching}
             onClick={() => setUnmatchDialogOpen(true)}
@@ -212,7 +212,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
             <Button
               size="sm"
               variant="outline"
-              className="h-8 rounded-none px-2.5 text-xs sm:px-3"
+              className="h-8 px-2.5 text-xs sm:px-3"
               aria-label={t("schedule")}
               onClick={props.onScheduleClick}
             >
@@ -224,7 +224,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
           {/* Chat Now Button Section */}
           <Button
             size="sm"
-            className="h-8 rounded-none px-2.5 text-xs sm:px-3"
+            className="h-8 px-2.5 text-xs sm:px-3"
             aria-label={t("chatNow")}
             onClick={props.onChatNowClick}
             disabled={props.isChatLoading}

@@ -2,9 +2,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { PixelMosaic } from "@/components/utils/brand/pixel-mosaic";
-import { PixelPet } from "@/components/utils/brand/pixel-pet";
-import { PIXEL_PET_SPRITES } from "@/components/utils/brand/pixel-pet/sprites";
-import { LucideBriefcase, LucideSparkles, LucideUsers } from "lucide-react";
+import { LucideBriefcase, LucideUsers } from "lucide-react";
+import { Bot as LucideSparkles } from "lucide-react";
 import { StatusPill } from "@/components/utils/data-display/status-pill";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 import { Badge } from "@/components/ui/badge";
@@ -111,10 +110,6 @@ function Swatch({ token, label }: { token: string; label: string }) {
     </div>
   );
 }
-
-const PET_EXPRESSIONS = Object.keys(
-  PIXEL_PET_SPRITES,
-) as (keyof typeof PIXEL_PET_SPRITES)[];
 
 export default function DesignSystemPage() {
   if (process.env.NODE_ENV === "production") notFound();
@@ -242,25 +237,6 @@ export default function DesignSystemPage() {
                 the theme.
               </p>
             </div>
-          </div>
-        </Section>
-
-        <Section
-          title="Neak — the pixel Apsara"
-          note="A 32×34 bust: mokot, face, collar, shoulders. A portrait rather than a full figure, because the Apsara identity lives almost entirely in the crown — spending the whole canvas on it buys five spires, a jewelled band and side pendants, none of which survive on a figure that also has to fit a body. No arms, so the set is expressions rather than poses. Her skin, hair and cloth are tokens declared once and never redefined per theme: a character whose colouring changed between light and dark would stop reading as the same character."
-        >
-          <div className="flex flex-wrap items-end gap-10">
-            {PET_EXPRESSIONS.map((expression) => (
-              <div
-                key={expression}
-                className="flex flex-col items-center gap-3"
-              >
-                <PixelPet expression={expression} height={136} />
-                <span className="pixel-label text-[9px] text-muted-foreground">
-                  {expression}
-                </span>
-              </div>
-            ))}
           </div>
         </Section>
 
@@ -393,7 +369,7 @@ export default function DesignSystemPage() {
               {STATUSES.map((status) => (
                 <div
                   key={status}
-                  className={`border border-l-[4px] p-3 text-sm ${CALLOUT[status]}`}
+                  className={`border p-3 text-sm ${CALLOUT[status]}`}
                 >
                   <p className={`font-medium ${ACCENT_TEXT[status]}`}>
                     {status} callout

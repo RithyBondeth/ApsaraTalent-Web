@@ -6,10 +6,10 @@ import {
   LucideUsers,
   LucideBriefcase,
   LucideFileText,
-  LucideSparkles,
   LucideLightbulb,
   LucideTarget,
 } from "lucide-react";
+import { Bot as LucideSparkles } from "lucide-react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   StaticBullet,

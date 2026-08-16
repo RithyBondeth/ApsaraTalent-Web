@@ -57,7 +57,7 @@ function PillGroup<T extends string>({
             type="button"
             onClick={() => onSelect(option)}
             className={cn(
-              "rounded-none border px-2.5 py-1 text-[11px] capitalize transition-colors",
+              "border px-2.5 py-1 text-[11px] capitalize transition-colors",
               option === value
                 ? "border-primary bg-primary/10 font-medium text-primary"
                 : "border-border/70 bg-card text-muted-foreground hover:border-border hover:text-foreground",
@@ -157,7 +157,7 @@ export function DesignTab({
             type="button"
             variant="outline"
             size="sm"
-            className="h-7 gap-1.5 rounded-none px-2.5 text-xs"
+            className="h-7 gap-1.5 px-2.5 text-xs"
             onClick={() => applyDesign(shuffleResumeDesign())}
           >
             <LucideDices size={13} />
@@ -167,7 +167,7 @@ export function DesignTab({
             type="button"
             variant="ghost"
             size="sm"
-            className="h-7 gap-1.5 rounded-none px-2.5 text-xs text-muted-foreground"
+            className="h-7 gap-1.5 px-2.5 text-xs text-muted-foreground"
             disabled={!isCustomized}
             onClick={() => setValue("design", undefined, { shouldDirty: true })}
           >
@@ -201,7 +201,7 @@ export function DesignTab({
                   })
                 }
                 className={cn(
-                  "size-8 rounded-none border transition-all",
+                  "size-8 border transition-all",
                   selected
                     ? "scale-105 border-transparent ring-2 ring-primary ring-offset-2 ring-offset-background"
                     : "border-border/60 hover:border-foreground",
@@ -218,7 +218,7 @@ export function DesignTab({
         <div className="mt-2.5 flex items-center gap-2">
           <label
             className={cn(
-              "relative flex cursor-pointer items-center gap-2 rounded-none border px-2.5 py-1.5 transition-colors",
+              "relative flex cursor-pointer items-center gap-2 border px-2.5 py-1.5 transition-colors",
               activeDesign.customAccent
                 ? "border-primary bg-primary/10"
                 : "border-border/70 bg-card hover:border-border",
@@ -246,7 +246,7 @@ export function DesignTab({
             />
             <span
               aria-hidden
-              className="size-4 rounded-none border border-border/60"
+              className="size-4 border border-border/60"
               style={{
                 background:
                   activeDesign.customAccent ??
@@ -270,7 +270,7 @@ export function DesignTab({
               type="button"
               variant="ghost"
               size="sm"
-              className="h-7 rounded-none px-2 text-[11px] text-muted-foreground"
+              className="h-7 px-2 text-[11px] text-muted-foreground"
               onClick={() => applyField("customAccent", undefined)}
             >
               {t("designCustomColorClear")}
@@ -292,7 +292,7 @@ export function DesignTab({
                 aria-pressed={selected}
                 onClick={() => applyField("typography", typography)}
                 className={cn(
-                  "flex min-w-[52px] flex-col items-center gap-0.5 rounded-none border px-2 py-1.5 transition-colors",
+                  "flex min-w-[52px] flex-col items-center gap-0.5 border px-2 py-1.5 transition-colors",
                   selected
                     ? "border-primary bg-primary/10"
                     : "border-border/70 bg-card hover:border-border",
@@ -356,7 +356,7 @@ export function DesignTab({
                       aria-pressed={selected}
                       onClick={() => toggleSidebarSection(section)}
                       className={cn(
-                        "rounded-none border px-2.5 py-1 text-[11px] capitalize transition-colors",
+                        "border px-2.5 py-1 text-[11px] capitalize transition-colors",
                         selected
                           ? "border-primary bg-primary/10 font-medium text-primary"
                           : "border-border/70 bg-card text-muted-foreground hover:border-border hover:text-foreground",

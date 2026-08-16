@@ -858,7 +858,11 @@
     "endOfResults": "You've seen it all",
     "exploreAllCompanies": "Explore all companies",
     "exploreAllTalent": "Explore all talent",
-    "forYou": "For you"
+    "forYou": "For you",
+    "availability": "Availability",
+    "skills": "Skills",
+    "people": "People",
+    "founded": "Founded"
   },
   "locations": {
     "phnomPenh": "Phnom Penh",

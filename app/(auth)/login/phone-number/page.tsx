@@ -5,7 +5,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import AuthShell from "@/components/auth/auth-shell";
 import { AuthField } from "@/components/auth/auth-field";
 import { AuthBackButton } from "@/components/auth/auth-back-button";
-import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useLoginOTPStore } from "@/stores/apis/auth/login-otp.store";
@@ -128,10 +127,12 @@ export default function PhoneNumberPage() {
       subtitleKey="phonePanelSubtitle"
     >
       <div className="auth-stagger flex w-full flex-col gap-7">
-        {/* Logo and Title Section */}
+        {/* Title Section */}
         <div style={{ "--d": "0ms" } as React.CSSProperties}>
-          <LogoComponent className="!h-16 w-auto self-start" priority />
-          <TypographyH2 className="mt-5 phone-xl:text-xl">
+          <span className="auth-form-kicker pixel-label">
+            {t("phonePanelEyebrow")}
+          </span>
+          <TypographyH2 className="mt-3 phone-xl:text-xl">
             {t("phoneLoginTitle")}
           </TypographyH2>
           <TypographyMuted className="text-md phone-xl:text-sm">

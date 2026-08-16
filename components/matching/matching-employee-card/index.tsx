@@ -48,12 +48,12 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <article className="pixel-wash group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card hover:border-foreground/35">
+    <article className="pixel-wash group w-full overflow-hidden border border-border bg-card hover:border-foreground/35">
       <div className="flex gap-4 p-4 sm:gap-5 sm:p-5">
         {/* Avatar Section */}
         <Avatar
           rounded="md"
-          className="size-14 flex-shrink-0 !rounded-none border border-border sm:size-16"
+          className="size-14 flex-shrink-0 border border-border sm:size-16"
         >
           <AvatarFallback className="text-sm font-medium">
             {getNameInitials(props.name)}
@@ -76,7 +76,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
             <div className="flex flex-shrink-0 items-center gap-2">
               <MatchScoreBadge score={props.matchScore} />
               <span
-                className={`border-current/15 whitespace-nowrap rounded-none border px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
+                className={`border-current/15 whitespace-nowrap border px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
               >
                 {availabilityLabel}
               </span>
@@ -98,7 +98,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
                   label={skill}
                   key={index}
                   neutral
-                  className="!rounded-none border border-border hover:shadow-none"
+                  className="border border-border hover:shadow-none"
                 />
               ))}
             </div>
@@ -109,17 +109,17 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
             <MetaChip
               icon={<LucideBriefcaseBusiness />}
               text={props.position}
-              className="rounded-none border border-border bg-muted/45"
+              className="border border-border bg-muted/45"
             />
             <MetaChip
               icon={<LucideClock />}
               text={props.experience}
-              className="rounded-none border border-border bg-muted/45"
+              className="border border-border bg-muted/45"
             />
             <MetaChip
               icon={<LucideMapPin />}
               text={translateLocation(props.location, tl)}
-              className="rounded-none border border-border bg-muted/45"
+              className="border border-border bg-muted/45"
             />
           </div>
         </div>
@@ -139,7 +139,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
           <Button
             size="sm"
             variant="ghost"
-            className="h-8 rounded-none px-2 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+            className="h-8 px-2 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
             aria-label={t("unmatch")}
             disabled={isUnmatching}
             onClick={() => setUnmatchDialogOpen(true)}
@@ -187,7 +187,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
             <Button
               size="sm"
               variant="outline"
-              className="h-8 rounded-none px-3 text-xs"
+              className="h-8 px-3 text-xs"
               onClick={props.onScheduleClick}
             >
               <LucideCalendarCheck className="size-3.5" />
@@ -196,7 +196,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
           )}
           <Button
             size="sm"
-            className="h-8 rounded-none px-3 text-xs"
+            className="h-8 px-3 text-xs"
             onClick={props.onChatNowClick}
             disabled={props.isChatLoading}
           >

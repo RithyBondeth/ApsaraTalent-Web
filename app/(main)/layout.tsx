@@ -87,7 +87,7 @@ export default function MainLayout({
         <main
           id="main-content"
           tabIndex={-1}
-          className="animate-page-in container mx-auto p-3 sm:p-4 lg:p-5"
+          className="pixel-sheet animate-page-in min-h-dvh p-3 sm:p-4 lg:p-5"
         >
           {children}
         </main>

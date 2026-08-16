@@ -10,7 +10,10 @@ export default function StaticContentLoadingSkeleton({
 }) {
   /* ----------------------------- Render UI ----------------------------- */
   return (
-    <div className="landing-scope min-h-screen bg-background text-foreground">
+    <div
+      className="landing-scope min-h-screen bg-background text-foreground"
+      aria-busy="true"
+    >
       {/* Loading Skeleton for Top Navigation Section */}
       <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl">
         <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">

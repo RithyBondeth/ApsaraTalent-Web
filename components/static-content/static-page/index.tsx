@@ -1,7 +1,7 @@
 import Header from "@/components/landing/landing-header";
-import { PixelPattern } from "@/components/utils/brand/pixel-pattern";
 import LandingFooter from "@/components/landing/landing-footer";
 import { ScrollProgress } from "@/components/utils/animations/scroll-progress";
+import { PixelGridField } from "@/components/utils/brand/pixel-grid-field";
 import {
   IStaticBulletProps,
   IStaticCardProps,
@@ -15,6 +15,7 @@ import {
 export function StaticPageShell(props: IStaticPageShellProps) {
   /* ------------------------------- Props ------------------------------- */
   const {
+    variant = "default",
     pageNumber,
     pageTotal = "04",
     title,
@@ -26,10 +27,14 @@ export function StaticPageShell(props: IStaticPageShellProps) {
     heroVisual,
     children,
   } = props;
+  const isLegal = variant === "legal";
+  const shellWidth = isLegal ? "max-w-[1600px]" : "max-w-7xl";
 
   /* ----------------------------- Render UI ----------------------------- */
   return (
-    <div className="landing-scope static-page-scope relative min-h-screen bg-background text-foreground">
+    <div
+      className={`landing-scope static-page-scope relative min-h-screen bg-background text-foreground ${isLegal ? "static-page-scope--legal" : ""}`}
+    >
       {/* Page Progress Section */}
       <ScrollProgress />
 
@@ -37,11 +42,13 @@ export function StaticPageShell(props: IStaticPageShellProps) {
       <Header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl" />
 
       {/* Page Hero Section */}
-      <section className="relative overflow-hidden border-b border-border pt-[72px]">
+      <section className="relative overflow-hidden border-b border-border pt-16">
         {/* Hero Background Animation Section */}
 
         {/* Hero Content Grid Section */}
-        <div className="relative mx-auto grid min-h-[420px] max-w-7xl border-x border-border lg:grid-cols-[1.08fr_0.92fr]">
+        <div
+          className={`relative mx-auto grid min-h-[420px] ${shellWidth} border-x border-border ${isLegal ? "lg:grid-cols-[7fr_3fr]" : "lg:grid-cols-[1.08fr_0.92fr]"}`}
+        >
           {/* Hero Copy Section */}
           <div className="flex flex-col justify-center px-6 py-12 sm:px-10 sm:py-14 lg:px-14 lg:py-16">
             <div className="static-page-reveal flex items-center gap-3">
@@ -79,7 +86,15 @@ export function StaticPageShell(props: IStaticPageShellProps) {
             {/* Hero Artwork Section */}
             <div className="relative z-10 my-auto flex items-center justify-center py-6">
               {heroVisual ? (
-                <div className="static-page-legal-visual">{heroVisual}</div>
+                <div
+                  className={
+                    isLegal
+                      ? "w-full max-w-[380px]"
+                      : "static-page-legal-visual"
+                  }
+                >
+                  {heroVisual}
+                </div>
               ) : (
                 <div className="static-page-orbit">
                   <div className="static-page-orbit-ring static-page-orbit-ring-one" />
@@ -116,7 +131,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
       </section>
 
       {/* Page Content Section */}
-      <div className="mx-auto max-w-7xl border-x border-border">
+      <div className={`mx-auto ${shellWidth} border-x border-border`}>
         {/* Mobile Table of Contents Section */}
         <nav
           aria-label={tocHeading}
@@ -137,10 +152,15 @@ export function StaticPageShell(props: IStaticPageShellProps) {
         </nav>
 
         {/* Desktop Content Grid Section */}
-        <div className="grid lg:grid-cols-[260px_minmax(0,1fr)]">
+        <div
+          className={`grid ${isLegal ? "lg:grid-cols-[300px_minmax(0,1fr)]" : "lg:grid-cols-[260px_minmax(0,1fr)]"}`}
+        >
           {/* Desktop Table of Contents Section */}
-          <aside className="hidden border-r border-border lg:block">
-            <nav aria-label={tocHeading} className="sticky top-[104px] p-8">
+          <aside className="static-page-toc-rail hidden border-r border-border lg:block">
+            <nav
+              aria-label={tocHeading}
+              className="static-page-toc-nav sticky top-16 p-8"
+            >
               <span className="pixel-label mb-5 block text-[10px] text-muted-foreground">
                 {tocHeading}
               </span>
@@ -149,7 +169,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
                   <a
                     key={item.id}
                     href={`#${item.id}`}
-                    className="group grid grid-cols-[28px_1fr] gap-2 border-b border-border py-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    className="static-page-toc-link group grid grid-cols-[28px_1fr] gap-2 border-b border-border py-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     <span className="pixel-numeral text-[10px] text-foreground">
                       {String(index + 1).padStart(2, "0")}
@@ -183,18 +203,23 @@ export function StaticSection(props: IStaticSectionProps) {
       className="static-page-section scroll-mt-24 border-b border-border px-6 py-14 sm:px-10 sm:py-16 lg:px-14 lg:py-20"
     >
       {/* Static Content Section */}
-      <div className="grid gap-6 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-8">
+      <div className="static-page-section-grid grid gap-6 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-8">
         {/* Section Icon Section */}
-        <div className="flex size-12 items-center justify-center border border-border bg-muted/45 text-foreground sm:size-14">
-          <span className="[&>svg]:size-5 [&>svg]:stroke-[1.5]">{icon}</span>
+        <div
+          data-number={number}
+          className="static-page-section-rail flex items-start"
+        >
+          <div className="static-page-section-icon flex size-12 items-center justify-center border border-border bg-muted/45 text-foreground sm:size-14">
+            <span className="[&>svg]:size-5 [&>svg]:stroke-[1.5]">{icon}</span>
+          </div>
         </div>
         {/* Section Copy Section */}
-        <div className="min-w-0">
+        <div className="static-page-section-body min-w-0">
           <span className="pixel-label text-[10px] text-muted-foreground">
             Section {number}
           </span>
           <h2 className="pixel-display mt-2 text-2xl sm:text-3xl">{title}</h2>
-          <div className="static-page-copy mt-6 flex flex-col gap-5 text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
+          <div className="static-page-copy mt-6 flex max-w-4xl flex-col gap-5 text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
             {children}
           </div>
         </div>
@@ -284,32 +309,32 @@ export function StaticNote(props: IStaticNoteProps) {
 
 export function StaticPageArtworkSlot(props: IStaticPageArtworkSlotProps) {
   /* ------------------------------- Props ------------------------------- */
-  const { icon, label } = props;
+  const { icon, label, tone = "paper" } = props;
 
   /* ----------------------------- Render UI ----------------------------- */
   return (
-    <div
-      className="static-page-artwork-slot relative isolate"
+    <PixelGridField
+      tone={tone}
+      animated
+      className="static-page-artwork-slot"
+      contentClassName="flex min-h-[205px] flex-col items-center p-[18px]"
       role="img"
       aria-label={`${label} artwork`}
     >
       {/* Static Artwork Slot Section */}
-      {/* Artwork Background Section */}
-
       {/* Artwork Mark Section */}
-      <PixelPattern seed="apsara-static" cell={40} className="-z-10" />
       <div className="static-page-artwork-slot-mark">
         <span className="[&>svg]:size-8 [&>svg]:stroke-[1.25]">{icon}</span>
       </div>
       {/* Artwork Caption Section */}
-      <div className="relative z-10 mt-auto flex w-full items-end justify-between border-t border-[hsl(var(--landing-panel-ink)/0.16)] pt-4">
-        <span className="text-xs font-medium text-[hsl(var(--landing-panel-ink)/0.8)]">
+      <div className="relative z-10 mt-auto flex w-full items-end justify-between border-t border-[hsl(var(--grid-ink)/0.18)] pt-4">
+        <span className="text-xs font-medium text-[hsl(var(--grid-ink)/0.8)]">
           {label}
         </span>
-        <span className="pixel-label text-[9px] text-[hsl(var(--landing-panel-ink)/0.38)]">
+        <span className="pixel-label text-[9px] text-[hsl(var(--grid-ink)/0.5)]">
           Apsara Talent
         </span>
       </div>
-    </div>
+    </PixelGridField>
   );
 }

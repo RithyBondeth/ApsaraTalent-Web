@@ -408,6 +408,137 @@ export function useGsapScrollAnimation<T extends HTMLElement>() {
         );
       });
 
+      // ── Match narrative — pet → confirmation → chat unlock ─
+      query("[data-match-sequence]").forEach((sequence) => {
+        const pet = sequence.querySelector("[data-match-piece='pet']");
+        const label = sequence.querySelector("[data-match-piece='label']");
+        const check = sequence.querySelector("[data-match-piece='check']");
+        const title = sequence.querySelector("[data-match-piece='title']");
+        const copy = sequence.querySelector("[data-match-piece='copy']");
+        const chat = sequence.querySelector("[data-match-piece='chat']");
+        const chatItems = sequence.querySelectorAll("[data-match-chat]");
+
+        const tl = gsap.timeline({
+          defaults: { ease: "power3.out" },
+          scrollTrigger: {
+            trigger: sequence,
+            start: "top 86%",
+            toggleActions: "play none none none",
+          },
+        });
+
+        if (pet) {
+          tl.fromTo(
+            pet,
+            { autoAlpha: 0, x: -24, scale: 0.9 },
+            { autoAlpha: 1, x: 0, scale: 1, duration: 0.65 },
+            0,
+          );
+        }
+        if (label) {
+          tl.fromTo(
+            label,
+            { autoAlpha: 0, y: 10 },
+            { autoAlpha: 1, y: 0, duration: 0.4 },
+            0.16,
+          );
+        }
+        if (check) {
+          tl.fromTo(
+            check,
+            { autoAlpha: 0, scale: 0.3, rotate: -12 },
+            {
+              autoAlpha: 1,
+              scale: 1,
+              rotate: 0,
+              duration: 0.55,
+              ease: "back.out(1.8)",
+            },
+            0.32,
+          );
+        }
+        if (title) {
+          tl.fromTo(
+            title,
+            { autoAlpha: 0, y: 18 },
+            { autoAlpha: 1, y: 0, duration: 0.55 },
+            0.42,
+          );
+        }
+        if (copy) {
+          tl.fromTo(
+            copy,
+            { autoAlpha: 0, y: 12 },
+            { autoAlpha: 1, y: 0, duration: 0.5 },
+            0.58,
+          );
+        }
+        if (chat) {
+          tl.fromTo(
+            chat,
+            { autoAlpha: 0, x: 26, clipPath: "inset(0 0 0 100%)" },
+            {
+              autoAlpha: 1,
+              x: 0,
+              clipPath: "inset(0 0 0 0%)",
+              duration: 0.72,
+            },
+            0.72,
+          );
+        }
+        if (chatItems.length) {
+          tl.fromTo(
+            chatItems,
+            { autoAlpha: 0, y: 10 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.42,
+              stagger: 0.12,
+            },
+            1.02,
+          );
+        }
+      });
+
+      // ── Dossiers arrive from their respective sides ───────
+      query("[data-match-card]").forEach((card) => {
+        const isCompany = card.dataset.matchCard === "company";
+        gsap.fromTo(
+          card,
+          { autoAlpha: 0, x: isCompany ? 36 : -36 },
+          {
+            autoAlpha: 1,
+            x: 0,
+            duration: 0.72,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 90%",
+              toggleActions: "play none none none",
+            },
+          },
+        );
+      });
+
+      query("[data-match-like]").forEach((heart) => {
+        gsap.fromTo(
+          heart,
+          { scale: 0.35, rotate: -14 },
+          {
+            scale: 1,
+            rotate: 0,
+            duration: 0.6,
+            ease: "back.out(2.2)",
+            scrollTrigger: {
+              trigger: heart,
+              start: "top 96%",
+              toggleActions: "play none none none",
+            },
+          },
+        );
+      });
+
       // ── SVG path drawing + traveling dot ───────────────────
       container
         .querySelectorAll<SVGSVGElement>("svg[data-gsap-draw]")
@@ -500,7 +631,9 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
     // ── Reduced motion: show everything, animate nothing ─────
     mm.add(MOTION_REDUCED, () => {
       gsap.set(
-        container.querySelectorAll("[data-hero], [data-hero-particle]"),
+        container.querySelectorAll(
+          "[data-hero], [data-hero-particle], [data-hero-pet]",
+        ),
         { autoAlpha: 1 },
       );
     });
@@ -570,6 +703,24 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
           { opacity: 1, duration: 0.5 },
           1.55,
         );
+      }
+
+      const heroPet = container.querySelector("[data-hero-pet]");
+      if (heroPet) {
+        tl.fromTo(
+          heroPet,
+          { autoAlpha: 0, y: 24, scale: 0.96 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 0.75 },
+          0.72,
+        );
+        gsap.to(heroPet, {
+          y: -7,
+          duration: 5.2,
+          delay: 1.7,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
       }
 
       // ── Floating particles — endless gentle drift ──────────

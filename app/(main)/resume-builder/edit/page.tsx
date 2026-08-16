@@ -356,14 +356,14 @@ export default function ResumeEditorPage() {
   return (
     <div className="resume-editor-shell animate-page-in flex h-[calc(100dvh-4rem)] flex-col overflow-hidden text-foreground">
       {/* Primary Action Bar Section */}
-      <div className="resume-editor-controls flex flex-col gap-2 border-b border-t-[5px] border-border border-t-foreground bg-card px-3 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-5">
+      <div className="resume-editor-controls flex flex-col gap-2 border-b border-border bg-card px-3 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-5">
         {/* Editor Identity and Template Section */}
         <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
           <Button
             variant="outline"
             size="sm"
             onClick={handleBack}
-            className="h-8 gap-1.5 rounded-none text-xs"
+            className="h-8 gap-1.5 text-xs"
           >
             <ArrowLeft size={14} />
             {tRb("back")}
@@ -374,7 +374,7 @@ export default function ResumeEditorPage() {
               variant="outline"
               size="sm"
               onClick={() => setFormPanelOpen(true)}
-              className="hidden h-8 gap-1.5 rounded-none text-xs md:flex"
+              className="hidden h-8 gap-1.5 text-xs md:flex"
               title={tRb("showFields")}
             >
               <PanelLeftOpen size={14} />
@@ -421,20 +421,17 @@ export default function ResumeEditorPage() {
               <Button
                 variant="outline"
                 size="icon"
-                className="size-8 rounded-none"
+                className="size-8"
                 title={tRb("moreActions")}
               >
                 <MoreHorizontal size={15} />
                 <span className="sr-only">{tRb("moreActions")}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-48 rounded-none border-border p-1"
-            >
+            <DropdownMenuContent align="end" className="w-48 border-border p-1">
               <DropdownMenuItem
                 onSelect={() => setResetDialogOpen(true)}
-                className="rounded-none text-xs"
+                className="text-xs"
               >
                 <RotateCcw size={14} />
                 {tRb("reset")}
@@ -446,7 +443,7 @@ export default function ResumeEditorPage() {
             onClick={handleDownload}
             disabled={downloading}
             size="sm"
-            className="h-8 flex-1 shrink-0 justify-center gap-2 rounded-none px-4 text-xs sm:w-auto sm:flex-none"
+            className="h-8 flex-1 shrink-0 justify-center gap-2 px-4 text-xs sm:w-auto sm:flex-none"
           >
             <Download size={15} />
             {tRb("downloadPdf")}
@@ -511,7 +508,7 @@ export default function ResumeEditorPage() {
                   variant="ghost"
                   size="icon"
                   onClick={() => setFormPanelOpen(false)}
-                  className="hidden size-8 rounded-none md:inline-flex"
+                  className="hidden size-8 md:inline-flex"
                   title={tRb("hideFields")}
                 >
                   <PanelLeftClose size={14} />
@@ -564,7 +561,7 @@ export default function ResumeEditorPage() {
 
       {/* Reset Confirmation Dialog Section */}
       <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
-        <DialogContent className="w-[calc(100%-1.5rem)] max-w-md rounded-none border border-foreground/20 bg-card p-0 shadow-[9px_9px_0_hsl(var(--foreground)/0.12),0_24px_70px_hsl(var(--foreground)/0.18)] sm:rounded-none">
+        <DialogContent className="max-w-md p-0">
           <header className="relative overflow-hidden border-b border-foreground bg-foreground p-5 text-background">
             <div className="relative z-[2] flex items-center gap-3 pr-8">
               <span className="flex size-11 shrink-0 items-center justify-center border border-background/25 bg-background/10">
@@ -585,7 +582,7 @@ export default function ResumeEditorPage() {
                 type="button"
                 variant="outline"
                 onClick={() => setResetDialogOpen(false)}
-                className="h-10 w-full rounded-none"
+                className="h-10 w-full"
               >
                 {tRb("cancel")}
               </Button>
@@ -593,7 +590,7 @@ export default function ResumeEditorPage() {
                 type="button"
                 variant="destructive"
                 onClick={handleReset}
-                className="h-10 w-full rounded-none"
+                className="h-10 w-full"
               >
                 <RotateCcw size={14} />
                 {tRb("reset")}

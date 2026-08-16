@@ -6,6 +6,7 @@ interface IStaticPageTocItem {
 }
 
 export interface IStaticPageShellProps {
+  variant?: "default" | "legal";
   pageNumber: string;
   pageTotal?: string;
   title: string;
@@ -51,4 +52,5 @@ export interface IStaticNoteProps {
 export interface IStaticPageArtworkSlotProps {
   icon: ReactNode;
   label: string;
+  tone?: "orange" | "yellow" | "blue" | "paper";
 }

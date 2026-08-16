@@ -16,11 +16,11 @@ export function LandingHowItWorks() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden border-b border-border py-20 sm:py-28 lg:py-36"
+      className="relative overflow-hidden border-b border-border"
     >
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-[1600px] border-x border-border">
         {/* Header Section */}
-        <div className="mb-14 max-w-3xl sm:mb-20">
+        <div className="max-w-4xl px-6 py-16 sm:px-10 sm:py-20 lg:px-14 lg:py-24">
           <span
             data-gsap="fade-up"
             className="pixel-label mb-4 block text-muted-foreground"
@@ -28,7 +28,7 @@ export function LandingHowItWorks() {
             {t("howItWorksHeading")} {t("howItWorksHeadingHighlight")} · 03
           </span>
           <TypographyH2
-            data-gsap="split-chars"
+            data-gsap="split-words"
             className="pixel-display text-3xl [perspective:800px] sm:text-4xl lg:text-5xl"
           >
             {t("howItWorksHeading")}{" "}
@@ -47,7 +47,7 @@ export function LandingHowItWorks() {
         {/* Step Key Section */}
         <div
           data-gsap="stagger-children"
-          className="grid border-l border-t border-border md:grid-cols-3"
+          className="grid border-t border-border md:grid-cols-3"
         >
           {landingStepKeys.map((step, index) => (
             <article

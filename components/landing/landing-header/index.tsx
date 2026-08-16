@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { LucideLogIn } from "lucide-react";
+import { LucideArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -15,43 +15,72 @@ export default function Header({ className }: { className?: string }) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <nav
+      aria-label="Apsara Talent"
       className={cn(
-        "mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8",
+        "mx-auto flex h-16 w-full max-w-[1600px] items-stretch justify-between border-x border-border",
         className,
       )}
     >
       {/* Left Menu Section */}
-      <div className="flex items-center gap-8">
-        <LogoComponent className="!h-11 w-auto shrink-0" priority />
-        <div className="hidden items-center gap-1 lg:flex">
+      <div className="flex min-w-0 items-stretch">
+        <Link
+          href="/"
+          aria-label="Apsara Talent home"
+          className="flex min-w-[150px] items-center border-r border-border px-5 transition-colors hover:bg-muted/55 sm:min-w-[220px] sm:px-7"
+        >
+          <LogoComponent className="h-10 w-auto" priority />
+        </Link>
+        <div className="hidden items-stretch lg:flex">
           <Link href="/product">
-            <Button variant="ghost">{t("products")}</Button>
+            <Button
+              variant="ghost"
+              className="h-full border-r border-border px-6"
+            >
+              {t("products")}
+            </Button>
           </Link>
           <Link href="/learn">
-            <Button variant="ghost">{t("learn")}</Button>
+            <Button
+              variant="ghost"
+              className="h-full border-r border-border px-6"
+            >
+              {t("learn")}
+            </Button>
           </Link>
           <Link href="/safety">
-            <Button variant="ghost">{t("safety")}</Button>
+            <Button
+              variant="ghost"
+              className="h-full border-r border-border px-6"
+            >
+              {t("safety")}
+            </Button>
           </Link>
           <Link href="/support">
-            <Button variant="ghost">{t("support")}</Button>
+            <Button
+              variant="ghost"
+              className="h-full border-r border-border px-6"
+            >
+              {t("support")}
+            </Button>
           </Link>
         </div>
       </div>
 
       {/* Right Menu Section */}
-      <div className="flex shrink-0 items-center gap-2 sm:gap-4">
-        {/* Combined Language + Theme Switcher */}
-        <Switcher inline />
+      <div className="flex shrink-0 items-stretch">
+        {/* Language and theme utility cells */}
+        <div className="flex items-stretch border-l border-border">
+          <Switcher inline variant="grid" className="h-full" />
+        </div>
 
         {/* Login Section */}
-        <Link href="/login">
+        <Link href="/login" className="flex">
           <Button
-            className="size-10 rounded-none p-0 text-xs shadow-none sm:h-10 sm:w-auto sm:px-5 sm:text-sm"
+            className="h-full min-w-16 rounded-none border-l border-foreground bg-foreground px-5 text-xs text-background shadow-none hover:bg-foreground/85 hover:text-background sm:min-w-[148px] sm:px-7 sm:text-sm"
             aria-label={t("login")}
           >
             <span className="hidden sm:inline">{t("login")}</span>
-            <LucideLogIn />
+            <LucideArrowRight className="size-4" />
           </Button>
         </Link>
       </div>

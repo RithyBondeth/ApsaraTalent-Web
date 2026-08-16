@@ -32,24 +32,24 @@ export default function CollapsedChatList(props: IChatListProps) {
               <TooltipTrigger asChild>
                 <button
                   className={cn(
-                    "relative flex w-full justify-center rounded-none border-l-[3px] p-1.5 transition-all",
+                    "relative flex w-full justify-center p-1.5 transition-all",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     isActive
-                      ? "border-l-primary bg-primary/5"
+                      ? "bg-primary/5"
                       : "border-l-transparent hover:bg-muted/60 active:bg-muted",
                   )}
                   onClick={() => onChatSelect(chat)}
                   aria-label={chat.name}
                 >
                   {chat.isGroup ? (
-                    <div className="flex h-10 w-10 items-center justify-center rounded-none border border-border bg-muted">
+                    <div className="flex h-10 w-10 items-center justify-center border border-border bg-muted">
                       <Users className="h-5 w-5 text-muted-foreground" />
                     </div>
                   ) : (
                     /* Avatar Section */
-                    <Avatar className="h-10 w-10 rounded-none border border-border">
+                    <Avatar className="h-10 w-10 border border-border">
                       <AvatarImage src={chat.avatar} alt={chat.name} />
-                      <AvatarFallback className="rounded-none text-xs font-medium">
+                      <AvatarFallback className="text-xs font-medium">
                         {getNameInitials(chat.name)}
                       </AvatarFallback>
                     </Avatar>
@@ -57,7 +57,7 @@ export default function CollapsedChatList(props: IChatListProps) {
 
                   {/* Unread Badge Section */}
                   {chat.unread ? (
-                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-none bg-primary px-0.5 text-[9px] font-medium text-primary-foreground">
+                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center bg-primary px-0.5 text-[9px] font-medium text-primary-foreground">
                       {chat.unread > 9 ? "9+" : chat.unread}
                     </span>
                   ) : isUnread ? (

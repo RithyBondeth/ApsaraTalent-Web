@@ -38,7 +38,7 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
           >
             {/* File Preview Section */}
             <div
-              className={`relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-none border bg-muted sm:h-14 sm:w-14 ${
+              className={`relative flex h-12 w-12 items-center justify-center overflow-hidden border bg-muted sm:h-14 sm:w-14 ${
                 file.status === "error"
                   ? "border-destructive/50"
                   : "border-border/50"
@@ -91,7 +91,7 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
             <button
               type="button"
               onClick={() => onRemoveFile(file.id)}
-              className="absolute -right-1 -top-1 z-20 flex h-4 w-4 items-center justify-center rounded-none border border-border bg-background shadow-sm transition-colors hover:bg-muted"
+              className="absolute -right-1 -top-1 z-20 flex h-4 w-4 items-center justify-center border border-border bg-background shadow-sm transition-colors hover:bg-muted"
               aria-label={`Remove ${file.filename}`}
             >
               <X className="h-2 w-2 text-muted-foreground" />
@@ -105,7 +105,7 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
             type="button"
             onClick={onAddMoreFiles}
             disabled={inputDisabled}
-            className="flex h-12 w-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-none border border-dashed border-border/70 bg-muted/30 transition-colors hover:border-border hover:bg-muted/60 disabled:pointer-events-none disabled:opacity-40 sm:h-14 sm:w-14"
+            className="flex h-12 w-12 shrink-0 flex-col items-center justify-center gap-0.5 border border-dashed border-border/70 bg-muted/30 transition-colors hover:border-border hover:bg-muted/60 disabled:pointer-events-none disabled:opacity-40 sm:h-14 sm:w-14"
             aria-label="Add more files"
           >
             <Paperclip className="h-4 w-4 text-muted-foreground" />

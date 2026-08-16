@@ -209,10 +209,9 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
-      // --radius is 0 (the UI is square), so the shadcn ladder would otherwise
-      // compute negative values. max() floors them instead of leaning on
-      // browsers to clamp. The only consumer left is the Avatar `rounded`
-      // prop; everything else is rounded-none or rounded-full outright.
+      // Three intentional corner roles: structural and overlay surfaces use
+      // rounded-none; compact/regular controls use rounded-sm/rounded-md; and
+      // genuinely circular identity/status elements use rounded-full.
       borderRadius: {
         lg: "var(--radius)",
         md: "max(0px, calc(var(--radius) - 2px))",

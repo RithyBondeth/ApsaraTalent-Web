@@ -48,7 +48,7 @@ export default function ReactionSummary(props: {
       <PopoverTrigger asChild>
         {/* Reaction Badge Section */}
         <div
-          className={`absolute -bottom-2 z-10 flex cursor-pointer gap-1 rounded-none border bg-background/90 px-1.5 py-0.5 shadow-sm backdrop-blur-sm transition-colors hover:bg-muted ${badgePositionClass}`}
+          className={`absolute -bottom-2 z-10 flex cursor-pointer gap-1 border bg-background/90 px-1.5 py-0.5 shadow-sm backdrop-blur-sm transition-colors hover:bg-muted ${badgePositionClass}`}
         >
           {Object.entries(reactionsByEmoji).map(([emoji, userIds]) => (
             <div key={emoji} className="flex items-center gap-0.5">
@@ -67,7 +67,7 @@ export default function ReactionSummary(props: {
       <PopoverContent className="w-64 overflow-hidden p-0" side="top">
         <Tabs defaultValue="all" className="w-full">
           {/* Tabs List Section */}
-          <TabsList className="no-scrollbar h-10 w-full justify-start gap-2 overflow-x-auto rounded-none border-b bg-muted/50 px-2">
+          <TabsList className="no-scrollbar h-10 w-full justify-start gap-2 overflow-x-auto border-b bg-muted/50 px-2">
             <TabsTrigger
               value="all"
               className="h-7 px-2 text-xs data-[state=active]:bg-background"

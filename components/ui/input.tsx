@@ -37,7 +37,7 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
         <div
           data-error={hasError}
           className={cn(
-            "flex h-12 w-full items-center rounded-none border border-input bg-background px-3 text-base transition-[color,border-color,box-shadow] duration-200",
+            "flex h-12 w-full items-center rounded-md border border-input bg-background px-3 text-base transition-[color,border-color,box-shadow] duration-200",
             "hover:border-foreground/40",
             // A hard 2px ring with no alpha falloff. The old 3px/20% ring read
             // as a soft glow, which is the one lighting effect this UI avoids.

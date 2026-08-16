@@ -90,7 +90,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
         <Button
           type="button"
           size="sm"
-          className="h-9 w-full justify-between rounded-none px-3 text-xs"
+          className="h-9 w-full justify-between px-3 text-xs"
           variant={props.selected ? "default" : "outline"}
           onClick={props.onUseTemplate}
         >

@@ -31,9 +31,9 @@ import {
   Loader2,
   MapPin,
   Shapes,
-  Sparkles,
   Users,
 } from "lucide-react";
+import { Bot as Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 export default function BasicInfoStepForm({

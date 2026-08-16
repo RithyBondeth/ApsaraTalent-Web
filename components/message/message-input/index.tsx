@@ -388,7 +388,7 @@ export default function ChatInput(props: IChatInputProps) {
         />
 
         {/* Input Pill Section */}
-        <div className="flex-1 overflow-hidden rounded-none border border-l-[4px] border-border border-l-foreground bg-muted/20 transition-colors focus-within:border-primary focus-within:border-l-primary focus-within:bg-background">
+        <div className="focus-within: flex-1 overflow-hidden border border-border bg-muted/20 transition-colors focus-within:border-primary focus-within:bg-background">
           {/* Attachment Thumbnail Strip Section (inside the pill, above the textarea) */}
           {hasAnyFiles && (
             <MessageAttachmentStrip
@@ -437,7 +437,7 @@ export default function ChatInput(props: IChatInputProps) {
                   <button
                     type="button"
                     disabled={inputDisabled}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
                     aria-label="Emoji"
                   >
                     <SmilePlus className="h-4 w-4" />
@@ -480,7 +480,7 @@ export default function ChatInput(props: IChatInputProps) {
                 type="button"
                 disabled={inputDisabled || atFileLimit}
                 onClick={openFilePicker}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
+                className="flex h-8 w-8 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
                 aria-label={
                   atFileLimit
                     ? t("maxFilesReached", { max: CHAT_MAX_FILES })
@@ -500,7 +500,7 @@ export default function ChatInput(props: IChatInputProps) {
                 type="button"
                 disabled={inputDisabled}
                 onClick={startRecording}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
+                className="flex h-8 w-8 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
                 aria-label="Record voice message"
               >
                 <Mic className="h-4 w-4" />
@@ -515,7 +515,7 @@ export default function ChatInput(props: IChatInputProps) {
             variant="default"
             onClick={handleSend}
             disabled={sendDisabled}
-            className="h-9 w-9 shrink-0 rounded-none p-0 font-medium sm:h-10 sm:w-10"
+            className="h-9 w-9 shrink-0 p-0 font-medium sm:h-10 sm:w-10"
             aria-label="Send message"
           >
             <LucideSendHorizonal className="h-4 w-4" />

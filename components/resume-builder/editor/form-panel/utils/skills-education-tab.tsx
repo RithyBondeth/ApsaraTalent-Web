@@ -8,7 +8,8 @@ import { useState } from "react";
 import { IFormPanelProps } from "../props";
 import { FieldLabel } from "./field-label";
 import { useTranslations } from "next-intl";
-import { Sparkles, Loader2, Wand2 } from "lucide-react";
+import { Loader2, Wand2 } from "lucide-react";
+import { Bot as Sparkles } from "lucide-react";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import { toast } from "sonner";
 
@@ -128,7 +129,7 @@ export function SkillsEducationTab({
           {skills.map((skill, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1 rounded-none border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] text-primary"
+              className="inline-flex items-center gap-1 border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] text-primary"
             >
               {skill}
               <button
@@ -221,7 +222,7 @@ export function SkillsEducationTab({
           {careerScopes.map((scope, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1 rounded-none border border-success-border bg-success-subtle px-2 py-0.5 text-[11px] text-success-accent"
+              className="inline-flex items-center gap-1 border border-success-border bg-success-subtle px-2 py-0.5 text-[11px] text-success-accent"
             >
               {scope}
               <button

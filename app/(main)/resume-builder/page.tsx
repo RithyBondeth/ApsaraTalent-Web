@@ -173,7 +173,7 @@ export default function ResumeBuilder() {
       <ResumeBuilderBanner />
 
       {/* Builder Workspace Section */}
-      <div className="pixel-ruled w-full items-start border-x-0 border-b-0 xl:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="pixel-ruled w-full items-start border-x-0 border-b-0 xl:grid-cols-[minmax(0,1fr)_420px]">
         {/* Step 1: Template Selection Section */}
         <section className="flex min-w-0 flex-col gap-4 p-6 sm:p-8">
           <StepHeader number="1" title={t("chooseTemplate")} />
@@ -230,7 +230,7 @@ export default function ResumeBuilder() {
         </section>
 
         {/* Builder Information Rail Section */}
-        <aside className="flex min-w-0 flex-col gap-4">
+        <aside className="flex min-w-0 flex-col gap-4 p-6 sm:p-8 xl:sticky xl:top-20 xl:self-start">
           {/* Step 2: Information Source Section */}
           <StepHeader number="2" title={t("pasteInfoTitle")} />
           <ResumeSourceInput

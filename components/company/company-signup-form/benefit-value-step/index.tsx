@@ -122,7 +122,7 @@ export default function BenefitValueStepForm({
   return (
     <div className="flex w-full flex-col items-start gap-5">
       {/* Benefit Section */}
-      <div className="flex w-full flex-col items-start gap-5 rounded-none border border-l-[5px] border-border border-l-foreground bg-card p-5 sm:p-6">
+      <div className="flex w-full flex-col items-start gap-5 border border-border bg-card p-5 sm:p-6">
         <div className="w-full">
           <SectionTitle
             icon={<LucideCircleCheck />}
@@ -135,7 +135,7 @@ export default function BenefitValueStepForm({
             {benefits.length > 0 ? (
               benefits.map((benefit) => (
                 <div
-                  className="flex cursor-pointer items-center gap-2 rounded-none border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
+                  className="flex cursor-pointer items-center gap-2 border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
                   key={benefit}
                 >
                   <IconLabel
@@ -206,7 +206,7 @@ export default function BenefitValueStepForm({
       </div>
 
       {/* Value Section */}
-      <div className="flex w-full flex-col items-start gap-5 rounded-none border border-l-[5px] border-border border-l-foreground bg-card p-5 sm:p-6">
+      <div className="flex w-full flex-col items-start gap-5 border border-border bg-card p-5 sm:p-6">
         <div className="w-full">
           <SectionTitle icon={<LucideZap />} title={t("cmpValueTitle")} />
         </div>
@@ -216,7 +216,7 @@ export default function BenefitValueStepForm({
             {values.length > 0 ? (
               values.map((value) => (
                 <div
-                  className="flex cursor-pointer items-center gap-2 rounded-none border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
+                  className="flex cursor-pointer items-center gap-2 border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
                   key={value}
                 >
                   <IconLabel

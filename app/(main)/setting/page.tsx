@@ -20,7 +20,7 @@ import { ResetPasswordDialog } from "@/components/setting/reset-password-dialog"
 import { TwoFactorDialog } from "@/components/setting/two-factor-dialog";
 import { T2FADialogMode } from "@/components/setting/two-factor-dialog/props";
 import SettingLoadingSkeleton from "@/components/setting/skeleton";
-import { LucideSettings2 } from "lucide-react";
+import { PageBanner } from "@/components/utils/layout/page-banner";
 
 export default function SettingPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -132,61 +132,43 @@ export default function SettingPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full">
+    <div className="settings-page w-full">
       {/* Header Section */}
-      <header className="relative overflow-hidden border border-t-[5px] border-border border-t-primary bg-card px-5 py-7 sm:px-7 sm:py-9">
-        <div className="pointer-events-none absolute -right-10 -top-16 size-52 rotate-12 border-[28px] border-primary/5" />
-        <div className="relative flex items-start gap-4 sm:gap-5">
-          <div className="flex size-11 shrink-0 items-center justify-center bg-primary text-primary-foreground sm:size-12">
-            <LucideSettings2 className="size-5 sm:size-6" />
-          </div>
-          <div className="max-w-2xl">
-            <p className="pixel-label mb-2 text-[10px] text-primary">
-              Apsara Talent
-            </p>
-            <h1 className="pixel-display text-3xl sm:text-4xl">
-              {tS("title")}
-            </h1>
-            <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
-              {tS("description")}
-            </p>
-          </div>
-        </div>
-      </header>
-
-      <div className="pixel-ruled items-start border-x-0 lg:grid-cols-2">
-        {/* Appearance Section */}
-        <AppearanceSection theme={theme} onThemeChange={handleThemeChange} />
-
-        {/* Language Section */}
-        <LanguageSection
-          language={language}
-          onLanguageChange={handleLanguageChange}
-        />
-      </div>
-
-      {/* Account Section */}
-      <AccountSection
-        displayName={displayName}
-        avatarSrc={avatarSrc}
-        email={currentUser?.email}
-        role={currentUser?.role}
-        isTwoFactorEnabled={currentUser?.isTwoFactorEnabled ?? false}
-        lastLogin={lastLogin}
-        memberSince={memberSince}
-        onResetPassword={() => {
-          setSent(false);
-          setResetDialogOpen(true);
-        }}
-        onToggleTwoFactor={handleToggleTwoFactor}
+      <PageBanner
+        eyebrow="Apsara Talent"
+        title={tS("title")}
+        subtitle={tS("description")}
       />
 
-      <div className="pixel-ruled items-start border-x-0 lg:grid-cols-2">
-        {/* Blocked Users Section */}
-        <BlockedUsersSection />
+      <div className="settings-workspace grid items-start border-b border-border xl:grid-cols-[minmax(0,1.35fr)_minmax(22rem,0.65fr)]">
+        {/* Primary account and safety column */}
+        <div className="flex min-w-0 flex-col gap-7 border-b border-border p-5 sm:p-8 xl:border-b-0 xl:border-r xl:p-10">
+          <AccountSection
+            displayName={displayName}
+            avatarSrc={avatarSrc}
+            email={currentUser?.email}
+            role={currentUser?.role}
+            isTwoFactorEnabled={currentUser?.isTwoFactorEnabled ?? false}
+            lastLogin={lastLogin}
+            memberSince={memberSince}
+            onResetPassword={() => {
+              setSent(false);
+              setResetDialogOpen(true);
+            }}
+            onToggleTwoFactor={handleToggleTwoFactor}
+          />
+          <BlockedUsersSection />
+        </div>
 
-        {/* About Section */}
-        <AboutSection />
+        {/* Preferences and product information rail */}
+        <div className="flex min-w-0 flex-col gap-7 p-5 sm:p-8 xl:p-10">
+          <AppearanceSection theme={theme} onThemeChange={handleThemeChange} />
+          <LanguageSection
+            language={language}
+            onLanguageChange={handleLanguageChange}
+          />
+          <AboutSection />
+        </div>
       </div>
 
       {/* Two-Factor Auth Dialog Section */}

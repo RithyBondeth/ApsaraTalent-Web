@@ -138,11 +138,11 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
       <DropdownMenu>
         {/* User Menu Trigger Section */}
         <DropdownMenuTrigger asChild>
-          <button className="hover: group flex h-11 items-center gap-2 border border-border bg-card/80 px-2 transition-[background-color,border-color,box-shadow,transform] duration-200 hover:border-foreground/35 hover:bg-muted/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px">
+          <button className="group flex h-11 items-center gap-2 rounded-md border border-border bg-card/80 px-2 transition-[background-color,border-color,box-shadow,transform] duration-200 hover:border-foreground/35 hover:bg-muted/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px">
             {/* Avatar Section */}
             <Avatar
               rounded="md"
-              className="h-7 w-7 shrink-0 rounded-none border border-border transition-colors duration-200 group-hover:border-foreground/30"
+              className="h-7 w-7 shrink-0 rounded border border-border transition-colors duration-200 group-hover:border-foreground/30"
             >
               <AvatarImage src={user.avatar} alt={user.name} />
               <AvatarFallback className="bg-foreground text-[10px] font-medium text-background">
@@ -167,7 +167,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
 
         {/* Dropdown Content Section */}
         <DropdownMenuContent
-          className="w-72 overflow-hidden rounded-none border border-foreground/20 p-0 shadow-[7px_7px_0_hsl(var(--foreground)/0.1),0_18px_45px_hsl(var(--foreground)/0.12)]"
+          className="pixel-overlay-shadow w-72 overflow-hidden rounded-md border border-border p-0"
           side="bottom"
           align="end"
           sideOffset={9}
@@ -177,7 +177,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
             <div className="flex items-center gap-3">
               <Avatar
                 rounded="md"
-                className="h-11 w-11 rounded-none border border-foreground/15"
+                className="h-11 w-11 rounded border border-border"
               >
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="bg-foreground font-medium text-background">
@@ -212,7 +212,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
                 <Link
                   href={`/profile/${currentUser?.role ?? USER_ROLE.EMPLOYEE}`}
                   prefetch={true}
-                  className="flex min-h-11 items-center gap-2.5 rounded-none px-2"
+                  className="flex min-h-11 items-center gap-2.5 rounded-md px-2"
                 >
                   <MenuIcon>
                     {isEmployee ? (
@@ -235,7 +235,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
                 <Link
                   href="/setting"
                   prefetch={true}
-                  className="flex min-h-11 items-center gap-2.5 rounded-none px-2"
+                  className="flex min-h-11 items-center gap-2.5 rounded-md px-2"
                 >
                   <MenuIcon>
                     <LucideSettings className="size-3.5 text-foreground" />
@@ -247,7 +247,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
               {/* Appearance Section */}
               <DropdownMenuItem
                 onClick={handleThemeToggle}
-                className="flex min-h-11 items-center gap-2.5 rounded-none px-2"
+                className="flex min-h-11 items-center gap-2.5 rounded-md px-2"
               >
                 <MenuIcon>
                   {resolvedTheme === "dark" ? (
@@ -262,7 +262,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
               {/* Language Section */}
               <DropdownMenuItem
                 onClick={() => setLanguage(language === "en" ? "km" : "en")}
-                className="flex min-h-11 items-center gap-2.5 rounded-none px-2"
+                className="flex min-h-11 items-center gap-2.5 rounded-md px-2"
               >
                 <MenuIcon>
                   <Globe className="size-3.5 text-foreground" />
@@ -280,7 +280,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
                 <Link
                   href="/favorite"
                   prefetch={true}
-                  className="flex min-h-11 items-center gap-2.5 rounded-none px-2"
+                  className="flex min-h-11 items-center gap-2.5 rounded-md px-2"
                 >
                   <MenuIcon>
                     <LucideBookMarked className="size-3.5 text-foreground" />
@@ -290,7 +290,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
               </DropdownMenuItem>
 
               {/* Report Problem Section */}
-              <DropdownMenuItem className="flex min-h-11 items-center gap-2.5 rounded-none px-2">
+              <DropdownMenuItem className="flex min-h-11 items-center gap-2.5 rounded-md px-2">
                 <MenuIcon>
                   <LucideInfo className="size-3.5 text-foreground" />
                 </MenuIcon>
@@ -303,7 +303,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
             {/* Logout Section */}
             <DropdownMenuItem
               onClick={() => setOpenLogoutDialog(true)}
-              className="flex min-h-11 items-center gap-2.5 rounded-none px-2 text-destructive focus:bg-destructive/10 focus:text-destructive"
+              className="flex min-h-11 items-center gap-2.5 rounded-md px-2 text-destructive focus:bg-destructive/10 focus:text-destructive"
             >
               <MenuIcon className="border-destructive/20 bg-destructive/10">
                 <LogOut className="size-3.5 text-destructive" />

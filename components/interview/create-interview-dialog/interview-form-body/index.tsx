@@ -151,7 +151,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
               </SelectContent>
             </Select>
           ) : (
-            <TypographyMuted className="rounded-none border-l-[4px] border-l-foreground bg-muted/50 px-3 py-2.5 text-sm">
+            <TypographyMuted className="bg-muted/50 px-3 py-2.5 text-sm">
               {t("noMatchedEmployees")}
             </TypographyMuted>
           )}
@@ -242,7 +242,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
             </Field>
 
             <Field label={t("duration")} icon={<LucideTimer />}>
-              <div className="flex h-10 items-center rounded-none border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-background">
+              <div className="flex h-10 items-center border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-background">
                 <input
                   type="number"
                   min={5}
@@ -292,7 +292,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
         </div>
 
         {error && (
-          <p className="rounded-none border border-l-[4px] border-destructive/20 border-l-destructive bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <p className="border border-destructive/20 border-l-destructive bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {error}
           </p>
         )}

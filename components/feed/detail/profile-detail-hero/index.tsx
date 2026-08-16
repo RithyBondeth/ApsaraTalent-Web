@@ -5,6 +5,7 @@ import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { cn } from "@/lib/utils";
 import { User } from "lucide-react";
 import { IProfileDetailHeroProps } from "./props";
+import { PixelGridDecor } from "@/components/utils/brand/pixel-grid-decor";
 
 export function ProfileDetailHero(props: IProfileDetailHeroProps) {
   /* ------------------------------- Props ------------------------------- */
@@ -27,7 +28,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
     <Avatar
       rounded="md"
       className={cn(
-        "shrink-0 rounded-none border-[3px] border-card bg-card",
+        "shrink-0 border-[3px] border-card bg-card",
         avatar && onAvatarClick && "cursor-pointer",
       )}
       onClick={avatar && onAvatarClick ? onAvatarClick : undefined}
@@ -46,7 +47,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
         {/* Employee Hero Card Section */}
         <div className="grid md:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
           {/* Employee Identity Panel Section */}
-          <section className="profile-detail-employee-intro relative flex min-h-[300px] flex-col overflow-hidden bg-foreground p-5 text-background sm:min-h-[340px] sm:p-7 md:min-h-[410px]">
+          <section className="profile-detail-employee-intro relative flex min-h-[250px] flex-col overflow-hidden bg-foreground p-5 text-background sm:min-h-[280px] sm:p-7 md:min-h-[320px]">
             {/* Animated Grid Background Section */}
 
             {/* Employee Panel Header Section */}
@@ -66,19 +67,20 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
                 <p className="pixel-label mb-2 text-[9px] opacity-55">
                   Apsara profile
                 </p>
-                <h1 className="text-3xl font-medium leading-[0.95] tracking-[-0.045em] sm:text-5xl">
-                  {name}
-                </h1>
+                <h1 className="pixel-display text-3xl sm:text-4xl">{name}</h1>
               </div>
             </div>
           </section>
 
           {/* Employee Professional Focus Panel Section */}
-          <section className="profile-detail-employee-focus relative flex min-h-[320px] flex-col overflow-hidden bg-card p-5 sm:min-h-[360px] sm:p-7 md:min-h-[410px]">
-            {/* Decorative Index Section */}
-            <div className="profile-detail-focus-index" aria-hidden>
-              AT
-            </div>
+          <section className="profile-detail-employee-focus relative flex min-h-[280px] flex-col overflow-hidden bg-card p-5 sm:min-h-[300px] sm:p-7 md:min-h-[320px]">
+            <PixelGridDecor
+              seed="employee-detail"
+              cells={4}
+              rows={3}
+              columns={12}
+              className="opacity-70"
+            />
             {/* Employee Headline Section */}
             <div className="relative z-[1]">
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -88,7 +90,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
                 {status}
               </div>
               {headline && (
-                <p className="mt-7 max-w-xl text-4xl font-medium leading-[0.95] tracking-[-0.05em] sm:text-6xl md:mt-10">
+                <p className="mt-7 max-w-xl text-3xl font-medium leading-[1.02] tracking-[-0.04em] sm:text-5xl md:mt-9">
                   {headline}
                 </p>
               )}
@@ -103,7 +105,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
 
             {/* Employee Actions Section */}
             {actions && (
-              <div className="relative z-[1] mt-4 hidden items-center justify-end gap-2 md:flex [&>button]:rounded-none">
+              <div className="[&>button]: relative z-[1] mt-4 hidden items-center justify-end gap-2 md:flex">
                 {actions}
               </div>
             )}
@@ -119,12 +121,19 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
       {/* Company Cover Section */}
       <section
         className={cn(
-          "profile-detail-hero profile-detail-company-cover relative flex min-h-[300px] flex-col overflow-hidden bg-foreground p-5 sm:min-h-[360px] sm:p-8",
+          "profile-detail-hero profile-detail-company-cover relative flex min-h-[220px] flex-col overflow-hidden p-5 sm:min-h-[260px] sm:p-8",
           cover && "profile-detail-hero-cover",
         )}
         style={cover ? { backgroundImage: `url(${cover})` } : undefined}
       >
-        {/* Animated Grid Background Section */}
+        {!cover && (
+          <PixelGridDecor
+            seed="company-detail"
+            cells={5}
+            rows={3}
+            columns={12}
+          />
+        )}
 
         {/* Company Cover Header Section */}
         <div className="relative z-[2] flex items-start justify-between gap-4">
@@ -135,11 +144,11 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
         </div>
 
         {/* Company Identity Section */}
-        <div className="relative z-[2] mt-auto max-w-4xl pb-10 sm:pb-0">
+        <div className="relative z-[2] mt-auto max-w-4xl pb-14 sm:pb-16">
           {headline && (
             <p className="pixel-label mb-4 text-xs opacity-70">{headline}</p>
           )}
-          <h1 className="text-4xl font-medium leading-[0.9] tracking-[-0.055em] sm:text-6xl lg:text-7xl">
+          <h1 className="pixel-display text-3xl sm:text-5xl lg:text-6xl">
             {name}
           </h1>
         </div>
@@ -148,7 +157,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
       {/* Company Metadata Rail Section */}
       <div className="relative grid gap-5 px-4 pb-5 sm:px-6 sm:pb-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-end">
         {/* Company Avatar Section */}
-        <div className="-mt-12 sm:-mt-14 [&>span]:size-24 sm:[&>span]:size-28">
+        <div className="-mt-14 sm:-mt-16 [&>span]:size-24 sm:[&>span]:size-28">
           {profileAvatar}
         </div>
 
@@ -161,14 +170,11 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
 
         {/* Company Actions Section */}
         {actions && (
-          <div className="hidden shrink-0 items-center gap-2 md:mb-1 md:flex [&>button]:rounded-none">
+          <div className="[&>button]: hidden shrink-0 items-center gap-2 md:mb-1 md:flex">
             {actions}
           </div>
         )}
       </div>
-
-      {/* Company Accent Line Section */}
-      <div className="h-1 bg-foreground" aria-hidden />
     </DetailCard>
   );
 }

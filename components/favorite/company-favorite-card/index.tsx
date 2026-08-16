@@ -28,7 +28,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
   return (
     <article
       className={cn(
-        "pixel-wash group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card hover:border-foreground/35",
+        "pixel-wash group w-full overflow-hidden border border-border bg-card hover:border-foreground/35",
         props.isRemoving && "animate-card-pop-shrink",
       )}
     >
@@ -36,7 +36,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
         {/* Avatar Section: Company Avatar */}
         <Avatar
           rounded="md"
-          className="size-14 flex-shrink-0 !rounded-none border border-border sm:size-16"
+          className="size-14 flex-shrink-0 border border-border sm:size-16"
         >
           <AvatarFallback className="text-sm font-medium">
             {getNameInitials(props.name)}
@@ -78,7 +78,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
                   label={op.title}
                   key={op.id}
                   neutral
-                  className="!rounded-none border border-border hover:shadow-none"
+                  className="border border-border hover:shadow-none"
                 />
               ))}
             </div>
@@ -89,17 +89,17 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
             <MetaChip
               icon={<LucideUsers />}
               text={t("memberCount", { count: props.companySize })}
-              className="rounded-none border border-border bg-muted/45"
+              className="border border-border bg-muted/45"
             />
             <MetaChip
               icon={<LucideBriefcaseBusiness />}
               text={t("positionCount", { count: props.openPosition.length })}
-              className="rounded-none border border-border bg-muted/45"
+              className="border border-border bg-muted/45"
             />
             <MetaChip
               icon={<LucideMapPin />}
               text={translateLocation(props.location, tl)}
-              className="rounded-none border border-border bg-muted/45"
+              className="border border-border bg-muted/45"
             />
           </div>
         </div>
@@ -110,7 +110,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
         <Button
           variant="outline"
           size="sm"
-          className="rounded-none border-destructive/30 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+          className="border-destructive/30 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
           onClick={props.onRemoveFromFavorite}
         >
           <LucideBookmarkX className="size-3.5" />
@@ -118,7 +118,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
         </Button>
         <Button
           size="sm"
-          className="rounded-none text-xs"
+          className="text-xs"
           onClick={() => router.replace(`/feed/company/${props.id}`)}
         >
           {t("viewDetail")}

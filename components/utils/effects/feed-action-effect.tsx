@@ -2,12 +2,8 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import {
-  LucideHeart,
-  LucideBookmark,
-  LucideStar,
-  LucideSparkles,
-} from "lucide-react";
+import { LucideHeart, LucideBookmark, LucideStar } from "lucide-react";
+import { Bot as LucideSparkles } from "lucide-react";
 
 /* ---------------------------------- Types --------------------------------- */
 export type TFeedEffectType = "like" | "save";

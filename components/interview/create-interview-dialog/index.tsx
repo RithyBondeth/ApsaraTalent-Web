@@ -163,7 +163,7 @@ export function CreateInterviewDialog({
 
   // ── Trigger Button ──────────────────────────────────────────────────
   const trigger = (
-    <Button size="sm" className="rounded-none">
+    <Button size="sm" className="">
       <LucidePlus className="size-4" />
       {t("scheduleInterview")}
     </Button>
@@ -172,7 +172,7 @@ export function CreateInterviewDialog({
   // ── Header Content ──────────────────────────────────────────────────
   const headerContent = (
     <div className="flex items-center gap-3">
-      <div className="flex size-10 items-center justify-center rounded-none bg-foreground text-background">
+      <div className="flex size-10 items-center justify-center bg-foreground text-background">
         <LucideCalendarCheck className="size-5 text-background" />
       </div>
       <div>

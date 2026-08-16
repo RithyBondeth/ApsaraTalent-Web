@@ -19,8 +19,8 @@ import type { IPixelPatternProps } from "./props";
  * ------------------------------------------------------------------------- */
 
 /* Three steps of tint plus empty. Deliberately shallow: at these alphas the
-   tiles blend into a texture, and any stronger reads as a checkerboard the eye
-   keeps trying to parse. */
+tiles blend into a texture, and any stronger reads as a checkerboard the eye
+keeps trying to parse. */
 const NEUTRAL = [
   "fill-foreground/[0.02]",
   "fill-foreground/[0.035]",
@@ -55,9 +55,9 @@ function generator(seed: number): () => number {
 }
 
 /** Edge of the repeating block, in tiles. At 10 the 400px repeat was faintly
- *  readable as horizontal rhythm across a 1440px band; 16 pushes it to ~700px,
- *  which is under three repeats on a wide screen and reads as texture. The
- *  cost is 256 rects in a <defs> rather than 100 — still nothing. */
+ * readable as horizontal rhythm across a 1440px band; 16 pushes it to ~700px,
+ * which is under three repeats on a wide screen and reads as texture. The
+ * cost is 256 rects in a <defs> rather than 100 — still nothing. */
 const BLOCK = 16;
 
 export function PixelPattern({

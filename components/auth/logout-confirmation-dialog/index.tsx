@@ -57,7 +57,7 @@ export function LogoutConfirmationDialog(
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="logout-dialog w-[calc(100%-1.5rem)] max-w-md rounded-none border border-foreground/20 bg-card p-0 shadow-[9px_9px_0_hsl(var(--foreground)/0.12),0_24px_70px_hsl(var(--foreground)/0.18)] sm:rounded-none"
+        className="logout-dialog max-w-md p-0"
         onOpenAutoFocus={(event) => {
           event.preventDefault();
           cancelButtonRef.current?.focus();
@@ -97,7 +97,7 @@ export function LogoutConfirmationDialog(
               variant="outline"
               disabled={isPending}
               onClick={() => onOpenChange(false)}
-              className="h-11 w-full rounded-none"
+              className="h-11 w-full"
             >
               {cancelLabel}
             </Button>
@@ -106,7 +106,7 @@ export function LogoutConfirmationDialog(
               variant="destructive"
               disabled={isPending}
               onClick={handleConfirm}
-              className="h-11 w-full rounded-none"
+              className="h-11 w-full"
             >
               {isPending ? (
                 <LoaderCircle className="size-4 animate-spin" />

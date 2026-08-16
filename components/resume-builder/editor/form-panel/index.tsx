@@ -85,22 +85,22 @@ export default function ResumeEditorFormPanel(
       className="flex h-full flex-col"
     >
       {/* Primary Editor Navigation Section */}
-      <TabsList className="grid h-11 w-full shrink-0 grid-cols-3 rounded-none border border-border bg-muted/35 p-0">
+      <TabsList className="grid h-11 w-full shrink-0 grid-cols-3 border border-border bg-muted/35 p-0">
         <TabsTrigger
           value="content"
-          className="h-full gap-1.5 rounded-none border-r border-border px-2 text-xs shadow-none"
+          className="h-full gap-1.5 border-r border-border px-2 text-xs shadow-none"
         >
           <ListTree size={13} /> {t("tabContent")}
         </TabsTrigger>
         <TabsTrigger
           value="layout"
-          className="h-full gap-1.5 rounded-none border-r border-border px-2 text-xs shadow-none"
+          className="h-full gap-1.5 border-r border-border px-2 text-xs shadow-none"
         >
           <LayoutPanelLeft size={13} /> {t("tabLayout")}
         </TabsTrigger>
         <TabsTrigger
           value="design"
-          className="h-full gap-1.5 rounded-none px-2 text-xs shadow-none"
+          className="h-full gap-1.5 px-2 text-xs shadow-none"
         >
           <Palette size={13} /> {t("tabStyle")}
         </TabsTrigger>

@@ -180,13 +180,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
       {/* Report Dialog Section */}
       <Dialog open={reportOpen} onOpenChange={setReportOpen}>
         {/* Report Dialog Content Section */}
-        <DialogContent
-          className={cn(
-            "sm:max-w-md",
-            isEditorial &&
-              "rounded-none border-border p-0 sm:rounded-none [&>button]:rounded-none",
-          )}
-        >
+        <DialogContent className={cn("sm:max-w-md", isEditorial && "p-0")}>
           {/* Report Dialog Header Section */}
           <DialogHeader
             className={cn(

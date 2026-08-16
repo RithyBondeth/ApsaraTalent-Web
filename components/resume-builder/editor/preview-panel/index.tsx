@@ -144,7 +144,7 @@ export default function ResumeEditorPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-none border border-transparent sm:h-7 sm:w-7"
+            className="h-8 w-8 border border-transparent sm:h-7 sm:w-7"
             onClick={zoomOut}
             disabled={zoomMultiplier <= RESUME_EDITOR_ZOOM_MIN}
             title={t("zoomOut")}
@@ -155,7 +155,7 @@ export default function ResumeEditorPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-12 rounded-none border border-border sm:h-7"
+            className="h-8 w-12 border border-border sm:h-7"
             onClick={zoomFit}
             title={t("resetToFit")}
           >
@@ -165,7 +165,7 @@ export default function ResumeEditorPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-none border border-transparent sm:h-7 sm:w-7"
+            className="h-8 w-8 border border-transparent sm:h-7 sm:w-7"
             onClick={zoomIn}
             disabled={zoomMultiplier >= RESUME_EDITOR_ZOOM_MAX}
             title={t("zoomIn")}

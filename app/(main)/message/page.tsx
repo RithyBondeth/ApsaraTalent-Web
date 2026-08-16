@@ -328,7 +328,7 @@ export default function MessagePageContent() {
   /* -------------------------------- Render UI -------------------------------- */
   // Chat View Section
   const chatView = activeChat ? (
-    <div className="flex h-full min-h-0 min-w-0 flex-col bg-card">
+    <div className="bg-background/92 flex h-full min-h-0 min-w-0 flex-col">
       {/* Chat Header Section */}
       <ChatHeader
         chat={activeChat}
@@ -374,7 +374,7 @@ export default function MessagePageContent() {
   );
 
   return (
-    <div className="message-editorial relative flex h-full min-h-0 w-full overflow-hidden border border-border bg-card">
+    <div className="message-editorial relative flex h-full min-h-0 w-full overflow-hidden border border-border bg-background">
       {/* Call Overlay + Incoming Modal Section */}
       <CallOrchestrator />
 

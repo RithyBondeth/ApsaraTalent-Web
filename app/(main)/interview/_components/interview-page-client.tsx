@@ -146,7 +146,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
 
       {/* Error Banner Section */}
       {error && interviews.length > 0 && (
-        <div className="w-full border border-l-[5px] border-destructive/20 border-l-destructive bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="w-full border border-destructive/20 border-l-destructive bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
         </div>
       )}

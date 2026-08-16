@@ -41,9 +41,9 @@ import {
   LucideTrash2,
   LucideUsers,
   LucideXCircle,
-  Sparkles,
   Loader2,
 } from "lucide-react";
+import { Bot as Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { IOpenPositionFormProps } from "./props";

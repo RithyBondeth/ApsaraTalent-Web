@@ -4,8 +4,8 @@ import {
   LucideFileText,
   LucideLoader2,
   LucideMessageCircleQuestion,
-  LucideSparkles,
 } from "lucide-react";
+import { Bot as LucideSparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { IAiMatchExplanationModalProps } from "../ai-match-explanation-modal/props";
 import { lazy, Suspense, useState } from "react";
@@ -46,9 +46,7 @@ function LazyActionButton(props: ILazyActionButtonProps) {
       size="sm"
       variant="outline"
       className={
-        interview
-          ? "gap-1.5 rounded-none text-xs"
-          : "h-8 gap-1.5 rounded-none px-2.5 text-xs sm:px-3"
+        interview ? "gap-1.5 text-xs" : "h-8 gap-1.5 px-2.5 text-xs sm:px-3"
       }
       aria-label={label}
       onClick={onClick}
@@ -72,9 +70,7 @@ function LoadingActionButton(
       size="sm"
       variant="outline"
       className={
-        interview
-          ? "gap-1.5 rounded-none text-xs"
-          : "h-8 gap-1.5 rounded-none px-2.5 text-xs sm:px-3"
+        interview ? "gap-1.5 text-xs" : "h-8 gap-1.5 px-2.5 text-xs sm:px-3"
       }
       aria-label={label}
       disabled

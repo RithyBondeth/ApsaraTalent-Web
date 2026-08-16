@@ -47,10 +47,10 @@ import {
   LucideTrash2,
   LucideXCircle,
   MapPin,
-  Sparkles,
   Loader2,
   Users,
 } from "lucide-react";
+import { Bot as Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Controller, useFieldArray, useWatch } from "react-hook-form";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";

@@ -1,8 +1,9 @@
 "use client";
 
+import { PixelGridField } from "@/components/utils/brand/pixel-grid-field";
+import { PixelPet } from "@/components/utils/brand/pixel-pet";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { useGsapScrollAnimation } from "@/hooks/utils/use-gsap-animation";
-import { useMediaQuery } from "@/hooks/utils/use-media-query";
 import { cn } from "@/lib/utils";
 import {
   LucideArrowLeftRight,
@@ -11,437 +12,306 @@ import {
   LucideHeart,
   LucideMapPin,
   LucideMessageCircle,
-  LucideSparkles,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { IDeviceChromeProps, ILandingMatchVisualProps } from "./props";
+import type { ILandingMatchVisualProps } from "./props";
 
-gsap.registerPlugin(ScrollTrigger);
+const CANDIDATE_SKILLS = ["TypeScript", "React", "Node.js"] as const;
 
-function DeviceChrome(props: IDeviceChromeProps) {
-  /* ------------------------------- Props ------------------------------- */
-  const { children } = props;
-
-  /* ----------------------------- Render UI ----------------------------- */
+function DossierLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="landing-match-device relative w-full max-w-[280px] border border-[hsl(var(--auth-ink)/0.18)] bg-[hsl(var(--auth-paper))] p-2.5 shadow-[0_28px_80px_hsl(var(--auth-paper)/0.42)]">
-      {/* Device Frame Section */}
-      {/* Device Speaker Section */}
-      <div className="mb-2 flex h-4 items-center justify-center">
-        <span className="h-1 w-10 rounded-full bg-[hsl(var(--auth-ink)/0.18)]" />
-      </div>
-      {/* Device Screen Section */}
-      <div className="overflow-hidden rounded-[14px] bg-[hsl(var(--auth-ink))] text-[hsl(var(--auth-paper))]">
-        {children}
-      </div>
-    </div>
+    <span className="pixel-label text-[10px] text-[hsl(var(--match-ink)/0.46)]">
+      {children}
+    </span>
   );
 }
 
-function CompanyDevice() {
-  /* ------------------------------- Utils ------------------------------- */
+function CandidateDossier() {
   const t = useTranslations("landing");
 
-  /* ----------------------------- Render UI ----------------------------- */
   return (
-    <DeviceChrome>
-      {/* Company Device Header Section */}
-      <div className="flex items-center justify-between border-b border-[hsl(var(--auth-paper)/0.1)] px-4 py-3">
-        <div>
-          <p className="pixel-label text-[9px] text-[hsl(var(--auth-paper)/0.48)]">
-            {t("matchVisualCompanyView")}
-          </p>
-          <p className="mt-0.5 text-xs font-medium">Kiri Labs</p>
-        </div>
-        <span className="grid size-7 place-items-center rounded-full border border-[hsl(var(--auth-paper)/0.14)]">
-          <LucideBriefcaseBusiness className="size-3.5" strokeWidth={1.6} />
-        </span>
+    <article
+      data-match-card="candidate"
+      className="flex h-full min-h-[540px] flex-col bg-[hsl(var(--match-paper))]"
+    >
+      <div className="flex items-center justify-between border-b border-[hsl(var(--match-line))] px-6 py-5 sm:px-8">
+        <DossierLabel>{t("matchVisualCompanyView")}</DossierLabel>
+        <DossierLabel>Candidate · 0842</DossierLabel>
       </div>
 
-      {/* Employee Preview Content Section */}
-      <div className="p-4">
-        {/* Employee Cover and Avatar Section */}
-        <div className="landing-profile-cover relative mb-10 h-20 overflow-visible border border-[hsl(var(--auth-paper)/0.1)]">
-          <span className="absolute -bottom-7 left-3 grid size-14 place-items-center rounded-full border-4 border-[hsl(var(--auth-ink))] bg-[hsl(var(--auth-paper))] text-base font-medium text-[hsl(var(--auth-ink))]">
-            SD
-          </span>
-        </div>
-
-        {/* Employee Identity Section */}
-        <div className="mb-4">
-          <h3 className="text-base font-medium tracking-tight">Sophea Dara</h3>
-          <p className="mt-1 text-[11px] text-[hsl(var(--auth-paper)/0.56)]">
-            Senior Product Designer
+      <div className="grid grid-cols-[112px_1fr] border-b border-[hsl(var(--match-line))]">
+        <PixelGridField
+          tone="yellow"
+          compact
+          animated
+          className="min-h-28 border-r border-[hsl(var(--match-line))] text-2xl font-medium sm:text-3xl"
+          contentClassName="grid h-full min-h-28 place-items-center"
+        >
+          BD
+        </PixelGridField>
+        <div className="flex flex-col justify-center px-6 py-3.5 sm:px-8">
+          <DossierLabel>Available now</DossierLabel>
+          <h3 className="mt-2 text-2xl font-medium tracking-[-0.03em] text-[hsl(var(--match-ink))] sm:text-3xl">
+            Bondeth
+          </h3>
+          <p className="mt-1 text-sm text-[hsl(var(--match-ink)/0.56)]">
+            Software Engineer
           </p>
-          <p className="mt-2 flex items-center gap-1 text-[10px] text-[hsl(var(--auth-paper)/0.46)]">
-            <LucideMapPin className="size-3" strokeWidth={1.6} />
-            Phnom Penh, Cambodia
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 border-b border-[hsl(var(--match-line))]">
+        <div className="border-r border-[hsl(var(--match-line))] px-6 py-5 sm:px-8">
+          <DossierLabel>Location</DossierLabel>
+          <p className="mt-3 flex items-center gap-2 text-sm text-[hsl(var(--match-ink))]">
+            <LucideMapPin className="size-4" strokeWidth={1.5} />
+            Phnom Penh
           </p>
         </div>
+        <div className="px-6 py-5 sm:px-8">
+          <DossierLabel>Match score</DossierLabel>
+          <p className="pixel-numeral mt-2 text-3xl text-[hsl(var(--match-ink))]">
+            94%
+          </p>
+        </div>
+      </div>
 
-        {/* Employee Skills Section */}
-        <div className="mb-5 flex flex-wrap gap-1.5">
-          {["Product", "Research", "Figma"].map((skill) => (
-            <span
+      <div className="flex-1 px-6 py-6 sm:px-8">
+        <DossierLabel>Core capabilities</DossierLabel>
+        <div className="mt-4 border-t border-[hsl(var(--match-line))]">
+          {CANDIDATE_SKILLS.map((skill, index) => (
+            <div
               key={skill}
-              className="border border-[hsl(var(--auth-paper)/0.12)] px-2 py-1 text-[9px] text-[hsl(var(--auth-paper)/0.62)]"
+              className="grid grid-cols-[36px_1fr] items-center border-b border-[hsl(var(--match-line))] py-3 text-sm text-[hsl(var(--match-ink))]"
             >
-              {skill}
-            </span>
+              <span className="pixel-numeral text-[10px] text-[hsl(var(--match-ink)/0.38)]">
+                0{index + 1}
+              </span>
+              <span>{skill}</span>
+            </div>
           ))}
         </div>
-
-        {/* Company Like Action Section */}
-        <div className="landing-match-like landing-match-like-company flex items-center justify-center gap-2 bg-[hsl(var(--auth-paper))] px-3 py-3 text-xs font-medium text-[hsl(var(--auth-ink))]">
-          <LucideHeart className="size-4 fill-current" strokeWidth={1.6} />
-          {t("matchVisualLiked")}
-        </div>
       </div>
-    </DeviceChrome>
+
+      <div className="flex items-center justify-between border-t border-[hsl(var(--match-line))] bg-[hsl(var(--match-ink))] px-6 py-5 text-[hsl(var(--match-paper))] sm:px-8">
+        <span className="text-sm font-medium">{t("matchVisualLiked")}</span>
+        <LucideHeart
+          data-match-like
+          className="size-4 fill-current"
+          strokeWidth={1.5}
+        />
+      </div>
+    </article>
   );
 }
 
-function EmployeeDevice() {
-  /* ------------------------------- Utils ------------------------------- */
+function CompanyDossier() {
   const t = useTranslations("landing");
 
-  /* ----------------------------- Render UI ----------------------------- */
   return (
-    <DeviceChrome>
-      {/* Employee Device Header Section */}
-      <div className="flex items-center justify-between border-b border-[hsl(var(--auth-paper)/0.1)] px-4 py-3">
-        <div>
-          <p className="pixel-label text-[9px] text-[hsl(var(--auth-paper)/0.48)]">
-            {t("matchVisualEmployeeView")}
-          </p>
-          <p className="mt-0.5 text-xs font-medium">Sophea Dara</p>
-        </div>
-        <span className="grid size-7 place-items-center rounded-full border border-[hsl(var(--auth-paper)/0.14)]">
-          <span className="text-[9px] font-medium">SD</span>
-        </span>
+    <article
+      data-match-card="company"
+      className="flex h-full min-h-[540px] flex-col bg-[hsl(var(--match-paper))]"
+    >
+      <div className="flex items-center justify-between border-b border-[hsl(var(--match-line))] px-6 py-5 sm:px-8">
+        <DossierLabel>{t("matchVisualEmployeeView")}</DossierLabel>
+        <DossierLabel>Company · 0217</DossierLabel>
       </div>
 
-      {/* Company Preview Content Section */}
-      <div className="p-4">
-        {/* Company Cover and Avatar Section */}
-        <div className="landing-company-cover relative mb-10 h-20 overflow-visible border border-[hsl(var(--auth-paper)/0.1)]">
-          <span className="absolute -bottom-7 left-3 grid size-14 place-items-center rounded-full border-4 border-[hsl(var(--auth-ink))] bg-[hsl(var(--auth-paper))] text-[11px] font-medium text-[hsl(var(--auth-ink))]">
-            KIRI
-          </span>
-        </div>
-
-        {/* Company Identity Section */}
-        <div className="mb-4">
-          <h3 className="text-base font-medium tracking-tight">Kiri Labs</h3>
-          <p className="mt-1 text-[11px] text-[hsl(var(--auth-paper)/0.56)]">
+      <div className="grid grid-cols-[112px_1fr] border-b border-[hsl(var(--match-line))]">
+        <PixelGridField
+          tone="yellow"
+          compact
+          mirror
+          animated
+          className="min-h-28 border-r border-[hsl(var(--match-line))]"
+          contentClassName="grid h-full min-h-28 place-items-center"
+        >
+          <LucideBriefcaseBusiness className="size-7" strokeWidth={1.4} />
+        </PixelGridField>
+        <div className="flex flex-col justify-center px-6 py-3.5 sm:px-8">
+          <DossierLabel>Hiring team</DossierLabel>
+          <h3 className="mt-2 text-2xl font-medium tracking-[-0.03em] text-[hsl(var(--match-ink))] sm:text-3xl">
+            Kiri Labs
+          </h3>
+          <p className="mt-1 text-sm text-[hsl(var(--match-ink)/0.56)]">
             Product &amp; Technology
           </p>
-          <p className="mt-2 flex items-center gap-1 text-[10px] text-[hsl(var(--auth-paper)/0.46)]">
-            <LucideMapPin className="size-3" strokeWidth={1.6} />
-            Phnom Penh, Cambodia
-          </p>
-        </div>
-
-        {/* Open Position Section */}
-        <div className="mb-5 border-y border-[hsl(var(--auth-paper)/0.1)] py-3">
-          <p className="pixel-label text-[9px] text-[hsl(var(--auth-paper)/0.42)]">
-            {t("matchVisualHiringFor")}
-          </p>
-          <p className="mt-1.5 text-xs font-medium">Senior Product Designer</p>
-        </div>
-
-        {/* Employee Like Action Section */}
-        <div className="landing-match-like landing-match-like-employee flex items-center justify-center gap-2 bg-[hsl(var(--auth-paper))] px-3 py-3 text-xs font-medium text-[hsl(var(--auth-ink))]">
-          <LucideHeart className="size-4 fill-current" strokeWidth={1.6} />
-          {t("matchVisualLiked")}
         </div>
       </div>
-    </DeviceChrome>
+
+      <div className="grid grid-cols-2 border-b border-[hsl(var(--match-line))]">
+        <div className="border-r border-[hsl(var(--match-line))] px-6 py-5 sm:px-8">
+          <DossierLabel>Location</DossierLabel>
+          <p className="mt-3 flex items-center gap-2 text-sm text-[hsl(var(--match-ink))]">
+            <LucideMapPin className="size-4" strokeWidth={1.5} />
+            Phnom Penh
+          </p>
+        </div>
+        <div className="px-6 py-5 sm:px-8">
+          <DossierLabel>Team size</DossierLabel>
+          <p className="pixel-numeral mt-2 text-3xl text-[hsl(var(--match-ink))]">
+            42
+          </p>
+        </div>
+      </div>
+
+      <div className="flex-1 px-6 py-6 sm:px-8">
+        <DossierLabel>{t("matchVisualHiringFor")}</DossierLabel>
+        <div className="mt-4 border border-[hsl(var(--match-line))]">
+          <div className="flex items-start justify-between gap-4 px-5 py-5">
+            <div>
+              <p className="text-lg font-medium tracking-[-0.02em] text-[hsl(var(--match-ink))]">
+                Software Engineer
+              </p>
+              <p className="mt-2 text-xs text-[hsl(var(--match-ink)/0.52)]">
+                Full-time · Hybrid · Phnom Penh
+              </p>
+            </div>
+            <span className="size-3 shrink-0 bg-pixel-3" />
+          </div>
+          <div className="grid grid-cols-3 border-t border-[hsl(var(--match-line))]">
+            {["Engineering", "Web", "Full-time"].map((tag) => (
+              <span
+                key={tag}
+                className="border-r border-[hsl(var(--match-line))] px-3 py-3 text-center text-[10px] text-[hsl(var(--match-ink)/0.62)] last:border-r-0"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between border-t border-[hsl(var(--match-line))] bg-[hsl(var(--match-ink))] px-6 py-5 text-[hsl(var(--match-paper))] sm:px-8">
+        <span className="text-sm font-medium">{t("matchVisualLiked")}</span>
+        <LucideHeart
+          data-match-like
+          className="size-4 fill-current"
+          strokeWidth={1.5}
+        />
+      </div>
+    </article>
   );
 }
 
-export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
-  /* ------------------------------- Props ------------------------------- */
-  const { className } = props;
+function MatchSignal() {
+  const t = useTranslations("landing");
 
-  /* ------------------------------- Utils ------------------------------- */
+  return (
+    <PixelGridField
+      tone="yellow"
+      animated
+      data-match-sequence
+      contentClassName="landing-match-signal__content grid text-pixel-ink"
+    >
+      <div className="grid min-h-32 place-items-center border-b border-pixel-ink/20 md:min-h-48 md:border-b-0 md:border-r">
+        <div data-match-piece="pet">
+          <PixelPet
+            expression="smiling"
+            height={120}
+            className="h-24 w-auto md:h-[120px]"
+          />
+        </div>
+      </div>
+
+      <div className="flex min-w-0 flex-col justify-center border-b border-pixel-ink/20 px-5 py-7 sm:px-8 md:border-b-0 md:px-8 lg:px-10 xl:px-12">
+        <div data-match-piece="label">
+          <DossierLabel>{t("matchVisualMutualInterest")}</DossierLabel>
+        </div>
+        <div className="mt-4 flex min-w-0 items-center gap-3 sm:gap-4">
+          <span
+            data-match-piece="check"
+            className="grid size-11 shrink-0 place-items-center bg-pixel-ink text-[hsl(var(--pixel-1))]"
+          >
+            <LucideCheck className="size-5" strokeWidth={2} />
+          </span>
+          <p
+            data-match-piece="title"
+            className="min-w-0 text-3xl font-medium leading-[0.95] tracking-[-0.045em] sm:text-4xl lg:text-5xl"
+          >
+            {t("matchVisualMatchReady")}
+          </p>
+        </div>
+        <p
+          data-match-piece="copy"
+          className="text-pixel-ink/68 mt-4 max-w-xl text-sm leading-relaxed sm:text-base"
+        >
+          Bondeth and Kiri Labs both showed interest.{" "}
+          {t("matchVisualMatchReadyDescription")}
+        </p>
+      </div>
+
+      <div
+        data-match-piece="chat"
+        className="flex min-h-32 flex-col justify-between bg-pixel-ink px-6 py-7 text-[hsl(var(--pixel-1))] md:min-h-48"
+      >
+        <div data-match-chat className="flex items-center justify-between">
+          <span className="pixel-label text-[10px] opacity-65">
+            Connection unlocked
+          </span>
+          <LucideArrowLeftRight className="size-5" strokeWidth={1.5} />
+        </div>
+        <div data-match-chat>
+          <LucideMessageCircle className="mb-3 size-5" strokeWidth={1.5} />
+          <p className="text-base font-medium">{t("featureRealTimeChat")}</p>
+          <p className="mt-1 text-xs opacity-65">Start the conversation →</p>
+        </div>
+      </div>
+    </PixelGridField>
+  );
+}
+
+export default function LandingMatchVisual({
+  className,
+}: ILandingMatchVisualProps) {
   const t = useTranslations("landing");
   const sectionRef = useGsapScrollAnimation<HTMLElement>();
-  const prefersReducedMotion = useMediaQuery(
-    "(prefers-reduced-motion: reduce)",
-  );
 
-  /* ---------------------------- All States ---------------------------- */
-  const matchStageRef = useRef<HTMLDivElement>(null);
-  const [isMatchActive, setIsMatchActive] = useState(false);
-
-  /* ----------------------------- Effects ------------------------------ */
-  useEffect(() => {
-    const matchStage = matchStageRef.current;
-    if (!matchStage) return;
-
-    const isDesktop = window.matchMedia("(min-width: 1024px)");
-
-    if (
-      prefersReducedMotion ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      setIsMatchActive(true);
-      return;
-    }
-
-    if (isDesktop.matches) {
-      const context = gsap.context(() => {
-        const select = gsap.utils.selector(matchStage);
-        const companyDevice = select(".landing-match-device-float-left");
-        const employeeDevice = select(".landing-match-device-float-right");
-        const companyLike = select(".landing-match-like-company");
-        const employeeLike = select(".landing-match-like-employee");
-        const beam = select(".landing-match-beam");
-        const arrow = select(".landing-match-arrow");
-        const result = select(".landing-match-result");
-        const spark = select(".landing-match-spark");
-
-        const timeline = gsap.timeline({
-          defaults: { ease: "power3.out" },
-          scrollTrigger: {
-            trigger: matchStage,
-            start: "top 84px",
-            end: "+=1600",
-            pin: true,
-            pinSpacing: true,
-            scrub: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        timeline
-          .fromTo(
-            companyDevice,
-            { opacity: 0, x: -90, y: 26, rotation: -5, scale: 0.92 },
-            {
-              opacity: 1,
-              x: 0,
-              y: 0,
-              rotation: -1.6,
-              scale: 1,
-              duration: 0.8,
-            },
-            0,
-          )
-          .fromTo(
-            employeeDevice,
-            { opacity: 0, x: 90, y: 26, rotation: 5, scale: 0.92 },
-            {
-              opacity: 1,
-              x: 0,
-              y: -5,
-              rotation: 1.6,
-              scale: 1,
-              duration: 0.8,
-            },
-            0.16,
-          )
-          .to(
-            companyLike,
-            {
-              opacity: 1,
-              scale: 1.08,
-              filter: "brightness(1.18)",
-              duration: 0.24,
-            },
-            0.82,
-          )
-          .to(
-            companyLike,
-            {
-              scale: 1,
-              filter: "brightness(1)",
-              duration: 0.24,
-            },
-            1.06,
-          )
-          .to(
-            employeeLike,
-            {
-              opacity: 1,
-              scale: 1.08,
-              filter: "brightness(1.18)",
-              duration: 0.24,
-            },
-            1.16,
-          )
-          .to(
-            employeeLike,
-            {
-              scale: 1,
-              filter: "brightness(1)",
-              duration: 0.24,
-            },
-            1.4,
-          )
-          .to(
-            beam,
-            {
-              opacity: 1,
-              scaleX: 1,
-              duration: 0.5,
-            },
-            1.55,
-          )
-          .fromTo(
-            beam,
-            { "--landing-match-beam-x": "-130%" },
-            {
-              "--landing-match-beam-x": "430%",
-              duration: 0.72,
-              ease: "power2.inOut",
-            },
-            1.72,
-          )
-          .to(
-            arrow,
-            {
-              opacity: 1,
-              rotation: 0,
-              scale: 1,
-              duration: 0.5,
-            },
-            1.64,
-          )
-          .to(
-            result,
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.62,
-              ease: "back.out(1.5)",
-            },
-            2.08,
-          )
-          .to(
-            spark,
-            {
-              opacity: 0.45,
-              y: 0,
-              rotation: 0,
-              scale: 1,
-              duration: 0.48,
-              ease: "back.out(2)",
-            },
-            2.3,
-          );
-      }, matchStage);
-
-      return () => context.revert();
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsMatchActive(entry.intersectionRatio >= 0.18);
-      },
-      {
-        rootMargin: "0px 0px -8% 0px",
-        threshold: [0, 0.18, 0.4],
-      },
-    );
-
-    observer.observe(matchStage);
-    return () => observer.disconnect();
-  }, [prefersReducedMotion]);
-
-  /* ----------------------------- Render UI ----------------------------- */
   return (
     <section
       ref={sectionRef}
       className={cn(
-        "relative overflow-hidden border-b border-border py-20 sm:py-28 lg:py-36",
+        "landing-match-editorial relative border-b border-border",
         className,
       )}
     >
-      {/* Landing Match Visual Section */}
-      {/* Background Grid Section */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Match Visual Heading Section */}
-        <div className="mb-12 grid gap-6 border-b border-border pb-10 sm:mb-16 md:grid-cols-[1fr_0.72fr] md:items-end">
-          <div>
+      <div className="mx-auto max-w-[1600px] border-x border-[hsl(var(--match-line))]">
+        <div className="grid lg:grid-cols-[7fr_3fr]">
+          <div className="px-6 py-16 sm:px-10 sm:py-20 lg:px-14 lg:py-24">
             <span
               data-gsap="fade-up"
-              className="pixel-label mb-4 block text-muted-foreground"
+              className="pixel-label text-[hsl(var(--match-ink)/0.46)]"
             >
-              {t("matchVisualEyebrow")}
+              {t("matchVisualEyebrow")} · 01
             </span>
             <TypographyH2
-              data-gsap="split-chars"
-              className="pixel-display max-w-2xl text-3xl [perspective:800px] sm:text-4xl lg:text-5xl"
+              data-gsap="split-words"
+              className="mt-5 max-w-4xl text-4xl font-normal !leading-[1.02] tracking-[-0.045em] text-[hsl(var(--match-ink))] [perspective:800px] sm:text-5xl lg:text-7xl"
             >
               {t("matchVisualHeading")}
             </TypographyH2>
           </div>
-          <p
-            data-gsap="blur-reveal"
-            className="max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base md:justify-self-end"
-          >
-            {t("matchVisualDescription")}
-          </p>
+          <div className="flex items-end border-t border-[hsl(var(--match-line))] bg-[hsl(var(--match-ink)/0.035)] px-6 py-10 sm:px-10 lg:border-l lg:border-t-0 lg:p-10">
+            <p
+              data-gsap="blur-reveal"
+              className="max-w-md text-base leading-relaxed text-[hsl(var(--match-ink)/0.64)]"
+            >
+              {t("matchVisualDescription")}
+            </p>
+          </div>
         </div>
 
-        {/* Interactive Match Stage Section */}
         <div
-          ref={matchStageRef}
-          data-match-active={isMatchActive}
-          className="landing-dark-panel landing-match-stage relative overflow-hidden border border-[hsl(var(--auth-ink)/10)] px-5 py-12 sm:px-10 sm:py-16 lg:min-h-[680px] lg:px-14"
+          className="border-t border-[hsl(var(--match-line))]"
           role="img"
           aria-label={t("matchVisualAccessibleLabel")}
         >
-          {/* Stage Background Grid Section */}
-
-          {/* Stage Header Section */}
-          <div className="pixel-label relative z-10 mb-10 flex items-center justify-between border-b border-[hsl(var(--auth-ink)/0.12)] pb-5 text-[10px] text-[hsl(var(--auth-ink)/0.42)] lg:mb-0">
-            <span>{t("matchVisualMutualInterest")}</span>
-            <span>Apsara Talent · Match</span>
-          </div>
-
-          {/* Mutual Match Devices Section */}
-          <div className="relative z-10 grid items-center gap-8 lg:absolute lg:inset-x-14 lg:bottom-12 lg:top-20 lg:grid-cols-[1fr_180px_1fr] lg:gap-6">
-            {/* Company Perspective Section */}
-            <div className="landing-match-device-float-left flex justify-center lg:justify-end">
-              <CompanyDevice />
-            </div>
-
-            {/* Match Connection Section */}
-            <div className="landing-match-connection relative flex flex-col items-center justify-center py-2 lg:h-full">
-              <div className="landing-match-beam hidden lg:block" aria-hidden />
-              <span className="landing-match-arrow mb-4 grid size-12 place-items-center rounded-full border border-[hsl(var(--auth-ink)/0.16)] bg-[hsl(var(--auth-ink)/0.06)] text-[hsl(var(--auth-ink)/0.72)] backdrop-blur-sm">
-                <LucideArrowLeftRight className="size-5" strokeWidth={1.5} />
-              </span>
-              {/* Match Result Section */}
-              <div className="landing-match-result relative w-full max-w-[190px] border border-[hsl(var(--auth-ink)/0.18)] bg-[hsl(var(--auth-ink)/0.07)] px-4 py-5 text-center backdrop-blur-xl">
-                <span className="mx-auto mb-3 grid size-10 place-items-center rounded-full bg-[hsl(var(--auth-ink))] text-[hsl(var(--auth-paper))]">
-                  <LucideCheck className="size-5" strokeWidth={2} />
-                </span>
-                <p className="text-sm font-medium text-[hsl(var(--auth-ink))]">
-                  {t("matchVisualMatchReady")}
-                </p>
-                <p className="mt-1.5 text-[10px] leading-relaxed text-[hsl(var(--auth-ink)/0.48)]">
-                  {t("matchVisualMatchReadyDescription")}
-                </p>
-                <div className="mt-4 flex items-center justify-center gap-2 border-t border-[hsl(var(--auth-ink)/0.12)] pt-3 text-[10px] font-medium text-[hsl(var(--auth-ink)/0.68)]">
-                  <LucideMessageCircle className="size-3.5" strokeWidth={1.6} />
-                  {t("featureRealTimeChat")}
-                </div>
-              </div>
-              <LucideSparkles className="landing-match-spark absolute right-3 top-1/4 size-4 text-[hsl(var(--auth-ink)/30)] lg:right-0" />
-            </div>
-
-            {/* Employee Perspective Section */}
-            <div className="landing-match-device-float-right flex justify-center lg:justify-start">
-              <EmployeeDevice />
+          <MatchSignal />
+          <div className="grid border-t border-[hsl(var(--match-line))] lg:grid-cols-2">
+            <CandidateDossier />
+            <div className="border-t border-[hsl(var(--match-line))] lg:border-l lg:border-t-0">
+              <CompanyDossier />
             </div>
           </div>
         </div>

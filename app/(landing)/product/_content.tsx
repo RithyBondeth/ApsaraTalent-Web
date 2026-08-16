@@ -9,10 +9,10 @@ import {
   LucideMessageSquare,
   LucideUsers,
   LucideBriefcase,
-  LucideSparkles,
   LucideDownload,
   LucideMonitor,
 } from "lucide-react";
+import { Bot as LucideSparkles } from "lucide-react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   StaticBullet,

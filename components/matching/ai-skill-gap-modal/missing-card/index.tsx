@@ -28,14 +28,14 @@ export default function MissingCard(props: IMissingCardProps) {
 
   /* --------------------------- Render UI -------------------------- */
   return (
-    <div className="flex flex-col gap-2.5 rounded-none border border-l-[5px] border-border border-l-foreground bg-card px-4 py-4 duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
+    <div className="flex flex-col gap-2.5 border border-border bg-card px-4 py-4 duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
       {/* Skill Name and Criticality Badge Section */}
       <div className="flex items-start justify-between gap-3">
         <p className="text-sm font-medium leading-snug text-foreground">
           {skill}
         </p>
         <span
-          className={`border-current/15 inline-flex shrink-0 rounded-none border px-2.5 py-0.5 text-[11px] font-medium ${chipColor}`}
+          className={`border-current/15 inline-flex shrink-0 border px-2.5 py-0.5 text-[11px] font-medium ${chipColor}`}
         >
           {critLabel}
         </span>
@@ -50,7 +50,7 @@ export default function MissingCard(props: IMissingCardProps) {
       )}
 
       {/* Learning Tip Section */}
-      <div className="flex gap-2 rounded-none border border-l-[4px] border-primary/10 border-l-primary bg-primary/5 px-3 py-2.5">
+      <div className="flex gap-2 border border-primary/10 bg-primary/5 px-3 py-2.5">
         <LucideBookOpen className="mt-0.5 size-3.5 shrink-0 text-primary" />
         <div>
           <p className="pixel-label mb-1 text-primary">{t("learningTip")}</p>

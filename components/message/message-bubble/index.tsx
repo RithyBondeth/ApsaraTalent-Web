@@ -135,9 +135,9 @@ function MessageBubble(props: IMessageBubbleProps) {
       {/* Sender Label Section (Partner Message Only) */}
       {!message.isMe && (
         <div className="mb-1 flex items-center">
-          <Avatar className="mr-2 h-6 w-6 rounded-none border border-border">
+          <Avatar className="mr-2 h-6 w-6 border border-border">
             {activeChat.isGroup ? (
-              <AvatarFallback className="rounded-none">
+              <AvatarFallback className="">
                 {message.senderId
                   .split(" ")
                   .map((n) => n[0])
@@ -146,7 +146,7 @@ function MessageBubble(props: IMessageBubbleProps) {
             ) : (
               <>
                 <AvatarImage src={activeChat.avatar} alt={activeChat.name} />
-                <AvatarFallback className="rounded-none">
+                <AvatarFallback className="">
                   {activeChat.name
                     .split(" ")
                     .map((n) => n[0])
@@ -168,16 +168,16 @@ function MessageBubble(props: IMessageBubbleProps) {
         {/* Message Bubble Section */}
         <div className="relative" onClick={toggleDeliveryTime}>
           <div
-            className={`rounded-none border text-sm transition-all ${
+            className={`border text-sm transition-all ${
               message.isMe
                 ? "border-primary bg-primary text-primary-foreground"
-                : "border-l-[4px] border-border border-l-foreground bg-card text-foreground"
+                : "border-border bg-card text-foreground"
             } ${message.isDeleted ? "px-3 py-2 opacity-60" : "p-3"}`}
           >
             {/* Reply / Quote block Section */}
             {message.replyTo && !message.isDeleted && (
               <div
-                className={`mb-2 rounded-none border-l-2 py-0.5 pl-2 text-xs opacity-80 ${
+                className={`mb-2 border-l-2 py-0.5 pl-2 text-xs opacity-80 ${
                   message.isMe
                     ? "border-primary-foreground/60 text-primary-foreground/80"
                     : "border-primary text-muted-foreground"
@@ -211,7 +211,7 @@ function MessageBubble(props: IMessageBubbleProps) {
                 <Button
                   variant={message.isMe ? "secondary" : "default"}
                   size="sm"
-                  className="w-full rounded-none"
+                  className="w-full"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleCallAgain();
@@ -234,7 +234,7 @@ function MessageBubble(props: IMessageBubbleProps) {
                     }
                     if (e.key === "Escape") cancelEditing();
                   }}
-                  className="max-h-[200px] min-h-[40px] resize-none rounded-none border-primary-foreground/30 bg-transparent px-2 py-1.5 text-sm text-primary-foreground placeholder:text-primary-foreground/50 focus-visible:ring-primary-foreground/50"
+                  className="max-h-[200px] min-h-[40px] resize-none border-primary-foreground/30 bg-transparent px-2 py-1.5 text-sm text-primary-foreground placeholder:text-primary-foreground/50 focus-visible:ring-primary-foreground/50"
                   rows={1}
                 />
                 <div className="flex justify-end gap-1">
@@ -242,7 +242,7 @@ function MessageBubble(props: IMessageBubbleProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 rounded-none text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                    className="h-6 w-6 text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"
                     onClick={cancelEditing}
                     aria-label="Cancel edit"
                   >
@@ -252,7 +252,7 @@ function MessageBubble(props: IMessageBubbleProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 rounded-none text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                    className="h-6 w-6 text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"
                     onClick={confirmEdit}
                     aria-label="Confirm edit"
                   >
@@ -338,9 +338,9 @@ function MessageBubble(props: IMessageBubbleProps) {
       {/* "Seen" Avatar Indicator (Last Read Message) Section */}
       {isLastSeen && (
         <div className="mt-0.5 flex items-center justify-end gap-1">
-          <Avatar className="h-4 w-4 rounded-none">
+          <Avatar className="h-4 w-4">
             <AvatarImage src={activeChat.avatar} alt={activeChat.name} />
-            <AvatarFallback className="rounded-none text-[8px]">
+            <AvatarFallback className="text-[8px]">
               {activeChat.name
                 .split(" ")
                 .map((n) => n[0])

@@ -33,14 +33,14 @@ export default function TemplateSelector({
         onValueChange={(v) => onChange(v as TResumeTemplate)}
       >
         {/* Select Template Trigger Section */}
-        <SelectTrigger className="h-8 w-[150px] rounded-none bg-background text-xs sm:w-[180px]">
+        <SelectTrigger className="h-8 w-[150px] bg-background text-xs sm:w-[180px]">
           <div className="flex items-center gap-2">
             <Layout size={14} className="text-muted-foreground" />
             <SelectValue placeholder={t("selectTemplate")} />
           </div>
         </SelectTrigger>
         {/* Select Template Dropdown Section */}
-        <SelectContent className="rounded-none border-border [&_[role=option]]:rounded-none">
+        <SelectContent className="[&_[role=option]]: border-border">
           {RESUME_TEMPLATE_KEYS.map((templateKey) => (
             <SelectItem
               key={templateKey}

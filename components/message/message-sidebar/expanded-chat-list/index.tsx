@@ -40,24 +40,22 @@ export default function ExpandedChatList(props: IChatListProps) {
           <button
             key={chat.id}
             className={cn(
-              "flex w-full items-center gap-3 border-b border-l-[4px] border-border px-3 py-3 text-left transition-colors md:px-4",
+              "flex w-full items-center gap-3 border-b border-border px-3 py-3 text-left transition-colors md:px-4",
               "hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring active:bg-muted",
-              isActive
-                ? "border-l-primary bg-primary/5"
-                : "border-l-transparent",
+              isActive ? "bg-primary/5" : "border-l-transparent",
             )}
             onClick={() => onChatSelect(chat)}
           >
             {/* Avatar + Online Dot Section */}
             <div className="relative shrink-0">
               {chat.isGroup ? (
-                <div className="flex h-11 w-11 items-center justify-center rounded-none border border-border bg-muted md:h-12 md:w-12">
+                <div className="flex h-11 w-11 items-center justify-center border border-border bg-muted md:h-12 md:w-12">
                   <Users className="h-5 w-5 text-muted-foreground" />
                 </div>
               ) : (
-                <Avatar className="h-11 w-11 rounded-none border border-border md:h-12 md:w-12">
+                <Avatar className="h-11 w-11 border border-border md:h-12 md:w-12">
                   <AvatarImage src={chat.avatar} alt={chat.name} />
-                  <AvatarFallback className="rounded-none text-sm font-medium">
+                  <AvatarFallback className="text-sm font-medium">
                     {getNameInitials(chat.name)}
                   </AvatarFallback>
                 </Avatar>
@@ -115,7 +113,7 @@ export default function ExpandedChatList(props: IChatListProps) {
 
                 {/* Unread Count Badge Section */}
                 {chat.unread ? (
-                  <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-none bg-primary px-1 text-[11px] font-medium leading-none text-primary-foreground">
+                  <span className="flex h-5 min-w-5 shrink-0 items-center justify-center bg-primary px-1 text-[11px] font-medium leading-none text-primary-foreground">
                     {chat.unread > 99 ? "99+" : chat.unread}
                   </span>
                 ) : null}

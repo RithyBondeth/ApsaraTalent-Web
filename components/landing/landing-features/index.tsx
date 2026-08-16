@@ -3,6 +3,7 @@
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { PixelGridField } from "@/components/utils/brand/pixel-grid-field";
 import { useGsapScrollAnimation } from "@/hooks/utils/use-gsap-animation";
 import { cn } from "@/lib/utils";
 import { landingFeatureKeys } from "@/utils/constants/landing.constant";
@@ -18,15 +19,12 @@ export default function LandingFeatures() {
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <section
-      ref={sectionRef}
-      className="relative border-b border-border py-20 sm:py-28 lg:py-36"
-    >
+    <section ref={sectionRef} className="relative border-b border-border">
       {/* Grid Background Section */}
 
       {/* Features Section */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 grid gap-6 border-b border-border pb-10 sm:mb-16 md:grid-cols-[1fr_0.7fr] md:items-end">
+      <div className="relative z-10 mx-auto max-w-[1600px] border-x border-border">
+        <div className="grid gap-6 border-b border-border px-6 py-16 sm:px-10 sm:py-20 md:grid-cols-[1fr_0.7fr] md:items-end lg:px-14 lg:py-24">
           {/* Feature Header Section */}
           <div>
             <span
@@ -36,7 +34,7 @@ export default function LandingFeatures() {
               {t("featuresHeadingHighlight")} · 06
             </span>
             <TypographyH2
-              data-gsap="split-chars"
+              data-gsap="split-words"
               className="pixel-display max-w-2xl text-3xl [perspective:800px] sm:text-4xl lg:text-5xl"
             >
               {t("featuresHeading")}{" "}
@@ -55,10 +53,45 @@ export default function LandingFeatures() {
           </TypographyMuted>
         </div>
 
+        <PixelGridField
+          tone="blue"
+          animated
+          className="border-b border-border"
+          contentClassName="flex min-h-[300px] items-end px-6 py-8 sm:px-10 sm:py-10 lg:px-14"
+        >
+          <div className="mx-auto w-full max-w-5xl border border-pixel-ink/20 bg-[hsl(var(--pixel-paper-1))] text-pixel-ink">
+            <div className="flex items-center justify-between border-b border-pixel-ink/15 px-5 py-4 sm:px-7">
+              <span className="pixel-label text-[10px] text-pixel-ink/55">
+                Live talent signals
+              </span>
+              <span className="flex items-center gap-2 text-xs">
+                <span className="size-2 bg-[hsl(var(--pixel-blue-2))]" />
+                System online
+              </span>
+            </div>
+            <div className="grid sm:grid-cols-3">
+              {landingFeatureKeys.slice(0, 3).map((feature, index) => (
+                <div
+                  key={feature.titleKey}
+                  className="border-b border-pixel-ink/15 px-5 py-6 last:border-b-0 sm:border-b-0 sm:border-r sm:px-7 sm:last:border-r-0"
+                >
+                  <div className="mb-7 flex items-center justify-between">
+                    <feature.icon className="size-5" strokeWidth={1.5} />
+                    <span className="pixel-numeral text-[10px] text-pixel-ink/45">
+                      0{index + 1}
+                    </span>
+                  </div>
+                  <p className="text-sm font-medium">{t(feature.titleKey)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </PixelGridField>
+
         {/* Feature Cards Section */}
         <div
           data-gsap="stagger-children"
-          className="grid grid-cols-1 border-l border-t border-border sm:grid-cols-2 lg:grid-cols-3"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
         >
           {landingFeatureKeys.map((feature, index) => (
             <article

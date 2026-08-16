@@ -497,6 +497,7 @@ export function TermsContent() {
   /* --------------------------- Render UI ---------------------------- */
   return (
     <StaticPageShell
+      variant="legal"
       pageNumber="06"
       pageTotal="06"
       title={c.pageTitle}
@@ -511,7 +512,11 @@ export function TermsContent() {
         </>
       }
       heroVisual={
-        <StaticPageArtworkSlot icon={<LucideFileText />} label={c.pageTitle} />
+        <StaticPageArtworkSlot
+          icon={<LucideFileText />}
+          label={c.pageTitle}
+          tone="paper"
+        />
       }
     >
       <div className="border-b border-border px-6 py-6 sm:px-10 lg:px-14">
@@ -524,7 +529,7 @@ export function TermsContent() {
           {c.s1.p1}{" "}
           <Link
             href="/privacy"
-            className="text-primary underline underline-offset-2"
+            className="text-foreground underline decoration-foreground/35 underline-offset-4 transition-colors hover:decoration-foreground"
           >
             {c.s1.privacyLink}
           </Link>
@@ -634,7 +639,7 @@ export function TermsContent() {
           {c.s10.p1}{" "}
           <Link
             href="/privacy"
-            className="text-primary underline underline-offset-2"
+            className="text-foreground underline decoration-foreground/35 underline-offset-4 transition-colors hover:decoration-foreground"
           >
             {c.s10.privacyLink}
           </Link>
@@ -713,7 +718,7 @@ export function TermsContent() {
             📧{" "}
             <a
               href="mailto:legal@apsaratalent.com"
-              className="text-primary underline underline-offset-2"
+              className="text-foreground underline decoration-foreground/35 underline-offset-4 transition-colors hover:decoration-foreground"
             >
               legal@apsaratalent.com
             </a>
@@ -722,7 +727,7 @@ export function TermsContent() {
             🌐{" "}
             <a
               href="https://apsaratalent.com"
-              className="text-primary underline underline-offset-2"
+              className="text-foreground underline decoration-foreground/35 underline-offset-4 transition-colors hover:decoration-foreground"
             >
               apsaratalent.com
             </a>

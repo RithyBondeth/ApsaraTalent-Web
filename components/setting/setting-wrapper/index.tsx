@@ -1,15 +1,16 @@
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { cn } from "@/lib/utils";
 import React from "react";
 import { ISettingWrapperProps } from "./props";
 
 export function SettingWrapper(props: ISettingWrapperProps) {
   /* --------------------------------- Props --------------------------------- */
-  const { icon, title, description, children } = props;
+  const { icon, title, description, children, className } = props;
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <section className="flex flex-col gap-3">
+    <section className={cn("flex h-full flex-col gap-4", className)}>
       {/* Setting Wrapper Header Section */}
       <div className="flex items-start gap-3">
         {/* Setting Wrapper Icon Section */}
@@ -27,7 +28,7 @@ export function SettingWrapper(props: ISettingWrapperProps) {
       </div>
 
       {/* Setting Wrapper Content Section */}
-      <div className="overflow-hidden border border-t-[4px] border-border border-t-primary bg-card">
+      <div className="min-h-0 flex-1 overflow-hidden border border-border bg-card">
         {children}
       </div>
     </section>

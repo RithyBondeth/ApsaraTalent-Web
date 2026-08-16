@@ -6,6 +6,7 @@ import { Phone, PhoneOff } from "lucide-react";
 import { IIncomingCallModalProps } from "./props";
 import { useTranslations } from "next-intl";
 import { getNameInitials } from "@/utils/functions/text";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 export function IncomingCallModal(props: IIncomingCallModalProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -22,8 +23,12 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm duration-200 animate-in fade-in">
-      <div className="flex w-80 flex-col items-center gap-5 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-6 duration-200 animate-in zoom-in-95">
+    <Dialog open>
+      <DialogContent
+        className="max-w-sm items-center gap-5 [&>button]:hidden"
+        onPointerDownOutside={(event) => event.preventDefault()}
+        onEscapeKeyDown={(event) => event.preventDefault()}
+      >
         {/* Incoming Voice Call Label Section */}
         <div className="space-y-1 text-center">
           <TypographyMuted className="pixel-label text-xs text-muted-foreground">
@@ -49,9 +54,9 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
             style={{ animationDelay: "0.9s" }}
             className="absolute h-16 w-16 border-2 border-success opacity-0 motion-safe:animate-call-ring"
           />
-          <Avatar className="relative z-10 h-16 w-16 rounded-none border-2 border-foreground motion-safe:animate-call-pulse">
+          <Avatar className="relative z-10 h-16 w-16 border-2 border-foreground motion-safe:animate-call-pulse">
             <AvatarImage src={caller.avatar} alt={caller.name} />
-            <AvatarFallback className="rounded-none text-lg font-medium">
+            <AvatarFallback className="text-lg font-medium">
               {initials}
             </AvatarFallback>
           </Avatar>
@@ -59,9 +64,9 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
 
         {/* Caller Name and Status Label Section */}
         <div className="space-y-1 text-center">
-          <h3 className="text-lg font-medium leading-tight text-foreground">
+          <DialogTitle className="text-lg font-medium leading-tight text-foreground">
             {caller.name}
-          </h3>
+          </DialogTitle>
           <TypographyMuted className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
             {t("calling")}
             {/* Three dots cycling, so the dialog reads as live while it waits. */}
@@ -107,7 +112,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
             <span className="text-xs text-muted-foreground">{t("accept")}</span>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

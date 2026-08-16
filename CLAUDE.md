@@ -146,9 +146,31 @@ scripts/             # Node maintenance and verification scripts
 ### Styling
 - Use Tailwind CSS with the established design system
 - Custom breakpoints are defined for responsive design
-- The UI is square: `rounded-none` everywhere, `rounded-full` only for avatars,
-  dots and pills. `--radius` is `0` so the shadcn primitives agree. Elevation is
-  a hard offset shadow with no blur (`4px 4px 0`), not a soft drop shadow.
+
+**Radius is by role, not global.** `--radius` is `0.5rem`, so the shadcn ladder
+resolves to `lg` 8px / `md` 6px / `sm` 4px.
+
+- **Structural cells are square.** Anything that is a cell of the ruled sheet —
+  a card in a `.pixel-ruled` grid, a band, a record strip, a mosaic tile — takes
+  `rounded-none`. A cell of a grid has no corner of its own.
+- **Interactive controls take `rounded-md`** (6px): buttons, inputs, selects,
+  tabs. **Floating overlays take `rounded-xl`** (12px): dialog, popover,
+  dropdown, sheet, command, toast. Status pills take `rounded` (4px).
+- `rounded-full` stays reserved for avatars and bare status dots.
+
+This was measured off mistral.ai per element role, not assumed. Counting raw
+elements suggests "square everything" — but that count is dominated by layout
+divs. By role their buttons are 6px, pills 6–8px and floating panels 12–16px.
+An earlier pass here read the aggregate and squared the whole UI, then had to
+be undone; don't redo that.
+
+**Elevation is flat.** Their pages carry 2–3 shadowed elements out of several
+thousand. Separation is a 1px hairline. The only shadow in the system is
+`.pixel-overlay-shadow` — a four-layer ambient at 2% alpha, for floating
+overlays only. There is no hard offset shadow and nothing moves on press.
+
+**Weight tops out at 500.** Display face 500, body 400, mono 400–500. Hierarchy
+comes from size, colour and typeface, never from bold.
 
 ### Page banners
 - Every signed-in page's banner is `PageBanner`

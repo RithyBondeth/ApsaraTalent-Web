@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { ClipboardPaste, ShieldCheck, Sparkles, UserRound } from "lucide-react";
+import { ClipboardPaste, ShieldCheck, UserRound } from "lucide-react";
+import { Bot as Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { IResumeSourceInputProps } from "./props";
 
@@ -18,7 +19,7 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <section className="w-full border border-t-[5px] border-border border-t-foreground bg-card p-4 sm:p-5">
+    <section className="w-full border border-border bg-card p-4 sm:p-5">
       <div className="flex flex-col gap-5">
         {/* Header Section */}
         <div className="flex flex-col gap-3">
@@ -69,7 +70,7 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-7 rounded-none px-2 text-xs"
+                className="h-7 px-2 text-xs"
                 onClick={() => onChange("")}
                 disabled={disabled}
               >
@@ -82,7 +83,7 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
             value={value}
             onChange={(event) => onChange(event.target.value)}
             placeholder={t("pasteInfoPlaceholder")}
-            className="min-h-56 resize-y rounded-none border-border bg-background text-sm leading-6 focus-visible:ring-1"
+            className="min-h-56 resize-y border-border bg-background text-sm leading-6 focus-visible:ring-1"
             maxLength={maxLength}
             disabled={disabled}
             aria-describedby="resume-source-help"

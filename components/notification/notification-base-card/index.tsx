@@ -53,7 +53,7 @@ export default function NotificationBaseCard(
     <div
       onClick={onClick}
       className={cn(
-        "group/card pixel-wash relative flex w-full items-start gap-3 overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card p-4 sm:gap-5 sm:p-5",
+        "group/card pixel-wash relative flex w-full items-start gap-3 overflow-hidden border border-border bg-card p-4 sm:gap-5 sm:p-5",
         onClick && "cursor-pointer hover:border-foreground/35",
         !seen && "bg-muted/15",
         isDeleting && "animate-card-pop-shrink",

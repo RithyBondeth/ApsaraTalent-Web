@@ -7,7 +7,7 @@ interface CachedAvatarProps {
   alt?: string;
   fallback?: string;
   className?: string;
-  rounded?: "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "full";
+  rounded?: "none" | "md" | "full";
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
   onClick?: (e: React.MouseEvent) => void;
   children?: React.ReactNode;
@@ -26,12 +26,7 @@ const sizeClasses = {
 
 const roundedClasses = {
   none: "rounded-none",
-  sm: "rounded-sm",
   md: "rounded-md",
-  lg: "rounded-lg",
-  xl: "rounded-xl",
-  "2xl": "rounded-2xl",
-  "3xl": "rounded-3xl",
   full: "rounded-full",
 };
 

@@ -88,7 +88,7 @@ export function ProfileCompletenessCard({
           asChild
           size="sm"
           variant="outline"
-          className="xs:flex hidden shrink-0 gap-1 rounded-none text-xs"
+          className="xs:flex hidden shrink-0 gap-1 text-xs"
         >
           <Link href={profileUrl}>
             {t("completeProfile")}

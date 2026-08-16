@@ -557,6 +557,7 @@ export function PrivacyContent() {
   /* --------------------------- Render UI ---------------------------- */
   return (
     <StaticPageShell
+      variant="legal"
       pageNumber="05"
       pageTotal="06"
       title={c.pageTitle}
@@ -586,6 +587,7 @@ export function PrivacyContent() {
         <StaticPageArtworkSlot
           icon={<LucideShieldCheck />}
           label={c.pageTitle}
+          tone="blue"
         />
       }
     >
@@ -711,7 +713,7 @@ export function PrivacyContent() {
           {c.s7.note}{" "}
           <a
             href={`mailto:${c.s7.email}`}
-            className="text-primary underline underline-offset-2"
+            className="text-foreground underline decoration-foreground/35 underline-offset-4 transition-colors hover:decoration-foreground"
           >
             {c.s7.email}
           </a>
@@ -757,7 +759,7 @@ export function PrivacyContent() {
             📧{" "}
             <a
               href="mailto:privacy@apsaratalent.com"
-              className="text-primary underline underline-offset-2"
+              className="text-foreground underline decoration-foreground/35 underline-offset-4 transition-colors hover:decoration-foreground"
             >
               privacy@apsaratalent.com
             </a>
@@ -766,7 +768,7 @@ export function PrivacyContent() {
             🌐{" "}
             <a
               href="https://apsaratalent.com"
-              className="text-primary underline underline-offset-2"
+              className="text-foreground underline decoration-foreground/35 underline-offset-4 transition-colors hover:decoration-foreground"
             >
               apsaratalent.com
             </a>

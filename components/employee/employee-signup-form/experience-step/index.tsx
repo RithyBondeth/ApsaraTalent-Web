@@ -7,7 +7,8 @@ import ErrorMessage from "@/components/utils/feedback/error-message";
 import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { LucidePlus, LucideTrash2, Sparkles, Loader2 } from "lucide-react";
+import { Loader2, LucidePlus, LucideTrash2 } from "lucide-react";
+import { Bot as Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { Controller, useFieldArray, useWatch } from "react-hook-form";
@@ -87,7 +88,7 @@ export default function ExperienceStepForm({
       {fields.map((field, index) => (
         <div
           key={field.id}
-          className="relative flex w-full flex-col items-start gap-3 rounded-none border border-l-[5px] border-border border-l-foreground bg-muted p-5"
+          className="relative flex w-full flex-col items-start gap-3 border border-border bg-muted p-5"
         >
           {/* Header Without Remove Button Section */}
           {fields.length === 1 && (

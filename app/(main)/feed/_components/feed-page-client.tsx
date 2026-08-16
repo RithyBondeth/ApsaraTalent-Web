@@ -22,7 +22,8 @@ import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/
 import { useModerationStore } from "@/stores/apis/moderation/moderation.store";
 import { ICompany } from "@/utils/interfaces/user/company.interface";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
-import { Building2, Sparkles, Users } from "lucide-react";
+import { Building2, Users } from "lucide-react";
+import { Bot as Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, {
   useCallback,
@@ -712,16 +713,16 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                     isEmployee ? (
                       <div key={i} className="flex h-full flex-col">
                         <div className="mb-1.5 flex items-center gap-1 px-1">
-                          <Skeleton className="size-3 rounded-none" />
-                          <Skeleton className="h-2.5 w-16 rounded-none" />
+                          <Skeleton className="size-3" />
+                          <Skeleton className="h-2.5 w-16" />
                         </div>
                         <CompanyCardSkeleton />
                       </div>
                     ) : (
                       <div key={i} className="flex h-full flex-col">
                         <div className="mb-1.5 flex items-center gap-1 px-1">
-                          <Skeleton className="size-3 rounded-none" />
-                          <Skeleton className="h-2.5 w-16 rounded-none" />
+                          <Skeleton className="size-3" />
+                          <Skeleton className="h-2.5 w-16" />
                         </div>
                         <EmployeeCardSkeleton />
                       </div>

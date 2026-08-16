@@ -47,9 +47,9 @@ export function AccountSection(props: IAccountSectionProps) {
     >
       {/* Header Section: Avatar, DisplayName, Email, Role */}
       <div className="flex items-center gap-4 bg-muted/30 px-4 py-5 sm:px-5">
-        <Avatar className="size-14 shrink-0 rounded-none border border-border">
+        <Avatar className="size-14 shrink-0 border border-border">
           <AvatarImage src={avatarSrc} alt={displayName} />
-          <AvatarFallback className="rounded-none text-base font-medium">
+          <AvatarFallback className="text-base font-medium">
             {getNameInitials(displayName)}
           </AvatarFallback>
         </Avatar>
@@ -62,7 +62,7 @@ export function AccountSection(props: IAccountSectionProps) {
           </TypographyMuted>
           <Badge
             variant="secondary"
-            className="pixel-label mt-0.5 w-fit rounded-none text-[10px]"
+            className="pixel-label mt-0.5 w-fit text-[10px]"
           >
             {role ?? "—"}
           </Badge>
@@ -94,13 +94,13 @@ export function AccountSection(props: IAccountSectionProps) {
         </div>
         <div className="flex shrink-0 items-center gap-2 pl-11 sm:pl-0">
           {isTwoFactorEnabled ? (
-            <Badge className="rounded-none border border-success-border bg-success-subtle text-[10px] text-success-accent hover:bg-success-subtle">
+            <Badge className="border border-success-border bg-success-subtle text-[10px] text-success-accent hover:bg-success-subtle">
               {t("enabled")}
             </Badge>
           ) : (
             <Badge
               variant="outline"
-              className="rounded-none text-[10px] text-muted-foreground"
+              className="text-[10px] text-muted-foreground"
             >
               {t("disabled")}
             </Badge>
@@ -108,7 +108,7 @@ export function AccountSection(props: IAccountSectionProps) {
           <Button
             size="sm"
             variant={isTwoFactorEnabled ? "outline" : "default"}
-            className="shrink-0 rounded-none text-xs"
+            className="shrink-0 text-xs"
             onClick={onToggleTwoFactor}
           >
             {isTwoFactorEnabled ? t("disable") : t("enable")}
@@ -147,7 +147,7 @@ export function AccountSection(props: IAccountSectionProps) {
         <Button
           size="sm"
           variant="outline"
-          className="ml-11 shrink-0 self-start rounded-none text-xs sm:ml-0 sm:self-auto"
+          className="ml-11 shrink-0 self-start text-xs sm:ml-0 sm:self-auto"
           onClick={onResetPassword}
         >
           {t("reset")}

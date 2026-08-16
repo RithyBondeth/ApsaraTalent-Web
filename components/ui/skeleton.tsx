@@ -5,7 +5,14 @@ function Skeleton({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("animate-shimmer rounded-none", className)} {...props} />
+    <div
+      aria-hidden="true"
+      className={cn(
+        "animate-shimmer pointer-events-none select-none rounded-none",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 

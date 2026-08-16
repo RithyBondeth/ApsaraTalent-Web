@@ -43,6 +43,7 @@ import {
   LucideBookmark,
   LucideBriefcaseBusiness,
   LucideCalendar,
+  LucideCompass,
   LucideDownload,
   LucideEye,
   LucideFileText,
@@ -275,13 +276,13 @@ export default function EmployeeDetailPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="profile-detail-page animate-page-in mx-auto flex w-full max-w-7xl flex-col gap-4 tablet-sm:pb-28 sm:gap-5">
+    <div className="profile-detail-page animate-page-in mx-auto flex w-full max-w-[1440px] flex-col gap-4 tablet-sm:pb-28 sm:gap-5">
       {/* Feed Action Effect Portal Section */}
       {effectPortal}
 
       {/* Back Navigation Header Section */}
       <header className="sticky top-0 z-30 -mx-3 border-b border-border bg-background/95 px-3 backdrop-blur-xl sm:-mx-4 sm:px-4 lg:-mx-5 lg:px-5">
-        <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center gap-3">
+        <div className="mx-auto flex h-16 min-w-0 max-w-[1440px] items-center gap-3">
           <button
             type="button"
             onClick={() => router.back()}
@@ -302,7 +303,7 @@ export default function EmployeeDetailPage() {
             targetId={employeeData.id}
             targetName={fullName || tf("employeeDetail")}
             variant="editorial"
-            triggerClassName="size-10 rounded-none border border-border bg-card hover:border-foreground/35"
+            triggerClassName="size-10 border border-border bg-card hover:border-foreground/35"
           />
         </div>
       </header>
@@ -386,7 +387,7 @@ export default function EmployeeDetailPage() {
       />
 
       {/* Content Grid Section */}
-      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-5">
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-5">
         {/* Left Section */}
         <div className="flex min-w-0 flex-col gap-4 sm:gap-5">
           {/* About Section */}
@@ -418,7 +419,7 @@ export default function EmployeeDetailPage() {
                       <Tag
                         label={item.name}
                         neutral
-                        className="!rounded-none border border-border"
+                        className="border border-border"
                       />
                     </HoverCardTrigger>
                     <HoverCardContent className="flex flex-col gap-1">
@@ -434,6 +435,36 @@ export default function EmployeeDetailPage() {
               </div>
             </DetailCard>
           )}
+
+          {/* Career Scope Section */}
+          {employeeData.careerScopes &&
+            employeeData.careerScopes.length > 0 && (
+              <DetailCard className="profile-detail-career-scope p-5 sm:p-6">
+                <SectionTitle
+                  icon={<LucideCompass />}
+                  title={tf("careerScope")}
+                  variant="detail"
+                />
+                <div className="flex flex-wrap gap-2">
+                  {employeeData.careerScopes.map((career, index) => (
+                    <HoverCard key={career.id ?? index}>
+                      <HoverCardTrigger>
+                        <Tag
+                          label={career.name}
+                          neutral
+                          className="border border-border"
+                        />
+                      </HoverCardTrigger>
+                      <HoverCardContent>
+                        <TypographySmall>
+                          {career.description ?? career.name}
+                        </TypographySmall>
+                      </HoverCardContent>
+                    </HoverCard>
+                  ))}
+                </div>
+              </DetailCard>
+            )}
 
           {/* Experience Section */}
           {employeeData.experiences && employeeData.experiences.length > 0 && (
@@ -567,7 +598,7 @@ export default function EmployeeDetailPage() {
                               variant="ghost"
                               size="icon"
                               aria-label="View document"
-                              className="size-8 rounded-none"
+                              className="size-8"
                             >
                               <LucideEye className="size-3.5" />
                             </Button>
@@ -576,7 +607,7 @@ export default function EmployeeDetailPage() {
                             variant="ghost"
                             size="icon"
                             aria-label="Download document"
-                            className="size-8 rounded-none"
+                            className="size-8"
                             onClick={() =>
                               handleDownloadFile(
                                 documentUrl,
@@ -664,7 +695,7 @@ export default function EmployeeDetailPage() {
       </div>
 
       {/* Mobile Sticky Action Bar Section */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 hidden gap-2 border-t border-border bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-xl tablet-md:flex [&>button]:flex-1 [&>button]:rounded-none">
+      <div className="[&>button]: fixed bottom-0 left-0 right-0 z-30 hidden gap-2 border-t border-border bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-xl tablet-md:flex [&>button]:flex-1">
         {!isFav && (
           <Button
             variant="outline"

@@ -10,12 +10,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  LucideSparkles,
-  LucideCheckCircle2,
-  LucidePlus,
-  LucideLoader2,
-} from "lucide-react";
+import { LucideCheckCircle2, LucidePlus, LucideLoader2 } from "lucide-react";
+import { Bot as LucideSparkles } from "lucide-react";
 import { API_RESUME_OPTIMIZE_STREAM_URL } from "@/utils/constants/apis/resume.api.constant";
 import {
   IOptimizeResumeResponse,
@@ -219,7 +215,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
         variant="outline"
         size="sm"
         onClick={() => void analyze()}
-        className="h-8 gap-1.5 rounded-none text-xs"
+        className="h-8 gap-1.5 text-xs"
         title={t("aiOptimizerTitle")}
       >
         <LucideSparkles size={14} className="text-primary" />
@@ -237,7 +233,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
       >
         <SheetContent
           side="right"
-          className="flex w-full flex-col gap-0 border-l-[5px] border-l-foreground p-0 sm:max-w-md"
+          className="flex w-full flex-col gap-0 p-0 sm:max-w-md"
         >
           {/* Header Section */}
           <SheetHeader className="border-b px-5 py-4">
@@ -259,14 +255,14 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
             {/* Full Skeleton Section (Generating With No Data Yet) */}
             {generating && !data?.overallFeedback && (
               <div className="flex flex-col gap-3 pt-2">
-                <Skeleton className="h-4 w-full rounded-none" />
-                <Skeleton className="h-4 w-5/6 rounded-none" />
-                <Skeleton className="h-4 w-4/6 rounded-none" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-5/6" />
+                <Skeleton className="h-4 w-4/6" />
                 <div className="my-2 h-px bg-border" />
-                <Skeleton className="h-4 w-full rounded-none" />
-                <Skeleton className="h-4 w-3/4 rounded-none" />
-                <Skeleton className="h-4 w-full rounded-none" />
-                <Skeleton className="h-4 w-2/3 rounded-none" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
               </div>
             )}
 
@@ -280,7 +276,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
               <>
                 {/* Overall Feedback Section */}
                 {data.overallFeedback && (
-                  <div className="rounded-none border border-l-[5px] border-border border-l-foreground bg-muted/50 p-4 duration-200 animate-in fade-in-0 slide-in-from-bottom-1">
+                  <div className="border border-border bg-muted/50 p-4 duration-200 animate-in fade-in-0 slide-in-from-bottom-1">
                     <p className="pixel-label mb-1.5 text-xs text-muted-foreground">
                       {t("overallFeedback")}
                     </p>
@@ -306,7 +302,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-6 rounded-none px-2 text-[11px]"
+                          className="h-6 px-2 text-[11px]"
                           onClick={handleApplySummary}
                           disabled={generating}
                         >
@@ -314,7 +310,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                         </Button>
                       )}
                     </div>
-                    <p className="rounded-none border border-l-[4px] border-border border-l-primary bg-muted/30 p-3 text-sm leading-relaxed text-muted-foreground">
+                    <p className="border border-border bg-muted/30 p-3 text-sm leading-relaxed text-muted-foreground">
                       {data.suggestedSummary}
                     </p>
                   </div>
@@ -357,7 +353,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                       ))}
                       {/* Pulsing Placeholder While Generating Skills Section */}
                       {generating && data.suggestedSkills.length < 6 && (
-                        <Skeleton className="h-5 w-20 rounded-none" />
+                        <Skeleton className="h-5 w-20" />
                       )}
                     </div>
                   </div>
@@ -372,7 +368,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                     {data.experienceSuggestions.map((s) => (
                       <div
                         key={s.index}
-                        className="flex flex-col gap-2 rounded-none border border-l-[5px] border-border border-l-foreground bg-muted/20 p-3 duration-200 animate-in fade-in-0 slide-in-from-bottom-1"
+                        className="flex flex-col gap-2 border border-border bg-muted/20 p-3 duration-200 animate-in fade-in-0 slide-in-from-bottom-1"
                       >
                         <div className="flex items-center justify-between">
                           <p className="text-xs font-medium text-foreground">
@@ -416,10 +412,10 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
 
                     {/* Skeleton For Next EXP Block While Still Streaming Section */}
                     {generating && (
-                      <div className="flex flex-col gap-2 rounded-none border border-l-[5px] border-border border-l-foreground bg-muted/20 p-3">
-                        <Skeleton className="h-3 w-24 rounded-none" />
-                        <Skeleton className="h-3 w-full rounded-none" />
-                        <Skeleton className="h-3 w-5/6 rounded-none" />
+                      <div className="flex flex-col gap-2 border border-border bg-muted/20 p-3">
+                        <Skeleton className="h-3 w-24" />
+                        <Skeleton className="h-3 w-full" />
+                        <Skeleton className="h-3 w-5/6" />
                       </div>
                     )}
                   </div>

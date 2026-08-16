@@ -154,7 +154,7 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-lg rounded-none sm:rounded-none [&>button]:rounded-none">
+      <DialogContent className="max-w-lg">
         {/* Dialog Header Section: Title */}
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -212,7 +212,7 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
           <span className="text-sm text-muted-foreground">{t("zoom")}</span>
 
           <Slider
-            className="[&>span>span]:rounded-none [&>span]:rounded-none"
+            className="[&>span>span]: [&>span]:"
             value={[zoom]}
             min={1}
             max={3}
@@ -227,7 +227,7 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
           <Button
             type="button"
             variant="outline"
-            className="rounded-none"
+            className=""
             onClick={() => setOpen(false)}
           >
             {t("cancel")}
@@ -235,7 +235,7 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
 
           <Button
             type="button"
-            className="rounded-none"
+            className=""
             disabled={mediaStatus !== "ready" || !croppedAreaPixels}
             onClick={confirmCrop}
           >

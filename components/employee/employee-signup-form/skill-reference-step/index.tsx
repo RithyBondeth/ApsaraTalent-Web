@@ -15,7 +15,8 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/functions/error";
 import { getRandomBadgeColor } from "@/utils/functions/ui";
-import { LucidePlus, LucideXCircle, Sparkles, Loader2 } from "lucide-react";
+import { Loader2, LucidePlus, LucideXCircle } from "lucide-react";
+import { Bot as Sparkles } from "lucide-react";
 import { useState } from "react";
 import { useWatch } from "react-hook-form";
 import { IStepFormProps } from "../props";
@@ -131,7 +132,7 @@ export default function SkillReferenceStepForm({
             return (
               <div
                 key={index}
-                className={`flex items-center ${bg} rounded-none border border-border pr-2`}
+                className={`flex items-center ${bg} border border-border pr-2`}
               >
                 <Tag label={skill} />
                 <LucideXCircle
@@ -183,7 +184,7 @@ export default function SkillReferenceStepForm({
               <TypographyMuted className="text-xs">
                 {t("empReferenceResume")}
               </TypographyMuted>
-              <div className="flex w-full items-center justify-between rounded-none border border-l-[4px] border-border border-l-foreground bg-muted p-3">
+              <div className="flex w-full items-center justify-between border border-border bg-muted p-3">
                 <TypographyMuted className="truncate pr-2">
                   {resumeFile.name.trim()}
                 </TypographyMuted>
@@ -227,7 +228,7 @@ export default function SkillReferenceStepForm({
               <TypographyMuted className="text-xs">
                 {t("empReferenceCoverLetter")}
               </TypographyMuted>
-              <div className="flex w-full items-center justify-between rounded-none border border-l-[4px] border-border border-l-foreground bg-muted p-3">
+              <div className="flex w-full items-center justify-between border border-border bg-muted p-3">
                 <TypographyMuted className="truncate pr-2">
                   {coverLetterFile.name.trim()}
                 </TypographyMuted>

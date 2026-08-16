@@ -14,12 +14,12 @@ import {
   LucideFileText,
   LucideMail,
   LucidePhone,
-  LucideSparkles,
   LucideUpload,
   LucideUser,
   LucideX,
   LucideZap,
 } from "lucide-react";
+import { Bot as LucideSparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -27,7 +27,7 @@ import { toast } from "sonner";
 /* ---------------------------------- Helper ---------------------------------- */
 function Chip({ icon, label }: { icon?: React.ReactNode; label: string }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-none border bg-background px-2.5 py-0.5 text-[11px] text-foreground/80">
+    <span className="inline-flex items-center gap-1 border bg-background px-2.5 py-0.5 text-[11px] text-foreground/80">
       {icon}
       {label}
     </span>
@@ -116,7 +116,7 @@ export default function SmartResumeUpload({
   if (data) {
     const filled = countFilledFields(data);
     return (
-      <div className="w-full overflow-hidden rounded-none border border-l-[5px] border-success-border border-l-success bg-success-subtle">
+      <div className="w-full overflow-hidden border border-success-border border-l-success bg-success-subtle">
         {/* Header Section */}
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
@@ -254,7 +254,7 @@ export default function SmartResumeUpload({
   /* --------------------------------- Loading State -------------------------------- */
   if (loading) {
     return (
-      <div className="flex w-full flex-col items-center gap-3 rounded-none border border-l-[5px] border-dashed border-primary/40 border-l-primary bg-primary/5 px-6 py-8">
+      <div className="flex w-full flex-col items-center gap-3 border border-dashed border-primary/40 bg-primary/5 px-6 py-8">
         {/* Icon Section */}
         <div className="flex size-10 animate-pulse items-center justify-center rounded-full bg-primary/10">
           <LucideFileText className="size-5 text-primary" />
@@ -286,7 +286,7 @@ export default function SmartResumeUpload({
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
       onDrop={onDrop}
-      className={`w-full rounded-none border-2 border-dashed transition-all duration-200 ${
+      className={`w-full border-2 border-dashed transition-all duration-200 ${
         isDragging
           ? "scale-[1.01] border-primary bg-primary/10"
           : "border-border bg-muted/30 hover:border-primary/50 hover:bg-muted/50"

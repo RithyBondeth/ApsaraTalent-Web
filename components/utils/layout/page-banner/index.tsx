@@ -1,5 +1,7 @@
-import { PixelPattern } from "@/components/utils/brand/pixel-pattern";
+import { PixelGridDecor } from "@/components/utils/brand/pixel-grid-decor";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import type { CSSProperties } from "react";
 import type { IPageBannerProps } from "./props";
 
 /* ---------------------------------------------------------------------------
@@ -33,19 +35,32 @@ export function PageBanner({
   className,
 }: IPageBannerProps) {
   const hasStats = Boolean(stats?.length);
+  // The banner and its decoration share one 12-column grid. Each stat claims
+  // two columns; the copy takes the rest, so every divider lands on a grid
+  // line instead of wherever the content happened to end.
+  const statCols = hasStats ? Math.min(6, (stats?.length ?? 0) * 2) : 0;
+  const copyCols = 12 - statCols;
 
   return (
-    <section className={cn("pixel-band relative isolate", className)}>
-      {/* The field spans the whole band, stat cells included — it sat inside
-          the copy cell before, which left the readings on bare ground and made
-          the banner look half-finished. */}
-      <PixelPattern seed={eyebrow} cell={44} className="-z-10" />
-
+    <section
+      className={cn("pixel-band pixel-module-grid overflow-hidden", className)}
+    >
+      {/* A quiet version of the landing lattice. Colour stays behind the
+          content rail, while the real 12-column cells keep every rule exact. */}
+      <PixelGridDecor seed={eyebrow} columns={12} className="-z-10" />
       {/* Masthead Section — copy on the left, stats as their own ruled cells on
           the right, sharing one vertical rule rather than sitting in a
           gapped two-column grid. */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto]">
-        <div className="pixel-pad min-w-0">
+      <div
+        className="page-banner-grid grid grid-cols-1 lg:grid-cols-12"
+        style={
+          {
+            "--page-banner-copy-cols": copyCols,
+            "--page-banner-stat-cols": statCols,
+          } as CSSProperties
+        }
+      >
+        <div className="page-banner-copy pixel-pad min-w-0">
           {/* Eyebrow Section */}
           <div className="pixel-label flex items-center gap-2 text-muted-foreground">
             {/* Three tiles of the ramp — the same mark the sheet uses
@@ -74,8 +89,18 @@ export function PageBanner({
         {/* Stats Section — one cell per figure, divided by rules. Each cell
             fills the masthead's full height so the numbers form a column of
             readings against the headline rather than a footnote under it. */}
+        {/* `auto-cols-[minmax(8.5rem,auto)]` sized these to their content,
+            which is why the dividers landed at fractional columns (6.01, 7.14,
+            8.28 measured) while the decoration ruled at whole ones. Equal
+            fractions of a whole-column span put every divider on a grid line
+            by construction. */}
         {hasStats ? (
-          <dl className="grid grid-cols-3 border-t border-border lg:auto-cols-[minmax(8.5rem,auto)] lg:grid-flow-col lg:grid-cols-none lg:border-l lg:border-t-0">
+          <dl
+            className="page-banner-stats grid border-t border-border lg:border-l lg:border-t-0"
+            style={{
+              gridTemplateColumns: `repeat(${stats?.length ?? 1}, minmax(0, 1fr))`,
+            }}
+          >
             {stats?.map(({ icon: Icon, value, label }) => (
               <div
                 key={label}
@@ -83,7 +108,7 @@ export function PageBanner({
               >
                 <dt className="flex items-center gap-1.5 text-muted-foreground">
                   <Icon aria-hidden className="size-3.5 shrink-0" />
-                  <span className="pixel-label truncate text-[10px]">
+                  <span className="pixel-label break-words text-[9px] leading-3 sm:text-[10px]">
                     {label}
                   </span>
                 </dt>
@@ -101,6 +126,90 @@ export function PageBanner({
       {children ? (
         <div className="border-t border-border px-6 py-4 sm:px-8">
           {children}
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+/**
+ * Loading counterpart to PageBanner. It deliberately shares the production
+ * component's grid classes instead of approximating the banner with a second
+ * hero layout, so route transitions cannot shift between two geometries.
+ */
+export function PageBannerSkeleton({
+  statCount = 0,
+  controls,
+  className,
+}: {
+  statCount?: number;
+  controls?: React.ReactNode;
+  className?: string;
+}) {
+  const safeStatCount = Math.min(3, Math.max(0, statCount));
+  const statCols = safeStatCount * 2;
+  const copyCols = 12 - statCols;
+
+  return (
+    <section
+      aria-label="Loading page header"
+      aria-live="polite"
+      className={cn("pixel-band pixel-module-grid overflow-hidden", className)}
+      role="status"
+    >
+      <PixelGridDecor
+        seed="page-banner-loading"
+        columns={12}
+        className="-z-10"
+      />
+
+      <div
+        className="page-banner-grid grid grid-cols-1 lg:grid-cols-12"
+        style={
+          {
+            "--page-banner-copy-cols": copyCols,
+            "--page-banner-stat-cols": statCols,
+          } as CSSProperties
+        }
+      >
+        <div className="page-banner-copy pixel-pad min-w-0">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-1 w-3" />
+            <Skeleton className="h-2.5 w-28" />
+          </div>
+          <Skeleton className="mt-4 h-9 w-4/5 max-w-[620px] sm:h-11 lg:h-14" />
+          <div className="mt-4 max-w-[58ch] space-y-2">
+            <Skeleton className="h-3.5 w-full" />
+            <Skeleton className="h-3.5 w-4/5" />
+          </div>
+        </div>
+
+        {safeStatCount > 0 ? (
+          <div
+            className="page-banner-stats grid border-t border-border lg:border-l lg:border-t-0"
+            style={{
+              gridTemplateColumns: `repeat(${safeStatCount}, minmax(0, 1fr))`,
+            }}
+          >
+            {Array.from({ length: safeStatCount }, (_, index) => (
+              <div
+                key={index}
+                className="flex min-w-0 flex-col justify-end border-border p-4 sm:p-5 [&+&]:border-l"
+              >
+                <div className="flex items-center gap-1.5">
+                  <Skeleton className="size-3.5 shrink-0" />
+                  <Skeleton className="h-2.5 w-16" />
+                </div>
+                <Skeleton className="mt-2 h-8 w-12" />
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+
+      {controls ? (
+        <div className="border-t border-border px-6 py-4 sm:px-8">
+          {controls}
         </div>
       ) : null}
     </section>

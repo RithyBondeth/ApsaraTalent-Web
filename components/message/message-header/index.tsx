@@ -45,7 +45,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="-ml-1 h-8 w-8 shrink-0 rounded-none lg:hidden"
+            className="-ml-1 h-8 w-8 shrink-0 lg:hidden"
             onClick={onBack}
             aria-label="Back to conversations"
           >
@@ -58,7 +58,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           variant="ghost"
           size="icon"
           onClick={onToggleSidebar}
-          className="hidden h-9 w-9 shrink-0 rounded-none border border-border lg:flex"
+          className="hidden h-9 w-9 shrink-0 border border-border lg:flex"
           aria-label={sidebarToggleLabel}
         >
           {isSidebarOpen ? (
@@ -70,15 +70,15 @@ export default function ChatHeader(props: IChatHeaderProps) {
 
         {/* Avatar and Online Status Section */}
         <div className="relative shrink-0">
-          <Avatar className="h-8 w-8 rounded-none border border-border sm:h-9 sm:w-9">
+          <Avatar className="h-8 w-8 border border-border sm:h-9 sm:w-9">
             {chat.isGroup ? (
-              <AvatarFallback className="rounded-none bg-primary/10">
+              <AvatarFallback className="bg-primary/10">
                 <Users className="h-4 w-4 text-primary" />
               </AvatarFallback>
             ) : (
               <>
                 <AvatarImage src={chat.avatar} alt={chat.name} />
-                <AvatarFallback className="rounded-none text-sm font-medium">
+                <AvatarFallback className="text-sm font-medium">
                   {avatarInitials}
                 </AvatarFallback>
               </>
@@ -114,7 +114,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8 rounded-none text-muted-foreground hover:text-foreground sm:h-9 sm:w-9"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground sm:h-9 sm:w-9"
           onClick={onStartVoiceCall}
           aria-label="Start voice call"
         >
@@ -126,7 +126,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-none lg:hidden"
+            className="h-8 w-8 lg:hidden"
             onClick={onOpenMobileSidebar}
             aria-label="Open conversations"
           >

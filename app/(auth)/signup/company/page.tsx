@@ -349,7 +349,7 @@ export default function CompanySignup() {
   return (
     <div className="auth-wizard mx-auto flex w-full max-w-4xl flex-col gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Step Progress Indicator Section */}
-      <div className="auth-wizard-progress w-full overflow-x-auto border border-t-[5px] border-border border-t-foreground bg-card p-4">
+      <div className="auth-wizard-progress w-full overflow-x-auto border border-border bg-card p-4">
         <div className="flex w-full min-w-[280px] items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => (

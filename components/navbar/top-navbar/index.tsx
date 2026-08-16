@@ -227,11 +227,12 @@ export default function TopNavbar() {
             >
               <LogoComponent
                 priority
+                withoutTitle
                 height={48}
                 width={80}
                 /* The wordmark stays put — the cell around it takes the wash.
                    A logo that moves on hover reads as a button. */
-                className="h-12 w-20"
+                className="h-12 w-12"
               />
             </Link>
 

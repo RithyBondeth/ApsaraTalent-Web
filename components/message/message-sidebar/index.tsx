@@ -82,7 +82,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
               <button
                 onClick={onNewChat}
                 aria-label="New conversation"
-                className="flex h-9 w-9 items-center justify-center rounded-none border border-foreground bg-foreground text-background transition-colors hover:border-primary hover:bg-primary"
+                className="flex h-9 w-9 items-center justify-center border border-foreground bg-foreground text-background transition-colors hover:border-primary hover:bg-primary"
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -92,7 +92,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 rounded-none lg:hidden"
+                className="h-8 w-8 lg:hidden"
                 onClick={onClose}
                 aria-label="Close sidebar"
               >
@@ -108,7 +108,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
             <button
               onClick={onNewChat}
               aria-label="New conversation"
-              className="flex h-9 w-9 items-center justify-center rounded-none border border-foreground bg-foreground text-background transition-colors hover:border-primary hover:bg-primary"
+              className="flex h-9 w-9 items-center justify-center border border-foreground bg-foreground text-background transition-colors hover:border-primary hover:bg-primary"
             >
               <Plus className="h-4 w-4" />
             </button>
@@ -123,7 +123,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t("chatsSearch")}
-              className="h-10 rounded-none border-border bg-muted/30 pl-9 focus-visible:ring-1 focus-visible:ring-primary"
+              className="h-10 border-border bg-muted/30 pl-9 focus-visible:ring-1 focus-visible:ring-primary"
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
             />

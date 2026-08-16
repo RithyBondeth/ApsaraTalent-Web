@@ -63,7 +63,7 @@ export default function ResumeBuilderGenerate({
             <AiQuotaBadge />
           </div>
           <Button
-            className="h-11 w-full justify-between rounded-none px-4"
+            className="h-11 w-full justify-between px-4"
             onClick={onGenerateClick}
             disabled={disabled}
           >

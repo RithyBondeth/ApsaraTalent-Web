@@ -278,11 +278,11 @@ export default function CompanyDetailPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="profile-detail-page animate-page-in mx-auto flex w-full max-w-7xl flex-col gap-4 tablet-sm:pb-28 sm:gap-5">
+    <div className="profile-detail-page animate-page-in mx-auto flex w-full max-w-[1440px] flex-col gap-4 tablet-sm:pb-28 sm:gap-5">
       {effectPortal}
       {/* Back Navigation Header Section */}
       <header className="sticky top-0 z-30 -mx-3 border-b border-border bg-background/95 px-3 backdrop-blur-xl sm:-mx-4 sm:px-4 lg:-mx-5 lg:px-5">
-        <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center gap-3">
+        <div className="mx-auto flex h-16 min-w-0 max-w-[1440px] items-center gap-3">
           <button
             type="button"
             onClick={() => router.back()}
@@ -303,7 +303,7 @@ export default function CompanyDetailPage() {
             targetId={companyData.id}
             targetName={companyData.name || tf("companyDetail")}
             variant="editorial"
-            triggerClassName="size-10 rounded-none border border-border bg-card hover:border-foreground/35"
+            triggerClassName="size-10 border border-border bg-card hover:border-foreground/35"
           />
         </div>
       </header>
@@ -371,7 +371,7 @@ export default function CompanyDetailPage() {
       />
 
       {/* Content Grid Section */}
-      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-5">
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-5">
         {/* Left Section */}
         <div className="flex min-w-0 flex-col gap-4 sm:gap-5">
           {/* About Section */}
@@ -420,7 +420,7 @@ export default function CompanyDetailPage() {
                                 icon={<LucideAlarmClock />}
                                 label={formatAvailabilityWords(item.type)}
                                 neutral
-                                className="!rounded-none border border-border"
+                                className="border border-border"
                               />
                             )}
                             {item.experience && (
@@ -428,7 +428,7 @@ export default function CompanyDetailPage() {
                                 icon={<LucideUser />}
                                 label={item.experience}
                                 neutral
-                                className="!rounded-none border border-border"
+                                className="border border-border"
                               />
                             )}
                             {!!item.languagesRequired?.length && (
@@ -436,7 +436,7 @@ export default function CompanyDetailPage() {
                                 icon={<LucideLanguages />}
                                 label={item.languagesRequired.join(", ")}
                                 neutral
-                                className="!rounded-none border border-border"
+                                className="border border-border"
                               />
                             )}
                           </div>
@@ -498,7 +498,7 @@ export default function CompanyDetailPage() {
                                     key={s}
                                     label={s}
                                     neutral
-                                    className="!rounded-none border border-border"
+                                    className="border border-border"
                                   />
                                 ))}
                               </div>
@@ -522,7 +522,7 @@ export default function CompanyDetailPage() {
 
           {/* Career Scope Section */}
           {companyData.careerScopes && companyData.careerScopes.length > 0 && (
-            <DetailCard className="profile-detail-company-scope p-5 sm:p-6">
+            <DetailCard className="profile-detail-career-scope p-5 sm:p-6">
               <SectionTitle
                 icon={<LucideCompass />}
                 title={tf("careerScope")}
@@ -535,7 +535,7 @@ export default function CompanyDetailPage() {
                       <Tag
                         label={career.name}
                         neutral
-                        className="!rounded-none border border-border"
+                        className="border border-border"
                       />
                     </HoverCardTrigger>
                     <HoverCardContent>
@@ -722,7 +722,7 @@ export default function CompanyDetailPage() {
       </div>
 
       {/* Mobile Sticky Action Bar Section */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 hidden gap-2 border-t border-border bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-xl tablet-md:flex [&>button]:flex-1 [&>button]:rounded-none">
+      <div className="[&>button]: fixed bottom-0 left-0 right-0 z-30 hidden gap-2 border-t border-border bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-xl tablet-md:flex [&>button]:flex-1">
         {!isFav && (
           <Button
             variant="outline"

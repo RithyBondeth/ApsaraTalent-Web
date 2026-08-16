@@ -24,7 +24,11 @@ function StatValue({
   return <>{loaded ? "N/A" : "..."}</>;
 }
 
-export default function LandingLiveStats() {
+export default function LandingLiveStats({
+  inverted = false,
+}: {
+  inverted?: boolean;
+}) {
   /* ------------------------------------- Utils ------------------------------------ */
   const t = useTranslations("landing");
 
@@ -49,37 +53,91 @@ export default function LandingLiveStats() {
 
   /* ----------------------------------- Render UI ----------------------------------- */
   return (
-    <div className="flex items-center gap-4 border-t border-border pt-5 sm:gap-7 2xl:gap-9">
+    <div
+      className={
+        inverted
+          ? "flex items-center gap-4 border-t border-[hsl(var(--landing-hero-ink)/0.14)] pt-5 sm:gap-7 2xl:gap-9"
+          : "flex items-center gap-4 border-t border-border pt-5 sm:gap-7 2xl:gap-9"
+      }
+    >
       {/* Number of User Section */}
       <div className="flex flex-col">
-        <span className="pixel-numeral text-xl text-foreground sm:text-2xl">
+        <span
+          className={
+            inverted
+              ? "pixel-numeral text-xl text-[hsl(var(--landing-hero-ink))] sm:text-2xl"
+              : "pixel-numeral text-xl text-foreground sm:text-2xl"
+          }
+        >
           <StatValue value={users} loaded={loaded} />
         </span>
-        <TypographyMuted className="pixel-label text-[10px]">
+        <TypographyMuted
+          className={
+            inverted
+              ? "pixel-label text-[10px] text-[hsl(var(--landing-hero-ink)/0.48)]"
+              : "pixel-label text-[10px]"
+          }
+        >
           {t("statsUsers")}
         </TypographyMuted>
       </div>
 
-      <div className="h-7 w-px bg-border sm:h-8" />
+      <div
+        className={
+          inverted
+            ? "h-7 w-px bg-[hsl(var(--landing-hero-ink)/0.14)] sm:h-8"
+            : "h-7 w-px bg-border sm:h-8"
+        }
+      />
 
       {/* Number of Company Section */}
       <div className="flex flex-col">
-        <span className="pixel-numeral text-xl text-foreground sm:text-2xl">
+        <span
+          className={
+            inverted
+              ? "pixel-numeral text-xl text-[hsl(var(--landing-hero-ink))] sm:text-2xl"
+              : "pixel-numeral text-xl text-foreground sm:text-2xl"
+          }
+        >
           <StatValue value={companies} loaded={loaded} />
         </span>
-        <TypographyMuted className="pixel-label text-[10px]">
+        <TypographyMuted
+          className={
+            inverted
+              ? "pixel-label text-[10px] text-[hsl(var(--landing-hero-ink)/0.48)]"
+              : "pixel-label text-[10px]"
+          }
+        >
           {t("statsCompanies")}
         </TypographyMuted>
       </div>
 
-      <div className="h-7 w-px bg-border sm:h-8" />
+      <div
+        className={
+          inverted
+            ? "h-7 w-px bg-[hsl(var(--landing-hero-ink)/0.14)] sm:h-8"
+            : "h-7 w-px bg-border sm:h-8"
+        }
+      />
 
       {/* Number of Employee Section */}
       <div className="flex flex-col">
-        <span className="pixel-numeral text-xl text-foreground sm:text-2xl">
+        <span
+          className={
+            inverted
+              ? "pixel-numeral text-xl text-[hsl(var(--landing-hero-ink))] sm:text-2xl"
+              : "pixel-numeral text-xl text-foreground sm:text-2xl"
+          }
+        >
           <StatValue value={employees} loaded={loaded} />
         </span>
-        <TypographyMuted className="pixel-label text-[10px]">
+        <TypographyMuted
+          className={
+            inverted
+              ? "pixel-label text-[10px] text-[hsl(var(--landing-hero-ink)/0.48)]"
+              : "pixel-label text-[10px]"
+          }
+        >
           {t("statsEmployees")}
         </TypographyMuted>
       </div>

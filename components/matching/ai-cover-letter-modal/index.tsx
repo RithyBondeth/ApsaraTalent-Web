@@ -23,8 +23,8 @@ import {
   LucideRotateCcw,
   LucideDownload,
   LucideLoader2,
-  LucideSparkles,
 } from "lucide-react";
+import { Bot as LucideSparkles } from "lucide-react";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import {
   API_RESUME_COVER_LETTER_STREAM_URL,
@@ -248,7 +248,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
         ref={triggerRef}
         size="sm"
         variant="outline"
-        className="h-8 gap-1.5 rounded-none px-2.5 text-xs sm:px-3"
+        className="h-8 gap-1.5 px-2.5 text-xs sm:px-3"
         aria-label={t("coverLetter")}
         onClick={() => void generate()}
       >
@@ -291,7 +291,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
                 key={s.id}
                 onClick={() => setSelectedStyle(s.id)}
                 disabled={isBusy}
-                className={`shrink-0 rounded-none border px-3 py-1 text-xs transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+                className={`shrink-0 border px-3 py-1 text-xs transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
                   selectedStyle === s.id
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-transparent text-muted-foreground hover:border-primary/50 hover:text-foreground"
@@ -357,11 +357,11 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
             {generating && !coverLetter ? (
               <>
                 {/* Skeleton Loader Section */}
-                <Skeleton className="h-7 w-24 rounded-none" />
+                <Skeleton className="h-7 w-24" />
                 <div className="flex items-center gap-2">
-                  <Skeleton className="h-7 w-16 rounded-none" />
-                  <Skeleton className="size-7 rounded-none" />
-                  <Skeleton className="h-7 w-28 rounded-none" />
+                  <Skeleton className="h-7 w-16" />
+                  <Skeleton className="size-7" />
+                  <Skeleton className="h-7 w-28" />
                 </div>
               </>
             ) : (

@@ -5,7 +5,6 @@ import { AuthField } from "@/components/auth/auth-field";
 import { AuthSelect } from "@/components/auth/auth-select";
 import { AuthDateField } from "@/components/auth/auth-date-field";
 import { AuthBackButton } from "@/components/auth/auth-back-button";
-import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
@@ -320,12 +319,12 @@ export default function SignupPage() {
   /* -------------------------------------- Render UI -------------------------------------- */
   return (
     <div className="flex w-full flex-col gap-6">
-      {/* Logo Section */}
-      <LogoComponent className="!h-16 w-auto self-start" priority />
-
       {/* Title Section */}
       <div>
-        <TypographyH2>{t("signupPageTitle")}</TypographyH2>
+        <span className="auth-form-kicker pixel-label">
+          {t("signupPanelEyebrow")}
+        </span>
+        <TypographyH2 className="mt-3">{t("signupPageTitle")}</TypographyH2>
         <TypographyMuted className="text-md">
           {t("signupSubtitle")}
         </TypographyMuted>

@@ -69,7 +69,7 @@ export default function NotificationMatchCard(
           <div className="flex min-w-0 items-center gap-2">
             <Avatar
               rounded="md"
-              className="size-8 shrink-0 !rounded-none border border-border bg-secondary"
+              className="size-8 shrink-0 border border-border bg-secondary"
             >
               <AvatarFallback className="text-sm">
                 {getNameInitials(props.user.name)}
@@ -100,13 +100,13 @@ export default function NotificationMatchCard(
         <div className="flex items-center gap-2 tablet-sm:w-full">
           <Button
             variant="outline"
-            className="h-8 rounded-none text-xs tablet-sm:h-9 tablet-sm:flex-1 tablet-sm:text-xs"
+            className="h-8 text-xs tablet-sm:h-9 tablet-sm:flex-1 tablet-sm:text-xs"
             onClick={handleViewProfile}
           >
             {t("viewProfile")}
           </Button>
           <Button
-            className="h-8 rounded-none text-xs tablet-sm:h-9 tablet-sm:flex-1 tablet-sm:text-xs"
+            className="h-8 text-xs tablet-sm:h-9 tablet-sm:flex-1 tablet-sm:text-xs"
             onClick={(e) => {
               e.stopPropagation();
               handleNavigate();

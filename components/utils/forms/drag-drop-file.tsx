@@ -153,7 +153,7 @@ export const DragDropFile = <T extends FieldValues>({
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`relative flex h-60 w-full cursor-pointer flex-col items-center justify-center rounded-none border-2 border-l-[5px] border-dashed p-5 text-center ${
+      className={`relative flex h-60 w-full cursor-pointer flex-col items-center justify-center border-2 border-dashed p-5 text-center ${
         isDragging ? "border-primary bg-accent" : "border-muted-foreground"
       } ${className} h-64`}
       onDragEnter={handleDragEnter}

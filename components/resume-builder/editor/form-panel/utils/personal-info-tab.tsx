@@ -8,7 +8,8 @@ import { IFormPanelProps } from "../props";
 import { FieldLabel } from "./field-label";
 import { capitalizeWords } from "@/utils/functions/text";
 import { useTranslations } from "next-intl";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { Bot as Sparkles } from "lucide-react";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import { toast } from "sonner";
 
