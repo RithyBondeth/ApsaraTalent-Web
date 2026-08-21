@@ -521,16 +521,6 @@
   }
 }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
 @keyframes page-in {
   from {
     opacity: 0;
@@ -1079,10 +1069,6 @@
     );
     background-size: 200% 100%;
     animation: shimmer 1.6s ease-in-out infinite;
-  }
-
-  .animate-float {
-    animation: float 3.5s ease-in-out infinite;
   }
 
   /* Hide scrollbar for Chrome, Safari and Opera */
