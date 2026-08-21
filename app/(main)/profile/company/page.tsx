@@ -70,7 +70,6 @@ import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-s
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import {
   companyTypeConstant,
-  COMPANY_ICON_COLOR,
   locationConstant,
   loginMethodConstant,
   platformConstant,
@@ -84,6 +83,7 @@ import {
   readImageFileAsDataUrl,
 } from "@/utils/functions/file";
 import { MAX_IMAGE_SIZE } from "@/utils/constants/config.constant";
+import { BenefitValueChip } from "@/components/utils/data-display/benefit-value-chip";
 import { IBenefits } from "@/utils/interfaces/user/company.interface";
 import { IValues } from "@/utils/interfaces/user/company.interface";
 import { TPlatform } from "@/utils/types/user/platform.type";
@@ -2007,31 +2007,17 @@ export default function ProfilePage() {
 
             {/* Benefit List Section */}
             <div className="flex w-full flex-col items-stretch gap-3">
-              <div className="flex w-full flex-wrap gap-3">
+              <div className="flex w-full flex-wrap gap-2">
                 {benefits.length > 0 ? (
                   benefits.map((benefit) => (
-                    <div
-                      className="flex cursor-pointer items-center gap-2 border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
+                    <BenefitValueChip
                       key={benefit.label}
-                    >
-                      <IconLabel
-                        icon={
-                          <LucideCircleCheck
-                            stroke="white"
-                            fill={COMPANY_ICON_COLOR.BENEFIT}
-                          />
-                        }
-                        className="font-medium [&>p]:text-[#0073E6]"
-                        text={benefit.label}
-                      />
-                      {isEdit && (
-                        <LucideXCircle
-                          className="cursor-pointer text-destructive"
-                          width={"18px"}
-                          onClick={() => removeBenefit(benefit.label)}
-                        />
-                      )}
-                    </div>
+                      kind="benefit"
+                      label={benefit.label}
+                      onRemove={
+                        isEdit ? () => removeBenefit(benefit.label) : undefined
+                      }
+                    />
                   ))
                 ) : (
                   <div className="flex w-full items-center justify-center">
@@ -2104,32 +2090,17 @@ export default function ProfilePage() {
 
             {/* Value List Section */}
             <div className="flex w-full flex-col items-stretch gap-3">
-              <div className="flex w-full flex-wrap gap-3">
+              <div className="flex w-full flex-wrap gap-2">
                 {values.length > 0 ? (
                   values.map((value, index) => (
-                    <div
-                      className="flex cursor-pointer items-center gap-2 border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
+                    <BenefitValueChip
                       key={index}
-                    >
-                      <IconLabel
-                        icon={
-                          <LucideCircleCheck
-                            stroke="white"
-                            fill={COMPANY_ICON_COLOR.VALUE}
-                          />
-                        }
-                        className="font-medium [&>p]:text-[#69B41E]"
-                        text={value.label}
-                      />
-                      {isEdit && (
-                        // Remove Value Button Section
-                        <LucideXCircle
-                          className="cursor-pointer text-destructive"
-                          width={"18px"}
-                          onClick={() => removeValue(value.label)}
-                        />
-                      )}
-                    </div>
+                      kind="value"
+                      label={value.label}
+                      onRemove={
+                        isEdit ? () => removeValue(value.label) : undefined
+                      }
+                    />
                   ))
                 ) : (
                   <div className="flex w-full items-center justify-center">

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { LucideBriefcase, LucideSparkles, LucideUsers } from "lucide-react";
 
 import { StatusPill } from "@/components/utils/data-display/status-pill";
+import { BenefitValueChip } from "@/components/utils/data-display/benefit-value-chip";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "./theme-toggle";
+import { BenefitValueRemovableDemo } from "./benefit-value-demo";
 
 export const metadata: Metadata = { title: "Design system" };
 
@@ -298,6 +300,22 @@ export default function DesignSystemPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </Section>
+
+        <Section
+          title="Benefits & values"
+          note="Categorical, not status — a benefit is a kind of thing, not a severity. One chip serves the company profile, the signup wizard, the employee-facing company page and the company dialog; onRemove is what the authoring surfaces add."
+        >
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-2">
+              <BenefitValueChip kind="benefit" label="Unlimited PTO" />
+              <BenefitValueChip kind="benefit" label="Yearly tech stipend" />
+              <BenefitValueChip kind="value" label="Innovation" />
+              <BenefitValueChip kind="value" label="Collaboration" />
+            </div>
+
+            <BenefitValueRemovableDemo />
           </div>
         </Section>
 

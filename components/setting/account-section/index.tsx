@@ -92,7 +92,7 @@ export function AccountSection(props: IAccountSectionProps) {
             </span>
           </div>
         </div>
-        <div className="flex shrink-0 items-center gap-2 pl-11 sm:pl-0">
+        <div className="flex shrink-0 items-stretch gap-2 pl-11 sm:pl-0">
           {isTwoFactorEnabled ? (
             <Badge className="rounded-none border border-emerald-300/40 bg-emerald-500/10 text-[10px] text-emerald-600 hover:bg-emerald-500/10">
               {t("enabled")}

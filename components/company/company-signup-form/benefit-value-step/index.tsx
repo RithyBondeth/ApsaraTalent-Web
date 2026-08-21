@@ -10,17 +10,11 @@ import {
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import ErrorMessage from "@/components/utils/feedback/error-message";
-import IconLabel from "@/components/utils/data-display/icon-label";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import {
-  LucideCircleCheck,
-  LucidePlus,
-  LucideXCircle,
-  LucideZap,
-} from "lucide-react";
+import { LucideCircleCheck, LucidePlus, LucideZap } from "lucide-react";
 import { useState } from "react";
-import { COMPANY_ICON_COLOR } from "@/utils/constants/ui.constant";
+import { BenefitValueChip } from "@/components/utils/data-display/benefit-value-chip";
 
 export default function BenefitValueStepForm({
   getValues,
@@ -134,26 +128,12 @@ export default function BenefitValueStepForm({
           <div className="flex w-full flex-wrap gap-3">
             {benefits.length > 0 ? (
               benefits.map((benefit) => (
-                <div
-                  className="flex cursor-pointer items-center gap-2 rounded-none border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
+                <BenefitValueChip
                   key={benefit}
-                >
-                  <IconLabel
-                    icon={
-                      <LucideCircleCheck
-                        stroke="white"
-                        fill={COMPANY_ICON_COLOR.BENEFIT}
-                      />
-                    }
-                    className="font-medium [&>p]:text-[#0073E6]"
-                    text={benefit}
-                  />
-                  <LucideXCircle
-                    className="cursor-pointer text-red-500"
-                    width={"18px"}
-                    onClick={() => removeBenefit(benefit)}
-                  />
-                </div>
+                  kind="benefit"
+                  label={benefit}
+                  onRemove={() => removeBenefit(benefit)}
+                />
               ))
             ) : (
               <div className="flex w-full items-center justify-center py-2">
@@ -215,26 +195,12 @@ export default function BenefitValueStepForm({
           <div className="flex w-full flex-wrap gap-3">
             {values.length > 0 ? (
               values.map((value) => (
-                <div
-                  className="flex cursor-pointer items-center gap-2 rounded-none border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
+                <BenefitValueChip
                   key={value}
-                >
-                  <IconLabel
-                    icon={
-                      <LucideCircleCheck
-                        stroke="white"
-                        fill={COMPANY_ICON_COLOR.VALUE}
-                      />
-                    }
-                    className="font-medium [&>p]:text-[#69B41E]"
-                    text={value}
-                  />
-                  <LucideXCircle
-                    className="cursor-pointer text-red-500"
-                    width={"18px"}
-                    onClick={() => removeValue(value)}
-                  />
-                </div>
+                  kind="value"
+                  label={value}
+                  onRemove={() => removeValue(value)}
+                />
               ))
             ) : (
               <div className="flex w-full items-center justify-center py-2">

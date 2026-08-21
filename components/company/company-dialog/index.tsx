@@ -3,7 +3,6 @@
 import {
   LucideBuilding,
   LucideBuilding2,
-  LucideCircleCheck,
   LucideExternalLink,
   LucideMapPin,
   LucideUsers,
@@ -23,6 +22,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
 import { translateLocation, getNameInitials } from "@/utils/functions/text";
+import { BenefitValueChip } from "@/components/utils/data-display/benefit-value-chip";
 
 export default function CompanyDialog(props: ICompanyDialogProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -134,13 +134,11 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
               </TypographyP>
               <div className="flex flex-wrap gap-2">
                 {props.benefits.map((benefit, index) => (
-                  <span
+                  <BenefitValueChip
                     key={index}
-                    className="inline-flex items-center gap-1.5 rounded-none bg-blue-50 px-2.5 py-1.5 text-xs font-medium text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
-                  >
-                    <LucideCircleCheck className="h-3.5 w-3.5 shrink-0" />
-                    {benefit.label}
-                  </span>
+                    kind="benefit"
+                    label={benefit.label}
+                  />
                 ))}
               </div>
             </section>
@@ -154,13 +152,11 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
               </TypographyP>
               <div className="flex flex-wrap gap-2">
                 {props.values.map((value, index) => (
-                  <span
+                  <BenefitValueChip
                     key={index}
-                    className="inline-flex items-center gap-1.5 rounded-none bg-green-50 px-2.5 py-1.5 text-xs font-medium text-green-700 dark:bg-green-950/40 dark:text-green-300"
-                  >
-                    <LucideCircleCheck className="h-3.5 w-3.5 shrink-0" />
-                    {value.label}
-                  </span>
+                    kind="value"
+                    label={value.label}
+                  />
                 ))}
               </div>
             </section>

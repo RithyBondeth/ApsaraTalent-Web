@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/hover-card";
 import ImagePopup from "@/components/utils/data-display/image-popup";
 import Tag from "@/components/utils/data-display/tag";
+import { BenefitValueChip } from "@/components/utils/data-display/benefit-value-chip";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui";
@@ -39,7 +40,6 @@ import {
   LucideBuilding2,
   LucideCalendarDays,
   LucideCamera,
-  LucideCircleCheck,
   LucideCompass,
   LucideGlobe,
   LucideHeartHandshake,
@@ -656,38 +656,34 @@ export default function CompanyDetailPage() {
                 variant="detail"
               />
               <div className="space-y-4">
-                {companyData.values.length > 0 && (
-                  <div>
-                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                      {tf("dialogValues")}
-                    </p>
-                    <div className="flex flex-col gap-1.5">
-                      {companyData.values.map((v) => (
-                        <div
-                          key={v.id}
-                          className="flex items-center gap-2 border border-green-700/15 bg-green-50 px-3 py-2 text-sm text-green-700 dark:bg-green-950/40 dark:text-green-300"
-                        >
-                          <LucideCircleCheck className="size-4 flex-shrink-0" />
-                          {v.label}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
                 {companyData.benefits.length > 0 && (
                   <div>
                     <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                       {tf("dialogBenefits")}
                     </p>
-                    <div className="flex flex-col gap-1.5">
+                    <div className="flex flex-wrap gap-2">
                       {companyData.benefits.map((b: IBenefits) => (
-                        <div
+                        <BenefitValueChip
                           key={b.id}
-                          className="flex items-center gap-2 border border-blue-700/15 bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
-                        >
-                          <LucideCircleCheck className="size-4 flex-shrink-0" />
-                          {b.label}
-                        </div>
+                          kind="benefit"
+                          label={b.label}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {companyData.values.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      {tf("dialogValues")}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {companyData.values.map((v) => (
+                        <BenefitValueChip
+                          key={v.id}
+                          kind="value"
+                          label={v.label}
+                        />
                       ))}
                     </div>
                   </div>

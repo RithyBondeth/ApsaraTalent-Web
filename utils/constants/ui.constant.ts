@@ -814,8 +814,3 @@ export const CHART_COLOR = {
   PINK: "#ec4899", // pink-500  — likes received bar
   GREEN: "#10b981", // emerald-500 — matches bar
 } as const;
-
-export const COMPANY_ICON_COLOR = {
-  BENEFIT: "#0073E6", // blue   — benefit check icon
-  VALUE: "#69B41E", // green  — value check icon
-} as const;

@@ -151,9 +151,9 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
             </Avatar>
 
             {/* Name and Role Section */}
-            <div className="hidden min-w-0 flex-col gap-0.5 sm:flex">
+            <div className="hidden min-w-0 flex-col items-start gap-0.5 sm:flex">
               <span className="max-w-[86px] truncate text-xs font-semibold leading-none lg:max-w-[104px]">
-                {user.name}
+                {user.name} 
               </span>
               <span className="text-[9px] font-semibold uppercase leading-none tracking-[0.12em] text-muted-foreground">
                 {currentUser?.role ?? ""}
