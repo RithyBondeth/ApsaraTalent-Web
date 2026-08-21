@@ -66,7 +66,6 @@ import {
   useGsapHeroAnimation,
   useGsapMarquee,
   useGsapScrollAnimation,
-  useGsapScrollProgress,
 } from "./use-gsap-animation";
 
 function ScrollHarness() {
@@ -98,11 +97,6 @@ function MarqueeHarness() {
   return createElement("div", { ref }, "Companies");
 }
 
-function ProgressHarness() {
-  const ref = useGsapScrollProgress<HTMLDivElement>();
-  return createElement("div", { ref });
-}
-
 describe("GSAP animation hooks", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -126,22 +120,15 @@ describe("GSAP animation hooks", () => {
     ).toBe(true);
   });
 
-  it("initializes hero, marquee, and scroll-progress animations", () => {
+  it("initializes hero and marquee animations", () => {
     const hero = render(createElement(HeroHarness));
     const marquee = render(createElement(MarqueeHarness));
-    const progress = render(createElement(ProgressHarness));
 
     expect(gsapMocks.timeline).toHaveBeenCalled();
     expect(gsapMocks.tween.totalTime).toHaveBeenCalled();
     expect(gsapMocks.scrollCreate).toHaveBeenCalled();
-    expect(gsapMocks.fromTo).toHaveBeenCalledWith(
-      expect.any(HTMLDivElement),
-      { scaleX: 0 },
-      expect.objectContaining({ scaleX: 1 }),
-    );
 
     hero.unmount();
     marquee.unmount();
-    progress.unmount();
   });
 });

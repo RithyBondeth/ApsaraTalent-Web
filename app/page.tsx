@@ -8,7 +8,7 @@ import { LandingHowItWorks } from "@/components/landing/landing-how-it-works";
 import LandingCta from "@/components/landing/landing-cta";
 import LandingMatchVisual from "@/components/landing/landing-match-visual";
 import LandingFooter from "@/components/landing/landing-footer";
-import { ScrollProgress } from "@/components/utils/animations/scroll-progress";
+import { ScrollProgressBar } from "@/components/utils/layout/scroll-progress-bar";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
 export default function IndexPage() {
@@ -19,7 +19,7 @@ export default function IndexPage() {
   return (
     <div className="landing-scope relative min-h-screen bg-background text-foreground">
       {/* Scroll Progress Bar */}
-      <ScrollProgress />
+      <ScrollProgressBar />
 
       {/* Header Section */}
       <Header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl" />

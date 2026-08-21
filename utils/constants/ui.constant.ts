@@ -819,7 +819,3 @@ export const COMPANY_ICON_COLOR = {
   BENEFIT: "#0073E6", // blue   — benefit check icon
   VALUE: "#69B41E", // green  — value check icon
 } as const;
-
-/* Scroll progress bar decorative gradient (fixed top of page) */
-export const SCROLL_PROGRESS_GRADIENT =
-  "linear-gradient(90deg, hsl(var(--primary)) 0%, #7c3aed 55%, #ec4899 100%)";

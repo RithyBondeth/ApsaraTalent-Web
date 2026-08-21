@@ -1,7 +1,7 @@
 import Header from "@/components/landing/landing-header";
 import LandingFooter from "@/components/landing/landing-footer";
 import { GridRunners } from "@/components/ui/grid-runners";
-import { ScrollProgress } from "@/components/utils/animations/scroll-progress";
+import { ScrollProgressBar } from "@/components/utils/layout/scroll-progress-bar";
 import {
   IStaticBulletProps,
   IStaticCardProps,
@@ -31,7 +31,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
   return (
     <div className="landing-scope static-page-scope relative min-h-screen bg-background text-foreground">
       {/* Page Progress Section */}
-      <ScrollProgress />
+      <ScrollProgressBar />
 
       {/* Page Header Section */}
       <Header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl" />

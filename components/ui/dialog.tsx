@@ -66,7 +66,7 @@ const dialogContentVariants = cva(
   },
 );
 
-export interface IDialogContentProps
+interface IDialogContentProps
   extends
     React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
     VariantProps<typeof dialogContentVariants> {
@@ -168,5 +168,4 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
-  dialogContentVariants,
 };

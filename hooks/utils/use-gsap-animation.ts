@@ -703,29 +703,3 @@ export function useGsapMarquee<T extends HTMLElement>() {
  */
 
 /* ------------------------------------ Hook ------------------------------------ */
-export function useGsapScrollProgress<T extends HTMLElement>() {
-  /* -------------------------------- All States -------------------------------- */
-  const barRef = useRef<T>(null);
-
-  /* --------------------------------- Effects ---------------------------------- */
-  useEffect(() => {
-    const bar = barRef.current;
-    if (!bar) return;
-
-    const mm = gsap.matchMedia();
-    mm.add(MOTION_OK, () => {
-      gsap.fromTo(
-        bar,
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: { start: 0, end: "max", scrub: 0.4 },
-        },
-      );
-    });
-
-    return () => mm.revert();
-  }, []);
-  return barRef;
-}

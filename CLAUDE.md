@@ -200,6 +200,29 @@ things there. Five cards on that page each wore one, so the accent had stopped
 distinguishing any surface and become a texture. 26 decorative accents moved to
 ink; 10 semantic ones kept the blue.
 
+### Stacking order
+There is a ladder. Stay on it rather than inventing a number:
+
+| | |
+|---|---|
+| `z-10`–`z-40` | content that overlaps within a card or section |
+| `z-50` | both page headers, sheets, dialog surface and overlay |
+| `z-[60]` | `ScrollProgressBar` — above the headers, below anything modal |
+| `z-[100]` | skip link, the incoming-call modal |
+| `z-[110]` | the dialog close button |
+
+The scroll bar sat at `z-[9999]` for a while, which painted a stripe across the
+top of an open dialog's scrim. A number that large is a sign someone was
+fighting a stacking context rather than reading the ladder.
+
+### Scroll progress
+One component — `ScrollProgressBar` (`components/utils/layout`) — for the
+landing, legal and signed-in pages alike. It writes `transform` straight to the
+node inside a rAF; scrolling a long page otherwise re-renders it sixty times a
+second. Under reduced motion it drops the easing but **still reports progress**:
+progress is information, not decoration. The GSAP version this replaced left
+the bar at `scale-x-0` forever for those readers, so they saw nothing at all.
+
 ### Page banners
 - Every signed-in page's banner is `PageBanner`
   (`components/utils/layout/page-banner`): an eyebrow, headline, subtitle, and up
