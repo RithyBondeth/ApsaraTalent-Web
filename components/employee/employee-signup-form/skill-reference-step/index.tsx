@@ -14,7 +14,6 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/functions/error";
-import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { LucidePlus, LucideXCircle, Sparkles, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useWatch } from "react-hook-form";
@@ -127,11 +126,10 @@ export default function SkillReferenceStepForm({
         </div>
         <div className="flex flex-wrap gap-3">
           {skills.map((skill, index) => {
-            const { bg } = getRandomBadgeColor(skill);
             return (
               <div
                 key={index}
-                className={`flex items-center ${bg} rounded-none border border-border pr-2`}
+                className="flex items-center rounded-none border border-border bg-muted/50 pr-2"
               >
                 <Tag label={skill} />
                 <LucideXCircle

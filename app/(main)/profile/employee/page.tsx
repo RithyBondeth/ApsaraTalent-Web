@@ -2429,7 +2429,6 @@ export default function EmployeeProfilePage() {
                         <div>
                           <Tag
                             label={skill.name}
-                            neutral
                             className="!rounded-none border border-border hover:shadow-none"
                           />
                         </div>
@@ -2541,7 +2540,6 @@ export default function EmployeeProfilePage() {
                         <div>
                           <Tag
                             label={career.name}
-                            neutral
                             className="!rounded-none border border-border hover:shadow-none"
                           />
                         </div>

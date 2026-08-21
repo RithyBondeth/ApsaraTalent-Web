@@ -420,7 +420,6 @@ export default function EmployeeDetailPage() {
                     <HoverCardTrigger>
                       <Tag
                         label={item.name}
-                        neutral
                         className="!rounded-none border border-border"
                       />
                     </HoverCardTrigger>

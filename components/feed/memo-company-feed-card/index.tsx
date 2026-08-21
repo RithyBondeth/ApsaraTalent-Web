@@ -41,7 +41,6 @@ export const MemoCompanyFeedCard = React.memo(function CompanyFeedCard({
       <CompanyCard
         {...company}
         id={company.id}
-        variant="grid"
         viewHref={`/feed/company/${company.id}`}
         onViewClick={() => onView(company.id)}
         onSaveClick={() =>

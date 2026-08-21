@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import { getAvailabilityStyleClass } from "./get-availability-class";
 import { getStatusBadgeStyleClass } from "./get-interview-status-class";
 import { getPaginationPages } from "./get-pagination-pages";
-import { getRandomBadgeColor } from "./get-random-badge-color";
 import { getSocialPlatformTypeIcon } from "./get-social-type";
 
 describe("UI functions", () => {
@@ -62,12 +61,7 @@ describe("UI functions", () => {
     expect(getPaginationPages({ currentPage: 99, totalPages: 3 })).toEqual([3]);
   });
 
-  it("returns deterministic badge colors and social icons", () => {
-    expect(getRandomBadgeColor("React")).toBe(getRandomBadgeColor("React"));
-    expect(getRandomBadgeColor("React")).toEqual({
-      bg: expect.any(String),
-      text: expect.any(String),
-    });
+  it("returns social icons", () => {
     expect(React.isValidElement(getSocialPlatformTypeIcon("Github"))).toBe(
       true,
     );

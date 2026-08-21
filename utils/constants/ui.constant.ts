@@ -179,15 +179,6 @@ export const salaryCurrencyConstant: {
  * Twelve arbitrary hues became six deliberate ones; with a hash-based pick the
  * repeat rate matters far less than not colliding with success/warning/danger.
  */
-export const badgeRandomColorsClass: { bg: string; text: string }[] = [
-  { bg: "bg-category-indigo-subtle", text: "text-category-indigo-accent" },
-  { bg: "bg-category-teal-subtle", text: "text-category-teal-accent" },
-  { bg: "bg-category-violet-subtle", text: "text-category-violet-accent" },
-  { bg: "bg-category-orange-subtle", text: "text-category-orange-accent" },
-  { bg: "bg-category-magenta-subtle", text: "text-category-magenta-accent" },
-  { bg: "bg-category-lime-subtle", text: "text-category-lime-accent" },
-] as const;
-
 export const careerScopesListConstant: {
   label: string;
   value: string;

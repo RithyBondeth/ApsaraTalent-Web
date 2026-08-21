@@ -97,7 +97,6 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
                 <Tag
                   label={op.title}
                   key={op.id}
-                  neutral
                   className="!rounded-none border border-border hover:shadow-none"
                 />
               ))}

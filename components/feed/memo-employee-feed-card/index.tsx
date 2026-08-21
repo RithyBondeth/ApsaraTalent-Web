@@ -41,7 +41,6 @@ export const MemoEmployeeFeedCard = React.memo(function EmployeeFeedCard({
       <EmployeeCard
         {...employee}
         id={employee.id}
-        variant="grid"
         viewHref={`/feed/employee/${employee.id}`}
         onViewClick={() => onView(employee.id)}
         onSaveClick={() =>

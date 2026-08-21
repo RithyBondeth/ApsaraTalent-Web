@@ -2182,7 +2182,6 @@ export default function ProfilePage() {
                         <div>
                           <Tag
                             label={career.name}
-                            neutral
                             className="!rounded-none border border-border hover:shadow-none"
                           />
                         </div>

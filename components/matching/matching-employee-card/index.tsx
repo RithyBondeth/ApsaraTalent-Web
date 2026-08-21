@@ -97,7 +97,6 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
                 <Tag
                   label={skill}
                   key={index}
-                  neutral
                   className="!rounded-none border border-border hover:shadow-none"
                 />
               ))}
