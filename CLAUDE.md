@@ -286,8 +286,20 @@ Three groups of tokens:
   `-border`. Example: `bg-success-subtle text-success-accent border-success-border`.
 - **Categorical** — `category-{violet,magenta,teal,orange,indigo,lime}` with
   `-accent` and `-subtle`, for labels that differ in *kind*: notification type,
-  employment type, skill tags. Never borrow a status colour for these — spending
-  amber on "freelance" is what stops a real warning from standing out.
+  company benefits (indigo) and values (lime). Never borrow a status colour for
+  these — spending amber on "freelance" is what stops a real warning from
+  standing out.
+
+  **A label is neutral until its colour carries information.** Skill tags,
+  career scopes, languages, availability and open-position titles all go through
+  `Tag`, which is neutral, full stop. `Tag` used to pick a categorical hue by
+  hashing the label's character codes, so "Python" was indigo and "React" orange
+  for no readable reason — and it collided with the hues that *do* mean
+  something (a skill hashing to indigo was the same fill and text as a benefit
+  chip). Every reading surface had already opted out via a `neutral` flag before
+  the hash was retired; don't reintroduce colour-by-hash. `BenefitValueChip`
+  (`components/utils/data-display/benefit-value-chip`) is the one categorical
+  chip, the same way `StatusPill` is the one status pill.
 
 Every token resolves per theme on its own, so **token classes never take a
 `dark:` variant**. Seeing one is a sign someone reintroduced a second palette.

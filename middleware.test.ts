@@ -64,4 +64,24 @@ describe("authentication middleware", () => {
     expect(response.headers.get("location")).toBeNull();
     expect(response.headers.get("x-middleware-next")).toBe("1");
   });
+
+  it("keeps email verification reachable for a freshly registered user", () => {
+    // Registration signs the person in, so they arrive here authenticated.
+    // The generic /login/* bounce would send them to /feed and — now that the
+    // mail carries a code rather than a link — strand them there.
+    expect(
+      redirectLocation("/login/email-verification", "employee"),
+    ).toBeNull();
+    expect(
+      redirectLocation(
+        "/login/email-verification?email=person%40example.com",
+        "company",
+      ),
+    ).toBeNull();
+  });
+
+  it("still bounces an authenticated user off the other auth routes", () => {
+    expect(redirectLocation("/login", "employee")).toContain("/feed");
+    expect(redirectLocation("/signup", "employee")).toContain("/feed");
+  });
 });

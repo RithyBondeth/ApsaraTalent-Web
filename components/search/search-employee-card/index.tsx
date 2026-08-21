@@ -100,7 +100,6 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
               <Tag
                 label={item}
                 key={index}
-                neutral
                 className="!rounded-none border border-border hover:shadow-none"
               />
             ))}

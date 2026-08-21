@@ -109,7 +109,6 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
               <Tag
                 label={item}
                 key={index}
-                neutral
                 className="!rounded-none border border-border hover:shadow-none"
               />
             ))}

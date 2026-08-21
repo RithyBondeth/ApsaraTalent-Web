@@ -153,7 +153,7 @@ try {
     "/login",
     "/login/phone-number",
     "/login/phone-number/phone-otp",
-    "/login/email-verification/smoke-test-id",
+    "/login/email-verification?email=smoke%40example.com",
     "/forgot-password",
     "/reset-password",
     "/signup",

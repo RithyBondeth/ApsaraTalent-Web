@@ -299,7 +299,16 @@ export default function CompanySignup() {
       toast.success(t("signupSuccessful"), {
         duration: TOAST_DURATION_MS.SHORT,
       });
-      setTimeout(() => router.replace("/feed"), DEFAULT_REDIRECT_DELAY_MS);
+      // An email signup is not finished until the address is verified, and
+      // the mail now carries a code rather than a link — so this redirect is
+      // the only way the person reaches the page. Phone signups have nothing
+      // to verify and go straight to the feed.
+      const pendingEmail = basicSignupData?.email ?? null;
+      const destination = pendingEmail
+        ? `/login/email-verification?email=${encodeURIComponent(pendingEmail)}`
+        : "/feed";
+
+      setTimeout(() => router.replace(destination), DEFAULT_REDIRECT_DELAY_MS);
     }
 
     const errorList = [
@@ -330,6 +339,7 @@ export default function CompanySignup() {
     uploadCover.message,
     uploadsComplete,
     router,
+    basicSignupData?.email,
   ]);
 
   /* ------------------------------ Loading State ------------------------------ */

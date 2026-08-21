@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -26,7 +27,6 @@ import {
   workModeConstant,
   yearOfExperienceConstant,
 } from "@/utils/constants/ui.constant";
-import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { Popover } from "@radix-ui/react-popover";
 import {
   LucideBadgeCheck,
@@ -358,11 +358,13 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
               {skills &&
                 skills.length > 0 &&
                 skills.split(", ").map((item, index) => {
-                  const { bg } = getRandomBadgeColor(item);
                   return (
                     <div
                       key={index}
-                      className={`flex items-center ${props.isEdit && `${bg} border border-border pr-2`}`}
+                      className={cn(
+                        "flex items-center",
+                        props.isEdit && "border border-border bg-muted/50 pr-2",
+                      )}
                     >
                       <Tag label={item} />
                       {props.isEdit && (

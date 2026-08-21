@@ -11,8 +11,11 @@ export const API_AUTH_SIGNUP_URL = {
 export const API_AUTH_FORGOT_PASSWORD_URL = API_AUTH_URL + "/forgot-password";
 export const API_AUTH_RESET_PASSWORD_URL = (token: string) =>
   `${API_AUTH_URL}/reset-password/${token}`;
-export const API_AUTH_VERIFY_EMAIL_URL = (emailVerificationToken: string) =>
-  `${API_AUTH_URL}/verify-email/${emailVerificationToken}`;
+// The code travels in the body, not the path — six digits in a URL end up in
+// access logs and browser history, and it is a credential while it lives.
+export const API_AUTH_VERIFY_EMAIL_URL = API_AUTH_URL + "/verify-email";
+export const API_AUTH_RESEND_EMAIL_OTP_URL =
+  API_AUTH_URL + "/verify-email/resend";
 
 export const API_AUTH_VERIFY_OTP_URL = API_AUTH_URL + "/verify-otp";
 export const API_AUTH_LOGIN_OTP_URL = API_AUTH_URL + "/login-otp";

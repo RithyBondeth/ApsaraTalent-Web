@@ -421,7 +421,6 @@ export default function CompanyDetailPage() {
                               <Tag
                                 icon={<LucideAlarmClock />}
                                 label={formatAvailabilityWords(item.type)}
-                                neutral
                                 className="!rounded-none border border-border"
                               />
                             )}
@@ -429,7 +428,6 @@ export default function CompanyDetailPage() {
                               <Tag
                                 icon={<LucideUser />}
                                 label={item.experience}
-                                neutral
                                 className="!rounded-none border border-border"
                               />
                             )}
@@ -437,7 +435,6 @@ export default function CompanyDetailPage() {
                               <Tag
                                 icon={<LucideLanguages />}
                                 label={item.languagesRequired.join(", ")}
-                                neutral
                                 className="!rounded-none border border-border"
                               />
                             )}
@@ -499,7 +496,6 @@ export default function CompanyDetailPage() {
                                   <Tag
                                     key={s}
                                     label={s}
-                                    neutral
                                     className="!rounded-none border border-border"
                                   />
                                 ))}
@@ -536,7 +532,6 @@ export default function CompanyDetailPage() {
                     <HoverCardTrigger>
                       <Tag
                         label={career.name}
-                        neutral
                         className="!rounded-none border border-border"
                       />
                     </HoverCardTrigger>

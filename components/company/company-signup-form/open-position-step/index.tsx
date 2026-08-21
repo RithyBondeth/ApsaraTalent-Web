@@ -32,7 +32,6 @@ import {
 } from "@/utils/constants/ui.constant";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { getRandomBadgeColor } from "@/utils/functions/ui";
 import {
   BadgeCheck,
   BarChart3,
@@ -534,11 +533,10 @@ export default function OpenPositionStepForm({
               <div className="flex flex-wrap gap-2">
                 {(getValues?.(`openPositions.${index}.skills`) || []).map(
                   (skill, skillIndex) => {
-                    const { bg } = getRandomBadgeColor(skill);
                     return (
                       <div
                         key={`${skill}-${skillIndex}`}
-                        className={`flex items-center ${bg} pr-2`}
+                        className="flex items-center bg-muted/50 pr-2"
                       >
                         <Tag label={skill} />
                         <LucideXCircle
