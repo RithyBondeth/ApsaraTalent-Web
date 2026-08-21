@@ -225,14 +225,13 @@ export default function TopNavbar() {
               aria-label="Apsara Talent"
               className="group flex h-full shrink-0 items-center border-x border-transparent px-1 transition-colors hover:border-border hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-2 lg:min-w-[96px] lg:justify-center"
             >
-              {/* The box now follows the mark's own 187.92:120 ratio — at
-                  80x48 it was 6% wide, so the logo was being stretched as
-                  well as sitting small in a 60/64px bar. */}
+              {/* Height-driven; the width follows the mark's own ratio, so
+                  the box can never stretch it. Now that the artwork's
+                  transparent padding is trimmed, this height is all mark. */}
               <LogoComponent
                 priority
                 height={56}
-                width={88}
-                className="h-12 w-[75px] transition-transform duration-300 group-hover:-translate-y-0.5 lg:h-14 lg:w-[88px]"
+                className="h-11 transition-transform duration-300 group-hover:-translate-y-0.5 lg:h-14"
               />
             </Link>
 

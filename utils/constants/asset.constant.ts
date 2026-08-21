@@ -21,9 +21,8 @@ import phoneNumberSvg from "@/assets/auth/phone-number.svg";
 import phoneOTPSvg from "@/assets/auth/phone-otp.svg";
 
 // ─── Utils (shared across pages) ──────────────────────────────────────────────
-import logo from "@/assets/utils/logo.svg";
-import logoBlack from "@/assets/utils/logo-black.svg";
-import logoWithoutTitle from "@/assets/utils/logo-icon.svg";
+import logo from "@/assets/utils/apsaratalent-logo-with-text.png";
+import logoWithoutTitle from "@/assets/utils/apsaratalent-logo.png";
 
 export {
   // Socials
@@ -41,6 +40,5 @@ export {
   phoneOTPSvg,
   // Utils
   logo,
-  logoBlack,
   logoWithoutTitle,
 };

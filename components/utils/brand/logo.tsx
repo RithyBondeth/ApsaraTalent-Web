@@ -1,70 +1,53 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import {
-  logo,
-  logoBlack,
-  logoWithoutTitle,
-} from "@/utils/constants/asset.constant";
+import { logo, logoWithoutTitle } from "@/utils/constants/asset.constant";
 import Image from "next/image";
 
-/* ----------------------------------- Helper ---------------------------------- */
+/* ---------------------------------------------------------------------------
+ * The brand mark.
+ *
+ * This used to cross-fade two SVGs — a light-mode lockup and a dark-mode one —
+ * with a blur transition on theme change. The new artwork ships as a single
+ * lockup, so there is nothing to cross-fade and the pair of stacked, absolutely
+ * positioned images (and their `aspect-[5/3]` wrapper, which did not match the
+ * artwork's 3:2) are gone. One image, its own aspect ratio, no theme swap.
+ * ------------------------------------------------------------------------- */
+
 interface ILogoProps {
+  /** Icon-only mark — the dancer without the wordmark. */
   withoutTitle?: boolean;
-  width?: number;
+  /** Rendered height in px. Width follows the artwork's own ratio. */
   height?: number;
   className?: string;
   priority?: boolean;
 }
 
+/* The artwork's true aspect after trimming: the source files shipped with
+   transparent padding (11% off the bottom of the lockup, 17% off the left of
+   the icon), so a height-constrained box was spending a fifth of its budget
+   on empty space. These are the ratios of the trimmed marks. */
+const RATIO = { lockup: 740 / 428, icon: 454 / 581 } as const;
+
 export default function LogoComponent({
   withoutTitle = false,
-  height = 100,
-  width = 200,
+  height = 56,
   className,
   priority = false,
 }: ILogoProps) {
-  if (withoutTitle) {
-    return (
-      <Image
-        src={logoWithoutTitle}
-        alt="Apsara Talent logo"
-        height={height}
-        width={width}
-        className={cn("h-auto w-auto", className)}
-        priority={priority}
-      />
-    );
-  }
+  const src = withoutTitle ? logoWithoutTitle : logo;
+  const ratio = withoutTitle ? RATIO.icon : RATIO.lockup;
+  const width = Math.round(height * ratio);
 
   return (
-    <span
-      role="img"
-      aria-label="Apsara Talent"
-      className={cn(
-        "relative inline-grid aspect-[5/3] overflow-visible",
-        className,
-      )}
-      style={className ? undefined : { width, height }}
-    >
-      <Image
-        src={logo}
-        alt=""
-        fill
-        sizes={`${width}px`}
-        aria-hidden
-        className="pointer-events-none object-contain opacity-100 blur-0 transition-[opacity,transform,filter] duration-500 ease-out dark:scale-[0.98] dark:opacity-0 dark:blur-[2px]"
-        priority={priority}
-      />
-      <Image
-        src={logoBlack}
-        alt=""
-        fill
-        sizes={`${width}px`}
-        aria-hidden
-        className="pointer-events-none scale-[1.08] object-contain opacity-0 blur-[2px] transition-[opacity,transform,filter] duration-500 ease-out dark:scale-[1.11] dark:opacity-100 dark:blur-0"
-        priority={priority}
-      />
-    </span>
+    <Image
+      src={src}
+      alt="Apsara Talent"
+      height={height}
+      width={width}
+      sizes={`${width}px`}
+      className={cn("w-auto object-contain", className)}
+      priority={priority}
+    />
   );
 }
