@@ -994,6 +994,7 @@ export default function EmployeeSearchPage() {
               <PageState
                 variant="empty"
                 title={t("emptyList")}
+                description={t("emptyListDescription")}
                 image={emptySvg}
                 compact
                 action={

@@ -22,7 +22,6 @@ import notificationEmptySvg from "@/assets/notification/empty.svg";
 
 // ─── Message ──────────────────────────────────────────────────────────────────
 import messageEmptySvg from "@/assets/message/empty.svg";
-import messageSvg from "@/assets/message/message.svg";
 
 // ─── Favorite ─────────────────────────────────────────────────────────────────
 
@@ -64,7 +63,6 @@ export {
   // Matching
   // Message
   messageEmptySvg,
-  messageSvg,
   // Favorite
   // Search
   // Profile

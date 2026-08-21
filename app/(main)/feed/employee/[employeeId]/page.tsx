@@ -54,6 +54,7 @@ import {
   LucidePhone,
   LucideTransgender,
   LucideUser,
+  LucideUserX,
   LucideZap,
   User,
 } from "lucide-react";
@@ -259,6 +260,8 @@ export default function EmployeeDetailPage() {
         <PageState
           variant="empty"
           title={tf("employeeNotFound")}
+          description={tf("employeeNotFoundDescription")}
+          icon={LucideUserX}
           action={{ label: tf("backToFeed"), href: "/feed" }}
         />
       </div>

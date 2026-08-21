@@ -271,6 +271,8 @@ export default function CompanyDetailPage() {
         <PageState
           variant="empty"
           title={tf("companyNotFound")}
+          description={tf("companyNotFoundDescription")}
+          icon={LucideBuilding2}
           action={{ label: tf("backToFeed"), href: "/feed" }}
         />
       </div>

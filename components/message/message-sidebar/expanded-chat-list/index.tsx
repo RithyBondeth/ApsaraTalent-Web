@@ -1,10 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { Check, CheckCheck, Users } from "lucide-react";
+import { Check, CheckCheck, LucideMessagesSquare, Users } from "lucide-react";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { IChatListProps } from "../props";
 import { useTranslations } from "next-intl";
-import { messageSvg } from "@/utils/constants/asset.constant";
 import { getNameInitials } from "@/utils/functions/text";
 import { PageState } from "@/components/utils/feedback/page-state";
 
@@ -22,7 +21,7 @@ export default function ExpandedChatList(props: IChatListProps) {
         variant="empty"
         title={t("noConversations")}
         description={t("noConversationsDescription")}
-        image={messageSvg}
+        icon={LucideMessagesSquare}
         compact
         className="m-3 w-auto shadow-none"
         action={{ label: t("discoverMatches"), href: "/matching" }}

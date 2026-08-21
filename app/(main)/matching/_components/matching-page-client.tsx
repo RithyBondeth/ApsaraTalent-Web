@@ -380,6 +380,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
             <PageState
               variant="empty"
               title={t("emptyList")}
+              description={t("emptyListDescription")}
               image={emptySvg}
               compact
               className="my-6 sm:my-8"

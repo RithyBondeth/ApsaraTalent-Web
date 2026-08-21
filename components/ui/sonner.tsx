@@ -50,7 +50,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         ...props.icons,
       }}
       style={{
-        fontFamily: "var(--font-ubuntu), var(--font-preahvihear), sans-serif",
+        fontFamily: "var(--font-ubuntu), var(--font-kantumruy), sans-serif",
         ...props.style,
       }}
       toastOptions={{

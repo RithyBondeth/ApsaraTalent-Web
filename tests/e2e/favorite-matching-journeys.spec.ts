@@ -174,7 +174,7 @@ test.describe("authenticated favorite journeys", () => {
     await expect(
       page.getByText("Apsara Labs removed from favorites."),
     ).toBeVisible();
-    await expect(page.getByText("Favorite List Empty")).toBeVisible();
+    await expect(page.getByText("Nothing saved yet")).toBeVisible();
     await expect(
       page.getByRole("link", { name: "Explore more" }),
     ).toHaveAttribute("href", "/search/company");
@@ -207,7 +207,7 @@ test.describe("authenticated favorite journeys", () => {
 
     await expectNoHorizontalOverflow(page);
     await page.getByRole("button", { name: "Remove" }).click();
-    await expect(page.getByText("Favorite List Empty")).toBeVisible();
+    await expect(page.getByText("Nothing saved yet")).toBeVisible();
     await expectNoHorizontalOverflow(page);
     expect(state.favoriteRemovals).toBe(1);
   });
@@ -266,7 +266,7 @@ test.describe("authenticated matching journeys", () => {
     await page.getByRole("button", { name: "Yes, Unmatch" }).click();
 
     await expect(page.getByText("Unmatched successfully.")).toBeVisible();
-    await expect(page.getByText("Matching List Empty")).toBeVisible();
+    await expect(page.getByText("No matches yet")).toBeVisible();
     expect(state.unmatchRequests).toBe(1);
   });
 
@@ -304,7 +304,7 @@ test.describe("authenticated matching journeys", () => {
     ).toBeVisible();
     await expectNoHorizontalOverflow(page);
     await page.getByRole("button", { name: "Yes, Unmatch" }).click();
-    await expect(page.getByText("Matching List Empty")).toBeVisible();
+    await expect(page.getByText("No matches yet")).toBeVisible();
     await expectNoHorizontalOverflow(page);
     expect(state.unmatchRequests).toBe(1);
   });

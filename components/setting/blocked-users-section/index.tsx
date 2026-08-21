@@ -77,6 +77,8 @@ export function BlockedUsersSection() {
           <PageState
             variant="empty"
             title={tS("noBlockedUsers")}
+            description={tS("noBlockedUsersDescription")}
+            icon={LucideShieldBan}
             compact
             className="min-h-0 border-0 py-7 shadow-none"
           />

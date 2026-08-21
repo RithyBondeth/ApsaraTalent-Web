@@ -924,6 +924,11 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
           title={
             isEmployee ? tFeed("companyListEmpty") : tFeed("employeeListEmpty")
           }
+          description={
+            isEmployee
+              ? tFeed("companyListEmptyDescription")
+              : tFeed("employeeListEmptyDescription")
+          }
           image={emptySvg}
           compact
           className="my-6 sm:my-8"

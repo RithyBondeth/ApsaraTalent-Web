@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --font-ubuntu: "Ubuntu";
-    --font-preahvihear: "Preahvihear";
+    --font-kantumruy: "Kantumruy Pro";
 
     /* Off-white page bg — pure white cards float above it */
     --background: 220 20% 97%;
@@ -3911,7 +3911,7 @@ body:has(.landing-scope),
   --apsara-toast-soft: 38 19% 92%;
   --apsara-toast-shadow: 36 32% 13%;
   --apsara-toast-accent: 38 9% 34%;
-  font-family: var(--font-ubuntu), var(--font-preahvihear), sans-serif;
+  font-family: var(--font-ubuntu), var(--font-kantumruy), sans-serif;
 }
 
 [data-sonner-toaster].apsara-toaster[data-sonner-theme="dark"] {

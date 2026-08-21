@@ -56,7 +56,7 @@
     "reset": "Reset",
     "blockedUsers": "Blocked users",
     "blockedUsersDescription": "People you've blocked can't message you or appear in your feed",
-    "noBlockedUsers": "You haven't blocked anyone.",
+    "noBlockedUsers": "No blocked users",
     "blockedUsersLoadErrorDescription": "We could not load your blocked users. Check your connection and try again.",
     "retry": "Try again",
     "loading": "Loading...",
@@ -76,7 +76,8 @@
     "twoFactorEnabledDesc": "Your account is protected with an authenticator app",
     "twoFactorDisabledDesc": "Add an extra layer of security to your account",
     "enable": "Enable",
-    "disable": "Disable"
+    "disable": "Disable",
+    "noBlockedUsersDescription": "People you block can't message you or appear in your feed."
   },
   "states": {
     "sessionErrorDescription": "We could not load your account. Check your connection and try again.",
@@ -624,13 +625,14 @@
     "companySizeLowToHigh": "Company Size: Low to High",
     "errorDescription": "Try adjusting your filters or search terms and try again.",
     "retry": "Try again",
-    "emptyList": "No jobs match your search criteria. Try adjusting your filters.",
+    "emptyList": "No jobs match your search",
     "educationLabel": "Education",
     "experienceLabel": "Experience",
     "viewCompany": "View Company",
     "loadMore": "Load More",
     "loading": "Loading...",
-    "statJobs": "Jobs listed"
+    "statJobs": "Jobs listed",
+    "emptyListDescription": "Try adjusting your filters."
   },
   "searchCompany": {
     "bannerTitle": "Hire Smarter, Anywhere.",
@@ -664,12 +666,13 @@
     "experienceLowToHigh": "Experience: Low to High",
     "errorDescription": "Try adjusting your filters or search terms and try again.",
     "retry": "Try again",
-    "emptyList": "No employees match your search criteria. Try adjusting your filters.",
+    "emptyList": "No talent matches your search",
     "yrsExp": "yrs exp",
     "viewProfile": "View Profile",
     "loadMore": "Load More",
     "loading": "Loading...",
-    "statTalent": "Talent found"
+    "statTalent": "Talent found",
+    "emptyListDescription": "Try adjusting your filters."
   },
   "favorite": {
     "savedFavorites": "Saved Favorites",
@@ -680,14 +683,15 @@
     "bannerSubtitle1": "Quick access to the companies and talents you've saved",
     "bannerSubtitle2": "Review, connect, and take the next step whenever you're ready",
     "bannerMuted": "Your personal shortlist — organized in one place.",
-    "emptyList": "Favorite List Empty",
+    "emptyList": "Nothing saved yet",
     "retry": "Try again",
     "remove": "Remove",
     "viewDetail": "View Detail",
     "founded": "Founded {year}",
     "memberCount": "{count, plural, one {# member} other {# members}}",
     "positionCount": "{count, plural, one {# position} other {# positions}}",
-    "yrsExp": "{years} yrs exp"
+    "yrsExp": "{years} yrs exp",
+    "emptyListDescription": "Profiles you save will appear here for quick access."
   },
   "matching": {
     "matchScoreValue": "{score}% match",
@@ -700,7 +704,7 @@
     "bannerSubtitle1": "Find Your Perfect Match & Start a Conversation",
     "bannerSubtitle2": "Start chatting, connect instantly, and build your future together.",
     "bannerMuted": "When companies and talents like each other — it's a match.",
-    "emptyList": "Matching List Empty",
+    "emptyList": "No matches yet",
     "loadErrorDescription": "We could not load your matches. Check your connection and try again.",
     "retry": "Try again",
     "schedule": "Schedule",
@@ -780,7 +784,8 @@
     "skillGapBadge": "{count, plural, one {# gap} other {# gaps}}",
     "learningTip": "How to learn",
     "neededFor": "Needed for",
-    "statMatches": "Matches"
+    "statMatches": "Matches",
+    "emptyListDescription": "Matches appear here once both sides have shown interest."
   },
   "feed": {
     "employeeBannerTitle": "Connect with global professionals and grow your network",
@@ -796,8 +801,8 @@
     "recommendedForYou": "Recommended for You",
     "allCompanies": "All Companies",
     "allTalent": "All Talent",
-    "companyListEmpty": "Company List Empty",
-    "employeeListEmpty": "Employee List Empty",
+    "companyListEmpty": "No companies to show",
+    "employeeListEmpty": "No talent to show",
     "loadErrorDescription": "We could not load this network. Check your connection and try again.",
     "likedSuccessTitle": "You liked this successfully!",
     "likedSuccessDescription": "If they like you back, it's a match! Check your Matching page to see who you've connected with.",
@@ -855,7 +860,11 @@
     "recommended": "Recommended",
     "endOfResults": "You've seen it all",
     "exploreAllCompanies": "Explore all companies",
-    "exploreAllTalent": "Explore all talent"
+    "exploreAllTalent": "Explore all talent",
+    "companyListEmptyDescription": "New companies will appear here as they join.",
+    "employeeListEmptyDescription": "New candidates will appear here as they join.",
+    "employeeNotFoundDescription": "This profile may have been removed or is no longer available.",
+    "companyNotFoundDescription": "This company may have been removed or is no longer available."
   },
   "locations": {
     "phnomPenh": "Phnom Penh",
@@ -1560,8 +1569,8 @@
     "declineSuccess": "Interview declined.",
     "updateError": "Failed to update interview status. Please try again.",
     "retry": "Try again",
-    "noInterviewsEmployee": "No interviews scheduled yet. Companies will schedule interviews with you after matching.",
-    "noInterviewsCompany": "No interviews scheduled yet. Click \"Schedule Interview\" to get started.",
+    "noInterviewsEmployee": "No interviews scheduled",
+    "noInterviewsCompany": "No interviews scheduled",
     "status": {
       "pending": "Pending",
       "accepted": "Accepted",
@@ -1571,7 +1580,9 @@
     },
     "statScheduled": "Scheduled",
     "statPending": "Pending",
-    "statAccepted": "Accepted"
+    "statAccepted": "Accepted",
+    "noInterviewsEmployeeDescription": "Companies will schedule interviews with you after matching.",
+    "noInterviewsCompanyDescription": "Use \"Schedule Interview\" to set up your first one."
   },
   "twoFactor": {
     "enableTitle": "Enable Two-Factor Authentication",

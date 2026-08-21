@@ -360,6 +360,7 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
             <PageState
               variant="empty"
               title={tFav("emptyList")}
+              description={tFav("emptyListDescription")}
               image={emptySvg}
               compact
               className="my-6 sm:my-8"

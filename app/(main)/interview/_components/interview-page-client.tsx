@@ -217,6 +217,11 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
             title={
               isEmployee ? t("noInterviewsEmployee") : t("noInterviewsCompany")
             }
+            description={
+              isEmployee
+                ? t("noInterviewsEmployeeDescription")
+                : t("noInterviewsCompanyDescription")
+            }
             image={emptySvg}
             compact
             className="my-6 sm:my-8"

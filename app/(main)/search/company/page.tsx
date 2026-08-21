@@ -745,6 +745,7 @@ export default function CompanySearchPage() {
               <PageState
                 variant="empty"
                 title={t("emptyList")}
+                description={t("emptyListDescription")}
                 image={emptySvg}
                 compact
                 action={

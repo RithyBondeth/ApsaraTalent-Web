@@ -3,7 +3,8 @@ import { LanguageProvider } from "@/components/utils/languages/language-provider
 import { ThemeProvider } from "@/components/utils/themes/theme-provider";
 import { TitleSync } from "@/components/utils/seo/title-sync";
 import type { Metadata } from "next";
-import "@fontsource/preahvihear/khmer-400.css";
+import "@fontsource/kantumruy-pro/khmer-400.css";
+import "@fontsource/kantumruy-pro/khmer-700.css";
 import "@fontsource/ubuntu/latin-400.css";
 import "@fontsource/ubuntu/latin-700.css";
 import "./globals.css";
@@ -31,7 +32,7 @@ export default function RootLayout({
       <body
         className="antialiased"
         style={{
-          fontFamily: "var(--font-ubuntu), var(--font-preahvihear), sans-serif",
+          fontFamily: "var(--font-ubuntu), var(--font-kantumruy), sans-serif",
         }}
         suppressHydrationWarning
       >
