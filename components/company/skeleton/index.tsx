@@ -195,7 +195,7 @@ export function CompanyDetailPageLoadingSkeleton() {
           </SkeletonCard>
 
           {/* Career Scope Section */}
-          <SkeletonCard className="profile-detail-company-scope p-5 sm:p-6">
+          <SkeletonCard className="p-5 sm:p-6">
             <SectionTitleSkeleton />
             <div className="flex flex-wrap gap-2">
               {[...Array(6)].map((_, i) => (

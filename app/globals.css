@@ -642,34 +642,6 @@
   box-shadow: 0 -10px 30px hsl(var(--foreground) / 0.07);
 }
 
-.app-top-navbar::before,
-.app-mobile-navbar::before {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  pointer-events: none;
-  content: "";
-  background-image:
-    linear-gradient(
-      to right,
-      hsl(var(--foreground) / 0.025) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      hsl(var(--foreground) / 0.02) 1px,
-      transparent 1px
-    );
-  background-size: 24px 24px;
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    black 14%,
-    black 86%,
-    transparent
-  );
-}
-
 /* ── Employee and company detail pages ───────────────────────────────── */
 .profile-detail-hero {
   --profile-detail-hero-ink: var(--background);
@@ -947,13 +919,6 @@
   transform: scaleY(1);
 }
 
-.profile-detail-company-scope {
-  background:
-    linear-gradient(135deg, hsl(var(--foreground) / 0.045) 25%, transparent 25%)
-      0 0 / 18px 18px,
-    hsl(var(--card));
-}
-
 .profile-detail-company-gallery {
   border-bottom-width: 4px;
 }
@@ -963,6 +928,13 @@
 }
 
 .logout-dialog-header {
+  --profile-detail-hero-ink: var(--background);
+}
+
+/* The own-profile cover reuses the detail pages' hero grid so the two read as
+   the same surface. The cover is `bg-foreground`, which inverts per theme, so
+   the grid ink is `--background` — the token that inverts with it. */
+.profile-cover {
   --profile-detail-hero-ink: var(--background);
 }
 

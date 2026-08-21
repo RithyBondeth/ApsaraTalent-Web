@@ -1,6 +1,7 @@
 "use client";
 
 import OpenPositionForm from "@/components/company/profile/open-position-form";
+import { GridRunners } from "@/components/ui/grid-runners";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -1230,17 +1231,22 @@ export default function ProfilePage() {
       <section className="profile-hero profile-company-hero overflow-hidden border border-border bg-card">
         {/* Cover Image Section */}
         <div
-          className={`profile-cover relative h-48 bg-cover bg-center bg-no-repeat sm:h-64 ${!company.cover ? "bg-foreground" : ""}`}
+          className={`profile-cover relative h-48 overflow-hidden bg-cover bg-center bg-no-repeat sm:h-64 ${!company.cover ? "bg-foreground" : ""}`}
           style={
             company.cover
               ? { backgroundImage: `url(${avatarOrCoverPreview.cover})` }
               : {}
           }
         >
-          {/* Overlay for Gradient Cover Section */}
-          {!company.cover && (
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_48%,hsl(var(--background)/0.09)_48%,hsl(var(--background)/0.09)_50%,transparent_50%,transparent_100%)] bg-[length:34px_34px]" />
-          )}
+          {/* Cover Background Section: the same grid the detail heroes use.
+              Drawn over a cover photo as well, which is what the detail
+              pages do — gating it on "no photo" is what made the two
+              covers diverge. */}
+          <div className="profile-detail-hero-grid" aria-hidden />
+          <GridRunners
+            className="profile-detail-grid-runners"
+            density="quiet"
+          />
 
           <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/65 to-transparent" />
           <span className="absolute bottom-4 left-5 text-[10px] font-bold uppercase tracking-[0.24em] text-white sm:left-6">

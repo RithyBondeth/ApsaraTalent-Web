@@ -524,7 +524,7 @@ export default function CompanyDetailPage() {
 
           {/* Career Scope Section */}
           {companyData.careerScopes && companyData.careerScopes.length > 0 && (
-            <DetailCard className="profile-detail-company-scope p-5 sm:p-6">
+            <DetailCard className="p-5 sm:p-6">
               <SectionTitle
                 icon={<LucideCompass />}
                 title={tf("careerScope")}

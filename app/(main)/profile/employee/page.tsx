@@ -1,6 +1,7 @@
 "use client";
 
 import EmployeeEducationForm from "@/components/employee/profile/education-form";
+import { GridRunners } from "@/components/ui/grid-runners";
 import EmployeeExperienceForm from "@/components/employee/profile/experience-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -1304,7 +1305,13 @@ export default function EmployeeProfilePage() {
       <section className="profile-hero profile-employee-hero overflow-hidden border border-border bg-card">
         {/* Gradient Banner Section */}
         <div className="profile-cover relative h-40 overflow-hidden bg-foreground sm:h-52">
-          <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_48%,hsl(var(--background)/0.09)_48%,hsl(var(--background)/0.09)_50%,transparent_50%,transparent_100%)] bg-[length:34px_34px]" />
+          {/* Cover Background Section: the same grid the employee and
+              company detail heroes use, so the two covers match. */}
+          <div className="profile-detail-hero-grid" aria-hidden />
+          <GridRunners
+            className="profile-detail-grid-runners"
+            density="quiet"
+          />
           <div className="absolute inset-x-5 top-5 flex items-start justify-between text-background sm:inset-x-6 sm:top-6">
             <span className="text-[10px] font-bold uppercase tracking-[0.24em] opacity-80">
               {tP("employeeProfileLabel")}
