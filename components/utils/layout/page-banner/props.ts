@@ -28,3 +28,15 @@ export interface IPageBannerProps {
   children?: ReactNode;
   className?: string;
 }
+
+export interface IPageBannerSkeletonProps {
+  /**
+   * How many stat placeholders to draw. Leave at 0 for pages that withhold
+   * `stats` until their data lands — drawing a stats column the banner will
+   * not have is the same reflow the placeholder exists to prevent.
+   */
+  stats?: number;
+  /** Placeholder for whatever the real banner puts in its children slot. */
+  children?: ReactNode;
+  className?: string;
+}

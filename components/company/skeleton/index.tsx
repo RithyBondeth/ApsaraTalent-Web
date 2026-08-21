@@ -4,7 +4,7 @@ import { Skeleton } from "../../ui/skeleton";
 /* --------------------------- Company Card Skeleton ---------------------------- */
 export default function CompanyCardSkeleton() {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden rounded-none border border-border bg-card">
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-none border border-t-[5px] border-border border-t-foreground bg-card">
       {/* Cover Banner Section */}
       <div className="relative h-32 w-full shrink-0 bg-gradient-to-br from-muted via-background to-muted/40 tablet-md:h-24">
         {/* Like and Quick View Buttons Section */}
@@ -73,7 +73,7 @@ function SkeletonCard({
 }) {
   return (
     <div
-      className={`border border-border bg-card shadow-[4px_4px_0_hsl(var(--foreground)/0.035)] [&_.animate-shimmer]:rounded-none ${className ?? ""}`}
+      className={`border border-border bg-card shadow-hard [&_.animate-shimmer]:rounded-none ${className ?? ""}`}
     >
       {children}
     </div>

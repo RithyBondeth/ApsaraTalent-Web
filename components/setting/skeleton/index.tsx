@@ -12,7 +12,7 @@ function SettingSectionSkeleton({ children }: { children: React.ReactNode }) {
           <Skeleton className="h-3 w-48 max-w-full rounded-none" />
         </div>
       </div>
-      <div className="overflow-hidden border border-t-[4px] border-border border-t-primary bg-card shadow-[4px_4px_0_hsl(var(--foreground)/0.05)]">
+      <div className="overflow-hidden border border-t-[5px] border-border border-t-foreground bg-card shadow-hard">
         {children}
       </div>
     </section>
@@ -40,7 +40,7 @@ export default function SettingLoadingSkeleton() {
   return (
     <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Page Header Section */}
-      <div className="border border-t-[5px] border-border border-t-primary bg-card px-5 py-7 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:px-7 sm:py-9">
+      <div className="border border-t-[5px] border-border border-t-foreground bg-card px-5 py-7 shadow-hard sm:px-7 sm:py-9">
         <div className="flex items-start gap-4 sm:gap-5">
           <Skeleton className="size-11 shrink-0 rounded-none sm:size-12" />
           <div className="flex flex-1 flex-col gap-2.5">

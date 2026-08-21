@@ -168,7 +168,7 @@ function MessageBubble(props: IMessageBubbleProps) {
         {/* Message Bubble Section */}
         <div className="relative" onClick={toggleDeliveryTime}>
           <div
-            className={`rounded-none border text-sm shadow-[3px_3px_0_hsl(var(--foreground)/0.05)] transition-all ${
+            className={`rounded-none border text-sm shadow-hard-sm transition-all ${
               message.isMe
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-l-[4px] border-border border-l-foreground bg-card text-foreground"

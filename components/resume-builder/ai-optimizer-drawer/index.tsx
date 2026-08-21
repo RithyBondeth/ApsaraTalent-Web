@@ -314,7 +314,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                         </Button>
                       )}
                     </div>
-                    <p className="rounded-none border border-l-[4px] border-border border-l-primary bg-muted/30 p-3 text-sm leading-relaxed text-muted-foreground">
+                    <p className="rounded-none border border-l-[4px] border-border border-l-primary bg-primary/5 p-3 text-sm leading-relaxed text-muted-foreground">
                       {data.suggestedSummary}
                     </p>
                   </div>

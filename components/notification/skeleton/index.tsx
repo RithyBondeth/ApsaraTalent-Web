@@ -1,12 +1,12 @@
+import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FeedBannerSkeleton } from "@/components/feed/skeleton";
 
 /* ---------------------------- Notification Page Loading Skeleton ---------------------------- */
 export default function NotificationLoadingSkeleton() {
   return (
     <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
-      <FeedBannerSkeleton />
+      <PageBannerSkeleton />
 
       {/* Content Section */}
       <section className="flex w-full flex-col gap-5">
@@ -22,7 +22,7 @@ export default function NotificationLoadingSkeleton() {
         </div>
 
         {/* Header Section: Filter tabs + action buttons */}
-        <div className="flex w-full flex-col gap-3 border border-t-[5px] border-border border-t-primary bg-card p-3 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex w-full flex-col gap-3 border border-t-[5px] border-border border-t-foreground bg-card p-3 shadow-hard sm:flex-row sm:items-center sm:justify-between">
           {/* Pill Tabs Filter Section: Hidden on tablet-sm */}
           <div className="scrollbar-none flex items-center gap-1 overflow-x-auto bg-muted/45 p-1 tablet-sm:hidden">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -57,7 +57,7 @@ export default function NotificationLoadingSkeleton() {
 /* -------------------------------- Notification Card Skeleton -------------------------------- */
 export function NotificationCardSkeleton() {
   return (
-    <div className="relative flex w-full items-start gap-3 overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:gap-5 sm:p-5">
+    <div className="relative flex w-full items-start gap-3 overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card p-4 shadow-hard sm:gap-5 sm:p-5">
       {/* Unread Indicator Bar Section */}
       <div className="absolute bottom-0 left-0 top-0 w-1 animate-pulse bg-muted" />
 

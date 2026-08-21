@@ -122,6 +122,39 @@
        than reintroducing a 12px corner the rest of the app doesn't use.
        Pills and avatars opt in with rounded-full. */
     --radius: 0rem;
+
+    /* ---------------------------------------------------------------- */
+    /* Elevation                                                        */
+    /*                                                                  */
+    /* A hard offset shadow with no blur — the square UI casts a solid  */
+    /* block, not a soft glow. Four steps, and nothing between them:    */
+    /*                                                                  */
+    /*   xs  inline controls, chips, small toggles                      */
+    /*   sm  nested surfaces sitting inside an already-raised one       */
+    /*   md  the default — cards, panels, list items, the page banner   */
+    /*   lg  surfaces that float over the page — dialogs, popovers      */
+    /*                                                                  */
+    /* These replaced 34 hand-written `shadow-[Npx_Npx_0_...]` values   */
+    /* that had drifted across 3–9px offsets and 0.035–0.18 alphas.     */
+    /* Reach for shadow-hard-xs/sm/hard/hard-lg instead of writing a    */
+    /* new arbitrary value; a one-off is how the drift started.         */
+    /* ---------------------------------------------------------------- */
+    --elevation-xs: 2px 2px 0 hsl(var(--foreground) / 0.06);
+    --elevation-sm: 3px 3px 0 hsl(var(--foreground) / 0.05);
+    --elevation-md: 5px 5px 0 hsl(var(--foreground) / 0.055);
+    --elevation-lg: 8px 8px 0 hsl(var(--foreground) / 0.08);
+
+    /* The active navigation item and a selected setting card are filled
+       cobalt; a foreground-coloured shadow under them reads as grime, so
+       they cast their own colour instead. Same ladder, primary hue. */
+    --elevation-primary-xs: 2px 2px 0 hsl(var(--primary) / 0.22);
+    --elevation-primary: 3px 3px 0 hsl(var(--primary) / 0.22);
+
+    /* The scrim behind a modal. Deliberately NOT derived from --foreground:
+       that token inverts per theme, so `bg-foreground/80` would put a white
+       veil over the page in dark mode. A scrim darkens in both themes. */
+    --scrim: 224 20% 4%;
+
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 221 83% 53%;
@@ -224,6 +257,19 @@
     --sidebar-accent-foreground: 213 94% 80%;
     --sidebar-border: 222 14% 19%;
     --sidebar-ring: 213 94% 68%;
+
+    /* Elevation — dark. The offset shadow is now near-white on a near
+       black page, so the light-mode alphas render as an invisible haze.
+       Roughly tripled so the block still reads as a cast shadow rather
+       than dirt on the surface, while staying under the lightness step
+       between --background and --card that does most of the separating. */
+    --elevation-xs: 2px 2px 0 hsl(var(--foreground) / 0.16);
+    --elevation-sm: 3px 3px 0 hsl(var(--foreground) / 0.14);
+    --elevation-md: 5px 5px 0 hsl(var(--foreground) / 0.15);
+    --elevation-lg: 8px 8px 0 hsl(var(--foreground) / 0.2);
+    --elevation-primary-xs: 2px 2px 0 hsl(var(--primary) / 0.3);
+    --elevation-primary: 3px 3px 0 hsl(var(--primary) / 0.3);
+    --scrim: 224 30% 2%;
   }
 }
 
@@ -351,7 +397,7 @@
   border-radius: 0 !important;
   background: hsl(var(--popover)) !important;
   color: hsl(var(--popover-foreground)) !important;
-  box-shadow: 6px 6px 0 hsl(var(--foreground) / 0.09) !important;
+  box-shadow: var(--elevation-lg) !important;
 }
 
 .profile-overlay,
@@ -418,7 +464,7 @@
 @media (hover: hover) and (pointer: fine) {
   .profile-editorial .profile-section:hover {
     border-color: hsl(var(--foreground) / 0.32);
-    box-shadow: 7px 7px 0 hsl(var(--foreground) / 0.055);
+    box-shadow: var(--elevation-lg);
     transform: translateY(-1px);
   }
 }
@@ -715,7 +761,7 @@
 }
 
 .profile-detail-employee-card {
-  box-shadow: 8px 8px 0 hsl(var(--foreground) / 0.07);
+  box-shadow: var(--elevation-lg);
 }
 
 .profile-detail-employee-intro {
@@ -950,7 +996,7 @@
 
 @media (max-width: 767px) {
   .profile-detail-employee-card {
-    box-shadow: 5px 5px 0 hsl(var(--foreground) / 0.06);
+    box-shadow: var(--elevation-md);
   }
 
   .profile-detail-focus-index {
@@ -2767,7 +2813,7 @@ body:has(.auth-scope),
   border-radius: 0;
   background: hsl(var(--card) / 0.5);
   padding: 1.25rem;
-  box-shadow: 5px 5px 0 hsl(var(--foreground) / 0.055);
+  box-shadow: var(--elevation-md);
 }
 
 .auth-wizard-step {

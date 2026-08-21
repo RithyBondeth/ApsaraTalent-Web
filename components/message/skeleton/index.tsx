@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 /* -------------------- Message Loading Skeleton Component -------------------- */
 export default function MessageLoadingSkeleton() {
   return (
-    <div className="relative mx-auto flex h-full w-full max-w-[1500px] overflow-hidden border border-t-[5px] border-border border-t-primary bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <div className="relative mx-auto flex h-full w-full max-w-[1500px] overflow-hidden border border-t-[5px] border-border border-t-foreground bg-card shadow-hard">
       <div className="hidden h-full w-full lg:flex">
         {/* Loading Skeleton for Sidebar Section */}
         <div className="w-[26%] min-w-[260px] max-w-[420px]">

@@ -70,7 +70,7 @@ export default function EmailVerificationPage() {
       <div className="auth-stagger flex w-full flex-col gap-7">
         {/* Icon Badge and Title Section */}
         <div style={{ "--d": "0ms" } as React.CSSProperties}>
-          <div className="mb-5 grid size-12 place-items-center rounded-none bg-foreground text-background shadow-[3px_3px_0_hsl(var(--foreground)/0.12)]">
+          <div className="mb-5 grid size-12 place-items-center rounded-none bg-foreground text-background shadow-hard-sm">
             <LucideMailCheck className="size-5" strokeWidth={1.6} />
           </div>
           <TypographyH2 className="tablet-sm:text-2xl">

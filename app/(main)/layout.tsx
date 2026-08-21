@@ -77,7 +77,7 @@ export default function MainLayout({
         {/* Skip Navigation Section */}
         <a
           href="#main-content"
-          className="sr-only z-[100] bg-primary px-4 py-3 font-semibold text-primary-foreground shadow-[3px_3px_0_hsl(var(--foreground)/0.18)] focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
+          className="sr-only z-[100] bg-primary px-4 py-3 font-semibold text-primary-foreground shadow-hard-sm focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
         >
           Skip to main content
         </a>
@@ -103,7 +103,7 @@ export default function MainLayout({
       {/* Skip Navigation Section */}
       <a
         href="#main-content"
-        className="sr-only z-[100] bg-primary px-4 py-3 font-semibold text-primary-foreground shadow-[3px_3px_0_hsl(var(--foreground)/0.18)] focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
+        className="sr-only z-[100] bg-primary px-4 py-3 font-semibold text-primary-foreground shadow-hard-sm focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
       >
         Skip to main content
       </a>

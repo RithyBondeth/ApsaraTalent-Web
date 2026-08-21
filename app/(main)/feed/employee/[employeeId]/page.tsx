@@ -458,7 +458,7 @@ export default function EmployeeDetailPage() {
                       <div
                         className={`min-w-0 flex-1 ${i < employeeData.experiences.length - 1 ? "pb-3" : ""}`}
                       >
-                        <div className="profile-detail-timeline-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-[3px_3px_0_hsl(var(--foreground)/0.05)]">
+                        <div className="profile-detail-timeline-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-hard-sm">
                           <p className="text-base font-bold tracking-tight">
                             {item.title}
                           </p>
@@ -494,7 +494,7 @@ export default function EmployeeDetailPage() {
                 {employeeData.educations.map((item: IEducation) => (
                   <div
                     key={item.id}
-                    className="flex items-start gap-3 border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-[3px_3px_0_hsl(var(--foreground)/0.05)]"
+                    className="flex items-start gap-3 border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-hard-sm"
                   >
                     <div className="flex size-9 flex-shrink-0 items-center justify-center border border-border bg-muted/60">
                       <LucideGraduationCap

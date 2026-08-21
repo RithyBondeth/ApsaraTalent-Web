@@ -388,7 +388,7 @@ export default function ChatInput(props: IChatInputProps) {
         />
 
         {/* Input Pill Section */}
-        <div className="flex-1 overflow-hidden rounded-none border border-l-[4px] border-border border-l-foreground bg-muted/20 shadow-[3px_3px_0_hsl(var(--foreground)/0.04)] transition-colors focus-within:border-primary focus-within:border-l-primary focus-within:bg-background">
+        <div className="flex-1 overflow-hidden rounded-none border border-l-[4px] border-border border-l-foreground bg-muted/20 shadow-hard-sm transition-colors focus-within:border-primary focus-within:border-l-primary focus-within:bg-background">
           {/* Attachment Thumbnail Strip Section (inside the pill, above the textarea) */}
           {hasAnyFiles && (
             <MessageAttachmentStrip
@@ -515,7 +515,7 @@ export default function ChatInput(props: IChatInputProps) {
             variant="default"
             onClick={handleSend}
             disabled={sendDisabled}
-            className="h-9 w-9 shrink-0 rounded-none p-0 font-medium shadow-[3px_3px_0_hsl(var(--foreground)/0.12)] sm:h-10 sm:w-10"
+            className="h-9 w-9 shrink-0 rounded-none p-0 font-medium shadow-hard-sm sm:h-10 sm:w-10"
             aria-label="Send message"
           >
             <LucideSendHorizonal className="h-4 w-4" />

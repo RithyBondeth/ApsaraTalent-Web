@@ -156,6 +156,7 @@ export default {
             subtle: "hsl(var(--category-lime-subtle))",
           },
         },
+        scrim: "hsl(var(--scrim))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -176,6 +177,18 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      // Elevation. The square UI casts a hard offset block with no blur;
+      // these four steps are the whole ladder. Defined as CSS variables in
+      // globals.css so dark mode can raise the alpha — a near-white shadow
+      // at the light-mode 5.5% is invisible on a 6%-lightness page.
+      boxShadow: {
+        "hard-xs": "var(--elevation-xs)",
+        "hard-sm": "var(--elevation-sm)",
+        hard: "var(--elevation-md)",
+        "hard-lg": "var(--elevation-lg)",
+        "hard-primary-xs": "var(--elevation-primary-xs)",
+        "hard-primary": "var(--elevation-primary)",
       },
       // --radius is 0 (the UI is square), so the shadcn ladder would otherwise
       // compute negative values. max() floors them instead of leaning on

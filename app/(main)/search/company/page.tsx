@@ -415,7 +415,7 @@ export default function CompanySearchPage() {
       <div className="flex w-full items-start gap-5 tablet-xl:flex-col">
         {/* Left Side: Filters Section */}
         <div
-          className={`search-filter-panel flex w-72 shrink-0 flex-col self-start rounded-none border border-t-[5px] border-border border-t-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] tablet-xl:w-full xl:w-80 ${
+          className={`search-filter-panel flex w-72 shrink-0 flex-col self-start rounded-none border border-t-[5px] border-border border-t-foreground bg-card shadow-hard tablet-xl:w-full xl:w-80 ${
             mobileFiltersOpen ? "tablet-xl:flex" : "tablet-xl:hidden"
           }`}
         >
@@ -627,7 +627,7 @@ export default function CompanySearchPage() {
                         >
                           <SelectValue placeholder={t("sortBy")} />
                         </SelectTrigger>
-                        <SelectContent className="rounded-none border-border shadow-[5px_5px_0_hsl(var(--foreground)/0.08)] [&_[role=option]]:rounded-none">
+                        <SelectContent className="rounded-none border-border shadow-hard [&_[role=option]]:rounded-none">
                           <SelectItem value="createdAt-desc">
                             {t("newestFirst")}
                           </SelectItem>

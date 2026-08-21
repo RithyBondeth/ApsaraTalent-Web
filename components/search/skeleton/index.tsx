@@ -1,3 +1,4 @@
+import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 
 /* ---------------------------- Search Bar Skeleton --------------------------- */
@@ -17,49 +18,22 @@ function SearchBarSkeleton() {
 }
 
 /* ---------------------------- Search Hero Skeleton -------------------------- */
+// The search pages render their hero through `SearchPageHero`, a thin wrapper
+// over `PageBanner` that hands the filter bar to the banner's children slot —
+// so the placeholder is the banner's own skeleton with the same slot filled.
+// No `stats`: both search pages withhold them while `loading` is true.
 function SearchHeroSkeleton() {
   return (
-    <div className="flex min-h-[300px] w-full flex-row overflow-hidden border border-border bg-card">
-      {/* Hero Copy and Search Section */}
-      <div className="flex w-3/5 min-w-0 flex-none flex-col justify-between gap-7 px-6 py-7 tablet-md:gap-4 tablet-md:px-4 tablet-md:py-5 sm:px-8 sm:py-9">
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-px w-7 rounded-none" />
-          <Skeleton className="h-2.5 w-24 rounded-none" />
-        </div>
-
-        <div className="space-y-3">
-          <Skeleton className="h-10 w-5/6 max-w-[560px] rounded-none tablet-md:h-6" />
-          <Skeleton className="h-10 w-3/5 max-w-[420px] rounded-none tablet-md:h-6" />
-          <Skeleton className="h-4 w-4/5 max-w-[520px] rounded-none" />
-        </div>
-
-        <div className="flex items-center gap-3 tablet-md:hidden">
-          <Skeleton className="h-9 w-0.5 rounded-none" />
-          <Skeleton className="h-3 w-3/5 rounded-none" />
-        </div>
-
-        <SearchBarSkeleton />
-      </div>
-
-      {/* Hero Visual Section */}
-      <div className="relative flex min-h-[300px] w-2/5 min-w-0 shrink-0 items-center justify-center overflow-hidden bg-foreground p-7 tablet-md:p-3">
-        <div className="absolute left-4 top-4 flex items-center gap-2 tablet-md:left-2 tablet-md:top-2">
-          <Skeleton className="size-7 rounded-none opacity-20" />
-          <Skeleton className="h-3 w-28 rounded-none opacity-20 tablet-md:hidden" />
-        </div>
-        <div className="relative mt-5 h-[206px] w-[84%] max-w-[330px] border border-background/15 p-3 tablet-md:h-[124px] tablet-md:w-[78%] tablet-md:p-1.5">
-          <div className="absolute -bottom-2 -right-2 h-full w-full border border-background/10" />
-          <Skeleton className="relative h-full w-full rounded-none opacity-20" />
-        </div>
-      </div>
-    </div>
+    <PageBannerSkeleton>
+      <SearchBarSkeleton />
+    </PageBannerSkeleton>
   );
 }
 
 /* -------------------------- Filter Sidebar Skeleton ------------------------- */
 function SearchFilterSidebarSkeleton({ filterCount }: { filterCount: number }) {
   return (
-    <div className="search-filter-panel flex w-72 shrink-0 flex-col border border-t-[5px] border-border border-t-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] tablet-xl:hidden xl:w-80">
+    <div className="search-filter-panel flex w-72 shrink-0 flex-col border border-t-[5px] border-border border-t-foreground bg-card shadow-hard tablet-xl:hidden xl:w-80">
       {/* Sidebar Header Section */}
       <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4">
         <Skeleton className="h-5 w-28 rounded-none" />
@@ -99,7 +73,7 @@ function SearchResultsHeaderSkeleton() {
 /* -------------------------- Company Result Skeleton ------------------------- */
 export function SearchCompanyCardSkeleton() {
   return (
-    <div className="w-full overflow-hidden border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <div className="w-full overflow-hidden border border-l-[5px] border-border border-l-foreground bg-card shadow-hard">
       {/* Company and Position Content Section */}
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Section */}
@@ -149,7 +123,7 @@ export function SearchCompanyCardSkeleton() {
 /* -------------------------- Employee Result Skeleton ------------------------ */
 function SearchEmployeePageCardSkeleton() {
   return (
-    <div className="w-full overflow-hidden border border-l-[5px] border-border border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <div className="w-full overflow-hidden border border-l-[5px] border-border border-l-foreground bg-card shadow-hard">
       {/* Employee Content Section */}
       <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Section */}

@@ -37,7 +37,7 @@ export const ReactionPicker = (props: {
       <PopoverContent
         side="top"
         align="center"
-        className="w-fit rounded-none border-muted bg-background/95 p-1 shadow-lg backdrop-blur-md"
+        className="w-fit rounded-none border-muted bg-background/95 p-1 shadow-hard-lg backdrop-blur-md"
       >
         {/* Emoji List Section */}
         <div className="flex gap-1">

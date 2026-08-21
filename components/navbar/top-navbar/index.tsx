@@ -301,7 +301,7 @@ export default function TopNavbar() {
                   <span
                     className={`relative flex h-8 w-9 items-center justify-center border transition-[background-color,border-color,color,transform] duration-200 ${
                       isMoreActive
-                        ? "border-primary bg-primary text-primary-foreground shadow-[2px_2px_0_hsl(var(--primary)/0.22)]"
+                        ? "border-primary bg-primary text-primary-foreground shadow-hard-primary-xs"
                         : "border-transparent group-hover:border-border group-hover:bg-muted/60 group-active:translate-y-px"
                     }`}
                   >
@@ -311,7 +311,7 @@ export default function TopNavbar() {
                     />
                     <span className="sr-only">{t("more")}</span>
                     {moreBadgeCount > 0 && (
-                      <span className="absolute -right-2 -top-2 flex h-[17px] min-w-[17px] items-center justify-center border border-background bg-destructive px-1 text-[9px] font-extrabold leading-none text-destructive-foreground shadow-[1px_1px_0_hsl(var(--foreground)/0.18)]">
+                      <span className="absolute -right-2 -top-2 flex h-[17px] min-w-[17px] items-center justify-center border border-background bg-destructive px-1 text-[9px] font-extrabold leading-none text-destructive-foreground shadow-hard-xs">
                         {moreBadgeCount > 99 ? "99+" : moreBadgeCount}
                       </span>
                     )}

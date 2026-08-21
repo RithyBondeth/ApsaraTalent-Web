@@ -66,7 +66,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
   if (isGrid) {
     return (
       <>
-        <div className="group relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-none border border-border/70 bg-card shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1.5 hover:border-primary/25 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] active:translate-y-0 active:scale-[0.98] active:shadow-[0_2px_8px_hsl(var(--foreground)/0.05)]">
+        <div className="group relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-none border border-t-[5px] border-border border-t-foreground bg-card transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:border-foreground/45 hover:border-t-foreground hover:shadow-hard-lg active:translate-y-0 active:scale-[0.985] active:shadow-none">
           {/* Cover Banner Section */}
           <div className="relative h-32 w-full shrink-0 overflow-hidden bg-gradient-to-br from-muted via-background to-muted/40 tablet-md:h-24">
             {props.cover && (
@@ -84,7 +84,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 size="icon"
                 variant="ghost"
                 aria-label="Like"
-                className="size-8 rounded-none border border-border/70 bg-background/90 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-foreground hover:text-background"
+                className="size-8 rounded-none border border-border bg-background/90 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-foreground hover:text-background"
                 onClick={props.onLikeClick}
                 disabled={props.onLikeClickDisable}
               >
@@ -98,7 +98,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 size="icon"
                 variant="ghost"
                 aria-label="Quick view"
-                className="size-8 rounded-none border border-border/70 bg-background/90 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-foreground hover:text-background"
+                className="size-8 rounded-none border border-border bg-background/90 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-foreground hover:text-background"
                 onClick={handleClickDialog}
               >
                 <LucideEye className="!size-4" />
@@ -264,7 +264,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
 
   // ── Default Variant Section ───────────────────────────────────────────────
   return (
-    <div className="flex h-fit w-full cursor-pointer flex-col items-start gap-4 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-foreground/40 hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+    <div className="flex h-fit w-full cursor-pointer flex-col items-start gap-4 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-4 shadow-hard transition-all duration-300 ease-out hover:-translate-y-1 hover:border-foreground/40 hover:shadow-hard-lg">
       {/* Main Content Section */}
       <div className="flex w-full flex-wrap items-start justify-between gap-3">
         {/* Header Section: Avatar + Info + Actions */}

@@ -4,6 +4,7 @@ import { LucideBriefcase, LucideSparkles, LucideUsers } from "lucide-react";
 
 import { StatusPill } from "@/components/utils/data-display/status-pill";
 import { PageBanner } from "@/components/utils/layout/page-banner";
+import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -145,6 +146,16 @@ export default function DesignSystemPage() {
               title="Build a standout resume in minutes"
               subtitle="Let AI draft, refine, and format your resume so you can focus on the content."
             />
+          </div>
+        </Section>
+
+        <Section
+          title="Page banner — loading"
+          note="The placeholder above each banner is the banner: same padding, same accent edge, same grid. Each bar sits in a row the height of the line box it stands in, so nothing moves when the copy arrives. Pass `stats` only for pages that hand the banner its counts on first paint."
+        >
+          <div className="space-y-4">
+            <PageBannerSkeleton stats={3} />
+            <PageBannerSkeleton />
           </div>
         </Section>
 
@@ -320,10 +331,10 @@ export default function DesignSystemPage() {
         >
           <div className="grid gap-4 sm:grid-cols-3">
             <Card className="p-4 text-sm">Card — 4px offset</Card>
-            <div className="border border-border bg-card p-4 text-sm shadow-[6px_6px_0_hsl(var(--foreground)/0.1)]">
+            <div className="border border-border bg-card p-4 text-sm shadow-hard-lg">
               Dialog — 6px offset
             </div>
-            <div className="border border-border bg-popover p-4 text-sm shadow-[4px_4px_0_hsl(var(--foreground)/0.08)]">
+            <div className="border border-border bg-popover p-4 text-sm shadow-hard">
               Popover — 4px offset
             </div>
           </div>

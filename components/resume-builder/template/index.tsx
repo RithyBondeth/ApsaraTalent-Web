@@ -23,8 +23,8 @@ export default function TemplateCard(props: ITemplateCardProps) {
     <article
       className={`group h-full w-full cursor-pointer overflow-hidden border bg-card transition-[border-color,box-shadow,transform] duration-200 ease-out ${
         props.selected
-          ? "-translate-y-0.5 border-foreground shadow-[7px_7px_0_hsl(var(--foreground)/0.12)]"
-          : "border-border shadow-[4px_4px_0_hsl(var(--foreground)/0.045)] hover:-translate-y-0.5 hover:border-foreground/35 hover:shadow-[7px_7px_0_hsl(var(--foreground)/0.07)]"
+          ? "-translate-y-0.5 border-foreground shadow-hard-lg"
+          : "border-border shadow-hard hover:-translate-y-0.5 hover:border-foreground/35 hover:shadow-hard-lg"
       }`}
     >
       {/* Preview Area Section */}

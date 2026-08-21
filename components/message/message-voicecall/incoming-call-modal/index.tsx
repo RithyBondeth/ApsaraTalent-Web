@@ -22,8 +22,8 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm duration-200 animate-in fade-in">
-      <div className="flex w-80 flex-col items-center gap-5 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-6 shadow-[7px_7px_0_hsl(var(--foreground)/0.14)] duration-200 animate-in zoom-in-95">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-scrim/50 backdrop-blur-sm duration-200 animate-in fade-in">
+      <div className="flex w-80 flex-col items-center gap-5 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-6 shadow-hard-lg duration-200 animate-in zoom-in-95">
         {/* Incoming Voice Call Label Section */}
         <div className="space-y-1 text-center">
           <TypographyMuted className="text-xs font-medium uppercase tracking-widest text-muted-foreground">

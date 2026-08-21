@@ -138,7 +138,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
       <DropdownMenu>
         {/* User Menu Trigger Section */}
         <DropdownMenuTrigger asChild>
-          <button className="group flex h-11 items-center gap-2 border border-border bg-card/80 px-2 transition-[background-color,border-color,box-shadow,transform] duration-200 hover:border-foreground/35 hover:bg-muted/60 hover:shadow-[3px_3px_0_hsl(var(--foreground)/0.08)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px">
+          <button className="group flex h-11 items-center gap-2 border border-border bg-card/80 px-2 transition-[background-color,border-color,box-shadow,transform] duration-200 hover:border-foreground/35 hover:bg-muted/60 hover:shadow-hard-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px">
             {/* Avatar Section */}
             <Avatar
               rounded="md"
@@ -167,7 +167,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
 
         {/* Dropdown Content Section */}
         <DropdownMenuContent
-          className="w-72 overflow-hidden rounded-none border border-foreground/20 p-0 shadow-[7px_7px_0_hsl(var(--foreground)/0.1),0_18px_45px_hsl(var(--foreground)/0.12)]"
+          className="w-72 overflow-hidden rounded-none border border-foreground/20 p-0 shadow-hard-lg"
           side="bottom"
           align="end"
           sideOffset={9}

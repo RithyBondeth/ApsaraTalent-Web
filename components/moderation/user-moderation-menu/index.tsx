@@ -135,7 +135,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
           className={cn(
             "w-44",
             isEditorial &&
-              "rounded-none border-border bg-popover p-0 shadow-[6px_6px_0_hsl(var(--foreground)/0.09)]",
+              "rounded-none border-border bg-popover p-0 shadow-hard-lg",
           )}
         >
           <DropdownMenuItem

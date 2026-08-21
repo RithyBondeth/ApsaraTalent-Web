@@ -198,7 +198,8 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
       {/* Dialog Section */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="flex flex-col gap-0 rounded-none border-t-[5px] border-t-foreground p-0 shadow-[6px_6px_0_hsl(var(--foreground)/0.1)] sm:max-w-2xl"
+          variant="flush"
+          size="xl"
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             triggerRef.current?.focus();

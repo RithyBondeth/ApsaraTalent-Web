@@ -1,5 +1,7 @@
 "use client";
 
+import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
+
 import EmployeeCardSkeleton from "@/components/employee/skeleton";
 import ImagePopup from "@/components/utils/data-display/image-popup";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -40,7 +42,6 @@ import {
 import CompanyCardSkeleton from "@/components/company/skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  FeedBannerSkeleton,
   FeedDividerSkeleton,
   FeedRecommendationsSkeleton,
 } from "@/components/feed/skeleton";
@@ -633,7 +634,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       <OnboardingFlow />
       {/* Feed Banner Section */}
       {isLoading ? (
-        <FeedBannerSkeleton />
+        <PageBannerSkeleton stats={1} />
       ) : (
         <FadeIn className="w-full">
           {/* Feed Banner Content Section */}

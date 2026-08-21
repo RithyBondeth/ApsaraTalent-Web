@@ -121,7 +121,7 @@ export function OnboardingFlow() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Card Container Section */}
-        <div className="relative flex flex-col gap-4 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-5 shadow-[6px_6px_0_hsl(var(--foreground)/0.12)]">
+        <div className="relative flex flex-col gap-4 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-5 shadow-hard-lg">
           {/* Close Button Section */}
           <button
             onClick={dismiss}

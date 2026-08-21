@@ -406,7 +406,7 @@ export default function CompanyDetailPage() {
                   {companyData.openPositions.map((item) => (
                     <div
                       key={item.id}
-                      className="profile-detail-position-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-[4px_4px_0_hsl(var(--foreground)/0.06)] sm:p-5"
+                      className="profile-detail-position-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-hard sm:p-5"
                     >
                       {/* Position Header Section */}
                       <div className="flex items-start justify-between gap-3 tablet-md:flex-col">

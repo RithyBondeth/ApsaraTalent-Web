@@ -154,7 +154,7 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-lg rounded-none sm:rounded-none [&>button]:rounded-none">
+      <DialogContent>
         {/* Dialog Header Section: Title */}
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

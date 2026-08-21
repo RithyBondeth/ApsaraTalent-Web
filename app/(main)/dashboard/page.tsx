@@ -198,7 +198,7 @@ export default function DashboardPage() {
         />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {/* Weekly Activity Bar Chart Section */}
-          <div className="border border-t-[5px] border-border border-t-primary bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:col-span-2 sm:p-6 lg:col-span-2">
+          <div className="border border-t-[5px] border-border border-t-foreground bg-card p-5 shadow-hard sm:col-span-2 sm:p-6 lg:col-span-2">
             {/* Weekly Activity Header Section */}
             <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
               <div className="flex flex-col items-start gap-2">
@@ -227,7 +227,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Match Rate Radial Chart Section */}
-          <div className="flex flex-col border border-t-[5px] border-border border-t-primary bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
+          <div className="flex flex-col border border-t-[5px] border-border border-t-foreground bg-card p-5 shadow-hard sm:p-6">
             {/* Match Rate Header Section */}
             <div className="flex flex-col items-start gap-2">
               <TypographyH4>{t("matchRate")}</TypographyH4>
@@ -250,7 +250,7 @@ export default function DashboardPage() {
           title={t("recentMatches")}
           icon={<LucideUsers className="size-4" />}
         />
-        <div className="border border-t-[5px] border-border border-t-primary bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
+        <div className="border border-t-[5px] border-border border-t-foreground bg-card p-5 shadow-hard sm:p-6">
           <RecentMatchesList
             matches={data.recentMatches}
             isEmployee={isEmployee}

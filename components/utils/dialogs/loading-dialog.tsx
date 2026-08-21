@@ -30,7 +30,9 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
   return (
     <Dialog open={loading}>
       <DialogContent
-        className="max-w-sm overflow-hidden rounded-none border-border/60 bg-background/95 shadow-2xl backdrop-blur-sm sm:rounded-none [&>button]:hidden"
+        size="sm"
+        hideClose
+        className="bg-background/95 backdrop-blur-sm"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >

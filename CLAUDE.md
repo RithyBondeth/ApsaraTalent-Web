@@ -147,8 +147,58 @@ scripts/             # Node maintenance and verification scripts
 - Use Tailwind CSS with the established design system
 - Custom breakpoints are defined for responsive design
 - The UI is square: `rounded-none` everywhere, `rounded-full` only for avatars,
-  dots and pills. `--radius` is `0` so the shadcn primitives agree. Elevation is
-  a hard offset shadow with no blur (`4px 4px 0`), not a soft drop shadow.
+  dots and pills. `--radius` is `0` so the shadcn primitives agree.
+
+### Elevation
+Elevation is a hard offset shadow with no blur, and it is a **four-step token
+ladder** — never an arbitrary value:
+
+- `shadow-hard-xs` — inline controls, chips
+- `shadow-hard-sm` — a surface nested inside an already-raised one
+- `shadow-hard` — the default: cards, panels, list items
+- `shadow-hard-lg` — floats over the page: dialogs, sheets, popovers
+- `shadow-hard-primary` / `-primary-xs` — a filled-cobalt surface (the active
+  nav item, a selected setting card) casting its own hue instead of grime
+
+They resolve from `--elevation-*` in `globals.css`, which raises the alpha in
+dark mode — a near-white shadow at the light-mode 5.5% is invisible on a
+6%-lightness page. `npm run check:elevation` ratchets hand-written
+`shadow-[…]` values; the six that remain are deliberate *glows* (the button's
+coloured hover bloom, the scroll-to-top pill, the landing device panel), which
+describe light rather than height.
+
+### Accent edges
+**Ink is structure. Cobalt is interaction.** A surface gets an ink edge because
+it is a surface; it gets a cobalt one only when the blue is carrying
+information.
+
+Two widths, and they are not interchangeable:
+
+- **`border-*-[5px]`** — a *surface* accent: the top or left edge of a card,
+  panel, dialog or banner. Always `foreground`, with the exceptions below.
+- **`border-*-[4px]`** — an *inline* accent: a passage of content inside a
+  surface. Callouts, quote blocks, message bubbles, chat rows.
+
+Cobalt is reserved for these, and nothing else:
+
+| | |
+|---|---|
+| `PageBanner` | page identity — the one cobalt edge per page |
+| `PageState` | blue empty vs red error; the colour *is* the state |
+| active chat row, focused message input | selected / focus state |
+| AI-suggestion callouts | paired with `bg-primary/5` — marks generated content |
+
+Inside `.auth-scope` and `.landing-scope` the ink is a warm brown rather than
+charcoal, because those scopes redefine `--foreground`. That is deliberate;
+they read as paper.
+
+The reason for the split: `--primary` is also every button fill, every link and
+the focus ring. A decorative cobalt rule competes with the actual affordances
+for the same attention — on the settings page, a blue bar over the "About" card
+was louder than the "View →" links inside it, which were the only clickable
+things there. Five cards on that page each wore one, so the accent had stopped
+distinguishing any surface and become a texture. 26 decorative accents moved to
+ink; 10 semantic ones kept the blue.
 
 ### Page banners
 - Every signed-in page's banner is `PageBanner`
@@ -161,6 +211,32 @@ scripts/             # Node maintenance and verification scripts
   image; give the space to real data via `stats` instead.
 - Withhold `stats` until the data has loaded (pass `undefined`, not zeroes) so a
   placeholder "0" doesn't flash and reflow.
+- The loading shape is `PageBannerSkeleton`, beside `PageBanner`. It carries the
+  *same* wrapper classes as the real banner, and `page-banner-parity.test.tsx`
+  fails if the two ever diverge. Pass `stats={n}` only for pages that hand the
+  banner its counts on first paint — a skeleton that draws a stats column the
+  banner won't have is the reflow the placeholder exists to prevent.
+- This replaced `FeedBannerSkeleton`, which had been left behind by the hero
+  removal: it still drew a 280px two-column grid with a dark `bg-foreground`
+  artwork panel, so six pages loaded with a shape they were never going to
+  show. Nothing in the type system ties a component to its skeleton, so when
+  you change a page's layout, change its skeleton in the same commit.
+
+### Dialogs
+`DialogContent` owns the surface — square corners, the 5px ink top edge,
+`shadow-hard-lg`, the square close button. Call sites had been restating all
+of it and disagreeing while they did (five swapped the accent to
+`border-t-foreground`, four fell back to `shadow-2xl`/`shadow-lg`, five undid
+the round close button with `[&>button]:rounded-none`).
+
+Only two shapes exist, as variants rather than class strings:
+
+- `variant="default"` — padded body: a title, some copy, a footer
+- `variant="flush"` — the dialog draws its own header/body/footer bands
+
+plus `size` (`sm`/`md`/`lg`/`xl`/`full`) and `hideClose`. Widths, heights and
+scroll containers still go through `className`; the *surface* does not. `Sheet`
+is the same surface on a slide-in, and shares the scrim and elevation.
 
 ### Colour
 All colour lives in CSS custom properties in `app/globals.css` and is exposed
@@ -191,10 +267,16 @@ with literal strings — `` `bg-${status}-subtle` `` silently compiles to nothin
 `StatusPill` (`components/utils/data-display/status-pill`) already covers the
 common status-badge case.
 
-- `npm run check:design` gates both halves: `check:contrast` re-derives every
+- **Scrim** — `scrim`, the veil behind a modal. Deliberately not derived from
+  `--foreground`: that token inverts per theme, so `bg-foreground/80` would put
+  a *white* wash over the page in dark mode. Use `bg-scrim/80`, never
+  `bg-black/80`.
+
+- `npm run check:design` gates three things: `check:contrast` re-derives every
   token pair's WCAG ratio from `globals.css` and fails if one drops below
-  threshold; `check:tokens` is a ratchet on raw palette classes that may go down
-  but never up (`--list` to see what's left, `--update` after migrating a file).
+  threshold; `check:tokens` is a ratchet on raw palette classes; `check:elevation`
+  is a ratchet on hand-written shadows. Both ratchets may go down but never up
+  (`--list` to see what's left, `--update` after migrating a file).
 - `app/design-system` renders every token and primitive in both themes. Dev
   only — it `notFound()`s in production.
 

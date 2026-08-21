@@ -34,7 +34,8 @@
     "check:env": "node scripts/check-env.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:tokens": "node scripts/check-color-tokens.mjs",
-    "check:design": "npm run check:contrast && npm run check:tokens"
+    "check:design": "npm run check:contrast && npm run check:tokens && npm run check:elevation",
+    "check:elevation": "node scripts/check-elevation.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

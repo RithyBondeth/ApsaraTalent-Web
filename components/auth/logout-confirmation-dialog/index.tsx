@@ -57,7 +57,9 @@ export function LogoutConfirmationDialog(
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="logout-dialog w-[calc(100%-1.5rem)] max-w-md rounded-none border border-foreground/20 bg-card p-0 shadow-[9px_9px_0_hsl(var(--foreground)/0.12),0_24px_70px_hsl(var(--foreground)/0.18)] sm:rounded-none"
+        variant="flush"
+        size="md"
+        className="logout-dialog w-[calc(100%-1.5rem)] bg-card"
         onOpenAutoFocus={(event) => {
           event.preventDefault();
           cancelButtonRef.current?.focus();

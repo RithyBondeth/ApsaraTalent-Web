@@ -57,7 +57,7 @@ function LanguageCard(props: ILanguageCardProps) {
       className={cn(
         "relative flex w-full cursor-pointer items-center gap-3 border-2 px-4 py-3.5 text-left transition-all duration-200",
         active
-          ? "border-primary bg-primary/5 shadow-[3px_3px_0_hsl(var(--primary)/0.18)]"
+          ? "border-primary bg-primary/5 shadow-hard-primary"
           : "border-border bg-card hover:border-primary/40 hover:bg-accent/50",
       )}
     >

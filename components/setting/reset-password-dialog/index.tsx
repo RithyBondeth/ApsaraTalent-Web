@@ -24,7 +24,7 @@ export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm rounded-none border-t-[5px] border-t-primary shadow-[6px_6px_0_hsl(var(--foreground)/0.09)]">
+      <DialogContent size="sm">
         <DialogHeader>
           {/* Reset Password Icon Header Section */}
           <div className="mx-auto mb-2 flex size-14 items-center justify-center border border-primary/25 bg-primary/10">

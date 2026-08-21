@@ -28,7 +28,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
     <Avatar
       rounded="md"
       className={cn(
-        "shrink-0 rounded-none border-[3px] border-card bg-card shadow-[7px_7px_0_hsl(var(--foreground)/0.14)]",
+        "shrink-0 rounded-none border-[3px] border-card bg-card shadow-hard-lg",
         avatar && onAvatarClick && "cursor-pointer",
       )}
       onClick={avatar && onAvatarClick ? onAvatarClick : undefined}

@@ -140,7 +140,7 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
       {/* Dialog Section */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="rounded-none border-t-[5px] border-t-foreground shadow-[6px_6px_0_hsl(var(--foreground)/0.1)]"
+          className=""
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             triggerRef.current?.focus();

@@ -67,7 +67,7 @@ export function BlockedUsersSection() {
             title={error}
             description={tS("blockedUsersLoadErrorDescription")}
             compact
-            className="min-h-0 border-x-0 border-b-0 py-7 shadow-none"
+            className="min-h-0 border-0 py-7 shadow-none"
             action={{
               label: tS("retry"),
               onClick: () => void getBlockedUsers(),
@@ -78,7 +78,7 @@ export function BlockedUsersSection() {
             variant="empty"
             title={tS("noBlockedUsers")}
             compact
-            className="min-h-0 border-x-0 border-b-0 py-7 shadow-none"
+            className="min-h-0 border-0 py-7 shadow-none"
           />
         ) : (
           /* ── Blocked Users List Section ────────────────────── */

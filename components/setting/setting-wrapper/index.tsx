@@ -29,7 +29,7 @@ export function SettingWrapper(props: ISettingWrapperProps) {
       </div>
 
       {/* Setting Wrapper Content Section */}
-      <div className="overflow-hidden border border-t-[4px] border-border border-t-primary bg-card shadow-[4px_4px_0_hsl(var(--foreground)/0.05)]">
+      <div className="overflow-hidden border border-t-[5px] border-border border-t-foreground bg-card shadow-hard">
         {children}
       </div>
     </section>
