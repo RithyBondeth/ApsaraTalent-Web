@@ -209,11 +209,11 @@
     "otpSubtitle": "We will sent you an one time password code on your phone number.",
     "otpRequired": "OTP Code is required",
     "otpLength": "OTP must be 6 digits",
-    "otpInstructions": "Enter your one time password code here.",
+    "otpInstructions": "Enter the 6-digit code from your email.",
     "didntReceiveCode": "Didn't receive code?",
     "resend": "Resend",
     "emailVerificationTitle": "Email Verification",
-    "emailVerificationSubtitle": "Please verify you email by clicking the verify button below.",
+    "emailVerificationSubtitle": "Enter the 6-digit code we emailed you to finish setting up your account.",
     "verify": "Verify",
     "backToBasicInfo": "Back to basic info",
     "signupAsEmployee": "Sign up as employee",
@@ -406,7 +406,13 @@
     "smartUploadDataApplied": "Resume data applied to your form",
     "smartUploadDialogTitle": "Speed up your registration",
     "smartUploadDialogSubtitle": "Upload your resume and we'll auto-fill your info. Or skip and fill in manually.",
-    "smartUploadDialogSkip": "Fill in manually"
+    "smartUploadDialogSkip": "Fill in manually",
+    "emailVerificationSentTo": "We sent a 6-digit code to {email}.",
+    "emailMissingForOtp": "We don't know which address to verify. Open the link from your signup, or sign up again.",
+    "didNotReceiveCode": "Didn't get the code?",
+    "resendCode": "Send a new one",
+    "resendCodeIn": "Resend in {seconds}s",
+    "verificationCodeResent": "A new code is on its way."
   },
   "toast": {
     "removeResumeSuccess": "Remove Resume Successfully!",

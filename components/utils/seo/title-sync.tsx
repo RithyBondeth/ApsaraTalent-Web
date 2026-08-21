@@ -58,7 +58,7 @@ const PREFIX_TITLES: Array<{ prefix: string; en: string; km: string }> = [
     km: "ប្រវត្តិរូបក្រុមហ៊ុន",
   },
   {
-    prefix: "/login/email-verification/",
+    prefix: "/login/email-verification",
     en: "Verify Email",
     km: "ផ្ទៀងផ្ទាត់អ៊ីមែល",
   },
