@@ -17,10 +17,14 @@ import { MatchingLoadingSkeleton } from "@/components/matching/skeleton";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { CountUp } from "@/components/utils/animations/count-up";
-import { Building2, Handshake, Users } from "lucide-react";
+import {
+  Building2,
+  Handshake,
+  LucideHeartHandshake,
+  Users,
+} from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 
@@ -381,7 +385,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
               variant="empty"
               title={t("emptyList")}
               description={t("emptyListDescription")}
-              image={emptySvg}
+              icon={LucideHeartHandshake}
               compact
               className="my-6 sm:my-8"
               action={{ label: t("goToFeed"), href: "/feed" }}

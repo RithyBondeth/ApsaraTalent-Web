@@ -16,13 +16,13 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { TNotificationFilterType } from "@/utils/types/app/notification.type";
 import {
   BellRing,
+  LucideBell,
   LucideCheckCheck,
   LucideTrash2,
   MailOpen,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { notificationEmptySvg } from "@/utils/constants/asset.constant";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import NotificationLoadingSkeleton, {
@@ -333,7 +333,7 @@ export default function NotificationPage() {
               variant="empty"
               title={t("emptyList")}
               description={t("emptyListDescription")}
-              image={notificationEmptySvg}
+              icon={LucideBell}
               compact
               className="my-6 sm:my-8"
               action={

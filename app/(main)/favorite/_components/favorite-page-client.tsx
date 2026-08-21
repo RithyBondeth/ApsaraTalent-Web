@@ -12,12 +12,11 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import { FavoriteLoadingSkeleton } from "@/components/favorite/skeleton";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
-import { Bookmark, Building2, Users } from "lucide-react";
+import { Bookmark, Building2, LucideBookmark, Users } from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 
@@ -361,7 +360,7 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
               variant="empty"
               title={tFav("emptyList")}
               description={tFav("emptyListDescription")}
-              image={emptySvg}
+              icon={LucideBookmark}
               compact
               className="my-6 sm:my-8"
               action={{

@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -35,6 +34,7 @@ import debounce from "lodash.debounce";
 import {
   LucideBriefcaseBusiness,
   LucideGraduationCap,
+  LucideSearchX,
   LucideSlidersHorizontal,
   LucideUsers,
   LucideX,
@@ -746,7 +746,7 @@ export default function CompanySearchPage() {
                 variant="empty"
                 title={t("emptyList")}
                 description={t("emptyListDescription")}
-                image={emptySvg}
+                icon={LucideSearchX}
                 compact
                 action={
                   activeFilterCount > 0

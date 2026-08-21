@@ -95,12 +95,12 @@ import {
   ChevronDown,
   LucideAtSign,
   LucideBadgeCheck,
+  LucideBriefcase,
   LucideBriefcaseBusiness,
   LucideCamera,
   LucideCircleCheck,
   LucideClock3,
   LucideCompass,
-  LucideLoader2,
   LucideDownload,
   LucideEdit,
   LucideEye,
@@ -109,6 +109,7 @@ import {
   LucideGlobe,
   LucideGraduationCap,
   LucideLink2,
+  LucideLoader2,
   LucideMail,
   LucideMapPin,
   LucideMonitor,
@@ -138,10 +139,6 @@ import {
 } from "react-hook-form";
 import { PageState } from "@/components/utils/feedback/page-state";
 import type { TEmployeeProfileForm } from "./validation";
-import {
-  addNewEducationSvg,
-  addNewExperienceSvg,
-} from "@/utils/constants/asset.constant";
 import { getEmployeeProfileCompletion } from "@/utils/functions/profile";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
@@ -2255,26 +2252,20 @@ export default function EmployeeProfilePage() {
                     );
                   })
                 ) : (
-                  <div className="flex w-full flex-col items-center justify-center p-3">
-                    {/* Add New Experience Section */}
-                    <Image
-                      alt="empty"
-                      src={addNewExperienceSvg}
-                      className="animate-float size-60"
-                    />
-                    <Button
-                      className="text-xs"
-                      variant={"secondary"}
-                      type="button"
-                      onClick={() => {
+                  <PageState
+                    variant="empty"
+                    title={tP("experienceEmpty")}
+                    description={tP("experienceEmptyDescription")}
+                    icon={LucideBriefcase}
+                    compact
+                    action={{
+                      label: tP("addExperienceBackground"),
+                      onClick: () => {
                         setIsEdit(true);
                         addNewExperience();
-                      }}
-                    >
-                      {tP("addExperienceBackground")}
-                      <LucidePlus />
-                    </Button>
-                  </div>
+                      },
+                    }}
+                  />
                 )}
               </div>
 
@@ -2372,26 +2363,20 @@ export default function EmployeeProfilePage() {
                     );
                   })
                 ) : (
-                  <div className="flex w-full flex-col items-center justify-center p-3">
-                    {/* Add New Education Section */}
-                    <Image
-                      alt="empty"
-                      src={addNewEducationSvg}
-                      className="animate-float size-60"
-                    />
-                    <Button
-                      variant={"secondary"}
-                      className="text-xs"
-                      type="button"
-                      onClick={() => {
+                  <PageState
+                    variant="empty"
+                    title={tP("educationEmpty")}
+                    description={tP("educationEmptyDescription")}
+                    icon={LucideGraduationCap}
+                    compact
+                    action={{
+                      label: tP("addEducationBackground"),
+                      onClick: () => {
                         setIsEdit(true);
                         addNewEducation();
-                      }}
-                    >
-                      {tP("addEducationBackground")}
-                      <LucidePlus />
-                    </Button>
-                  </div>
+                      },
+                    }}
+                  />
                 )}
               </div>
 

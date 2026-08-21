@@ -24,7 +24,7 @@ import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/
 import { useModerationStore } from "@/stores/apis/moderation/moderation.store";
 import { ICompany } from "@/utils/interfaces/user/company.interface";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
-import { Building2, Sparkles, Users } from "lucide-react";
+import { Building2, LucideNewspaper, Sparkles, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, {
   useCallback,
@@ -33,7 +33,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   FEED_PAGE_SIZE,
@@ -929,7 +928,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
               ? tFeed("companyListEmptyDescription")
               : tFeed("employeeListEmptyDescription")
           }
-          image={emptySvg}
+          icon={LucideNewspaper}
           compact
           className="my-6 sm:my-8"
           action={{

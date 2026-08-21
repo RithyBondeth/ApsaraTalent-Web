@@ -8,6 +8,7 @@ import { IChatMessagesProps } from "./props";
 import { useTranslations } from "next-intl";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { useMediaQuery } from "@/hooks/utils/use-media-query";
+import { LucideMessageCircleDashed } from "lucide-react";
 
 /* --------------------------------- Helper --------------------------------- */
 // Resolve last seen message index
@@ -92,6 +93,7 @@ export const ChatMessages = (props: IChatMessagesProps) => {
           variant="empty"
           title={t("noMessagesTitle")}
           description={t("noMessages")}
+          icon={LucideMessageCircleDashed}
           compact
           className="h-full min-h-0 shadow-none"
         />

@@ -34,6 +34,7 @@ import {
   RESUME_TEMPLATE_LABEL_KEYS,
 } from "@/utils/constants/resume.constant";
 import { PageState } from "@/components/utils/feedback/page-state";
+import { LucideLayoutTemplate } from "lucide-react";
 
 /* --------------------------------- Helper ---------------------------------- */
 /** Numbered step header shared by each stage of the builder flow */
@@ -218,6 +219,7 @@ export default function ResumeBuilder() {
                 variant="empty"
                 title={t("noTemplatesTitle")}
                 description={t("noTemplatesAvailable")}
+                icon={LucideLayoutTemplate}
                 compact
                 className="col-span-full"
                 action={{

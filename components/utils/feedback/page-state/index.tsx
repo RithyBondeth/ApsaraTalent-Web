@@ -7,7 +7,6 @@ import {
   LucideTriangleAlert,
   type LucideIcon,
 } from "lucide-react";
-import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 
 interface IPageStateAction {
@@ -20,13 +19,12 @@ interface IPageStateProps {
   variant: "empty" | "error";
   title: string;
   description?: string;
-  image?: StaticImageData | string;
-  imageAlt?: string;
   /**
    * The glyph for this particular state. Without it every empty state in the
    * app shows the same inbox, so "no messages", "no interviews" and "no search
-   * results" are indistinguishable at a glance. Ignored when `image` is set.
-   * Error states always use the warning triangle.
+   * results" are indistinguishable at a glance — which is exactly the state
+   * this app was in while most of them shared one illustration. Every call site
+   * is expected to pass one. Error states always use the warning triangle.
    */
   icon?: LucideIcon;
   action?: IPageStateAction;
@@ -40,8 +38,6 @@ export function PageState(props: IPageStateProps) {
     variant,
     title,
     description,
-    image,
-    imageAlt = "",
     icon: Icon,
     action,
     compact = false,
@@ -50,6 +46,7 @@ export function PageState(props: IPageStateProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   const isError = variant === "error";
+  const Glyph = isError ? LucideTriangleAlert : (Icon ?? LucideInbox);
   const actionClassName = cn(
     "min-w-32 px-5 text-xs",
     isError &&
@@ -81,36 +78,25 @@ export function PageState(props: IPageStateProps) {
         className,
       )}
     >
-      {/* State Visual Section */}
-      {image ? (
-        <Image
-          src={image}
-          alt={imageAlt}
-          aria-hidden={imageAlt === ""}
-          height={200}
-          width={200}
-          className={cn(
-            "animate-float object-contain grayscale motion-reduce:animate-none",
-            compact ? "size-20 sm:size-24" : "h-28 w-28 sm:h-40 sm:w-40",
-          )}
-        />
-      ) : (
-        <span
-          aria-hidden
-          className={cn(
-            "grid place-items-center border",
-            compact ? "size-11" : "size-14",
-            isError
-              ? "border-destructive/25 bg-destructive/10 text-destructive"
-              : "border-primary/25 bg-primary/10 text-primary",
-          )}
-        >
-          {(() => {
-            const Glyph = isError ? LucideTriangleAlert : (Icon ?? LucideInbox);
-            return <Glyph className={compact ? "size-5" : "size-6"} />;
-          })()}
-        </span>
-      )}
+      {/* State Visual Section
+       *
+       * The non-compact frame is larger than the glyph it replaced. This state
+       * fills `min-h-[55vh]`, which a 160px illustration used to hold down; a
+       * `size-14` box with a `size-6` glyph left the region reading as broken
+       * rather than empty. The compact frame was already proportioned for the
+       * cards it sits in and is unchanged. */}
+      <span
+        aria-hidden
+        className={cn(
+          "grid place-items-center border",
+          compact ? "size-11" : "size-20",
+          isError
+            ? "border-destructive/25 bg-destructive/10 text-destructive"
+            : "border-primary/25 bg-primary/10 text-primary",
+        )}
+      >
+        <Glyph className={compact ? "size-5" : "size-9"} />
+      </span>
 
       {/* State Copy Section
        *

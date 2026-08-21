@@ -10,9 +10,13 @@ import { useSearchParams } from "next/navigation";
 import InterviewLoadingSkeleton from "@/components/interview/skeleton";
 import { InterviewCard } from "@/components/interview/interview-card";
 import { CreateInterviewDialog } from "@/components/interview/create-interview-dialog";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
-import { CalendarCheck2, CalendarClock, CircleCheckBig } from "lucide-react";
+import {
+  CalendarCheck2,
+  CalendarClock,
+  CircleCheckBig,
+  LucideCalendarClock,
+} from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 
@@ -222,7 +226,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
                 ? t("noInterviewsEmployeeDescription")
                 : t("noInterviewsCompanyDescription")
             }
-            image={emptySvg}
+            icon={LucideCalendarClock}
             compact
             className="my-6 sm:my-8"
           />

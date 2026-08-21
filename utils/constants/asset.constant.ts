@@ -1,3 +1,10 @@
+// Per-page illustration sections used to live here — Feed, Notification,
+// Matching, Message, Favorite, Search, Profile, Interview, Resume Builder and
+// Legal. They emptied out as the page banners lost their hero SVGs and the
+// empty states moved to Lucide glyphs, and are not coming back: a raster or SVG
+// asset cannot take a colour token, so it cannot follow the theme the way an
+// icon does. What is left is the artwork that genuinely has to be an image.
+
 // ─── Socials ─────────────────────────────────────────────────────────────────
 import facebookIcon from "@/assets/socials/facebook.webp";
 import githubIcon from "@/assets/socials/github.png";
@@ -13,32 +20,7 @@ import emailVerificationSvg from "@/assets/auth/email-verification.svg";
 import phoneNumberSvg from "@/assets/auth/phone-number.svg";
 import phoneOTPSvg from "@/assets/auth/phone-otp.svg";
 
-// ─── Feed ─────────────────────────────────────────────────────────────────────
-
-// ─── Notification ─────────────────────────────────────────────────────────────
-import notificationEmptySvg from "@/assets/notification/empty.svg";
-
-// ─── Matching ─────────────────────────────────────────────────────────────────
-
-// ─── Message ──────────────────────────────────────────────────────────────────
-import messageEmptySvg from "@/assets/message/empty.svg";
-
-// ─── Favorite ─────────────────────────────────────────────────────────────────
-
-// ─── Search ───────────────────────────────────────────────────────────────────
-
-// ─── Profile ──────────────────────────────────────────────────────────────────
-import addNewEducationSvg from "@/assets/profile/add-new-education.svg";
-import addNewExperienceSvg from "@/assets/profile/add-new-experience.svg";
-
-// ─── Interview ────────────────────────────────────────────────────────────────
-
-// ─── Resume Builder ───────────────────────────────────────────────────────────
-
-// ─── Legal ────────────────────────────────────────────────────────────────────
-
 // ─── Utils (shared across pages) ──────────────────────────────────────────────
-import emptySvg from "@/assets/utils/empty.svg";
 import logo from "@/assets/utils/logo.svg";
 import logoBlack from "@/assets/utils/logo-black.svg";
 import logoWithoutTitle from "@/assets/utils/logo-icon.svg";
@@ -57,22 +39,7 @@ export {
   emailVerificationSvg,
   phoneNumberSvg,
   phoneOTPSvg,
-  // Feed
-  // Notification
-  notificationEmptySvg,
-  // Matching
-  // Message
-  messageEmptySvg,
-  // Favorite
-  // Search
-  // Profile
-  addNewEducationSvg,
-  addNewExperienceSvg,
-  // Interview
-  // Resume Builder
-  // Legal
   // Utils
-  emptySvg,
   logo,
   logoBlack,
   logoWithoutTitle,

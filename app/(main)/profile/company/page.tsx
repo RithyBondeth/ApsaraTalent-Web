@@ -93,6 +93,7 @@ import {
   LucideCalendarDays,
   LucideCamera,
   LucideCircleCheck,
+  LucideClipboardList,
   LucideCompass,
   LucideEdit,
   LucideGlobe,
@@ -122,7 +123,6 @@ import {
   useWatch,
 } from "react-hook-form";
 import type { TCompanyProfileForm } from "./validation";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import { getCompanyProfileCompletion } from "@/utils/functions/profile";
 import { CompanyProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
 import { SectionTitle } from "@/components/utils/layout/section-title";
@@ -1851,17 +1851,13 @@ export default function ProfilePage() {
                     );
                   })
                 ) : (
-                  <div className="flex w-full flex-col items-center justify-center p-5">
-                    {/* Add New OpenPosition Section */}
-                    <Image
-                      alt="empty"
-                      src={emptySvg}
-                      className="animate-float size-44"
-                    />
-                    <TypographyMuted className="text-sm">
-                      {tP("noOpenPositionAvailable")}
-                    </TypographyMuted>
-                  </div>
+                  <PageState
+                    variant="empty"
+                    title={tP("openPositionEmpty")}
+                    description={tP("openPositionEmptyDescription")}
+                    icon={LucideClipboardList}
+                    compact
+                  />
                 )}
               </div>
 
