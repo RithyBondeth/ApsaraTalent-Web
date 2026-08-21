@@ -2024,55 +2024,31 @@ html.theme-fallback-transition body *::after {
 }
 
 /* ══════════════════════════ Auth Experience ══════════════════════════ */
-/* Notion-inspired warm editorial auth. Paper-cream / warm-charcoal neutrals, */
-/* a serif display headline, hairline borders, and calm ambient motion. The    */
-/* brand panel adapts to the theme and carries a soft Apsara relief.           */
-
-/* Warm neutral palette scoped to auth — removes the app's cool blue tint. */
+/* Editorial auth: a serif display headline, hairline rules, calm ambient      */
+/* motion, and a brand panel that flips with the theme.                        */
+/*                                                                             */
+/* The neutrals are NOT redefined here. Auth used to carry a warm paper-cream  */
+/* palette — a full second set of ~15 tokens — and the split cost more than    */
+/* the warmth was worth: the contrast gate only parsed `:root` and `.dark`, so */
+/* every one of those tokens was ungated, and --input had quietly collapsed    */
+/* onto the hairline --border, leaving the login and signup fields at 1.25:1   */
+/* against the page where WCAG 1.4.11 asks 3:1. This scope now inherits the    */
+/* base palette, which is gated, so the fields cannot drift again.             */
+/*                                                                             */
+/* What stays is the part that was actually design rather than page chrome:    */
+/* the brand panel's paper/ink pair, keyed to the base neutrals.               */
 body:has(.auth-scope),
 .auth-scope {
-  --background: 43 24% 96%;
-  --foreground: 40 9% 18%;
-  --card: 40 33% 99%;
-  --popover: 40 33% 99%;
-  --muted: 43 18% 93%;
-  --muted-foreground: 40 6% 44%;
-  --accent: 214 95% 93%;
-  --accent-foreground: 224 64% 33%;
-  --secondary: 43 18% 93%;
-  --secondary-foreground: 40 9% 18%;
-  --border: 40 14% 87%;
-  --input: 40 14% 87%;
-  --ring: 221 83% 53%;
-  --primary: 221 83% 53%;
-  --primary-foreground: 0 0% 100%;
-
-  /* Light mode: warm form surface paired with a charcoal brand panel. */
-  --auth-paper: 34 8% 11%;
-  --auth-ink: 40 22% 92%;
+  /* Light mode: light form surface paired with a charcoal brand panel. */
+  --auth-paper: 224 14% 10%;
+  --auth-ink: 220 14% 94%;
 }
 
 .dark body:has(.auth-scope),
 .dark .auth-scope {
-  --background: 36 7% 10%;
-  --foreground: 40 11% 89%;
-  --card: 36 6% 13%;
-  --popover: 36 6% 14%;
-  --muted: 36 5% 16%;
-  --muted-foreground: 40 6% 58%;
-  --accent: 217 42% 18%;
-  --accent-foreground: 213 94% 80%;
-  --secondary: 36 5% 16%;
-  --secondary-foreground: 40 11% 89%;
-  --border: 36 5% 21%;
-  --input: 36 5% 21%;
-  --ring: 213 94% 68%;
-  --primary: 213 94% 68%;
-  --primary-foreground: 222 47% 11%;
-
   /* Dark mode deliberately reverses the split: dark form, white brand panel. */
-  --auth-paper: 40 33% 99%;
-  --auth-ink: 40 9% 18%;
+  --auth-paper: 0 0% 100%;
+  --auth-ink: 224 14% 10%;
 }
 
 /* Size container: auth fields respond to the form column width, not the      */
@@ -2527,7 +2503,10 @@ body:has(.auth-scope),
   height: 52px;
   padding: 0 1rem;
   border-radius: 0;
-  border: 1px solid hsl(var(--border));
+  /* --input, not --border: this bounds a text field, so WCAG 1.4.11 wants 3:1.
+     The decorative --border is a 1.38:1 hairline and left the login fields
+     effectively edgeless. */
+  border: 1px solid hsl(var(--input));
   background: hsl(var(--card) / 0.72);
   transition:
     border-color 0.22s ease,
@@ -2813,7 +2792,7 @@ body:has(.auth-scope),
 .auth-wizard-form div:has(> input:not([type="file"])),
 .auth-wizard-form textarea,
 .auth-wizard-form button[role="combobox"] {
-  border-color: hsl(var(--border));
+  border-color: hsl(var(--input));
   background: hsl(var(--card) / 0.76);
 }
 
@@ -2995,50 +2974,22 @@ body:has(.auth-scope) .auth-dialog-footer > * {
 }
 
 /* ═════════════════════════ Landing Experience ═════════════════════════ */
-/* Mirrors the auth area's paper-and-ink system: restrained warm neutrals, */
-/* square editorial surfaces, fine rules, and charcoal feature panels.     */
+/* Mirrors the auth area's ink-and-panel system: square editorial surfaces, */
+/* fine rules, and charcoal feature panels.                                 */
+/*                                                                          */
+/* Like .auth-scope, this no longer redefines the neutrals — see the note on */
+/* the auth block for why the warm second palette was retired. The panel     */
+/* pair below is inherited by .landing-swap-panel and friends.               */
 body:has(.landing-scope),
 .landing-scope {
-  --background: 43 24% 96%;
-  --foreground: 40 9% 18%;
-  --card: 40 33% 99%;
-  --card-foreground: 40 9% 18%;
-  --popover: 40 33% 99%;
-  --popover-foreground: 40 9% 18%;
-  --muted: 43 18% 93%;
-  --muted-foreground: 40 6% 42%;
-  --accent: 214 95% 93%;
-  --accent-foreground: 224 64% 33%;
-  --secondary: 43 18% 93%;
-  --secondary-foreground: 40 9% 18%;
-  --border: 40 14% 84%;
-  --input: 40 14% 84%;
-  --ring: 221 83% 53%;
-  --primary: 221 83% 53%;
-  --primary-foreground: 0 0% 100%;
-  --auth-paper: 34 8% 11%;
-  --auth-ink: 40 22% 92%;
+  --auth-paper: 224 14% 10%;
+  --auth-ink: 220 14% 94%;
 }
 
 .dark body:has(.landing-scope),
 .dark .landing-scope {
-  --background: 36 7% 10%;
-  --foreground: 40 11% 89%;
-  --card: 36 6% 13%;
-  --card-foreground: 40 11% 89%;
-  --popover: 36 6% 14%;
-  --popover-foreground: 40 11% 89%;
-  --muted: 36 5% 16%;
-  --muted-foreground: 40 6% 58%;
-  --accent: 217 42% 18%;
-  --accent-foreground: 213 94% 80%;
-  --secondary: 36 5% 16%;
-  --secondary-foreground: 40 11% 89%;
-  --border: 36 5% 24%;
-  --input: 36 5% 24%;
-  --ring: 213 94% 68%;
-  --primary: 213 94% 68%;
-  --primary-foreground: 222 47% 11%;
+  --auth-paper: 0 0% 100%;
+  --auth-ink: 224 14% 10%;
 }
 
 .landing-grid {
@@ -3080,10 +3031,12 @@ body:has(.landing-scope),
     hsl(var(--landing-panel-bg));
 }
 
+/* The bg/ink pair is not restated here: `.dark .landing-scope` already flips
+   --auth-paper/--auth-ink, and this panel reads them through var(). It used to
+   hardcode a second copy, which is how it kept the old cream after the scope
+   above had moved on. Only the edge needs a value of its own. */
 .dark .landing-swap-panel {
-  --landing-panel-bg: 43 24% 96%;
-  --landing-panel-ink: 40 9% 18%;
-  border-color: hsl(40 14% 78%);
+  border-color: hsl(220 13% 78%);
 }
 
 /* ═════════════════════════ Static Editorial Pages ═══════════════════ */

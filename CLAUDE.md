@@ -188,9 +188,16 @@ Cobalt is reserved for these, and nothing else:
 | active chat row, focused message input | selected / focus state |
 | AI-suggestion callouts | paired with `bg-primary/5` — marks generated content |
 
-Inside `.auth-scope` and `.landing-scope` the ink is a warm brown rather than
-charcoal, because those scopes redefine `--foreground`. That is deliberate;
-they read as paper.
+`.auth-scope` and `.landing-scope` used to redefine the neutrals to a warm
+paper-cream, so their ink read as brown rather than charcoal. That split is
+gone: both scopes now inherit the base palette and declare only
+`--auth-paper`/`--auth-ink`, the brand panel's opposing pair. The warmth was
+not worth what it cost — `check:contrast` parsed only `:root` and `.dark`, so
+~15 tokens per scope were ungated, and `--input` had collapsed onto the
+hairline `--border`, leaving the login and signup fields at 1.25:1 against the
+page where WCAG 1.4.11 asks 3:1. The gate now parses the scope blocks too
+(`SCOPES` in `scripts/check-contrast.mjs`); add a scope there the moment you
+add one to `globals.css`, or it inherits the same blind spot.
 
 The reason for the split: `--primary` is also every button fill, every link and
 the focus ring. A decorative cobalt rule competes with the actual affordances

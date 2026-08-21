@@ -53,9 +53,34 @@ function contrast(a, b) {
 /* ------------------------------- Token parse ------------------------------- */
 
 /**
+ * Scoped palettes that re-declare a subset of the base tokens for one area of
+ * the app (`.auth-scope`, `.landing-scope`). They inherit every token they do
+ * not name, so each one is checked as base-theme-plus-overrides rather than on
+ * its own — a scope that overrides --background but not --muted-foreground has
+ * still changed that pair's contrast.
+ *
+ * These went unchecked for a long time, and the gap is what let --input in both
+ * scopes collapse onto the hairline --border and sit at 1.25:1 against the page
+ * while `:root` was correctly holding 3:1. Add a scope here the moment you add
+ * one to globals.css.
+ */
+const SCOPES = ["auth", "landing"];
+
+const declarations = (body) => {
+  const out = {};
+  const decl = /--([\w-]+)\s*:\s*([\d.]+)\s+([\d.]+)%\s+([\d.]+)%\s*;/g;
+  let m;
+  while ((m = decl.exec(body)) !== null) {
+    out[m[1]] = [Number(m[2]), Number(m[3]), Number(m[4])];
+  }
+  return out;
+};
+
+/**
  * Pulls the `:root { … }` and `.dark { … }` custom-property blocks out of
- * globals.css. Only `H S% L%` triplets are collected — anything else in there
- * (fonts, --radius) isn't a colour and is skipped.
+ * globals.css, plus the light and dark block of every scope in SCOPES. Only
+ * `H S% L%` triplets are collected — anything else in there (fonts, --radius)
+ * isn't a colour and is skipped.
  */
 function parseTokens(css) {
   const themes = { light: {}, dark: {} };
@@ -68,10 +93,26 @@ function parseTokens(css) {
     const body = css.match(re)?.[1];
     if (!body)
       throw new Error(`Could not find the ${theme} token block in globals.css`);
-    const decl = /--([\w-]+)\s*:\s*([\d.]+)\s+([\d.]+)%\s+([\d.]+)%\s*;/g;
-    let m;
-    while ((m = decl.exec(body)) !== null) {
-      themes[theme][m[1]] = [Number(m[2]), Number(m[3]), Number(m[4])];
+    Object.assign(themes[theme], declarations(body));
+  }
+
+  for (const scope of SCOPES) {
+    for (const [theme, re] of [
+      ["light", new RegExp(`^\\.${scope}-scope\\s*\\{([\\s\\S]*?)^\\}`, "m")],
+      [
+        "dark",
+        new RegExp(`^\\.dark \\.${scope}-scope\\s*\\{([\\s\\S]*?)^\\}`, "m"),
+      ],
+    ]) {
+      const body = css.match(re)?.[1];
+      if (!body)
+        throw new Error(
+          `Could not find the ${theme} block for .${scope}-scope in globals.css`,
+        );
+      themes[`${scope} ${theme}`] = {
+        ...themes[theme],
+        ...declarations(body),
+      };
     }
   }
   return themes;
@@ -100,6 +141,9 @@ const PAIRS = [
   ["ring", "card", UI, "focus ring on card"],
   ["sidebar-foreground", "sidebar-background", TEXT, "sidebar text"],
   ["sidebar-accent-foreground", "sidebar-accent", TEXT, "sidebar active item"],
+  // Scope-only: the auth/landing brand panel, which opposes the page theme.
+  // Skipped in the base themes, which don't declare the pair.
+  ["auth-ink", "auth-paper", TEXT, "text on the brand panel"],
 ];
 
 // Every status family carries the same five roles, so the checks are identical.
@@ -170,8 +214,11 @@ function main() {
   const failures = [];
   let checked = 0;
 
-  for (const theme of ["light", "dark"]) {
+  for (const theme of Object.keys(themes)) {
     const tokens = themes[theme];
+    // "auth light" and "landing light" step through the same surface ladder as
+    // plain "light" — the scope name is only a prefix.
+    const base = theme.split(" ").pop();
     const lines = [];
 
     for (const [fg, bg, threshold, label, kind] of PAIRS) {
@@ -192,7 +239,7 @@ function main() {
       }
     }
 
-    for (const [a, b] of LADDER[theme]) {
+    for (const [a, b] of LADDER[base]) {
       if (!tokens[a] || !tokens[b]) continue;
       checked++;
       const ratio = contrast(tokens[a], tokens[b]);
