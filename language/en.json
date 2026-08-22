@@ -1626,5 +1626,22 @@
     "step4Desc": "Head to Matching to see who liked you back and start a conversation.",
     "next": "Next",
     "getStarted": "Get started"
+  },
+  "support": {
+    "reportTitle": "Report a problem",
+    "reportDescription": "Tell us what went wrong and we'll look into it. Your account and the page you were on are included automatically.",
+    "detailsPlaceholder": "What happened? Steps that led to it help most.",
+    "charactersLeft": "{count} characters left",
+    "send": "Send report",
+    "sending": "Sending…",
+    "cancel": "Cancel",
+    "reportSent": "Thanks — your report is on its way to our team.",
+    "category": {
+      "bug": "Something is broken",
+      "account": "Account or sign-in",
+      "payment": "Billing or payment",
+      "content": "Inappropriate content",
+      "other": "Something else"
+    }
   }
 }
