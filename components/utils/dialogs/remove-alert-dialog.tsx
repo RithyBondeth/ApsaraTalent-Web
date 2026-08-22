@@ -50,11 +50,7 @@ export default function RemoveAlertDialog(props: IRemoveAlertDialog) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-      <DialogContent
-        variant="flush"
-        size="md"
-        className="[&>button]:right-4 [&>button]:top-4"
-      >
+      <DialogContent variant="flush" size="md">
         <div className="h-1 w-20 bg-destructive" />
 
         <DialogHeader className="flex-row items-start gap-4 space-y-0 px-6 pb-6 pt-5 text-left">

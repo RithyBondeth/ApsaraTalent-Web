@@ -140,6 +140,7 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
       {/* Dialog Section */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
+          variant="flush"
           className=""
           onCloseAutoFocus={(event) => {
             event.preventDefault();

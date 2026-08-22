@@ -51,7 +51,12 @@ const dialogContentVariants = cva(
   {
     variants: {
       variant: {
-        default: "gap-0 px-3 py-4",
+        // 24px all round, and a real gap between header, body and footer.
+        // This was `gap-0 px-3 py-4`: 12px of horizontal padding put content
+        // almost against the edge, and with no gap every call site had to
+        // invent its own spacing — which is why no two dialogs lined up.
+        default: "gap-5 p-6",
+        // The dialog draws its own bands, so it owns its padding too.
         flush: "gap-0 p-0",
       },
       size: {
@@ -94,7 +99,7 @@ const DialogContent = React.forwardRef<
           rounded-full with a soft `shadow-sm`, which is why five call sites
           carried a `[&>button]:rounded-none` override to undo it. */}
       {hideClose ? null : (
-        <DialogPrimitive.Close className="absolute right-3 top-3 z-[110] flex size-8 items-center justify-center rounded-none border border-border bg-background/90 text-foreground opacity-80 backdrop-blur-xl transition-all hover:bg-foreground hover:text-background hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95 disabled:pointer-events-none">
+        <DialogPrimitive.Close className="absolute right-4 top-4 z-[110] flex size-8 items-center justify-center rounded-none border border-border bg-background/90 text-foreground opacity-80 backdrop-blur-xl transition-all hover:bg-foreground hover:text-background hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95 disabled:pointer-events-none">
           <LucideX className="size-4" />
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>
@@ -111,7 +116,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col space-y-1.5 text-center sm:text-left",
+      "flex flex-col space-y-1.5 pr-8 text-center sm:text-left",
       className,
     )}
     {...props}
@@ -125,7 +130,7 @@ const DialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "auth-dialog-footer flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      "auth-dialog-footer flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end",
       className,
     )}
     {...props}

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogoutConfirmationDialog } from "@/components/auth/logout-confirmation-dialog";
+import { ReportProblemDialog } from "@/components/support/report-problem-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,6 +62,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
 
   /* -------------------------------- All States ----------------------------- */
   const [openLogoutDialog, setOpenLogoutDialog] = useState<boolean>(false);
+  const [openReportDialog, setOpenReportDialog] = useState<boolean>(false);
 
   /* ----------------------------- API Integration --------------------------- */
   // Current User
@@ -290,7 +292,10 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
               </DropdownMenuItem>
 
               {/* Report Problem Section */}
-              <DropdownMenuItem className="flex min-h-11 items-center gap-2.5 rounded-none px-2">
+              <DropdownMenuItem
+                onClick={() => setOpenReportDialog(true)}
+                className="flex min-h-11 items-center gap-2.5 rounded-none px-2"
+              >
                 <MenuIcon>
                   <LucideInfo className="size-3.5 text-foreground" />
                 </MenuIcon>
@@ -315,6 +320,11 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
       </DropdownMenu>
 
       {/* Logout Dialog Section */}
+      <ReportProblemDialog
+        open={openReportDialog}
+        onOpenChange={setOpenReportDialog}
+      />
+
       <LogoutConfirmationDialog
         open={openLogoutDialog}
         onOpenChange={setOpenLogoutDialog}

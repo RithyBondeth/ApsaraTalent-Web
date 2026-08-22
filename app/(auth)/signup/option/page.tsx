@@ -176,7 +176,7 @@ export default function SingUpOption() {
         }}
       >
         <DialogContent>
-          <div className="flex flex-col gap-5 px-6 pb-5 pt-6">
+          <div className="flex flex-col gap-5">
             {/* Header Section */}
             <DialogHeader>
               <DialogTitle className="text-xl">

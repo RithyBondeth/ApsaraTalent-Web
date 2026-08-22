@@ -261,6 +261,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
       {/* Modal Section */}
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent
+          variant="flush"
           className="h-[78dvh]"
           onCloseAutoFocus={(event) => {
             event.preventDefault();
