@@ -233,8 +233,15 @@ the bar at `scale-x-0` forever for those readers, so they saw nothing at all.
 ### Page banners
 - Every signed-in page's banner is `PageBanner`
   (`components/utils/layout/page-banner`): an eyebrow, headline, subtitle, and up
-  to three optional `stats` (a page's already-loaded counts). Legal/landing pages
-  use `StaticPageShell` with a themeable `StaticPageArtworkSlot`, never a raster.
+  to three optional `stats` (a page's already-loaded counts). Legal and landing
+  sub-pages use `StaticPageShell`, which now renders that same `PageBanner`
+  inside its hero band — it is the banner everywhere, signed in or out.
+  `StaticPageArtworkSlot` is gone: the shell's hero used to be a two-column
+  split whose right half held a decorative artwork box, the page number as
+  "06 / 06", the title twice over, and four of the sidebar's contents links —
+  no information that wasn't already on screen, for 45% of the banner and 110%
+  of the fold at 375px. The space now carries document metadata (last updated,
+  section count, reading time), the same trade the hero illustrations made.
 - **No banner illustrations.** They were removed on purpose — the SVGs ran
   146–320 KB, preloaded with `priority`, took ~68% of the mobile fold, and used
   no `currentColor` so they couldn't follow the theme. Don't reintroduce a hero
