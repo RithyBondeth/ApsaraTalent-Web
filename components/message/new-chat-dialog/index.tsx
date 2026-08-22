@@ -40,7 +40,7 @@ export default function NewChatDialog(props: INewChatDialogProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent size="md" className="gap-4">
+      <DialogContent size="md">
         {/* Heading Section */}
         <DialogHeader>
           <DialogTitle className="text-base font-black tracking-[-0.01em]">
