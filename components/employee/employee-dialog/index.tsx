@@ -20,6 +20,8 @@ import { IEmployeeDialogProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
+import MetaChip from "@/components/utils/data-display/meta-chip";
+import Tag from "@/components/utils/data-display/tag";
 import { useTranslations } from "next-intl";
 import { translateLocation, getNameInitials } from "@/utils/functions/text";
 
@@ -77,18 +79,18 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           </DialogDescription>
 
           {/* Location, Years of Experience, Availability Section */}
-          <div className="mt-3 flex flex-wrap gap-1.5 [&>span>span]:rounded-none [&>span]:rounded-none">
+          <div className="mt-3 flex flex-wrap gap-1.5">
             {props.location && (
-              <span className="inline-flex items-center gap-1 rounded-none bg-muted px-2.5 py-1 text-xs text-muted-foreground">
-                <LucideMapPin className="h-3 w-3 shrink-0" />
-                {translateLocation(props.location, tl)}
-              </span>
+              <MetaChip
+                icon={<LucideMapPin />}
+                text={translateLocation(props.location, tl)}
+              />
             )}
             {props.yearsOfExperience && (
-              <span className="inline-flex items-center gap-1 rounded-none bg-muted px-2.5 py-1 text-xs text-muted-foreground">
-                <LucideBriefcase className="h-3 w-3 shrink-0" />
-                {props.yearsOfExperience}
-              </span>
+              <MetaChip
+                icon={<LucideBriefcase />}
+                text={props.yearsOfExperience}
+              />
             )}
             {props.availability && (
               <AvailabilityBadge availability={props.availability} />
@@ -125,12 +127,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
               </TypographyP>
               <div className="flex flex-wrap gap-1.5">
                 {props.skills.map((skill) => (
-                  <span
-                    key={skill.id}
-                    className="rounded-none bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/80"
-                  >
-                    {skill.name}
-                  </span>
+                  <Tag key={skill.id} label={skill.name} />
                 ))}
               </div>
             </section>

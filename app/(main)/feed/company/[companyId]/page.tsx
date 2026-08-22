@@ -421,21 +421,18 @@ export default function CompanyDetailPage() {
                               <Tag
                                 icon={<LucideAlarmClock />}
                                 label={formatAvailabilityWords(item.type)}
-                                className="!rounded-none border border-border"
                               />
                             )}
                             {item.experience && (
                               <Tag
                                 icon={<LucideUser />}
                                 label={item.experience}
-                                className="!rounded-none border border-border"
                               />
                             )}
                             {!!item.languagesRequired?.length && (
                               <Tag
                                 icon={<LucideLanguages />}
                                 label={item.languagesRequired.join(", ")}
-                                className="!rounded-none border border-border"
                               />
                             )}
                           </div>
@@ -493,11 +490,7 @@ export default function CompanyDetailPage() {
                               </p>
                               <div className="flex flex-wrap gap-1.5">
                                 {item.skills.map((s) => (
-                                  <Tag
-                                    key={s}
-                                    label={s}
-                                    className="!rounded-none border border-border"
-                                  />
+                                  <Tag key={s} label={s} />
                                 ))}
                               </div>
                             </div>
@@ -530,10 +523,7 @@ export default function CompanyDetailPage() {
                 {companyData.careerScopes.map((career, i) => (
                   <HoverCard key={i}>
                     <HoverCardTrigger>
-                      <Tag
-                        label={career.name}
-                        className="!rounded-none border border-border"
-                      />
+                      <Tag label={career.name} />
                     </HoverCardTrigger>
                     <HoverCardContent>
                       <TypographySmall>

@@ -19,14 +19,8 @@ import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/cou
 import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import {
-  getAvailabilityStyleClass,
-  getSocialPlatformTypeIcon,
-} from "@/utils/functions/ui";
-import {
-  formatAvailabilityWords,
-  translateLocation,
-} from "@/utils/functions/text";
+import { getSocialPlatformTypeIcon } from "@/utils/functions/ui";
+import { translateLocation } from "@/utils/functions/text";
 import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { formatShortDate } from "@/utils/functions/date";
 import { extractCleanFilename } from "@/utils/functions/file";
@@ -65,6 +59,7 @@ import { EmployeeDetailPageLoadingSkeleton } from "@/components/employee/skeleto
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 import { useFeedActionEffect } from "@/components/utils/effects/feed-action-effect";
 import MetaChip from "@/components/utils/data-display/meta-chip";
+import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import UserModerationMenu from "@/components/moderation/user-moderation-menu";
@@ -327,11 +322,7 @@ export default function EmployeeDetailPage() {
         onAvatarClick={() => setOpenProfilePopup(true)}
         status={
           employeeData.availability ? (
-            <span
-              className={`border-current/15 border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(employeeData.availability)}`}
-            >
-              {formatAvailabilityWords(employeeData.availability)}
-            </span>
+            <AvailabilityBadge availability={employeeData.availability} />
           ) : undefined
         }
         meta={
@@ -418,10 +409,7 @@ export default function EmployeeDetailPage() {
                 {employeeData.skills.map((item: ISkill) => (
                   <HoverCard key={item.id}>
                     <HoverCardTrigger>
-                      <Tag
-                        label={item.name}
-                        className="!rounded-none border border-border"
-                      />
+                      <Tag label={item.name} />
                     </HoverCardTrigger>
                     <HoverCardContent className="flex flex-col gap-1">
                       <TypographySmall className="text-sm">

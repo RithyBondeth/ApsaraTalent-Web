@@ -106,11 +106,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
         {props.skills.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {props.skills.slice(0, 6).map((item, index) => (
-              <Tag
-                label={item}
-                key={index}
-                className="!rounded-none border border-border hover:shadow-none"
-              />
+              <Tag label={item} key={index} />
             ))}
             {props.skills.length > 6 && (
               <span className="self-center text-[11px] font-semibold text-muted-foreground">

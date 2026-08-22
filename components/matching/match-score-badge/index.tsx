@@ -1,4 +1,5 @@
-import { SCORE_COLOR } from "@/utils/constants/ui.constant";
+import { cn } from "@/lib/utils";
+import { getScoreTone } from "@/utils/functions/ui";
 import { useTranslations } from "next-intl";
 import { IMatchScoreBadgeProps } from "./props";
 
@@ -16,24 +17,22 @@ export default function MatchScoreBadge(props: IMatchScoreBadgeProps) {
 
   if (props.score === null || props.score === undefined) return null;
 
-  const color =
-    props.score >= 75
-      ? SCORE_COLOR.HIGH
-      : props.score >= 50
-        ? SCORE_COLOR.MEDIUM
-        : SCORE_COLOR.LOW;
+  const tone = getScoreTone(props.score);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <span
-      className="inline-flex shrink-0 items-center gap-1.5 rounded-none border px-2 py-1 text-xs font-bold tabular-nums"
-      style={{ color, borderColor: color }}
+      className={cn(
+        "inline-flex shrink-0 items-center gap-1.5 rounded-none border px-2 py-1 text-xs font-bold tabular-nums",
+        tone.text,
+        tone.border,
+      )}
       title={t("matchScoreHint")}
       aria-label={t("matchScoreLabel", { score: props.score })}
     >
       <span
-        className="size-1.5 shrink-0 rounded-full"
-        style={{ backgroundColor: color }}
+        aria-hidden
+        className={cn("size-1.5 shrink-0 rounded-full", tone.fill)}
       />
       {t("matchScoreValue", { score: props.score })}
     </span>

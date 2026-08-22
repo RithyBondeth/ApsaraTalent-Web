@@ -48,6 +48,26 @@ describe("profile status components", () => {
     expect(screen.getByText(label).className).toContain(token);
   });
 
+  // Moved here when getAvailabilityStyleClass — a second copy of this mapping
+  // that four cards pasted into hand-written spans — was retired.
+  it("keeps availability off the status ramp, with no two alike", () => {
+    const classNames = ["FULL_TIME", "PART_TIME", "FREELANCE", "CONTRACT"].map(
+      (availability) => {
+        const { container } = render(
+          <AvailabilityBadge availability={availability} />,
+        );
+        return container.querySelector("span")!.className;
+      },
+    );
+
+    // A category must never borrow a status colour — that is what keeps a real
+    // warning legible next to a "freelance" chip.
+    for (const className of classNames) {
+      expect(className).not.toMatch(/success|warning|destructive|info/);
+    }
+    expect(new Set(classNames).size).toBe(classNames.length);
+  });
+
   it("renders a visible search failure", () => {
     const onRetry = vi.fn();
     render(

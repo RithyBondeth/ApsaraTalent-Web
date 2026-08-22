@@ -2427,10 +2427,7 @@ export default function EmployeeProfilePage() {
                     <HoverCard>
                       <HoverCardTrigger asChild>
                         <div>
-                          <Tag
-                            label={skill.name}
-                            className="!rounded-none border border-border hover:shadow-none"
-                          />
+                          <Tag label={skill.name} />
                         </div>
                       </HoverCardTrigger>
                       <HoverCardContent>
@@ -2538,10 +2535,7 @@ export default function EmployeeProfilePage() {
                     <HoverCard>
                       <HoverCardTrigger asChild>
                         <div>
-                          <Tag
-                            label={career.name}
-                            className="!rounded-none border border-border hover:shadow-none"
-                          />
+                          <Tag label={career.name} />
                         </div>
                       </HoverCardTrigger>
                       <HoverCardContent>

@@ -1,27 +1,43 @@
 import { formatAvailabilityWords } from "@/utils/functions/text";
+import { cn } from "@/lib/utils";
 
 /* ---------------------------------------------------------------------------
- * Availability is a category, not a state — a freelancer is not "warning" —
- * so this reads from the categorical ramp rather than the status one. Each
- * entry is a literal class string because Tailwind only compiles class names
- * it can see spelled out.
+ * The one availability badge — employee card, matching, favourites, search,
+ * the employee detail page and the quick-view dialog.
+ *
+ * Availability is a category, not a state — a freelancer is not "warning" — so
+ * this reads from the categorical ramp rather than the status one. Each entry
+ * is a literal class string because Tailwind only compiles class names it can
+ * see spelled out.
+ *
+ * This used to have a twin: `getAvailabilityStyleClass` returned the same three
+ * hue pairs and four call sites pasted them into a hand-written span, so the
+ * same value rendered as an uppercase micro-label on the cards and a dotted
+ * sentence-case chip in the dialog. Both spellings also carried
+ * `border-current/15`, which is not a real Tailwind utility and compiled to
+ * nothing — every one of those badges was falling back to the default neutral
+ * border instead of a tinted one. The typography now follows StatusPill, which
+ * is what a small state badge looks like everywhere else in the app.
  * ------------------------------------------------------------------------- */
 
 const VARIANTS = {
   full: {
-    surface: "bg-category-teal-subtle text-category-teal-accent",
+    surface:
+      "bg-category-teal-subtle text-category-teal-accent border-category-teal-accent/20",
     dot: "bg-category-teal",
   },
   part: {
-    surface: "bg-category-indigo-subtle text-category-indigo-accent",
+    surface:
+      "bg-category-indigo-subtle text-category-indigo-accent border-category-indigo-accent/20",
     dot: "bg-category-indigo",
   },
   free: {
-    surface: "bg-category-violet-subtle text-category-violet-accent",
+    surface:
+      "bg-category-violet-subtle text-category-violet-accent border-category-violet-accent/20",
     dot: "bg-category-violet",
   },
   other: {
-    surface: "bg-muted text-muted-foreground",
+    surface: "bg-muted text-muted-foreground border-border",
     dot: "bg-muted-foreground",
   },
 } as const;
@@ -34,17 +50,31 @@ function resolveVariant(availability: string) {
   return VARIANTS.other;
 }
 
-export function AvailabilityBadge({ availability }: { availability: string }) {
+export function AvailabilityBadge({
+  availability,
+  className,
+}: {
+  availability: string;
+  /** Layout only — nowrap, shrink-0. The badge owns its own colour and type. */
+  className?: string;
+}) {
   /* ---------------------------------- Utils --------------------------------- */
   const config = resolveVariant(availability);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <span
-      className={`border-current/15 inline-flex items-center gap-1.5 rounded-none border px-2.5 py-1 text-xs font-medium ${config.surface}`}
+      className={cn(
+        "inline-flex items-center gap-1.5 border px-2.5 py-1 text-xs font-semibold uppercase tracking-wide",
+        config.surface,
+        className,
+      )}
     >
       {/* Availability Dot Section */}
-      <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${config.dot}`} />
+      <span
+        aria-hidden
+        className={cn("size-1.5 shrink-0 rounded-full", config.dot)}
+      />
 
       {/* Availability Label Section */}
       {formatAvailabilityWords(availability)}

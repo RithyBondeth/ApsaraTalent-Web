@@ -1,10 +1,6 @@
 import MetaChip from "@/components/utils/data-display/meta-chip";
 import { cn } from "@/lib/utils";
-import {
-  formatAvailabilityWords,
-  getNameInitials,
-  translateLocation,
-} from "@/utils/functions/text";
+import { getNameInitials, translateLocation } from "@/utils/functions/text";
 import {
   LucideBookmarkX,
   LucideBriefcaseBusiness,
@@ -17,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import { IFavoriteEmployeeCardProps } from "./props";
-import { getAvailabilityStyleClass } from "@/utils/functions/ui";
+import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
 
@@ -28,7 +24,6 @@ export default function FavoriteEmployeeCard(
   const router = useRouter();
   const t = useTranslations("favorite");
   const tl = useTranslations("locations");
-  const availLabel = formatAvailabilityWords(props.availability);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -62,11 +57,10 @@ export default function FavoriteEmployeeCard(
                 @{props.username}
               </TypographyMuted>
             </div>
-            <span
-              className={`border-current/15 flex-shrink-0 whitespace-nowrap rounded-none border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
-            >
-              {availLabel}
-            </span>
+            <AvailabilityBadge
+              availability={props.availability}
+              className="flex-shrink-0 whitespace-nowrap"
+            />
           </div>
 
           {/* Description Section */}
@@ -80,11 +74,7 @@ export default function FavoriteEmployeeCard(
           {props.skills.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {props.skills.slice(0, 6).map((skill, index) => (
-                <Tag
-                  label={skill}
-                  key={index}
-                  className="!rounded-none border border-border hover:shadow-none"
-                />
+                <Tag label={skill} key={index} />
               ))}
             </div>
           )}

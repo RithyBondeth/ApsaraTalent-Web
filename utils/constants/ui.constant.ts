@@ -789,18 +789,6 @@ export const MOBILE_BREAKPOINT = 768;
 export const AVATAR_INITIALS_LENGTH = 2;
 
 /* --------------------------------- Colors --------------------------------- */
-export const SCORE_COLOR = {
-  HIGH: "#22c55e", // score >= 75 — green-500
-  MEDIUM: "#f59e0b", // score >= 50 — amber-400
-  LOW: "#ef4444", // score  < 50 — red-500
-} as const;
-
-export const RATE_COLOR = {
-  HIGH: "#10b981", // rate >= 70 — emerald-500
-  MEDIUM: "#f59e0b", // rate >= 20 — amber-400
-  LOW: "#ef4444", // rate  < 20 — red-500
-} as const;
-
 export const CHART_COLOR = {
   PINK: "#ec4899", // pink-500  — likes received bar
   GREEN: "#10b981", // emerald-500 — matches bar

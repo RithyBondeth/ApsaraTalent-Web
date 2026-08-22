@@ -2180,10 +2180,7 @@ export default function ProfilePage() {
                     <HoverCard>
                       <HoverCardTrigger asChild>
                         <div>
-                          <Tag
-                            label={career.name}
-                            className="!rounded-none border border-border hover:shadow-none"
-                          />
+                          <Tag label={career.name} />
                         </div>
                       </HoverCardTrigger>
                       <HoverCardContent>
