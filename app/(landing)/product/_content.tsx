@@ -18,7 +18,6 @@ import {
   StaticBullet,
   StaticCard,
   StaticNote,
-  StaticPageArtworkSlot,
   StaticPageShell,
   StaticSection,
 } from "@/components/static-content/static-page";
@@ -219,13 +218,6 @@ export function ProductContent() {
       subtitle={t.subtitle}
       tocHeading={t.tocHeading}
       toc={t.toc}
-      icon={<LucideSmartphone />}
-      heroVisual={
-        <StaticPageArtworkSlot
-          icon={<LucideSmartphone />}
-          label={t.pageTitle}
-        />
-      }
     >
       {/* Mobile App Section */}
       <StaticSection

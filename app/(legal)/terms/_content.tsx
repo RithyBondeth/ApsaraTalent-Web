@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   LucideAlertTriangle,
   LucideCalendar,
+  LucideClock,
   LucideFileText,
   LucideGavel,
   LucideLock,
@@ -21,9 +22,9 @@ import {
   StaticBullet,
   StaticNote,
   StaticPageShell,
-  StaticPageArtworkSlot,
   StaticSection,
 } from "@/components/static-content/static-page";
+import { formatCount } from "@/utils/functions/text";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
 /* -------------------------- Sub Components -------------------------- */
@@ -78,7 +79,13 @@ const content = {
   en: {
     back: "Back",
     pageTitle: "Terms of Service",
-    lastUpdated: "Last updated: March 24, 2026",
+    // Banner metadata. `readingTime` is measured from the rendered English
+    // article, not guessed — recount it when the policy text changes.
+    updatedOn: "March 24, 2026",
+    statUpdated: "last updated",
+    statSections: "sections",
+    statReading: "reading time",
+    readingTime: "~7 min",
     tocHeading: "Contents",
     intro:
       "These Terms of Service govern your access to and use of Apsara Talent — a talent-matching platform connecting skilled professionals with companies across Cambodia. By creating an account or using any part of the platform, you agree to these terms.",
@@ -284,7 +291,11 @@ const content = {
   km: {
     back: "ត្រឡប់",
     pageTitle: "លក្ខខណ្ឌនៃការប្រើប្រាស់",
-    lastUpdated: "ធ្វើបច្ចុប្បន្នភាពចុងក្រោយ: ២៤ មីនា ២០២៦",
+    updatedOn: "២៤ មីនា ២០២៦",
+    statUpdated: "ធ្វើបច្ចុប្បន្នភាពចុងក្រោយ",
+    statSections: "ផ្នែក",
+    statReading: "រយៈពេលអាន",
+    readingTime: "~៧ នាទី",
     tocHeading: "មាតិកា",
     intro:
       "លក្ខខណ្ឌនៃការប្រើប្រាស់ទាំងនេះគ្រប់គ្រងការចូលប្រើ និងការប្រើប្រាស់ Apsara Talent — វេទិកាផ្គូផ្គងទេព្យោសម្បទាដែលភ្ជាប់អ្នកជំនាញជំនាញជាមួយក្រុមហ៊ុននៅទូទាំងប្រទេសកម្ពុជា។ តាមរយៈការបង្កើតគណនី ឬការប្រើប្រាស់ផ្នែកណាមួយនៃវេទិកា អ្នកយល់ព្រមនឹងលក្ខខណ្ឌទាំងនេះ។",
@@ -498,21 +509,27 @@ export function TermsContent() {
   return (
     <StaticPageShell
       pageNumber="06"
-      pageTotal="06"
       title={c.pageTitle}
       subtitle={c.intro}
       tocHeading={c.tocHeading}
       toc={c.toc}
-      icon={<LucideFileText />}
-      meta={
-        <>
-          <LucideCalendar className="size-3.5" />
-          <span>{c.lastUpdated}</span>
-        </>
-      }
-      heroVisual={
-        <StaticPageArtworkSlot icon={<LucideFileText />} label={c.pageTitle} />
-      }
+      stats={[
+        {
+          icon: LucideCalendar,
+          label: c.statUpdated,
+          value: c.updatedOn,
+        },
+        {
+          icon: LucideFileText,
+          label: c.statSections,
+          value: formatCount(c.toc.length, language),
+        },
+        {
+          icon: LucideClock,
+          label: c.statReading,
+          value: c.readingTime,
+        },
+      ]}
     >
       <div className="border-b border-border px-6 py-6 sm:px-10 lg:px-14">
         <StaticNote icon={<LucideAlertTriangle />}>{c.callout}</StaticNote>

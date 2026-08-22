@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { capitalizeWords } from "./capitalize-words";
 import { formatAvailabilityWords } from "./format-availability-words";
+import { formatCount } from "./format-count";
 import { formatSalaryRange } from "./format-salary-range";
 import { getNameInitials } from "./get-name-initials";
 import { translateLocation } from "./translate-location";
@@ -103,5 +104,18 @@ describe("text functions", () => {
         ),
       ).toBe("Competitive");
     });
+  });
+});
+
+describe("formatCount", () => {
+  it("leaves Latin digits alone for English", () => {
+    expect(formatCount(16, "en")).toBe("16");
+    expect(formatCount(0, "en")).toBe("0");
+  });
+
+  it("renders Khmer numerals for km, so a count matches the dates beside it", () => {
+    expect(formatCount(16, "km")).toBe("១៦");
+    expect(formatCount(2026, "km")).toBe("២០២៦");
+    expect(formatCount(0, "km")).toBe("០");
   });
 });

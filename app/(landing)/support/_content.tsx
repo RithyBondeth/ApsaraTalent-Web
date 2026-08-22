@@ -13,7 +13,6 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   StaticBullet,
   StaticCard,
-  StaticPageArtworkSlot,
   StaticPageShell,
   StaticSection,
 } from "@/components/static-content/static-page";
@@ -328,13 +327,6 @@ export function SupportContent() {
       subtitle={t.subtitle}
       tocHeading={t.tocHeading}
       toc={t.toc}
-      icon={<LucideHelpCircle />}
-      heroVisual={
-        <StaticPageArtworkSlot
-          icon={<LucideHelpCircle />}
-          label={t.pageTitle}
-        />
-      }
     >
       {/* FAQ Section */}
       <StaticSection

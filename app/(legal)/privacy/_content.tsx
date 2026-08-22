@@ -2,7 +2,9 @@
 
 import {
   LucideCalendar,
+  LucideClock,
   LucideDatabase,
+  LucideFileText,
   LucideLock,
   LucideMail,
   LucideRefreshCw,
@@ -17,9 +19,9 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import {
   StaticBullet,
   StaticPageShell,
-  StaticPageArtworkSlot,
   StaticSection,
 } from "@/components/static-content/static-page";
+import { formatCount } from "@/utils/functions/text";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
 /* -------------------------- Sub Components -------------------------- */
@@ -69,7 +71,13 @@ const content = {
   en: {
     back: "Back",
     pageTitle: "Privacy Policy",
-    lastUpdated: "Last updated: March 24, 2026",
+    // Banner metadata. `readingTime` is measured from the rendered English
+    // article, not guessed — recount it when the policy text changes.
+    updatedOn: "March 24, 2026",
+    statUpdated: "last updated",
+    statSections: "sections",
+    statReading: "reading time",
+    readingTime: "~5 min",
     tocHeading: "Contents",
     intro:
       "At Apsara Talent, we are committed to protecting your personal information. This Privacy Policy explains what data we collect, why we collect it, and how we use and safeguard it when you use our talent-matching platform.",
@@ -307,7 +315,11 @@ const content = {
   km: {
     back: "ត្រឡប់",
     pageTitle: "គោលការណ៍ភាពឯកជន",
-    lastUpdated: "ធ្វើបច្ចុប្បន្នភាពចុងក្រោយ: ២៤ មីនា ២០២៦",
+    updatedOn: "២៤ មីនា ២០២៦",
+    statUpdated: "ធ្វើបច្ចុប្បន្នភាពចុងក្រោយ",
+    statSections: "ផ្នែក",
+    statReading: "រយៈពេលអាន",
+    readingTime: "~៥ នាទី",
     tocHeading: "មាតិកា",
     intro:
       "នៅ Apsara Talent យើងប្តេជ្ញាចិត្តក្នុងការការពារព័ត៌មានផ្ទាល់ខ្លួនរបស់អ្នក។ គោលការណ៍ភាពឯកជននេះពន្យល់ពីទិន្នន័យដែលយើងប្រមូល មូលហេតុដែលយើងប្រមូល និងរបៀបដែលយើងប្រើប្រាស់ និងការពារវានៅពេលអ្នកប្រើប្រាស់វេទិកាផ្គូផ្គងទេព្យោសម្បទារបស់យើង។",
@@ -558,7 +570,6 @@ export function PrivacyContent() {
   return (
     <StaticPageShell
       pageNumber="05"
-      pageTotal="06"
       title={c.pageTitle}
       subtitle={
         language === "en" ? (
@@ -575,19 +586,23 @@ export function PrivacyContent() {
       }
       tocHeading={c.tocHeading}
       toc={c.toc}
-      icon={<LucideShieldCheck />}
-      meta={
-        <>
-          <LucideCalendar className="size-3.5" />
-          <span>{c.lastUpdated}</span>
-        </>
-      }
-      heroVisual={
-        <StaticPageArtworkSlot
-          icon={<LucideShieldCheck />}
-          label={c.pageTitle}
-        />
-      }
+      stats={[
+        {
+          icon: LucideCalendar,
+          label: c.statUpdated,
+          value: c.updatedOn,
+        },
+        {
+          icon: LucideFileText,
+          label: c.statSections,
+          value: formatCount(c.toc.length, language),
+        },
+        {
+          icon: LucideClock,
+          label: c.statReading,
+          value: c.readingTime,
+        },
+      ]}
     >
       {/* 1. Information We Collect Section */}
       <Section

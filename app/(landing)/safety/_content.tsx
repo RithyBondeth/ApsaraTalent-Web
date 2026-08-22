@@ -13,7 +13,6 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   StaticBullet,
   StaticNote,
-  StaticPageArtworkSlot,
   StaticPageShell,
   StaticSection,
 } from "@/components/static-content/static-page";
@@ -254,13 +253,6 @@ export function SafetyContent() {
       subtitle={t.subtitle}
       tocHeading={t.tocHeading}
       toc={t.toc}
-      icon={<LucideShieldCheck />}
-      heroVisual={
-        <StaticPageArtworkSlot
-          icon={<LucideShieldCheck />}
-          label={t.pageTitle}
-        />
-      }
     >
       {/* Our Commitment Section */}
       <StaticSection

@@ -14,7 +14,6 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   StaticBullet,
   StaticCard,
-  StaticPageArtworkSlot,
   StaticPageShell,
   StaticSection,
   StaticStep,
@@ -314,10 +313,6 @@ export function LearnContent() {
       subtitle={t.subtitle}
       tocHeading={t.tocHeading}
       toc={t.toc}
-      icon={<LucideBookOpen />}
-      heroVisual={
-        <StaticPageArtworkSlot icon={<LucideBookOpen />} label={t.pageTitle} />
-      }
     >
       {/* Getting Started Section */}
       <StaticSection

@@ -13,7 +13,8 @@ export interface IPageBannerProps {
   /** Small uppercase kicker above the title. */
   eyebrow: string;
   title: string;
-  subtitle?: string;
+  /** Plain copy, or light inline emphasis — no block elements: it renders in a <p>. */
+  subtitle?: ReactNode;
   /**
    * Up to three counts shown alongside the copy. Omit while the page is still
    * loading rather than passing zeroes — a real "0" and "not loaded yet" look

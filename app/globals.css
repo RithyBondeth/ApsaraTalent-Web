@@ -3051,16 +3051,6 @@ body:has(.landing-scope),
   }
 }
 
-@keyframes static-page-orbit-drift {
-  0%,
-  100% {
-    transform: translateY(0) rotate(-2deg);
-  }
-  50% {
-    transform: translateY(-8px) rotate(2deg);
-  }
-}
-
 @keyframes static-page-ring-pulse {
   0%,
   100% {
@@ -3083,167 +3073,6 @@ body:has(.landing-scope),
 
 .static-page-reveal-delay-2 {
   animation-delay: 180ms;
-}
-
-.static-page-orbit {
-  position: relative;
-  display: grid;
-  width: min(58vw, 230px);
-  aspect-ratio: 1;
-  place-items: center;
-}
-
-.static-page-orbit-ring {
-  position: absolute;
-  inset: 9%;
-  border: 1px solid hsl(var(--landing-panel-ink) / 0.18);
-  border-radius: 50%;
-  animation: static-page-ring-pulse 4.8s ease-in-out infinite;
-}
-
-.static-page-orbit-ring::before,
-.static-page-orbit-ring::after {
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border: 1px solid hsl(var(--landing-panel-ink) / 0.42);
-  background: hsl(var(--landing-panel-bg));
-  content: "";
-}
-
-.static-page-orbit-ring::before {
-  top: 12%;
-  right: 11%;
-}
-
-.static-page-orbit-ring::after {
-  bottom: 10%;
-  left: 15%;
-}
-
-.static-page-orbit-ring-two {
-  inset: 23%;
-  animation-delay: -2.4s;
-}
-
-.static-page-hero-icon {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  width: 92px;
-  height: 92px;
-  place-items: center;
-  border: 1px solid hsl(var(--landing-panel-ink) / 0.32);
-  color: hsl(var(--landing-panel-ink));
-  background: hsl(var(--landing-panel-bg) / 0.82);
-  box-shadow:
-    14px 14px 0 hsl(var(--landing-panel-ink) / 0.055),
-    -10px -10px 0 hsl(var(--landing-panel-ink) / 0.035);
-  animation: static-page-orbit-drift 5.6s ease-in-out infinite;
-  backdrop-filter: blur(8px);
-}
-
-.static-page-hero-icon > svg {
-  width: 36px;
-  height: 36px;
-  stroke-width: 1.35;
-}
-
-.static-page-legal-visual {
-  position: relative;
-  display: grid;
-  width: min(74vw, 350px);
-  min-height: 205px;
-  place-items: center;
-  border: 1px solid hsl(var(--landing-panel-ink) / 0.16);
-  background:
-    linear-gradient(
-      135deg,
-      hsl(var(--landing-panel-ink) / 0.045),
-      transparent 54%
-    ),
-    hsl(var(--landing-panel-bg) / 0.48);
-  box-shadow:
-    16px 16px 0 hsl(var(--landing-panel-ink) / 0.045),
-    -8px -8px 0 hsl(var(--landing-panel-ink) / 0.025);
-  animation: static-page-orbit-drift 6.4s ease-in-out infinite;
-}
-
-.static-page-legal-visual::before,
-.static-page-legal-visual::after {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border: 1px solid hsl(var(--landing-panel-ink) / 0.36);
-  background: hsl(var(--landing-panel-bg));
-  content: "";
-}
-
-.static-page-legal-visual::before {
-  top: -4px;
-  left: -4px;
-}
-
-.static-page-legal-visual::after {
-  right: -4px;
-  bottom: -4px;
-}
-
-.static-page-legal-visual img {
-  width: min(90%, 310px);
-  height: auto;
-  object-fit: contain;
-}
-
-.static-page-artwork-slot {
-  position: relative;
-  display: flex;
-  width: min(74vw, 350px);
-  min-height: 205px;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
-  border: 1px solid hsl(var(--landing-panel-ink) / 0.16);
-  padding: 18px;
-  background:
-    radial-gradient(
-      circle at 78% 18%,
-      hsl(var(--landing-panel-ink) / 0.07),
-      transparent 27%
-    ),
-    hsl(var(--landing-panel-bg) / 0.5);
-  box-shadow:
-    14px 14px 0 hsl(var(--landing-panel-ink) / 0.04),
-    -7px -7px 0 hsl(var(--landing-panel-ink) / 0.025);
-  animation: static-page-orbit-drift 6.4s ease-in-out infinite;
-}
-
-.static-page-artwork-slot-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(hsl(var(--landing-panel-ink) / 0.055) 1px, transparent 1px),
-    linear-gradient(
-      90deg,
-      hsl(var(--landing-panel-ink) / 0.055) 1px,
-      transparent 1px
-    );
-  background-size: 28px 28px;
-  mask-image: linear-gradient(to bottom, #000, transparent 88%);
-}
-
-.static-page-artwork-slot-mark {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  width: 78px;
-  height: 78px;
-  margin: auto;
-  place-items: center;
-  border: 1px solid hsl(var(--landing-panel-ink) / 0.28);
-  color: hsl(var(--landing-panel-ink));
-  background: hsl(var(--landing-panel-bg) / 0.8);
-  box-shadow: 10px 10px 0 hsl(var(--landing-panel-ink) / 0.045);
 }
 
 .static-page-step::after {
@@ -3286,11 +3115,7 @@ body:has(.landing-scope),
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .static-page-reveal,
-  .static-page-orbit-ring,
-  .static-page-hero-icon,
-  .static-page-legal-visual,
-  .static-page-artwork-slot {
+  .static-page-reveal {
     animation: none !important;
   }
 

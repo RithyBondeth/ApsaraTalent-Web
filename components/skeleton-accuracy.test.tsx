@@ -93,9 +93,11 @@ describe("route-specific skeleton geometry", () => {
     expect(
       container.querySelectorAll("aside [class*='grid-cols-[28px_1fr]']"),
     ).toHaveLength(11);
-    expect(
-      container.querySelector(".mt-6.flex.items-center.gap-2"),
-    ).not.toBeNull();
+    // `hasMeta` now means "this page hands the banner its stats on first
+    // paint" — the legal pages show last-updated, sections and reading time.
+    // It used to mean a single icon-plus-date meta row, which is the shape the
+    // hero no longer has.
+    expect(container.querySelectorAll("dl > div")).toHaveLength(3);
   });
 
   it("uses the live notification control heights", () => {
