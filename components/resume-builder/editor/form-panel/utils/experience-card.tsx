@@ -13,12 +13,12 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 import {
-  PlusCircle,
-  Trash2,
-  ChevronDown,
-  ChevronUp,
-  Sparkles,
-  Loader2,
+  LucidePlusCircle,
+  LucideTrash2,
+  LucideChevronDown,
+  LucideChevronUp,
+  LucideSparkles,
+  LucideLoader2,
 } from "lucide-react";
 import { useState } from "react";
 import { FieldLabel } from "./field-label";
@@ -125,13 +125,13 @@ export function ExperienceCard({
               }}
               className="rounded p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
             >
-              <Trash2 size={13} />
+              <LucideTrash2 size={13} />
             </button>
           )}
           {open ? (
-            <ChevronUp size={14} className="text-muted-foreground" />
+            <LucideChevronUp size={14} className="text-muted-foreground" />
           ) : (
-            <ChevronDown size={14} className="text-muted-foreground" />
+            <LucideChevronDown size={14} className="text-muted-foreground" />
           )}
         </div>
       </div>
@@ -189,9 +189,9 @@ export function ExperienceCard({
                   className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                 >
                   {descLoading ? (
-                    <Loader2 size={10} className="animate-spin" />
+                    <LucideLoader2 size={10} className="animate-spin" />
                   ) : (
-                    <Sparkles size={10} />
+                    <LucideSparkles size={10} />
                   )}
                   {t("aiRefine")}
                 </Button>
@@ -217,7 +217,7 @@ export function ExperienceCard({
                 className="h-6 px-2 text-[10px] text-primary"
                 onClick={() => achAppend("" as unknown as Experience)}
               >
-                <PlusCircle size={11} className="mr-1" /> {t("add")}
+                <LucidePlusCircle size={11} className="mr-1" /> {t("add")}
               </Button>
             </div>
 
@@ -243,9 +243,9 @@ export function ExperienceCard({
                           className="h-5 gap-1 px-1.5 text-[8px] text-primary hover:bg-primary/10 hover:text-primary"
                         >
                           {achLoading ? (
-                            <Loader2 size={9} className="animate-spin" />
+                            <LucideLoader2 size={9} className="animate-spin" />
                           ) : (
-                            <Sparkles size={9} />
+                            <LucideSparkles size={9} />
                           )}
                           {t("refine")}
                         </Button>
@@ -255,7 +255,7 @@ export function ExperienceCard({
                         onClick={() => achRemove(ai)}
                         className="p-1 text-muted-foreground transition-colors hover:text-destructive"
                       >
-                        <Trash2 size={12} />
+                        <LucideTrash2 size={12} />
                       </button>
                     </div>
                   </div>

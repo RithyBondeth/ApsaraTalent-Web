@@ -20,10 +20,10 @@ import { toast } from "sonner";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { CountUp } from "@/components/utils/animations/count-up";
 import {
-  Building2,
-  Handshake,
+  LucideBuilding2,
+  LucideHandshake,
   LucideHeartHandshake,
-  Users,
+  LucideUsers,
 } from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
@@ -275,7 +275,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
         subtitle={`${t("bannerSubtitle1")} ${t("bannerSubtitle2")}`}
         stats={[
           {
-            icon: Handshake,
+            icon: LucideHandshake,
             label: t("statMatches"),
             value: matchCount,
           },
@@ -303,9 +303,9 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
           </div>
           <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
             {isEmployee ? (
-              <Building2 className="size-4" />
+              <LucideBuilding2 className="size-4" />
             ) : (
-              <Users className="size-4" />
+              <LucideUsers className="size-4" />
             )}
           </div>
         </div>

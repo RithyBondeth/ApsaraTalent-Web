@@ -1,4 +1,4 @@
-import { TrendingUp } from "lucide-react";
+import { LucideTrendingUp } from "lucide-react";
 import { IStatisticCardProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -28,7 +28,7 @@ export default function StatisticCard({
             <Icon className={`h-4.5 w-4.5 ${color}`} />
           </div>
           {/* Trending Up Icon Section */}
-          <TrendingUp className="h-4 w-4 text-muted-foreground/40" />
+          <LucideTrendingUp className="h-4 w-4 text-muted-foreground/40" />
         </div>
         {/* Value Section */}
         <TypographyP className="text-2xl font-bold tracking-tight sm:text-3xl [&:not(:first-child)]:mt-0">

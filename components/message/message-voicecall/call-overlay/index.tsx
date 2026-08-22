@@ -5,7 +5,7 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { formatDurationClock } from "@/utils/functions/date";
 import { getNameInitials } from "@/utils/functions/text";
-import { Mic, MicOff, PhoneOff } from "lucide-react";
+import { LucideMic, LucideMicOff, LucidePhoneOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ICallOverlayProps } from "./props";
 import { useTranslations } from "next-intl";
@@ -125,9 +125,9 @@ export function CallOverlay(props: ICallOverlayProps) {
               aria-label={muteLabel}
             >
               {isMuted ? (
-                <MicOff className="h-5 w-5" />
+                <LucideMicOff className="h-5 w-5" />
               ) : (
-                <Mic className="h-5 w-5" />
+                <LucideMic className="h-5 w-5" />
               )}
             </button>
             <span className="text-[10px] text-muted-foreground">
@@ -143,7 +143,7 @@ export function CallOverlay(props: ICallOverlayProps) {
               className="flex h-11 w-11 items-center justify-center rounded-full bg-red-500 shadow-md transition-colors hover:bg-red-600 active:bg-red-700"
               aria-label="End call"
             >
-              <PhoneOff className="h-5 w-5 text-white" />
+              <LucidePhoneOff className="h-5 w-5 text-white" />
             </button>
             <span className="text-[10px] text-muted-foreground">
               {t("endCall")}

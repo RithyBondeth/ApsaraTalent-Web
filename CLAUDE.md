@@ -117,6 +117,22 @@ scripts/             # Node maintenance and verification scripts
   (`search-bar.test.tsx`), never `index.test.tsx` — the filename is what shows
   up in test output, so it has to identify the subject on its own
 
+### Icon imports
+`lucide-react` exports every icon three ways — `Home`, `HomeIcon` and
+`LucideHome`. Use the **`Lucide*` alias**. The codebase had drifted across all
+three (455 / 237 / 4) with 31 files mixing conventions inside one import block;
+the prefix also keeps icons picked out in the import lists here that run past
+thirty symbols. `no-restricted-syntax` in `eslint.config.mjs` fails the build on
+the other two spellings.
+
+Brand marks are the exception and do not come from Lucide at all: it has no
+Google icon and has **deprecated its brand set for removal in v1.0**. Those live
+in `components/utils/brand` — `LoginMethodIcon` for auth providers,
+`PlatformIcon` for social links — backed by Simple Icons, with in-house glyphs
+for LinkedIn (dropped from Simple Icons after a trademark request). All render
+in `currentColor`; the full-colour raster logos stay on the OAuth buttons in
+`(auth)/login`, where Google's branding terms apply.
+
 ### Utility Imports
 - Every subdirectory of `utils/functions/` has a barrel beside it
   (`utils/functions/date/` ↔ `utils/functions/date.ts`)

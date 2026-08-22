@@ -1,9 +1,9 @@
 import { TAnalyticsResponse } from "@/stores/apis/matching/analytics.store";
 import {
-  Bookmark,
-  Handshake,
-  Heart,
-  HeartHandshake,
+  LucideBookmark,
+  LucideHandshake,
+  LucideHeart,
+  LucideHeartHandshake,
   LucideIcon,
 } from "lucide-react";
 
@@ -28,28 +28,28 @@ export const statisticCardConstants: TStatisticCardConfig[] = [
   {
     key: "totalLikesGiven",
     translationKey: "likesGiven",
-    icon: Heart,
+    icon: LucideHeart,
     color: "text-category-magenta-accent",
     bgColor: "bg-category-magenta-subtle",
   },
   {
     key: "totalLikesReceived",
     translationKey: "likesReceived",
-    icon: HeartHandshake,
+    icon: LucideHeartHandshake,
     color: "text-category-violet-accent",
     bgColor: "bg-category-violet-subtle",
   },
   {
     key: "totalMatches",
     translationKey: "totalMatches",
-    icon: Handshake,
+    icon: LucideHandshake,
     color: "text-category-teal-accent",
     bgColor: "bg-category-teal-subtle",
   },
   {
     key: "totalFavorites",
     translationKey: "savedFavorites",
-    icon: Bookmark,
+    icon: LucideBookmark,
     color: "text-category-orange-accent",
     bgColor: "bg-category-orange-subtle",
   },

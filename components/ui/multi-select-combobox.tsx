@@ -1,6 +1,6 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { LucideCheck } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -115,7 +115,7 @@ export function MultiSelectCombobox({
                   value={option}
                   onSelect={() => toggle(option)}
                 >
-                  <Check
+                  <LucideCheck
                     className={cn(
                       "mr-2 h-4 w-4",
                       selected.includes(option) ? "opacity-100" : "opacity-0",

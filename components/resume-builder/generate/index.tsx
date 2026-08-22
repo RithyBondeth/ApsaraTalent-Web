@@ -1,7 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Loader2, LucideLayoutTemplate, LucideRocket } from "lucide-react";
+import {
+  LucideLoader2,
+  LucideLayoutTemplate,
+  LucideRocket,
+} from "lucide-react";
 import { IResumeBuilderGenerateProps } from "./props";
 import { useTranslations } from "next-intl";
 import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
@@ -70,7 +74,11 @@ export default function ResumeBuilderGenerate({
             <span>
               {loading ? t("preparingResume") : t("generateMyResume")}
             </span>
-            {loading ? <Loader2 className="animate-spin" /> : <LucideRocket />}
+            {loading ? (
+              <LucideLoader2 className="animate-spin" />
+            ) : (
+              <LucideRocket />
+            )}
           </Button>
         </div>
       </div>

@@ -16,7 +16,7 @@ import { FavoriteLoadingSkeleton } from "@/components/favorite/skeleton";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
-import { Bookmark, Building2, LucideBookmark, Users } from "lucide-react";
+import { LucideBookmark, LucideBuilding2, LucideUsers } from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 
@@ -259,7 +259,7 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
         subtitle={`${tFav("bannerSubtitle1")} ${tFav("bannerSubtitle2")}`}
         stats={[
           {
-            icon: Bookmark,
+            icon: LucideBookmark,
             label: isEmployee ? tFav("companiesSaved") : tFav("talentSaved"),
             value: isEmployee
               ? (filteredEmployeeFavorites?.length ?? 0)
@@ -288,9 +288,9 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
           </div>
           <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
             {isEmployee ? (
-              <Building2 className="size-4" />
+              <LucideBuilding2 className="size-4" />
             ) : (
-              <Users className="size-4" />
+              <LucideUsers className="size-4" />
             )}
           </div>
         </div>

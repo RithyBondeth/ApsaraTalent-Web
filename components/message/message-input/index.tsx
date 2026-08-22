@@ -6,7 +6,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { LucideSendHorizonal, Mic, Paperclip, SmilePlus } from "lucide-react";
+import {
+  LucideSendHorizonal,
+  LucideMic,
+  LucidePaperclip,
+  LucideSmilePlus,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { IChatInputProps } from "./props";
 import {
@@ -440,7 +445,7 @@ export default function ChatInput(props: IChatInputProps) {
                     className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
                     aria-label="Emoji"
                   >
-                    <SmilePlus className="h-4 w-4" />
+                    <LucideSmilePlus className="h-4 w-4" />
                   </button>
                 </PopoverTrigger>
                 <PopoverContent
@@ -492,7 +497,7 @@ export default function ChatInput(props: IChatInputProps) {
                     : t("attachFiles")
                 }
               >
-                <Paperclip className="h-4 w-4" />
+                <LucidePaperclip className="h-4 w-4" />
               </button>
 
               {/* Microphone Section (toggle recording on click) */}
@@ -503,7 +508,7 @@ export default function ChatInput(props: IChatInputProps) {
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
                 aria-label="Record voice message"
               >
-                <Mic className="h-4 w-4" />
+                <LucideMic className="h-4 w-4" />
               </button>
             </div>
           )}

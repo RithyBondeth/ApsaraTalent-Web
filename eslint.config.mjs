@@ -27,6 +27,24 @@ const eslintConfig = [
     ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      // lucide-react exports every icon three ways — `Home`, `HomeIcon` and
+      // `LucideHome` — and the codebase had drifted across all three, with 31
+      // files mixing conventions inside a single import block. The Lucide*
+      // alias won on volume (455 of 696) and it keeps icons distinguishable in
+      // the import lists here that run to thirty-plus symbols.
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "ImportDeclaration[source.value='lucide-react'] > ImportSpecifier[imported.name!=/^Lucide/]",
+          message:
+            "Import lucide-react icons under their Lucide* alias (LucideHome, not Home or HomeIcon).",
+        },
+      ],
+    },
+  },
   // Must stay last: turns off the stylistic rules Prettier owns.
   prettierConfig,
 ];

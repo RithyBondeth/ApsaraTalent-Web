@@ -1,4 +1,9 @@
-import { FileText, ImageIcon, Paperclip, X } from "lucide-react";
+import {
+  LucideFileText,
+  LucideImage,
+  LucidePaperclip,
+  LucideX,
+} from "lucide-react";
 import { IMessageAttachmentStripProps } from "./props";
 
 export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
@@ -52,7 +57,7 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
 
               {file.status === "error" && (
                 <div className="absolute inset-0 z-10 flex items-center justify-center bg-destructive/15">
-                  <X className="h-5 w-5 text-destructive" />
+                  <LucideX className="h-5 w-5 text-destructive" />
                 </div>
               )}
 
@@ -68,9 +73,9 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
               ) : (
                 <div className="flex items-center justify-center p-2">
                   {file.filename.match(/\.(jpe?g|png|gif|webp)$/i) ? (
-                    <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                    <LucideImage className="h-6 w-6 text-muted-foreground" />
                   ) : (
-                    <FileText className="h-6 w-6 text-muted-foreground" />
+                    <LucideFileText className="h-6 w-6 text-muted-foreground" />
                   )}
                 </div>
               )}
@@ -94,7 +99,7 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
               className="absolute -right-1 -top-1 z-20 flex h-4 w-4 items-center justify-center rounded-none border border-border bg-background shadow-sm transition-colors hover:bg-muted"
               aria-label={`Remove ${file.filename}`}
             >
-              <X className="h-2 w-2 text-muted-foreground" />
+              <LucideX className="h-2 w-2 text-muted-foreground" />
             </button>
           </div>
         ))}
@@ -108,7 +113,7 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
             className="flex h-12 w-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-none border border-dashed border-border/70 bg-muted/30 transition-colors hover:border-border hover:bg-muted/60 disabled:pointer-events-none disabled:opacity-40 sm:h-14 sm:w-14"
             aria-label="Add more files"
           >
-            <Paperclip className="h-4 w-4 text-muted-foreground" />
+            <LucidePaperclip className="h-4 w-4 text-muted-foreground" />
             <span className="text-[9px] leading-none text-muted-foreground">
               Add
             </span>

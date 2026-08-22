@@ -15,11 +15,11 @@ import { useNotificationStore } from "@/stores/apis/notification/notification.st
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { TNotificationFilterType } from "@/utils/types/app/notification.type";
 import {
-  BellRing,
+  LucideBellRing,
   LucideBell,
   LucideCheckCheck,
   LucideTrash2,
-  MailOpen,
+  LucideMailOpen,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -152,12 +152,12 @@ export default function NotificationPage() {
             ? undefined
             : [
                 {
-                  icon: BellRing,
+                  icon: LucideBellRing,
                   label: t("statAll"),
                   value: notifications.length,
                 },
                 {
-                  icon: MailOpen,
+                  icon: LucideMailOpen,
                   label: t("statUnread"),
                   value: unreadCount,
                 },
@@ -183,7 +183,7 @@ export default function NotificationPage() {
             </div>
           </div>
           <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
-            <BellRing className="size-4" />
+            <LucideBellRing className="size-4" />
           </div>
         </div>
 

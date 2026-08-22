@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronsUpDown } from "lucide-react";
+import { LucideCheck, LucideChevronsUpDown } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -92,7 +92,7 @@ export function CreatableCombobox({
               {selectedOption ? selectedOption.label : value || placeholder}
             </span>
           </span>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <LucideChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
 
@@ -153,7 +153,7 @@ export function CreatableCombobox({
                     setOpen(false);
                   }}
                 >
-                  <Check
+                  <LucideCheck
                     className={cn(
                       "mr-2 h-4 w-4",
                       value === option.value ? "opacity-100" : "opacity-0",
@@ -174,7 +174,7 @@ export function CreatableCombobox({
                       setOpen(false);
                     }}
                   >
-                    <Check
+                    <LucideCheck
                       className={cn(
                         "mr-2 h-4 w-4",
                         value === inputValue ? "opacity-100" : "opacity-0",

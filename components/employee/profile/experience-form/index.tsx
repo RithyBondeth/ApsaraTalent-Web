@@ -10,8 +10,8 @@ import {
   LucideBriefcaseBusiness,
   LucideBuilding2,
   LucideTrash2,
-  Sparkles,
-  Loader2,
+  LucideSparkles,
+  LucideLoader2,
 } from "lucide-react";
 import { Controller, useWatch } from "react-hook-form";
 import { IEmployeeExperienceFormProps } from "./props";
@@ -113,9 +113,9 @@ export default function EmployeeExperienceForm(
                 className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
               >
                 {isRefining ? (
-                  <Loader2 size={10} className="animate-spin" />
+                  <LucideLoader2 size={10} className="animate-spin" />
                 ) : (
-                  <Sparkles size={10} />
+                  <LucideSparkles size={10} />
                 )}
                 {tr("aiRefine")}
               </Button>

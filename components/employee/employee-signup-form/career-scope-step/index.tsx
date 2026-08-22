@@ -26,7 +26,11 @@ import {
 import ErrorMessage from "@/components/utils/feedback/error-message";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { ChevronLeft, ChevronRight, LucideSearch } from "lucide-react";
+import {
+  LucideChevronLeft,
+  LucideChevronRight,
+  LucideSearch,
+} from "lucide-react";
 import { careerScopesListConstant } from "@/utils/constants/ui.constant";
 import { getPaginationPages } from "@/utils/functions/ui";
 import { useTranslations } from "next-intl";
@@ -158,7 +162,7 @@ export default function EmployeeCareerScopeStepForm({
               onClick={() => goToPage(Math.max(currentPage - 1, 1))}
               className={`gap-1 pl-2.5 ${currentPage === 1 ? "pointer-events-none opacity-50" : ""}`}
             >
-              <ChevronLeft className="h-4 w-4" />
+              <LucideChevronLeft className="h-4 w-4" />
               <span>{tCommon("previous")}</span>
             </PaginationLink>
           </PaginationItem>
@@ -184,7 +188,7 @@ export default function EmployeeCareerScopeStepForm({
               className={`gap-1 pr-2.5 ${currentPage === totalPages ? "pointer-events-none opacity-50" : ""}`}
             >
               <span>{tCommon("next")}</span>
-              <ChevronRight className="h-4 w-4" />
+              <LucideChevronRight className="h-4 w-4" />
             </PaginationLink>
           </PaginationItem>
         </PaginationContent>

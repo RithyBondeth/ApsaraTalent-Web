@@ -45,6 +45,7 @@ import LabelInput from "@/components/utils/forms/label-input";
 import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { LoginMethodIcon } from "@/components/utils/brand/login-method-icon";
 import { useAvatarState } from "@/hooks/profile/employee/use-avatar-state";
 import { useCareerScopesState } from "@/hooks/profile/employee/use-careerscope-state";
 import { useReferenceFilesState } from "@/hooks/profile/employee/use-referencefile-state";
@@ -74,7 +75,7 @@ import {
   platformConstant,
   workModeConstant,
 } from "@/utils/constants/ui.constant";
-import { getSocialPlatformTypeIcon } from "@/utils/functions/ui";
+import { PlatformIcon } from "@/components/utils/brand/platform-icon";
 import { capitalizeWords } from "@/utils/functions/text";
 import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { MAX_IMAGE_SIZE } from "@/utils/constants/config.constant";
@@ -92,8 +93,8 @@ import { ISocialLink } from "@/utils/interfaces/user/social.interface";
 import { TPlatform } from "@/utils/types/user/platform.type";
 import { cn } from "@/lib/utils";
 import {
-  Check,
-  ChevronDown,
+  LucideCheck,
+  LucideChevronDown,
   LucideAtSign,
   LucideBadgeCheck,
   LucideBriefcase,
@@ -123,13 +124,12 @@ import {
   LucideVenusAndMars,
   LucideXCircle,
   LucideZap,
-  Sparkles,
+  LucideSparkles,
 } from "lucide-react";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import Link from "next/link";
 import {
   Controller,
@@ -1765,7 +1765,7 @@ export default function EmployeeProfilePage() {
                       {jobLoading ? (
                         <LucideLoader2 size={10} className="animate-spin" />
                       ) : (
-                        <Sparkles size={10} />
+                        <LucideSparkles size={10} />
                       )}
                       {tr("aiRefine")}
                     </Button>
@@ -2088,7 +2088,7 @@ export default function EmployeeProfilePage() {
                                   );
                                 }}
                               >
-                                <Check
+                                <LucideCheck
                                   className={cn(
                                     "mr-2 h-4 w-4",
                                     (languagesValue ?? []).includes(lang)
@@ -2142,7 +2142,7 @@ export default function EmployeeProfilePage() {
                       {descLoading ? (
                         <LucideLoader2 size={10} className="animate-spin" />
                       ) : (
-                        <Sparkles size={10} />
+                        <LucideSparkles size={10} />
                       )}
                       {tr("aiRefine")}
                     </Button>
@@ -2594,7 +2594,7 @@ export default function EmployeeProfilePage() {
                             (c) => c.name === careerScopeInput.name,
                           )?.name
                         : tP("selectCareers")}
-                      <ChevronDown className="opacity-50" />
+                      <LucideChevronDown className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent
@@ -2916,7 +2916,7 @@ export default function EmployeeProfilePage() {
                       className="inline-flex max-w-[200px] items-center gap-1.5 overflow-hidden border border-border bg-muted/50 px-3 py-1.5 text-foreground hover:bg-muted sm:max-w-[260px]"
                     >
                       <span className="flex-shrink-0">
-                        {getSocialPlatformTypeIcon(item.platform as TPlatform)}
+                        <PlatformIcon platform={item.platform as TPlatform} />
                       </span>
                       <span className="truncate text-sm">{item.platform}</span>
                     </Link>
@@ -2965,9 +2965,9 @@ export default function EmployeeProfilePage() {
                             <div className="flex min-w-0 items-center gap-2">
                               <span className="flex size-5 shrink-0 items-center justify-center [&>svg]:size-4">
                                 {socialInput?.platform ? (
-                                  getSocialPlatformTypeIcon(
-                                    socialInput.platform as TPlatform,
-                                  )
+                                  <PlatformIcon
+                                    platform={socialInput.platform as TPlatform}
+                                  />
                                 ) : (
                                   <LucideGlobe />
                                 )}
@@ -2983,9 +2983,9 @@ export default function EmployeeProfilePage() {
                               >
                                 <span className="flex items-center gap-2">
                                   <span className="flex size-5 shrink-0 items-center justify-center [&>svg]:size-4">
-                                    {getSocialPlatformTypeIcon(
-                                      platform.value as TPlatform,
-                                    )}
+                                    <PlatformIcon
+                                      platform={platform.value as TPlatform}
+                                    />
                                   </span>
                                   {platform.label}
                                 </span>
@@ -3083,13 +3083,9 @@ export default function EmployeeProfilePage() {
                   key={item.id}
                 >
                   <div className="flex items-center gap-2">
-                    <Image
-                      src={item.icon}
-                      alt={item.label}
-                      width={30}
-                      height={30}
-                      className="rounded-full"
-                    />
+                    <span className="mx-1 flex items-center">
+                      <LoginMethodIcon method={item.label} />
+                    </span>
                     <TypographySmall>{item.label}</TypographySmall>
                   </div>
 

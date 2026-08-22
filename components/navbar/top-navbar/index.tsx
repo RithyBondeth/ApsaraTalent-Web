@@ -14,7 +14,7 @@ import {
   sidebarList,
   MOBILE_PRIMARY_URLS,
 } from "@/utils/constants/sidebar.constant";
-import { LucideFileUser, MoreHorizontal } from "lucide-react";
+import { LucideFileUser, LucideMoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -307,7 +307,7 @@ export default function TopNavbar() {
                         : "border-transparent group-hover:border-border group-hover:bg-muted/60 group-active:translate-y-px"
                     }`}
                   >
-                    <MoreHorizontal
+                    <LucideMoreHorizontal
                       className="size-[18px]"
                       strokeWidth={isMoreActive ? 2.3 : 1.7}
                     />

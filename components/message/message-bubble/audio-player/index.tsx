@@ -1,7 +1,7 @@
 "use client";
 
 import { formatDurationClock } from "@/utils/functions/date";
-import { Pause, Play } from "lucide-react";
+import { LucidePause, LucidePlay } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { IAudioPlayerProps } from "./props";
 import { CHAT_DEFAULT_AMPLITUDE_AUDIO } from "@/utils/constants/chat.constant";
@@ -108,9 +108,9 @@ export function AudioPlayer(props: IAudioPlayerProps) {
         aria-label={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (
-          <Pause className="h-4 w-4 fill-current" />
+          <LucidePause className="h-4 w-4 fill-current" />
         ) : (
-          <Play className="h-4 w-4 fill-current" />
+          <LucidePlay className="h-4 w-4 fill-current" />
         )}
       </button>
 

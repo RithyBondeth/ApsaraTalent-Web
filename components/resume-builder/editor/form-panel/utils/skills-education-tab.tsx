@@ -8,7 +8,7 @@ import { useState } from "react";
 import { IFormPanelProps } from "../props";
 import { FieldLabel } from "./field-label";
 import { useTranslations } from "next-intl";
-import { Sparkles, Loader2, Wand2 } from "lucide-react";
+import { LucideSparkles, LucideLoader2, LucideWand2 } from "lucide-react";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import { toast } from "sonner";
 
@@ -115,9 +115,9 @@ export function SkillsEducationTab({
             className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
           >
             {skillsLoading ? (
-              <Loader2 size={10} className="animate-spin" />
+              <LucideLoader2 size={10} className="animate-spin" />
             ) : (
-              <Sparkles size={10} />
+              <LucideSparkles size={10} />
             )}
             {t("suggest")}
           </Button>
@@ -189,9 +189,9 @@ export function SkillsEducationTab({
               className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
             >
               {eduLoading ? (
-                <Loader2 size={10} className="animate-spin" />
+                <LucideLoader2 size={10} className="animate-spin" />
               ) : (
-                <Wand2 size={10} />
+                <LucideWand2 size={10} />
               )}
               {t("polish")}
             </Button>

@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { LucidePlus } from "lucide-react";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
 
 export function GhostAddButton(props: { label: string; onClick: () => void }) {
@@ -25,7 +25,7 @@ export function GhostAddButton(props: { label: string; onClick: () => void }) {
         justifyContent: "center",
       }}
     >
-      <Plus size={11} />
+      <LucidePlus size={11} />
       {label}
     </button>
   );

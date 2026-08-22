@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import { Loader2 } from "lucide-react";
+import { LucideLoader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -195,7 +195,7 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
 
           {mediaStatus === "loading" && (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-muted">
-              <Loader2 className="size-7 animate-spin text-muted-foreground" />
+              <LucideLoader2 className="size-7 animate-spin text-muted-foreground" />
               <span className="sr-only">{tr("imageReadFailed")}</span>
             </div>
           )}

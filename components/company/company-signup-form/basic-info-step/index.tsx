@@ -23,16 +23,16 @@ import { useMemo } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import {
-  Building2,
-  CalendarDays,
-  Factory,
-  FileText,
-  Globe2,
-  Loader2,
-  MapPin,
-  Shapes,
-  Sparkles,
-  Users,
+  LucideBuilding2,
+  LucideCalendarDays,
+  LucideFactory,
+  LucideFileText,
+  LucideGlobe2,
+  LucideLoader2,
+  LucideMapPin,
+  LucideShapes,
+  LucideSparkles,
+  LucideUsers,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -122,7 +122,7 @@ export default function BasicInfoStepForm({
       {/* Form Section */}
       <Input
         placeholder={`${t("cmpBasicInfoCompanyNamePlaceholder")} *`}
-        prefix={<Building2 />}
+        prefix={<LucideBuilding2 />}
         aria-required="true"
         id="company-name"
         {...register("basicInfo.name")}
@@ -133,7 +133,7 @@ export default function BasicInfoStepForm({
           <Textarea
             autoResize
             placeholder={`${t("cmpBasicInfoDescriptionPlaceholder")} *`}
-            prefix={<FileText />}
+            prefix={<LucideFileText />}
             action={
               descValue ? (
                 <Button
@@ -145,9 +145,9 @@ export default function BasicInfoStepForm({
                   className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                 >
                   {isRefining ? (
-                    <Loader2 size={10} className="animate-spin" />
+                    <LucideLoader2 size={10} className="animate-spin" />
                   ) : (
-                    <Sparkles size={10} />
+                    <LucideSparkles size={10} />
                   )}
                   {tr("aiRefine")}
                 </Button>
@@ -163,7 +163,7 @@ export default function BasicInfoStepForm({
       <div className="field-row w-full">
         <Input
           placeholder={`${t("cmpBasicInfoIndustryPlaceholder")} *`}
-          prefix={<Factory />}
+          prefix={<LucideFactory />}
           aria-required="true"
           id="industry"
           {...register("basicInfo.industry")}
@@ -172,7 +172,7 @@ export default function BasicInfoStepForm({
         <Input
           type="number"
           placeholder={`${t("cmpBasicInfoCompanySizePlaceholder")} *`}
-          prefix={<Users />}
+          prefix={<LucideUsers />}
           aria-required="true"
           id="company-size"
           {...register("basicInfo.companySize")}
@@ -193,7 +193,7 @@ export default function BasicInfoStepForm({
                 placeholder={`${t("cmpBasicInfoFoundedYearPlaceholder")} *`}
                 emptyText={t("cmpBasicInfoFoundedYearEmpty")}
                 ariaLabel={t("cmpBasicInfoFoundedYear")}
-                icon={<CalendarDays />}
+                icon={<LucideCalendarDays />}
                 triggerId="founded-year"
                 allowCreate={false}
                 required
@@ -217,7 +217,7 @@ export default function BasicInfoStepForm({
                     className="h-12 text-muted-foreground"
                     aria-required="true"
                   >
-                    <MapPin className="mr-2 size-[18px] shrink-0" />
+                    <LucideMapPin className="mr-2 size-[18px] shrink-0" />
                     <SelectValue
                       placeholder={`${t("cmpBasicInfoLocationPlaceholder")} *`}
                     />
@@ -242,7 +242,7 @@ export default function BasicInfoStepForm({
         {/* Website URL Section */}
         <Input
           placeholder={t("cmpBasicInfoWebsiteUrlPlaceholder")}
-          prefix={<Globe2 />}
+          prefix={<LucideGlobe2 />}
           id="website-url"
           {...register("basicInfo.websiteUrl")}
           validationMessage={errors!.basicInfo?.websiteUrl?.message}
@@ -261,7 +261,7 @@ export default function BasicInfoStepForm({
                 placeholder={t("cmpBasicInfoCompanyTypePlaceholder")}
                 emptyText={t("cmpBasicInfoCompanyTypeEmpty")}
                 ariaLabel={t("cmpBasicInfoCompanyType")}
-                icon={<Shapes />}
+                icon={<LucideShapes />}
                 triggerId="company-type"
               />
             )}

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ReactionPicker } from "../../message-utils/reaction-picker";
-import { Pencil, Reply, Trash2 } from "lucide-react";
+import { LucidePencil, LucideReply, LucideTrash2 } from "lucide-react";
 import { IMessageBubbleActionsProps } from "./props";
 
 export function MessageBubbleActions(props: IMessageBubbleActionsProps) {
@@ -32,7 +32,7 @@ export function MessageBubbleActions(props: IMessageBubbleActionsProps) {
           onClick={onReply}
           aria-label="Reply to message"
         >
-          <Reply className="h-3.5 w-3.5" />
+          <LucideReply className="h-3.5 w-3.5" />
         </Button>
       )}
 
@@ -48,7 +48,7 @@ export function MessageBubbleActions(props: IMessageBubbleActionsProps) {
           onClick={onEdit}
           aria-label="Edit message"
         >
-          <Pencil className="h-3.5 w-3.5" />
+          <LucidePencil className="h-3.5 w-3.5" />
         </Button>
       )}
 
@@ -61,7 +61,7 @@ export function MessageBubbleActions(props: IMessageBubbleActionsProps) {
           onClick={onDelete}
           aria-label="Delete message"
         >
-          <Trash2 className="h-3.5 w-3.5" />
+          <LucideTrash2 className="h-3.5 w-3.5" />
         </Button>
       )}
     </div>

@@ -6,7 +6,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { LucideCheckCircle2, LucideLoader2 } from "lucide-react";
 import ApsaraLoadingSpinner from "@/components/utils/feedback/apsara-loading-spinner";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TLoadingStep } from "@/utils/interfaces/ui/loading.interface";
@@ -90,12 +90,12 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
                       }`}
                     >
                       {done ? (
-                        <CheckCircle2
+                        <LucideCheckCircle2
                           size={14}
                           className="shrink-0 text-primary"
                         />
                       ) : active ? (
-                        <Loader2
+                        <LucideLoader2
                           size={14}
                           className="shrink-0 animate-spin text-primary"
                         />

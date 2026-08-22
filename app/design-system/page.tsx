@@ -5,6 +5,8 @@ import { LucideBriefcase, LucideSparkles, LucideUsers } from "lucide-react";
 import { StatusPill } from "@/components/utils/data-display/status-pill";
 import { BenefitValueChip } from "@/components/utils/data-display/benefit-value-chip";
 import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
+import { LoginMethodIcon } from "@/components/utils/brand/login-method-icon";
+import { PlatformIcon } from "@/components/utils/brand/platform-icon";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -321,6 +323,49 @@ export default function DesignSystemPage() {
             <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
               {["FULL_TIME", "PART_TIME", "FREELANCE", "CONTRACT"].map((a) => (
                 <AvailabilityBadge key={a} availability={a} />
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          title="Brand marks"
+          note="Auth providers and social platforms, all in currentColor so they follow the theme. Sourced from Simple Icons, because Lucide has no Google mark and has deprecated the brand icons it does ship for removal in v1.0. LinkedIn is drawn in-house — Simple Icons dropped it after a trademark request — and Twitter renders as X, which is the mark Simple Icons carries now."
+        >
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-5">
+              {(["Google", "Facebook", "LinkedIn", "Github"] as const).map(
+                (method) => (
+                  <span
+                    key={method}
+                    className="flex items-center gap-2 text-sm text-foreground"
+                  >
+                    <LoginMethodIcon method={method} />
+                    {method}
+                  </span>
+                ),
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-5 border-t border-border pt-4">
+              {(
+                [
+                  "Facebook",
+                  "Instagram",
+                  "Telegram",
+                  "Linkedin",
+                  "Github",
+                  "Website",
+                  "Twitter",
+                ] as const
+              ).map((platform) => (
+                <span
+                  key={platform}
+                  className="flex items-center gap-2 text-sm text-muted-foreground"
+                >
+                  <PlatformIcon platform={platform} />
+                  {platform}
+                </span>
               ))}
             </div>
           </div>

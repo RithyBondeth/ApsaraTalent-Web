@@ -1,6 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { Check, CheckCheck, LucideMessagesSquare, Users } from "lucide-react";
+import {
+  LucideCheck,
+  LucideCheckCheck,
+  LucideMessagesSquare,
+  LucideUsers,
+} from "lucide-react";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { IChatListProps } from "../props";
 import { useTranslations } from "next-intl";
@@ -53,7 +58,7 @@ export default function ExpandedChatList(props: IChatListProps) {
             <div className="relative shrink-0">
               {chat.isGroup ? (
                 <div className="flex h-11 w-11 items-center justify-center rounded-none border border-border bg-muted md:h-12 md:w-12">
-                  <Users className="h-5 w-5 text-muted-foreground" />
+                  <LucideUsers className="h-5 w-5 text-muted-foreground" />
                 </div>
               ) : (
                 <Avatar className="h-11 w-11 rounded-none border border-border md:h-12 md:w-12">
@@ -95,9 +100,9 @@ export default function ExpandedChatList(props: IChatListProps) {
                 {isLastFromMe && (
                   <span className="shrink-0">
                     {chat.isRead ? (
-                      <CheckCheck className="h-3.5 w-3.5 text-green-500" />
+                      <LucideCheckCheck className="h-3.5 w-3.5 text-green-500" />
                     ) : (
-                      <Check className="h-3.5 w-3.5 text-muted-foreground" />
+                      <LucideCheck className="h-3.5 w-3.5 text-muted-foreground" />
                     )}
                   </span>
                 )}

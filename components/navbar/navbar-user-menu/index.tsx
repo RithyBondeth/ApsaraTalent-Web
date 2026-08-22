@@ -1,9 +1,9 @@
 "use client";
 
 import {
-  ChevronDown,
-  Globe,
-  LogOut,
+  LucideChevronDown,
+  LucideGlobe,
+  LucideLogOut,
   LucideBookMarked,
   LucideBuilding,
   LucideInfo,
@@ -161,7 +161,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
             </div>
 
             {/* Chevron Icon Section */}
-            <ChevronDown className="hidden size-3.5 shrink-0 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180 sm:block" />
+            <LucideChevronDown className="hidden size-3.5 shrink-0 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180 sm:block" />
           </button>
         </DropdownMenuTrigger>
 
@@ -265,7 +265,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
                 className="flex min-h-11 items-center gap-2.5 rounded-none px-2"
               >
                 <MenuIcon>
-                  <Globe className="size-3.5 text-foreground" />
+                  <LucideGlobe className="size-3.5 text-foreground" />
                 </MenuIcon>
                 <span>
                   {t("language")}
@@ -306,7 +306,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
               className="flex min-h-11 items-center gap-2.5 rounded-none px-2 text-destructive focus:bg-destructive/10 focus:text-destructive"
             >
               <MenuIcon className="border-destructive/20 bg-destructive/10">
-                <LogOut className="size-3.5 text-destructive" />
+                <LucideLogOut className="size-3.5 text-destructive" />
               </MenuIcon>
               {t("logOut")}
             </DropdownMenuItem>

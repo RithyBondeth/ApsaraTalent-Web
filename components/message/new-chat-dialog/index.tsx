@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { getNameInitials } from "@/utils/functions/text";
-import { Loader2, Search } from "lucide-react";
+import { LucideLoader2, LucideSearch } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { INewChatDialogProps } from "./props";
@@ -51,7 +51,7 @@ export default function NewChatDialog(props: INewChatDialogProps) {
 
         {/* Search Section */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <LucideSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
@@ -65,7 +65,7 @@ export default function NewChatDialog(props: INewChatDialogProps) {
         <div className="max-h-72 overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center py-10">
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              <LucideLoader2 className="h-5 w-5 animate-spin text-muted-foreground" />
             </div>
           ) : filtered.length === 0 ? (
             <div className="px-2 py-10 text-center">
@@ -112,7 +112,7 @@ export default function NewChatDialog(props: INewChatDialogProps) {
                       </div>
 
                       {isStarting && (
-                        <Loader2 className="h-4 w-4 shrink-0 animate-spin text-muted-foreground" />
+                        <LucideLoader2 className="h-4 w-4 shrink-0 animate-spin text-muted-foreground" />
                       )}
                     </button>
                   </li>

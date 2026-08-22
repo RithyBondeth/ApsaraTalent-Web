@@ -10,7 +10,7 @@ import {
   LucideGraduationCap,
   LucideMapPin,
   LucideUsers,
-  MoveUpRight,
+  LucideMoveUpRight,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ISearchCompanyCardProps } from "./props";
@@ -138,7 +138,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
         >
           <LucideBuilding className="size-3.5" />
           {t("viewCompany")}
-          <MoveUpRight className="size-3.5" />
+          <LucideMoveUpRight className="size-3.5" />
         </Button>
       </div>
     </article>

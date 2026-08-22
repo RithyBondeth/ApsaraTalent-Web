@@ -8,7 +8,7 @@ import { IFormPanelProps } from "../props";
 import { FieldLabel } from "./field-label";
 import { capitalizeWords } from "@/utils/functions/text";
 import { useTranslations } from "next-intl";
-import { Sparkles, Loader2 } from "lucide-react";
+import { LucideSparkles, LucideLoader2 } from "lucide-react";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import { toast } from "sonner";
 
@@ -80,9 +80,9 @@ export function PersonalInfoTab({
                 className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
               >
                 {jobLoading ? (
-                  <Loader2 size={10} className="animate-spin" />
+                  <LucideLoader2 size={10} className="animate-spin" />
                 ) : (
-                  <Sparkles size={10} />
+                  <LucideSparkles size={10} />
                 )}
                 {t("aiRefine")}
               </Button>
@@ -164,9 +164,9 @@ export function PersonalInfoTab({
             className="h-7 gap-1 border border-primary/20 px-2 text-[10px] text-primary hover:bg-primary/5 hover:text-primary"
           >
             {summaryLoading ? (
-              <Loader2 size={12} className="animate-spin" />
+              <LucideLoader2 size={12} className="animate-spin" />
             ) : (
-              <Sparkles size={12} />
+              <LucideSparkles size={12} />
             )}
             {t("aiRefine")}
           </Button>

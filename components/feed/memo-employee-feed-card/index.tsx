@@ -1,5 +1,5 @@
 import EmployeeCard from "@/components/employee/employee-card";
-import { Sparkles } from "lucide-react";
+import { LucideSparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React from "react";
 import { IMemoEmployeeFeedCardProps } from "./props";
@@ -30,7 +30,7 @@ export const MemoEmployeeFeedCard = React.memo(function EmployeeFeedCard({
       {/* Recommended Badge Section */}
       {isRecommended && (
         <div className="mb-2 flex items-center gap-1.5 border-l-2 border-foreground pl-2">
-          <Sparkles className="size-3 text-foreground" />
+          <LucideSparkles className="size-3 text-foreground" />
           <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
             {t("recommended")}
           </span>

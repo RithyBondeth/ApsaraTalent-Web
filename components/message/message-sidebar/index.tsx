@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Plus, Search, X } from "lucide-react";
+import { LucidePlus, LucideSearch, LucideX } from "lucide-react";
 import { useState } from "react";
 import { IChatSidebarProps } from "./props";
 import ExpandedChatList from "./expanded-chat-list";
@@ -86,7 +86,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
                 aria-label="New conversation"
                 className="flex h-9 w-9 items-center justify-center rounded-none border border-foreground bg-foreground text-background transition-colors hover:border-primary hover:bg-primary"
               >
-                <Plus className="h-4 w-4" />
+                <LucidePlus className="h-4 w-4" />
               </button>
             )}
             {/* On Close Button Section */}
@@ -98,7 +98,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
                 onClick={onClose}
                 aria-label="Close sidebar"
               >
-                <X className="h-4 w-4" />
+                <LucideX className="h-4 w-4" />
               </Button>
             )}
           </div>
@@ -112,7 +112,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
               aria-label="New conversation"
               className="flex h-9 w-9 items-center justify-center rounded-none border border-foreground bg-foreground text-background transition-colors hover:border-primary hover:bg-primary"
             >
-              <Plus className="h-4 w-4" />
+              <LucidePlus className="h-4 w-4" />
             </button>
           )}
         </div>
@@ -122,7 +122,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
       {isOpen && (
         <div className="shrink-0 border-b border-border px-3 py-3 md:px-4">
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <LucideSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t("chatsSearch")}
               className="h-10 rounded-none border-border bg-muted/30 pl-9 focus-visible:ring-1 focus-visible:ring-primary"

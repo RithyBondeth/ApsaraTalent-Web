@@ -6,7 +6,7 @@ import {
   LucideGraduationCap,
   LucideMapPin,
   LucideUser,
-  MoveUpRight,
+  LucideMoveUpRight,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ISearchEmployeeCardProps } from "./props";
@@ -110,7 +110,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
         >
           <LucideUser className="size-3.5" />
           {t("viewProfile")}
-          <MoveUpRight className="size-3.5" />
+          <LucideMoveUpRight className="size-3.5" />
         </Button>
       </div>
     </article>

@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { LoaderCircle, LogOut } from "lucide-react";
+import { LucideLoaderCircle, LucideLogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ILogoutConfirmationDialogProps } from "./props";
 
@@ -70,7 +70,7 @@ export function LogoutConfirmationDialog(
           <div className="profile-detail-hero-grid" aria-hidden />
           <div className="relative z-[2] flex items-start gap-4 pr-10">
             <div className="flex size-12 shrink-0 items-center justify-center border border-background/25 bg-background/10 sm:size-14">
-              <LogOut className="size-5 sm:size-6" strokeWidth={1.6} />
+              <LucideLogOut className="size-5 sm:size-6" strokeWidth={1.6} />
             </div>
             <div className="min-w-0 pt-0.5">
               <p className="mb-2 text-[9px] font-extrabold uppercase tracking-[0.22em] opacity-60">
@@ -112,9 +112,9 @@ export function LogoutConfirmationDialog(
               className="h-11 w-full rounded-none"
             >
               {isPending ? (
-                <LoaderCircle className="size-4 animate-spin" />
+                <LucideLoaderCircle className="size-4 animate-spin" />
               ) : (
-                <LogOut className="size-4" />
+                <LucideLogOut className="size-4" />
               )}
               {confirmLabel}
             </Button>

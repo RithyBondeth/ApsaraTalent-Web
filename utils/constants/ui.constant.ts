@@ -1,10 +1,4 @@
-import {
-  facebookIcon,
-  githubIcon,
-  googleIcon,
-  linkedInIcon,
-} from "@/utils/constants/asset.constant";
-import { StaticImageData } from "next/image";
+import type { TLoginMethod } from "@/components/utils/brand/login-method-icon";
 
 export const genderConstant: {
   id: number;
@@ -37,15 +31,20 @@ export const platformConstant: {
   { id: 6, label: "Website", value: "Website" },
 ] as const;
 
+/**
+ * The OAuth providers listed in the profile's authentication section. Pure data
+ * — the glyph for each comes from `LoginMethodIcon`, so this file stays free of
+ * components and the raster logos stay on the sign-in buttons in `(auth)/login`,
+ * where Google's branding terms actually apply.
+ */
 export const loginMethodConstant: {
   id: number;
-  label: string;
-  icon: StaticImageData;
+  label: TLoginMethod;
 }[] = [
-  { id: 1, label: "Google", icon: googleIcon },
-  { id: 2, label: "Facebook", icon: facebookIcon },
-  { id: 3, label: "LinkedIn", icon: linkedInIcon },
-  { id: 4, label: "Github", icon: githubIcon },
+  { id: 1, label: "Google" },
+  { id: 2, label: "Facebook" },
+  { id: 3, label: "LinkedIn" },
+  { id: 4, label: "Github" },
 ] as const;
 
 export const availabilityConstant: {
