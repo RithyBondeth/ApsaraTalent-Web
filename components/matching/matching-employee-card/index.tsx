@@ -1,9 +1,5 @@
 import MetaChip from "@/components/utils/data-display/meta-chip";
-import {
-  formatAvailabilityWords,
-  getNameInitials,
-  translateLocation,
-} from "@/utils/functions/text";
+import { getNameInitials, translateLocation } from "@/utils/functions/text";
 import {
   LucideBriefcaseBusiness,
   LucideCalendarCheck,
@@ -27,7 +23,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import { IMatchingEmployeeCardProps } from "./props";
-import { getAvailabilityStyleClass } from "@/utils/functions/ui";
+import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -41,7 +37,6 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("matching");
   const tl = useTranslations("locations");
-  const availabilityLabel = formatAvailabilityWords(props.availability);
 
   /* -------------------------------- All States ------------------------------ */
   const [unmatchDialogOpen, setUnmatchDialogOpen] = useState<boolean>(false);
@@ -75,11 +70,10 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
             </div>
             <div className="flex flex-shrink-0 items-center gap-2">
               <MatchScoreBadge score={props.matchScore} />
-              <span
-                className={`border-current/15 whitespace-nowrap rounded-none border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
-              >
-                {availabilityLabel}
-              </span>
+              <AvailabilityBadge
+                availability={props.availability}
+                className="whitespace-nowrap"
+              />
             </div>
           </div>
 
@@ -94,11 +88,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
           {props.skills.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {props.skills.slice(0, 6).map((skill, index) => (
-                <Tag
-                  label={skill}
-                  key={index}
-                  className="!rounded-none border border-border hover:shadow-none"
-                />
+                <Tag label={skill} key={index} />
               ))}
             </div>
           )}

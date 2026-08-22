@@ -74,11 +74,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
           {props.openPosition.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {props.openPosition.slice(0, 6).map((op) => (
-                <Tag
-                  label={op.title}
-                  key={op.id}
-                  className="!rounded-none border border-border hover:shadow-none"
-                />
+                <Tag label={op.title} key={op.id} />
               ))}
             </div>
           )}

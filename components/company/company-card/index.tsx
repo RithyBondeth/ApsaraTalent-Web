@@ -167,11 +167,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 {props.openPositions
                   .slice(0, 3)
                   .map((item: IJobPosition, index) => (
-                    <Tag
-                      key={index}
-                      label={item.title}
-                      className="!rounded-none border border-border hover:shadow-none"
-                    />
+                    <Tag key={index} label={item.title} />
                   ))}
                 {props.openPositions.length > 3 && (
                   <span className="self-center text-[11px] font-medium text-muted-foreground">

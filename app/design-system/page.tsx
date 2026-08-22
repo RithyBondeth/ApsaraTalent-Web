@@ -4,6 +4,7 @@ import { LucideBriefcase, LucideSparkles, LucideUsers } from "lucide-react";
 
 import { StatusPill } from "@/components/utils/data-display/status-pill";
 import { BenefitValueChip } from "@/components/utils/data-display/benefit-value-chip";
+import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -305,7 +306,7 @@ export default function DesignSystemPage() {
 
         <Section
           title="Benefits & values"
-          note="Categorical, not status — a benefit is a kind of thing, not a severity. One chip serves the company profile, the signup wizard, the employee-facing company page and the company dialog; onRemove is what the authoring surfaces add."
+          note="Categorical, not status — a benefit is a kind of thing, not a severity. Benefits and values share one chip across five surfaces; availability shares one badge across six. The four hues are kept apart on purpose: benefit magenta sits opposite value lime, which it is always adjacent to, and clear of the three availability hues that can share a feed scroll."
         >
           <div className="space-y-4">
             <div className="flex flex-wrap gap-2">
@@ -316,6 +317,12 @@ export default function DesignSystemPage() {
             </div>
 
             <BenefitValueRemovableDemo />
+
+            <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
+              {["FULL_TIME", "PART_TIME", "FREELANCE", "CONTRACT"].map((a) => (
+                <AvailabilityBadge key={a} availability={a} />
+              ))}
+            </div>
           </div>
         </Section>
 

@@ -3,7 +3,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import {
-  LucideClock,
   LucideGraduationCap,
   LucideMapPin,
   LucideUser,
@@ -11,15 +10,12 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ISearchEmployeeCardProps } from "./props";
-import { getAvailabilityStyleClass } from "@/utils/functions/ui";
+import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
 import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
-import {
-  formatAvailabilityWords,
-  translateLocation,
-} from "@/utils/functions/text";
+import { translateLocation } from "@/utils/functions/text";
 
 export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -53,11 +49,10 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
                   {props.firstname} {props.lastname}
                 </TypographyP>
               </div>
-              <span
-                className={`border-current/15 flex-shrink-0 whitespace-nowrap rounded-none border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
-              >
-                {formatAvailabilityWords(props.availability)}
-              </span>
+              <AvailabilityBadge
+                availability={props.availability}
+                className="flex-shrink-0 whitespace-nowrap"
+              />
             </div>
           </div>
         </div>
@@ -72,11 +67,6 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
           <MetaChip
             icon={<LucideMapPin />}
             text={translateLocation(props.location, tl)}
-            className="rounded-none border border-border bg-muted/45"
-          />
-          <MetaChip
-            icon={<LucideClock />}
-            text={formatAvailabilityWords(props.availability)}
             className="rounded-none border border-border bg-muted/45"
           />
           <MetaChip
@@ -97,11 +87,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
         {props.skills.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {props.skills.slice(0, 6).map((item, index) => (
-              <Tag
-                label={item}
-                key={index}
-                className="!rounded-none border border-border hover:shadow-none"
-              />
+              <Tag label={item} key={index} />
             ))}
             {props.skills.length > 6 && (
               <span className="self-center text-[11px] font-semibold text-muted-foreground">

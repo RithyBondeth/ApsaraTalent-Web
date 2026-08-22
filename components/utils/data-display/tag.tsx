@@ -18,13 +18,19 @@ interface ITagInterface {
  * that do (a skill hashing to indigo looked exactly like a benefit chip).
  * Every reading surface had already opted out by passing `neutral`, so the flag
  * and the hash are both gone. Colour on a label now means something.
+ *
+ * The border is full-opacity `border-border` because all seventeen call sites
+ * were overriding the old `/60` back to it — in two slightly different spellings,
+ * one of which also disabled a shadow this component never had. Restating the
+ * component's own styling at the call site is how those two spellings drifted
+ * apart; pass `className` for layout, not for the chip's own look.
  * ------------------------------------------------------------------------- */
 export default function Tag(props: ITagInterface) {
   /* -------------------------------- Render UI ------------------------------- */
   return (
     <div
       className={cn(
-        "flex w-fit cursor-pointer items-center rounded-none border border-border/60 bg-muted/50 px-3 py-1.5 transition-all duration-200 ease-out hover:border-foreground/30 active:scale-95",
+        "flex w-fit cursor-pointer items-center rounded-none border border-border bg-muted/50 px-3 py-1.5 transition-all duration-200 ease-out hover:border-foreground/30 active:scale-95",
         props.icon && "gap-1",
         props.className,
       )}

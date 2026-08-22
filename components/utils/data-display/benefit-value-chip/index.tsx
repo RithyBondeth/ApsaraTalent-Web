@@ -14,8 +14,12 @@ import type { IBenefitValueChipProps, TBenefitValueKind } from "./props";
  * four answers.
  *
  * Benefits and values differ in KIND, not severity, so they take categorical
- * tokens rather than status ones — indigo and lime are the closest sanctioned
- * hues to the blue and yellow-green the app had been hand-rolling. As with
+ * tokens rather than status ones. Benefits started on indigo, the closest hue
+ * to the blue the app had been hand-rolling, but indigo is what
+ * AvailabilityBadge gives part-time, and the feed interleaves company and
+ * employee cards in one grid. Magenta sits 133° from the lime that values use —
+ * the separation that matters most, since benefit and value chips are adjacent
+ * in the same row — and well clear of every availability hue. As with
  * StatusPill, the classes are written out in full: Tailwind only compiles class
  * names it can see as literal strings, so `bg-category-${kind}-subtle` would
  * silently compile to nothing.
@@ -23,7 +27,7 @@ import type { IBenefitValueChipProps, TBenefitValueKind } from "./props";
 
 const KIND: Record<TBenefitValueKind, string> = {
   benefit:
-    "border-category-indigo-accent/20 bg-category-indigo-subtle text-category-indigo-accent",
+    "border-category-magenta-accent/20 bg-category-magenta-subtle text-category-magenta-accent",
   value:
     "border-category-lime-accent/20 bg-category-lime-subtle text-category-lime-accent",
 };

@@ -14,16 +14,14 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "../../ui/button";
 import CachedAvatar from "../../ui/cached-avatar";
 import Tag from "@/components/utils/data-display/tag";
+import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import EmployeeDialog from "../employee-dialog";
 import { IEmployeeCardProps } from "./props";
 import { useTranslations } from "next-intl";
-import {
-  translateLocation,
-  formatAvailabilityWords,
-} from "@/utils/functions/text";
+import { translateLocation } from "@/utils/functions/text";
 import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 
 export default function EmployeeCard(props: IEmployeeCardProps) {
@@ -130,21 +128,14 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
         {/* Status Badges Section */}
         <div className="flex flex-wrap items-center gap-1.5 px-4 pb-3">
-          <Tag
-            label={formatAvailabilityWords(props.availability)}
-            className="!rounded-none border border-border hover:shadow-none"
-          />
+          <AvailabilityBadge availability={props.availability} />
         </div>
 
         {/* Skills Section */}
         {props.skills.length > 0 && (
           <div className="flex flex-wrap gap-1.5 px-4 pb-3">
             {props.skills.slice(0, 4).map((skill) => (
-              <Tag
-                key={skill.id}
-                label={skill.name}
-                className="!rounded-none border border-border hover:shadow-none"
-              />
+              <Tag key={skill.id} label={skill.name} />
             ))}
             {props.skills.length > 4 && (
               <span className="self-center text-[11px] font-medium text-muted-foreground">

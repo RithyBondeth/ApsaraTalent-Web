@@ -293,7 +293,7 @@ Three groups of tokens:
   `-border`. Example: `bg-success-subtle text-success-accent border-success-border`.
 - **Categorical** — `category-{violet,magenta,teal,orange,indigo,lime}` with
   `-accent` and `-subtle`, for labels that differ in *kind*: notification type,
-  company benefits (indigo) and values (lime). Never borrow a status colour for
+  company benefits (magenta) and values (lime), employee availability (teal/indigo/violet via `AvailabilityBadge`). Never borrow a status colour for
   these — spending amber on "freelance" is what stops a real warning from
   standing out.
 
@@ -321,11 +321,20 @@ common status-badge case.
   a *white* wash over the page in dark mode. Use `bg-scrim/80`, never
   `bg-black/80`.
 
-- `npm run check:design` gates three things: `check:contrast` re-derives every
-  token pair's WCAG ratio from `globals.css` and fails if one drops below
-  threshold; `check:tokens` is a ratchet on raw palette classes; `check:elevation`
-  is a ratchet on hand-written shadows. Both ratchets may go down but never up
-  (`--list` to see what's left, `--update` after migrating a file).
+- `npm run check:design` gates four things: `check:contrast` re-derives every
+  token pair's WCAG ratio from `globals.css` — including the scoped palettes —
+  and fails if one drops below threshold; `check:tokens` is a ratchet on raw
+  palette classes; `check:elevation` is a ratchet on hand-written shadows; and
+  `check:inline-colors` fails on any `style={{ color: … }}` outside the resume
+  builder. Both ratchets may go down but never up (`--list` to see what's left,
+  `--update` after migrating a file).
+- **Colour goes in a class, never an inline style.** The first three gates all
+  read class names or `globals.css`, so a `style={{ color }}` is invisible to
+  every one of them — which is how the match-score badge, the score ring and the
+  dashboard radial all shipped raw hex that failed AA as text in light mode
+  (2.15–3.76:1) and could not follow the theme, while both ratchets reported
+  "holding". When a library insists on a colour string, pass
+  `hsl(var(--token))`; recharts accepts it.
 - `app/design-system` renders every token and primitive in both themes. Dev
   only — it `notFound()`s in production.
 

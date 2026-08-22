@@ -1,29 +1,34 @@
 import React from "react";
 import { describe, expect, it } from "vitest";
-import { getAvailabilityStyleClass } from "./get-availability-class";
 import { getStatusBadgeStyleClass } from "./get-interview-status-class";
 import { getPaginationPages } from "./get-pagination-pages";
+import { getScoreTone } from "./get-score-tone";
 import { getSocialPlatformTypeIcon } from "./get-social-type";
 
 describe("UI functions", () => {
   // These assert the token family each state maps to, not a specific hue.
   // Asserting on "green"/"amber" made the tests restate the palette, so any
   // colour change broke them without anything actually regressing.
-  it("maps availability to distinct categorical tokens", () => {
-    expect(getAvailabilityStyleClass("FULL_TIME")).toContain("category-teal");
-    expect(getAvailabilityStyleClass("part time")).toContain("category-indigo");
-    expect(getAvailabilityStyleClass("freelance")).toContain("category-violet");
-    expect(getAvailabilityStyleClass("contract")).toContain("muted");
+  it("maps a match score to status tokens, with a weak match kept neutral", () => {
+    expect(getScoreTone(90).text).toContain("success");
+    expect(getScoreTone(60).text).toContain("warning");
 
-    // Availability is a category, so it must never borrow a status colour —
-    // that is what keeps a real warning legible next to a "freelance" chip.
-    const all = ["FULL_TIME", "part time", "freelance", "contract"].map(
-      getAvailabilityStyleClass,
-    );
-    for (const classes of all) {
-      expect(classes).not.toMatch(/success|warning|destructive|info/);
+    // A low score is not an error — rendering a person in red reads far worse
+    // than it scores — so the weak band is muted rather than destructive.
+    expect(getScoreTone(20).text).toContain("muted");
+    expect(getScoreTone(20).text).not.toContain("destructive");
+
+    // Boundaries, and no raw hex anywhere: these used to be inline #22c55e /
+    // #f59e0b / #ef4444, which failed AA on a light card and no gate could see.
+    expect(getScoreTone(75).text).toContain("success");
+    expect(getScoreTone(74).text).toContain("warning");
+    expect(getScoreTone(50).text).toContain("warning");
+    expect(getScoreTone(49).text).toContain("muted");
+    for (const score of [90, 60, 20]) {
+      expect(JSON.stringify(getScoreTone(score))).not.toMatch(
+        /#[0-9a-f]{3,6}/i,
+      );
     }
-    expect(new Set(all).size).toBe(all.length);
   });
 
   it("maps interview states to distinct status tokens", () => {

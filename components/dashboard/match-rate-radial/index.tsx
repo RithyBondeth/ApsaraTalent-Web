@@ -5,20 +5,30 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { IMatchRateRadialProps } from "./props";
-import { RATE_COLOR } from "@/utils/constants/ui.constant";
+import { cn } from "@/lib/utils";
 
 export function MatchRateRadial({ rate }: IMatchRateRadialProps) {
   /* ---------------------------------- Helpers -------------------------------- */
-  const getColorBasedOnRate = (r: number) => {
-    if (r >= 70) return RATE_COLOR.HIGH;
-    if (r >= 40) return "hsl(var(--primary))";
-    if (r >= 20) return RATE_COLOR.MEDIUM;
-    return RATE_COLOR.LOW;
+  // The arc takes a colour string because recharts does, but it reads the same
+  // tokens as everything else — `hsl(var(--primary))` was already proving that
+  // works here. The label beside it takes a class, because a `style={{ color }}`
+  // of raw hex is invisible to both design gates and cannot follow the theme:
+  // the three RATE_COLOR values scored 2.54, 2.15 and 3.76 against a light card,
+  // all under the 4.5:1 that WCAG asks of text.
+  const band = (r: number) => {
+    if (r >= 70)
+      return { arc: "hsl(var(--success))", text: "text-success-accent" };
+    if (r >= 40) return { arc: "hsl(var(--primary))", text: "text-primary" };
+    if (r >= 20)
+      return { arc: "hsl(var(--warning))", text: "text-warning-accent" };
+    return {
+      arc: "hsl(var(--muted-foreground))",
+      text: "text-muted-foreground",
+    };
   };
 
-  const data = [{ value: rate, fill: "hsl(var(--primary))" }];
-  const color = getColorBasedOnRate(rate);
-  data[0].fill = color;
+  const tone = band(rate);
+  const data = [{ value: rate, fill: tone.arc }];
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -51,7 +61,7 @@ export function MatchRateRadial({ rate }: IMatchRateRadialProps) {
 
       {/* Rate Section */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-bold tracking-tight" style={{ color }}>
+        <span className={cn("text-3xl font-bold tracking-tight", tone.text)}>
           {rate}%
         </span>
         <span className="mt-0.5 text-xs text-muted-foreground">Match Rate</span>
