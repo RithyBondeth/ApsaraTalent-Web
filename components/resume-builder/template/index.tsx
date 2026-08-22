@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import ImagePopup from "@/components/utils/data-display/image-popup";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { Check, Eye } from "lucide-react";
+import { LucideCheck, LucideEye } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { ITemplateCardProps } from "./props";
@@ -23,8 +23,8 @@ export default function TemplateCard(props: ITemplateCardProps) {
     <article
       className={`group h-full w-full cursor-pointer overflow-hidden border bg-card transition-[border-color,box-shadow,transform] duration-200 ease-out ${
         props.selected
-          ? "-translate-y-0.5 border-foreground shadow-[7px_7px_0_hsl(var(--foreground)/0.12)]"
-          : "border-border shadow-[4px_4px_0_hsl(var(--foreground)/0.045)] hover:-translate-y-0.5 hover:border-foreground/35 hover:shadow-[7px_7px_0_hsl(var(--foreground)/0.07)]"
+          ? "-translate-y-0.5 border-foreground shadow-hard-lg"
+          : "border-border shadow-hard hover:-translate-y-0.5 hover:border-foreground/35 hover:shadow-hard-lg"
       }`}
     >
       {/* Preview Area Section */}
@@ -37,7 +37,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
               : "border-border bg-background/90 text-muted-foreground backdrop-blur"
           }`}
         >
-          {props.selected ? <Check className="size-3" /> : null}
+          {props.selected ? <LucideCheck className="size-3" /> : null}
           {props.selected ? t("selectedTemplate") : t("templateLabel")}
         </div>
 
@@ -67,7 +67,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
                 setPopupResume(true);
               }}
             >
-              <Eye size={14} />
+              <LucideEye size={14} />
               {t("preview")}
             </button>
           </div>
@@ -97,7 +97,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
           <span>
             {props.selected ? t("selectedTemplate") : t("useTemplate")}
           </span>
-          {props.selected ? <Check className="size-3.5" /> : null}
+          {props.selected ? <LucideCheck className="size-3.5" /> : null}
         </Button>
       </div>
 

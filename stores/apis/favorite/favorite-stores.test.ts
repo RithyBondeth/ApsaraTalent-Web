@@ -40,8 +40,16 @@ describe("favorite API stores", () => {
       loading: false,
       error: null,
     });
-    useGetAllCompanyFavoritesStore.setState({ employeeData: null, loading: false, error: null });
-    useGetAllEmployeeFavoritesStore.setState({ companyData: null, loading: false, error: null });
+    useGetAllCompanyFavoritesStore.setState({
+      employeeData: null,
+      loading: false,
+      error: null,
+    });
+    useGetAllEmployeeFavoritesStore.setState({
+      companyData: null,
+      loading: false,
+      error: null,
+    });
   });
 
   it("adds, removes, checks, optimistically removes, and clears company favorites", async () => {
@@ -51,13 +59,19 @@ describe("favorite API stores", () => {
     const store = useCompanyFavEmployeeStore.getState();
 
     await store.addEmployeeToFavorite("company-1", "employee-1");
-    expect(useCompanyFavEmployeeStore.getState().isFavorite("employee-1")).toBe(true);
+    expect(useCompanyFavEmployeeStore.getState().isFavorite("employee-1")).toBe(
+      true,
+    );
     await useCompanyFavEmployeeStore
       .getState()
       .removeEmployeeFromFavorite("company-1", "employee-1", "favorite-1");
-    expect(useCompanyFavEmployeeStore.getState().isFavorite("employee-1")).toBe(false);
+    expect(useCompanyFavEmployeeStore.getState().isFavorite("employee-1")).toBe(
+      false,
+    );
 
-    useCompanyFavEmployeeStore.setState({ favoriteEmployeeIds: new Set(["employee-2"]) });
+    useCompanyFavEmployeeStore.setState({
+      favoriteEmployeeIds: new Set(["employee-2"]),
+    });
     useCompanyFavEmployeeStore.getState().optimisticRemove("employee-2");
     useCompanyFavEmployeeStore.getState().clearFavorite();
     expect(useCompanyFavEmployeeStore.getState()).toMatchObject({
@@ -75,13 +89,19 @@ describe("favorite API stores", () => {
     await useEmployeeFavCompanyStore
       .getState()
       .addCompanyToFavorite("employee-1", "company-1");
-    expect(useEmployeeFavCompanyStore.getState().isFavorite("company-1")).toBe(true);
+    expect(useEmployeeFavCompanyStore.getState().isFavorite("company-1")).toBe(
+      true,
+    );
     await useEmployeeFavCompanyStore
       .getState()
       .removeCompanyFromFavorite("employee-1", "company-1", "favorite-1");
-    expect(useEmployeeFavCompanyStore.getState().isFavorite("company-1")).toBe(false);
+    expect(useEmployeeFavCompanyStore.getState().isFavorite("company-1")).toBe(
+      false,
+    );
 
-    useEmployeeFavCompanyStore.setState({ favoriteCompanyIds: new Set(["company-2"]) });
+    useEmployeeFavCompanyStore.setState({
+      favoriteCompanyIds: new Set(["company-2"]),
+    });
     useEmployeeFavCompanyStore.getState().optimisticRemove("company-2");
     useEmployeeFavCompanyStore.getState().clearFavorites();
     expect(useEmployeeFavCompanyStore.getState()).toMatchObject({
@@ -115,9 +135,13 @@ describe("favorite API stores", () => {
         .getState()
         .addCompanyToFavorite("employee-1", "company-1"),
     ).rejects.toThrow("favorite request failed");
-    expect(useEmployeeFavCompanyStore.getState().favoriteCompanyIds).toEqual(new Set());
+    expect(useEmployeeFavCompanyStore.getState().favoriteCompanyIds).toEqual(
+      new Set(),
+    );
 
-    useEmployeeFavCompanyStore.setState({ favoriteCompanyIds: new Set(["company-1"]) });
+    useEmployeeFavCompanyStore.setState({
+      favoriteCompanyIds: new Set(["company-1"]),
+    });
     await expect(
       useEmployeeFavCompanyStore
         .getState()
@@ -127,7 +151,9 @@ describe("favorite API stores", () => {
       new Set(["company-1"]),
     );
 
-    useCompanyFavEmployeeStore.setState({ favoriteEmployeeIds: new Set(["employee-1"]) });
+    useCompanyFavEmployeeStore.setState({
+      favoriteEmployeeIds: new Set(["employee-1"]),
+    });
     await expect(
       useCompanyFavEmployeeStore
         .getState()
@@ -154,8 +180,12 @@ describe("favorite API stores", () => {
     useCountCurrentEmployeeFavoritesStore.getState().incrementCount();
     useCountCurrentEmployeeFavoritesStore.getState().decrementCount();
 
-    expect(useCountCurrentCompanyFavoritesStore.getState().totalCmpFavorites).toBe(4);
-    expect(useCountCurrentEmployeeFavoritesStore.getState().totalEmpFavorites).toBe(7);
+    expect(
+      useCountCurrentCompanyFavoritesStore.getState().totalCmpFavorites,
+    ).toBe(4);
+    expect(
+      useCountCurrentEmployeeFavoritesStore.getState().totalEmpFavorites,
+    ).toBe(7);
   });
 
   it("keeps favorite counts non-negative and handles count failures", async () => {
@@ -163,8 +193,12 @@ describe("favorite API stores", () => {
     useCountCurrentEmployeeFavoritesStore.setState({ totalEmpFavorites: 0 });
     useCountCurrentCompanyFavoritesStore.getState().decrementCount();
     useCountCurrentEmployeeFavoritesStore.getState().decrementCount();
-    expect(useCountCurrentCompanyFavoritesStore.getState().totalCmpFavorites).toBe(0);
-    expect(useCountCurrentEmployeeFavoritesStore.getState().totalEmpFavorites).toBe(0);
+    expect(
+      useCountCurrentCompanyFavoritesStore.getState().totalCmpFavorites,
+    ).toBe(0);
+    expect(
+      useCountCurrentEmployeeFavoritesStore.getState().totalEmpFavorites,
+    ).toBe(0);
 
     axiosMocks.get
       .mockRejectedValueOnce(new Error("company count failed"))
@@ -194,9 +228,13 @@ describe("favorite API stores", () => {
     ];
     axiosMocks.get.mockResolvedValueOnce({ data: favorites });
 
-    await useGetAllCompanyFavoritesStore.getState().queryAllCompanyFavorites("company-1");
+    await useGetAllCompanyFavoritesStore
+      .getState()
+      .queryAllCompanyFavorites("company-1");
 
-    expect(useGetAllCompanyFavoritesStore.getState().employeeData).toEqual(favorites);
+    expect(useGetAllCompanyFavoritesStore.getState().employeeData).toEqual(
+      favorites,
+    );
     expect(useCompanyFavEmployeeStore.getState().favoriteEmployeeIds).toEqual(
       new Set(["employee-1", "employee-2"]),
     );
@@ -209,9 +247,13 @@ describe("favorite API stores", () => {
     ];
     axiosMocks.get.mockResolvedValueOnce({ data: favorites });
 
-    await useGetAllEmployeeFavoritesStore.getState().queryAllEmployeeFavorites("employee-1");
+    await useGetAllEmployeeFavoritesStore
+      .getState()
+      .queryAllEmployeeFavorites("employee-1");
 
-    expect(useGetAllEmployeeFavoritesStore.getState().companyData).toEqual(favorites);
+    expect(useGetAllEmployeeFavoritesStore.getState().companyData).toEqual(
+      favorites,
+    );
     expect(useEmployeeFavCompanyStore.getState().favoriteCompanyIds).toEqual(
       new Set(["company-1", "company-2"]),
     );
@@ -222,7 +264,9 @@ describe("favorite API stores", () => {
       .mockRejectedValueOnce(new Error("company favorites failed"))
       .mockRejectedValueOnce(new Error("employee favorites failed"));
 
-    await useGetAllCompanyFavoritesStore.getState().queryAllCompanyFavorites("company-1");
+    await useGetAllCompanyFavoritesStore
+      .getState()
+      .queryAllCompanyFavorites("company-1");
     await useGetAllEmployeeFavoritesStore
       .getState()
       .queryAllEmployeeFavorites("employee-1");

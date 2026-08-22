@@ -1,3 +1,4 @@
+import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import CompanyCardSkeleton from "@/components/company/skeleton";
 import EmployeeCardSkeleton from "@/components/employee/skeleton";
@@ -27,15 +28,15 @@ function RecommendedCardSkeleton({ isEmployee }: { isEmployee?: boolean }) {
 /* ------------ Neutral Card Skeleton (Shown Before user role is known) ------------ */
 function NeutralCardSkeleton() {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden border border-border border-t-[5px] border-t-foreground bg-card">
+    <div className="flex h-full w-full flex-col overflow-hidden border border-t-[5px] border-border border-t-foreground bg-card">
       <div className="flex items-start gap-3 p-4 pb-3">
         <Skeleton className="size-16 shrink-0 rounded-none" />
-        <div className="flex-1 flex flex-col gap-1.5">
+        <div className="flex flex-1 flex-col gap-1.5">
           <Skeleton className="h-4 w-28 rounded-none" />
           <Skeleton className="h-3 w-20 rounded-none" />
           <Skeleton className="h-3 w-16 rounded-none" />
         </div>
-        <div className="flex flex-col gap-1 shrink-0">
+        <div className="flex shrink-0 flex-col gap-1">
           <Skeleton className="size-8 rounded-none" />
           <Skeleton className="size-8 rounded-none" />
         </div>
@@ -45,11 +46,11 @@ function NeutralCardSkeleton() {
         <Skeleton className="h-6 w-20 rounded-none" />
         <Skeleton className="h-6 w-14 rounded-none" />
       </div>
-      <div className="px-4 pb-3 space-y-1.5">
+      <div className="space-y-1.5 px-4 pb-3">
         <Skeleton className="h-3 w-full rounded-none" />
         <Skeleton className="h-3 w-4/5 rounded-none" />
       </div>
-      <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-border/50">
+      <div className="flex items-center justify-end gap-2 border-t border-border/50 px-4 pb-3 pt-2">
         <Skeleton className="h-8 w-16 rounded-none" />
         <Skeleton className="h-8 w-16 rounded-none" />
       </div>
@@ -66,7 +67,7 @@ export default function FeedPageLoadingSkeleton({
   return (
     <div className="feed-scope flex w-full flex-col items-start gap-7 sm:gap-9">
       {/* Banner Section */}
-      <FeedBannerSkeleton />
+      <PageBannerSkeleton stats={1} />
 
       {/* Recommended for You Section */}
       <FeedRecommendationsSkeleton isEmployee={isEmployee} />
@@ -87,41 +88,6 @@ export default function FeedPageLoadingSkeleton({
             )}
           </div>
         ))}
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------ Feed Banner Loading Skeleton ------------------------ */
-export function FeedBannerSkeleton() {
-  return (
-    <div className="grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
-      {/* Desktop Skeleton Section 1050px */}
-      <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-px w-7 rounded-none" />
-          <Skeleton className="h-3 w-28 rounded-none" />
-        </div>
-        <div className="space-y-3">
-          <Skeleton className="h-10 w-5/6 max-w-[560px] rounded-none" />
-          <Skeleton className="h-10 w-3/5 max-w-[420px] rounded-none" />
-          <Skeleton className="h-4 w-4/5 max-w-[500px] rounded-none" />
-        </div>
-        <div className="flex items-center gap-3">
-          <Skeleton className="h-9 w-0.5 rounded-none" />
-          <Skeleton className="h-3 w-3/5 rounded-none" />
-        </div>
-      </div>
-      {/* Tablet Skeleton Section 651px–1050px */}
-      <div className="relative flex min-h-[280px] items-center justify-center overflow-hidden bg-foreground p-7 tablet-md:min-h-[180px]">
-        <div className="absolute left-5 top-4 flex items-center gap-2">
-          <Skeleton className="size-7 rounded-none opacity-20" />
-          <Skeleton className="h-3 w-24 rounded-none opacity-20" />
-        </div>
-        <div className="relative mt-5 h-[205px] w-[82%] max-w-[300px] border border-background/15 p-3 tablet-md:h-[132px] tablet-md:max-w-[230px]">
-          <div className="absolute -bottom-2 -right-2 h-full w-full border border-background/10" />
-          <Skeleton className="relative h-full w-full rounded-none opacity-20" />
-        </div>
       </div>
     </div>
   );

@@ -26,7 +26,11 @@ describe("matching and interview API stores", () => {
   beforeEach(() => {
     Object.values(axiosMocks).forEach((mock) => mock.mockReset());
     localStorage.clear();
-    useAiMatchExplanationStore.setState({ loading: false, error: null, data: null });
+    useAiMatchExplanationStore.setState({
+      loading: false,
+      error: null,
+      data: null,
+    });
     useAnalyticsStore.setState({ loading: false, error: null, data: null });
     useCompanyLikeStore.setState({ loading: false, error: null, data: null });
     useEmployeeLikeStore.setState({ loading: false, error: null, data: null });
@@ -121,7 +125,9 @@ describe("matching and interview API stores", () => {
       .mockResolvedValueOnce({ data: match });
 
     await useCompanyLikeStore.getState().companyLike("company-1", "employee-1");
-    await useEmployeeLikeStore.getState().employeeLike("employee-1", "company-1");
+    await useEmployeeLikeStore
+      .getState()
+      .employeeLike("employee-1", "company-1");
 
     expect(axiosMocks.post).toHaveBeenCalledTimes(2);
     expect(useCompanyLikeStore.getState().data).toBe(match);
@@ -175,13 +181,25 @@ describe("matching and interview API stores", () => {
       .mockResolvedValueOnce({ data: [employee] })
       .mockResolvedValueOnce({ data: [company] });
 
-    await useGetCurrentCompanyLikedStore.getState().queryCurrentCompanyLiked("company-1");
-    await useGetCurrentEmployeeLikedStore.getState().queryCurrentEmployeeLiked("employee-1");
-    useGetCurrentCompanyLikedStore.getState().optimisticAddLiked(employee as never);
-    useGetCurrentEmployeeLikedStore.getState().optimisticAddLiked(company as never);
+    await useGetCurrentCompanyLikedStore
+      .getState()
+      .queryCurrentCompanyLiked("company-1");
+    await useGetCurrentEmployeeLikedStore
+      .getState()
+      .queryCurrentEmployeeLiked("employee-1");
+    useGetCurrentCompanyLikedStore
+      .getState()
+      .optimisticAddLiked(employee as never);
+    useGetCurrentEmployeeLikedStore
+      .getState()
+      .optimisticAddLiked(company as never);
 
-    expect(useGetCurrentCompanyLikedStore.getState().currentCompanyLiked).toEqual([employee]);
-    expect(useGetCurrentEmployeeLikedStore.getState().currentEmployeeLiked).toEqual([company]);
+    expect(
+      useGetCurrentCompanyLikedStore.getState().currentCompanyLiked,
+    ).toEqual([employee]);
+    expect(
+      useGetCurrentEmployeeLikedStore.getState().currentEmployeeLiked,
+    ).toEqual([company]);
   });
 
   it("loads, silently refreshes, and removes matches for both roles", async () => {
@@ -195,11 +213,19 @@ describe("matching and interview API stores", () => {
       .mockResolvedValueOnce({ data: [company1, company2] })
       .mockResolvedValueOnce({ data: [company2] });
 
-    await useGetCurrentCompanyMatchingStore.getState().queryCurrentCompanyMatching("company-1");
-    await useGetCurrentCompanyMatchingStore.getState().silentRefetch("company-1");
+    await useGetCurrentCompanyMatchingStore
+      .getState()
+      .queryCurrentCompanyMatching("company-1");
+    await useGetCurrentCompanyMatchingStore
+      .getState()
+      .silentRefetch("company-1");
     useGetCurrentCompanyMatchingStore.getState().removeMatch("employee-2");
-    await useGetCurrentEmployeeMatchingStore.getState().queryCurrentEmployeeMatching("employee-1");
-    await useGetCurrentEmployeeMatchingStore.getState().silentRefetch("employee-1");
+    await useGetCurrentEmployeeMatchingStore
+      .getState()
+      .queryCurrentEmployeeMatching("employee-1");
+    await useGetCurrentEmployeeMatchingStore
+      .getState()
+      .silentRefetch("employee-1");
     useGetCurrentEmployeeMatchingStore.getState().removeMatch("company-2");
 
     expect(useGetCurrentCompanyMatchingStore.getState()).toMatchObject({
@@ -228,9 +254,13 @@ describe("matching and interview API stores", () => {
       .mockResolvedValueOnce({ data: [interview] })
       .mockResolvedValueOnce({ data: [interview, secondInterview] });
     axiosMocks.post.mockResolvedValueOnce({ data: secondInterview });
-    axiosMocks.patch.mockResolvedValueOnce({ data: { ...interview, status: "accepted" } });
+    axiosMocks.patch.mockResolvedValueOnce({
+      data: { ...interview, status: "accepted" },
+    });
 
-    await useInterviewStore.getState().queryInterviews("employee-1", "employee");
+    await useInterviewStore
+      .getState()
+      .queryInterviews("employee-1", "employee");
     await useInterviewStore.getState().createInterview({
       employeeId: "employee-2",
       companyId: "company-1",
@@ -238,7 +268,11 @@ describe("matching and interview API stores", () => {
       scheduledAt: "2026-08-01T10:00:00.000Z",
       createdBy: "company-1",
     });
-    expect(await useInterviewStore.getState().updateStatus("interview-1", "accepted")).toBe(true);
+    expect(
+      await useInterviewStore
+        .getState()
+        .updateStatus("interview-1", "accepted"),
+    ).toBe(true);
     await useInterviewStore.getState().silentRefetch("company-1", "company");
     useInterviewStore.getState().removeInterviewsByPartnerId("employee-2");
 

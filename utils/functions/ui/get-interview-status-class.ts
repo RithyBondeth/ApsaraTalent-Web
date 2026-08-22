@@ -2,8 +2,13 @@ import { TInterviewStatus } from "@/utils/types/interview";
 
 /* --------------------------------- Method ---------------------------------- */
 /**
- * Returns a set of Tailwind color classes (bg, text, border) that correspond
- * to the semantic meaning of an interview status.
+ * Returns the token classes (surface, text, border) for an interview status.
+ *
+ * These are status tokens rather than raw palette shades, so each one already
+ * resolves in both themes — the `dark:` half of every pair here is gone. The
+ * mapping is deliberate: "completed" is informational rather than a second
+ * success, and "cancelled" is a neutral outcome rather than a failure, so
+ * neither competes with the green of "accepted" or the red of "declined".
  *
  * @param status - An interview's state (e.g. "accepted", "declined", "pending")
  * @returns A string of tailwind utility classes
@@ -11,14 +16,14 @@ import { TInterviewStatus } from "@/utils/types/interview";
 export function getStatusBadgeStyleClass(status: TInterviewStatus) {
   switch (status) {
     case "accepted":
-      return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";
+      return "bg-success-subtle text-success-accent border-success-border";
     case "declined":
-      return "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 border-red-200 dark:border-red-800";
+      return "bg-destructive-subtle text-destructive-accent border-destructive-border";
     case "cancelled":
-      return "bg-gray-100 text-gray-600 dark:bg-gray-800/40 dark:text-gray-400 border-gray-200 dark:border-gray-700";
+      return "bg-muted text-muted-foreground border-border";
     case "completed":
-      return "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-blue-200 dark:border-blue-800";
+      return "bg-info-subtle text-info-accent border-info-border";
     default: // pending
-      return "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-amber-200 dark:border-amber-800";
+      return "bg-warning-subtle text-warning-accent border-warning-border";
   }
 }

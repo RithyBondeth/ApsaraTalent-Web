@@ -29,7 +29,7 @@ export function LandingHowItWorks() {
           </span>
           <TypographyH2
             data-gsap="split-chars"
-            className="text-3xl font-semibold tracking-[-0.035em] sm:text-4xl lg:text-5xl [perspective:800px]"
+            className="text-3xl font-semibold tracking-[-0.035em] [perspective:800px] sm:text-4xl lg:text-5xl"
           >
             {t("howItWorksHeading")}{" "}
             <span className="landing-highlight">

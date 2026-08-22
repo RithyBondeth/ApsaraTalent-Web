@@ -87,13 +87,16 @@ describe("lazy AI actions", () => {
         />
       ),
     },
-  ])("loads $label on the first click", async ({ label, testId, component }) => {
-    const user = userEvent.setup();
-    render(component);
+  ])(
+    "loads $label on the first click",
+    async ({ label, testId, component }) => {
+      const user = userEvent.setup();
+      render(component);
 
-    expect(screen.queryByTestId(testId)).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: label }));
+      expect(screen.queryByTestId(testId)).not.toBeInTheDocument();
+      await user.click(screen.getByRole("button", { name: label }));
 
-    expect(await screen.findByTestId(testId)).toHaveTextContent("true");
-  });
+      expect(await screen.findByTestId(testId)).toHaveTextContent("true");
+    },
+  );
 });

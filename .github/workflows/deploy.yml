@@ -104,11 +104,20 @@ jobs:
       - name: Validate repository environments
         run: npm run check:env -- production
 
+      - name: Check formatting
+        run: npm run format:check
+
       - name: Run lint
         run: npm run lint
 
       - name: Run TypeScript checks
         run: npm run typecheck
+
+      # Asserts every design token still clears WCAG AA against the surface it
+      # sits on, and that raw palette classes (bg-green-100 and friends) have
+      # not crept back past their baseline.
+      - name: Check design tokens
+        run: npm run check:design
 
   test:
     name: Unit tests

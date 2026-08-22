@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { API_AI_SKILL_GAP_STREAM_URL } from "@/utils/constants/apis/matching.api.constant";
 import { ISkillGapMissing, ISkillGapSummary } from "@/utils/interfaces/resume";
-import { streamFetch } from "@/utils/functions/stream-fetch";
+import { streamFetch } from "@/utils/functions/network";
 import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { useLocale, useTranslations } from "next-intl";
 import MissingCard from "./missing-card";
@@ -82,7 +82,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
 
   const hasData = matched.length > 0 || missing.length > 0 || summary !== null;
 
-    /* --------------------------------- Effects -------------------------------- */
+  /* --------------------------------- Effects -------------------------------- */
   useEffect(() => {
     if (!autoOpenRef.current) return;
     autoOpenRef.current = false;
@@ -189,7 +189,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
         aria-label={t("skillGap")}
         onClick={handleOpen}
       >
-        <LucideTarget className="size-3.5 text-primary shrink-0" />
+        <LucideTarget className="size-3.5 shrink-0 text-primary" />
         <span className={compact ? "hidden sm:inline" : undefined}>
           {t("skillGap")}
         </span>
@@ -198,25 +198,26 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
       {/* Dialog Section */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="sm:max-w-2xl flex flex-col p-0 gap-0 rounded-none border-t-[5px] border-t-foreground shadow-[6px_6px_0_hsl(var(--foreground)/0.1)]"
+          variant="flush"
+          size="xl"
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             triggerRef.current?.focus();
           }}
         >
           {/* Header Section */}
-          <DialogHeader className="shrink-0 px-5 pt-5 pb-4 border-b border-border/60">
+          <DialogHeader className="shrink-0 border-b border-border/60 px-5 pb-4 pt-5">
             <div className="flex items-center gap-3 pr-8">
-              <div className="size-9 rounded-none bg-foreground flex items-center justify-center shrink-0">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-none bg-foreground">
                 <LucideTarget className="size-5 text-background" />
               </div>
               <div className="min-w-0 flex-1">
-                <DialogTitle className="text-base font-semibold leading-tight text-left truncate">
+                <DialogTitle className="truncate text-left text-base font-semibold leading-tight">
                   {t("aiSkillGap", { name: companyName })}
                 </DialogTitle>
               </div>
               {missing.length > 0 && (
-                <span className="shrink-0 text-xs font-medium bg-muted text-muted-foreground px-2.5 py-1 rounded-none border border-border">
+                <span className="shrink-0 rounded-none border border-border bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
                   {generating
                     ? t("skillGapBadge", { count: missing.length }) + "…"
                     : t("skillGapBadge", { count: missing.length })}
@@ -230,21 +231,21 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
           </DialogHeader>
 
           {/* Scrollable Body Section */}
-          <div className="overflow-y-auto overscroll-contain max-h-[60vh] px-5 py-4 space-y-4">
+          <div className="max-h-[60vh] space-y-4 overflow-y-auto overscroll-contain px-5 py-4">
             {/* Skeleton Generating (Section With No Data Yet) */}
             {generating && !hasData && (
               <div className="space-y-3">
                 {[...Array(3)].map((_, i) => (
                   <div
                     key={i}
-                    className="rounded-none border border-border border-l-[5px] border-l-foreground bg-card px-4 py-4 space-y-2.5"
+                    className="space-y-2.5 rounded-none border border-l-[5px] border-border border-l-foreground bg-card px-4 py-4"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <Skeleton className="h-4 w-32 rounded-none" />
                       <Skeleton className="h-5 w-20 rounded-none" />
                     </div>
                     <Skeleton className="h-3 w-48 rounded-none" />
-                    <div className="rounded-none bg-primary/5 border border-primary/10 border-l-[4px] border-l-primary px-3 py-2.5 space-y-1.5">
+                    <div className="space-y-1.5 rounded-none border border-l-[4px] border-primary/10 border-l-primary bg-primary/5 px-3 py-2.5">
                       <Skeleton className="h-2.5 w-16 rounded-none" />
                       <Skeleton
                         className={`h-3 rounded-none ${i % 2 === 0 ? "w-full" : "w-4/5"}`}
@@ -258,14 +259,14 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
             {/* Error State Section (No Data and Not Generating) */}
             {error && !generating && !hasData && (
               <div className="flex flex-col items-center gap-4 py-16 text-center">
-                <div className="size-14 rounded-none border border-destructive/20 bg-destructive/10 flex items-center justify-center">
+                <div className="flex size-14 items-center justify-center rounded-none border border-destructive/20 bg-destructive/10">
                   <LucideAlertCircle className="size-7 text-destructive/70" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">
                     {t("somethingWentWrong")}
                   </p>
-                  <p className="text-sm text-muted-foreground mt-1 max-w-[280px]">
+                  <p className="mt-1 max-w-[280px] text-sm text-muted-foreground">
                     {error}
                   </p>
                 </div>
@@ -284,14 +285,14 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
             {/* Matched Skills Section */}
             {matched.length > 0 && (
               <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">
+                <p className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {t("matchedSkills")}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {matched.map((skill) => (
                     <span
                       key={skill}
-                      className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-none border border-green-200 bg-green-100 text-green-700 dark:border-green-800 dark:bg-green-900/40 dark:text-green-300 animate-in fade-in-0 duration-200"
+                      className="inline-flex items-center gap-1 rounded-none border border-green-200 bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700 duration-200 animate-in fade-in-0 dark:border-green-800 dark:bg-green-900/40 dark:text-green-300"
                     >
                       <LucideCheckCircle2 className="size-3 shrink-0" />
                       {skill}
@@ -304,7 +305,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
             {/* Missing Skills Section */}
             {missing.length > 0 && (
               <div className="space-y-2.5">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {t("missingSkills")}
                 </p>
                 {missing.map((item, i) => (
@@ -315,8 +316,8 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
 
             {/* Generating More Indicator Section (Streaming with data already visible) */}
             {generating && hasData && (
-              <div className="flex items-center gap-2 py-2 px-4 text-xs text-primary">
-                <LucideLoader2 className="size-3.5 animate-spin shrink-0" />
+              <div className="flex items-center gap-2 px-4 py-2 text-xs text-primary">
+                <LucideLoader2 className="size-3.5 shrink-0 animate-spin" />
                 <span>{t("skillGapGenerating")}</span>
               </div>
             )}
@@ -324,19 +325,19 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
             {/* Summary Box Section */}
             {summary && (
               <div
-                className={`rounded-none border border-l-[5px] px-4 py-4 ${gapStyle} animate-in fade-in-0 slide-in-from-bottom-2 duration-300`}
+                className={`rounded-none border border-l-[5px] px-4 py-4 ${gapStyle} duration-300 animate-in fade-in-0 slide-in-from-bottom-2`}
               >
-                <p className="text-[11px] font-bold uppercase tracking-wider mb-1.5 opacity-70">
+                <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wider opacity-70">
                   {t("skillGapSummary")}
                 </p>
                 <p className="text-sm font-semibold leading-snug">{gapLabel}</p>
                 {summary.estimatedWeeks > 0 && (
-                  <p className="text-xs opacity-70 mt-1">
+                  <p className="mt-1 text-xs opacity-70">
                     {t("estimatedTime", { weeks: summary.estimatedWeeks })}
                   </p>
                 )}
                 {summary.topPriority && (
-                  <p className="text-xs opacity-80 mt-2 leading-relaxed border-t border-current/10 pt-2.5">
+                  <p className="border-current/10 mt-2 border-t pt-2.5 text-xs leading-relaxed opacity-80">
                     {summary.topPriority}
                   </p>
                 )}
@@ -346,7 +347,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
 
           {/* Footer Section */}
           {!error && (
-            <div className="shrink-0 px-5 py-4 border-t border-border/60 bg-muted/20 flex items-center justify-end gap-3">
+            <div className="flex shrink-0 items-center justify-end gap-3 border-t border-border/60 bg-muted/20 px-5 py-4">
               {generating && !hasData ? (
                 <Skeleton className="h-9 w-36 rounded-none" />
               ) : (

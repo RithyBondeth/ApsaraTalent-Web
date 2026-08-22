@@ -87,7 +87,7 @@ export function TwoFactorDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-sm rounded-none border-t-[5px] border-t-primary shadow-[6px_6px_0_hsl(var(--foreground)/0.09)]">
+      <DialogContent size="sm">
         {/* Dialog Header Section */}
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -111,11 +111,11 @@ export function TwoFactorDialog({
         {isEnableFlow && step === 1 && (
           <div className="flex flex-col items-center gap-4 py-2">
             {loading ? (
-              <div className="flex items-center justify-center h-[160px]">
+              <div className="flex h-[160px] items-center justify-center">
                 <LucideLoader2 className="size-6 animate-spin text-muted-foreground" />
               </div>
             ) : error ? (
-              <div className="flex items-center gap-2 text-destructive text-sm">
+              <div className="flex items-center gap-2 text-sm text-destructive">
                 <LucideAlertCircle className="size-4 shrink-0" />
                 {error}
               </div>
@@ -125,8 +125,8 @@ export function TwoFactorDialog({
                   <QRCode value={qrCodeUrl} size={160} />
                 </div>
                 {secret && (
-                  <div className="w-full flex flex-col gap-1">
-                    <TypographyMuted className="text-xs text-center">
+                  <div className="flex w-full flex-col gap-1">
+                    <TypographyMuted className="text-center text-xs">
                       {t("manualEntry")}
                     </TypographyMuted>
                     <code className="block select-all break-all bg-muted px-3 py-2 text-center font-mono text-xs">
@@ -142,7 +142,7 @@ export function TwoFactorDialog({
         {/* Step 2 Section: OTP input (Both Flows) */}
         {step === 2 && (
           <div className="flex flex-col items-center gap-3 py-2">
-            <TypographySmall className="text-muted-foreground text-center text-xs">
+            <TypographySmall className="text-center text-xs text-muted-foreground">
               {t("otpHint")}
             </TypographySmall>
             <InputOTP
@@ -158,7 +158,7 @@ export function TwoFactorDialog({
               </InputOTPGroup>
             </InputOTP>
             {error && (
-              <div className="flex items-center gap-1.5 text-destructive text-xs">
+              <div className="flex items-center gap-1.5 text-xs text-destructive">
                 <LucideAlertCircle className="size-3.5 shrink-0" />
                 {error}
               </div>
@@ -192,7 +192,7 @@ export function TwoFactorDialog({
               className="rounded-none"
             >
               {loading && (
-                <LucideLoader2 className="size-4 animate-spin mr-1" />
+                <LucideLoader2 className="mr-1 size-4 animate-spin" />
               )}
               {isEnableFlow ? t("enableConfirm") : t("disableConfirm")}
             </Button>

@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GridRunners } from "@/components/ui/grid-runners";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { cn } from "@/lib/utils";
-import { User } from "lucide-react";
+import { LucideUser } from "lucide-react";
 import { IProfileDetailHeroProps } from "./props";
 
 export function ProfileDetailHero(props: IProfileDetailHeroProps) {
@@ -28,14 +28,14 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
     <Avatar
       rounded="md"
       className={cn(
-        "shrink-0 rounded-none border-[3px] border-card bg-card shadow-[7px_7px_0_hsl(var(--foreground)/0.14)]",
+        "shrink-0 rounded-none border-[3px] border-card bg-card shadow-hard-lg",
         avatar && onAvatarClick && "cursor-pointer",
       )}
       onClick={avatar && onAvatarClick ? onAvatarClick : undefined}
     >
       <AvatarImage src={avatar ?? ""} alt={name} className="object-cover" />
       <AvatarFallback className="bg-background text-xl font-bold uppercase text-foreground">
-        {fallback ?? <User className="size-6" />}
+        {fallback ?? <LucideUser className="size-6" />}
       </AvatarFallback>
     </Avatar>
   );
@@ -66,7 +66,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
             </div>
 
             {/* Employee Identity Section */}
-            <div className="relative z-[2] mt-auto flex items-end gap-4 sm:gap-5 tablet-sm:flex-col tablet-sm:items-start">
+            <div className="relative z-[2] mt-auto flex items-end gap-4 tablet-sm:flex-col tablet-sm:items-start sm:gap-5">
               <div className="[&>span]:size-24 sm:[&>span]:size-28">
                 {profileAvatar}
               </div>
@@ -162,7 +162,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
       {/* Company Metadata Rail Section */}
       <div className="relative grid gap-5 px-4 pb-5 sm:px-6 sm:pb-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-end">
         {/* Company Avatar Section */}
-        <div className="-mt-12 [&>span]:size-24 sm:-mt-14 sm:[&>span]:size-28">
+        <div className="-mt-12 sm:-mt-14 [&>span]:size-24 sm:[&>span]:size-28">
           {profileAvatar}
         </div>
 

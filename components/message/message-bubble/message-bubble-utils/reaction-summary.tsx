@@ -48,13 +48,13 @@ export default function ReactionSummary(props: {
       <PopoverTrigger asChild>
         {/* Reaction Badge Section */}
         <div
-          className={`absolute -bottom-2 flex gap-1 bg-background/90 backdrop-blur-sm border shadow-sm rounded-none px-1.5 py-0.5 z-10 cursor-pointer hover:bg-muted transition-colors ${badgePositionClass}`}
+          className={`absolute -bottom-2 z-10 flex cursor-pointer gap-1 rounded-none border bg-background/90 px-1.5 py-0.5 shadow-sm backdrop-blur-sm transition-colors hover:bg-muted ${badgePositionClass}`}
         >
           {Object.entries(reactionsByEmoji).map(([emoji, userIds]) => (
             <div key={emoji} className="flex items-center gap-0.5">
               <span className="text-xs leading-none">{emoji}</span>
               {userIds.length > 1 && (
-                <span className="text-[10px] text-muted-foreground font-medium">
+                <span className="text-[10px] font-medium text-muted-foreground">
                   {userIds.length}
                 </span>
               )}
@@ -64,13 +64,13 @@ export default function ReactionSummary(props: {
       </PopoverTrigger>
 
       {/* Content Reaction Section */}
-      <PopoverContent className="w-64 p-0 overflow-hidden" side="top">
+      <PopoverContent className="w-64 overflow-hidden p-0" side="top">
         <Tabs defaultValue="all" className="w-full">
           {/* Tabs List Section */}
-          <TabsList className="w-full justify-start h-10 bg-muted/50 rounded-none border-b px-2 gap-2 overflow-x-auto no-scrollbar">
+          <TabsList className="no-scrollbar h-10 w-full justify-start gap-2 overflow-x-auto rounded-none border-b bg-muted/50 px-2">
             <TabsTrigger
               value="all"
-              className="text-xs h-7 px-2 data-[state=active]:bg-background"
+              className="h-7 px-2 text-xs data-[state=active]:bg-background"
             >
               All {totalReactionCount}
             </TabsTrigger>
@@ -78,7 +78,7 @@ export default function ReactionSummary(props: {
               <TabsTrigger
                 key={emoji}
                 value={emoji}
-                className="text-xs h-7 px-2 data-[state=active]:bg-background"
+                className="h-7 px-2 text-xs data-[state=active]:bg-background"
               >
                 {emoji} {reactionsByEmoji[emoji].length}
               </TabsTrigger>

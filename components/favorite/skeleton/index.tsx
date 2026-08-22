@@ -1,4 +1,4 @@
-import { FeedBannerSkeleton } from "@/components/feed/skeleton";
+import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 
 /* ------------------------- Favorite Page Loading Skeleton ------------------------- */
@@ -10,7 +10,7 @@ export function FavoriteLoadingSkeleton({
   return (
     <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
-      <FeedBannerSkeleton />
+      <PageBannerSkeleton stats={1} />
 
       {/* Card List Section */}
       <section className="flex w-full flex-col gap-5">
@@ -44,7 +44,7 @@ export function FavoriteLoadingSkeleton({
 /* ---------------------- Favorite Company Card Loading Skeleton ---------------------- */
 function FavoriteCompanyCardSkeleton() {
   return (
-    <div className="w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <div className="w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-hard">
       <div className="flex gap-4 p-4 sm:gap-5 sm:p-5">
         {/* Avatar Section */}
         <Skeleton className="size-14 flex-shrink-0 rounded-none sm:size-16" />
@@ -93,7 +93,7 @@ function FavoriteCompanyCardSkeleton() {
 /* ---------------------- Favorite Employee Card Loading Skeleton --------------------- */
 function FavoriteEmployeeCardSkeleton() {
   return (
-    <div className="w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <div className="w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-hard">
       <div className="flex gap-4 p-4 sm:gap-5 sm:p-5">
         {/* Avatar Section */}
         <Skeleton className="size-14 flex-shrink-0 rounded-none sm:size-16" />

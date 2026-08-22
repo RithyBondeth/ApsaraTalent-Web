@@ -1,10 +1,4 @@
-import {
-  facebookIcon,
-  githubIcon,
-  googleIcon,
-  linkedInIcon,
-} from "@/utils/constants/asset.constant";
-import { StaticImageData } from "next/image";
+import type { TLoginMethod } from "@/components/utils/brand/login-method-icon";
 
 export const genderConstant: {
   id: number;
@@ -37,15 +31,20 @@ export const platformConstant: {
   { id: 6, label: "Website", value: "Website" },
 ] as const;
 
+/**
+ * The OAuth providers listed in the profile's authentication section. Pure data
+ * — the glyph for each comes from `LoginMethodIcon`, so this file stays free of
+ * components and the raster logos stay on the sign-in buttons in `(auth)/login`,
+ * where Google's branding terms actually apply.
+ */
 export const loginMethodConstant: {
   id: number;
-  label: string;
-  icon: StaticImageData;
+  label: TLoginMethod;
 }[] = [
-  { id: 1, label: "Google", icon: googleIcon },
-  { id: 2, label: "Facebook", icon: facebookIcon },
-  { id: 3, label: "LinkedIn", icon: linkedInIcon },
-  { id: 4, label: "Github", icon: githubIcon },
+  { id: 1, label: "Google" },
+  { id: 2, label: "Facebook" },
+  { id: 3, label: "LinkedIn" },
+  { id: 4, label: "Github" },
 ] as const;
 
 export const availabilityConstant: {
@@ -122,6 +121,11 @@ export const noticePeriodConstant: {
   { id: 3, label: "1 Month", value: "1_month" },
 ] as const;
 
+/**
+ * Suggested company types, not the allowed set — `companyType` is free text on
+ * both the API and the column, so employers outside this list (cooperatives,
+ * MFIs, social enterprises, branch offices) can enter their own.
+ */
 export const companyTypeConstant: {
   id: number;
   label: string;
@@ -133,6 +137,15 @@ export const companyTypeConstant: {
   { id: 4, label: "NGO", value: "ngo" },
   { id: 5, label: "Government", value: "government" },
 ] as const;
+
+/** Matches the API's `COMPANY_TYPE_MAX_LENGTH` (the varchar column width). */
+export const COMPANY_TYPE_MAX_LENGTH = 50;
+
+/**
+ * Earliest selectable founding year. Older than any company likely to register
+ * here, and far enough back that the list never needs revisiting.
+ */
+export const FOUNDED_YEAR_MIN = 1900;
 
 export const languageConstant: string[] = [
   "Khmer",
@@ -149,62 +162,22 @@ export const salaryCurrencyConstant: {
   id: number;
   label: string;
   value: string;
+  symbol: string;
 }[] = [
-  { id: 1, label: "USD ($)", value: "USD" },
-  { id: 2, label: "KHR (៛)", value: "KHR" },
+  { id: 1, label: "USD ($)", value: "USD", symbol: "$" },
+  { id: 2, label: "KHR (៛)", value: "KHR", symbol: "៛" },
 ] as const;
 
-export const badgeRandomColorsClass: { bg: string; text: string }[] = [
-  {
-    bg: "bg-blue-100    dark:bg-blue-500/15",
-    text: "text-blue-800    dark:text-blue-300",
-  },
-  {
-    bg: "bg-green-100   dark:bg-green-500/15",
-    text: "text-green-800   dark:text-green-300",
-  },
-  {
-    bg: "bg-purple-100  dark:bg-purple-500/15",
-    text: "text-purple-800  dark:text-purple-300",
-  },
-  {
-    bg: "bg-yellow-100  dark:bg-yellow-500/15",
-    text: "text-yellow-800  dark:text-yellow-300",
-  },
-  {
-    bg: "bg-pink-100    dark:bg-pink-500/15",
-    text: "text-pink-800    dark:text-pink-300",
-  },
-  {
-    bg: "bg-indigo-100  dark:bg-indigo-500/15",
-    text: "text-indigo-800  dark:text-indigo-300",
-  },
-  {
-    bg: "bg-red-100     dark:bg-red-500/15",
-    text: "text-red-800     dark:text-red-300",
-  },
-  {
-    bg: "bg-teal-100    dark:bg-teal-500/15",
-    text: "text-teal-800    dark:text-teal-300",
-  },
-  {
-    bg: "bg-orange-100  dark:bg-orange-500/15",
-    text: "text-orange-800  dark:text-orange-300",
-  },
-  {
-    bg: "bg-emerald-100 dark:bg-emerald-500/15",
-    text: "text-emerald-800 dark:text-emerald-300",
-  },
-  {
-    bg: "bg-cyan-100    dark:bg-cyan-500/15",
-    text: "text-cyan-800    dark:text-cyan-300",
-  },
-  {
-    bg: "bg-rose-100    dark:bg-rose-500/15",
-    text: "text-rose-800    dark:text-rose-300",
-  },
-] as const;
-
+/**
+ * Skill/tag chips pick a colour by hashing their label, purely so a wall of
+ * tags is scannable — the hue carries no meaning.
+ *
+ * These are the six categorical tokens, not raw palette shades: each already
+ * resolves per theme, so a chip no longer needs a hand-written `dark:` twin,
+ * and none of the six can be mistaken for a status colour (see globals.css).
+ * Twelve arbitrary hues became six deliberate ones; with a hash-based pick the
+ * repeat rate matters far less than not colliding with success/warning/danger.
+ */
 export const careerScopesListConstant: {
   label: string;
   value: string;
@@ -815,28 +788,7 @@ export const MOBILE_BREAKPOINT = 768;
 export const AVATAR_INITIALS_LENGTH = 2;
 
 /* --------------------------------- Colors --------------------------------- */
-export const SCORE_COLOR = {
-  HIGH: "#22c55e", // score >= 75 — green-500
-  MEDIUM: "#f59e0b", // score >= 50 — amber-400
-  LOW: "#ef4444", // score  < 50 — red-500
-} as const;
-
-export const RATE_COLOR = {
-  HIGH: "#10b981", // rate >= 70 — emerald-500
-  MEDIUM: "#f59e0b", // rate >= 20 — amber-400
-  LOW: "#ef4444", // rate  < 20 — red-500
-} as const;
-
 export const CHART_COLOR = {
   PINK: "#ec4899", // pink-500  — likes received bar
   GREEN: "#10b981", // emerald-500 — matches bar
 } as const;
-
-export const COMPANY_ICON_COLOR = {
-  BENEFIT: "#0073E6", // blue   — benefit check icon
-  VALUE: "#69B41E", // green  — value check icon
-} as const;
-
-/* Scroll progress bar decorative gradient (fixed top of page) */
-export const SCROLL_PROGRESS_GRADIENT =
-  "linear-gradient(90deg, hsl(var(--primary)) 0%, #7c3aed 55%, #ec4899 100%)";

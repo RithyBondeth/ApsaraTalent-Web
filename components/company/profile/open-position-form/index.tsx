@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -12,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { MultiSelectCombobox } from "@/components/ui/multi-select-combobox";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -20,10 +22,11 @@ import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
   availabilityConstant,
+  languageConstant,
   salaryCurrencyConstant,
   workModeConstant,
+  yearOfExperienceConstant,
 } from "@/utils/constants/ui.constant";
-import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { Popover } from "@radix-ui/react-popover";
 import {
   LucideBadgeCheck,
@@ -31,14 +34,15 @@ import {
   LucideCircleDollarSign,
   LucideClock3,
   LucideGraduationCap,
+  LucideLanguages,
   LucideMapPin,
   LucideMonitor,
   LucidePlus,
   LucideTrash2,
   LucideUsers,
   LucideXCircle,
-  Sparkles,
-  Loader2,
+  LucideSparkles,
+  LucideLoader2,
 } from "lucide-react";
 import { useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
@@ -131,9 +135,9 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-3">
+    <div className="flex w-full flex-col items-start gap-3">
       {/* Header With Remove Button Section */}
-      <div className="w-full flex items-center justify-between">
+      <div className="flex w-full items-center justify-between">
         <TypographyMuted className="font-bold text-foreground">
           {tP("positionIndex", { index: Number(props.index) + 1 })}
         </TypographyMuted>
@@ -202,9 +206,9 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                   className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                 >
                   {isRefining ? (
-                    <Loader2 size={10} className="animate-spin" />
+                    <LucideLoader2 size={10} className="animate-spin" />
                   ) : (
-                    <Sparkles size={10} />
+                    <LucideSparkles size={10} />
                   )}
                   {tr("aiRefine")}
                 </Button>
@@ -270,26 +274,58 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
               />
             }
           />
+
+          {/* Required Languages Section — mirrors the employee languages list
+              so a candidate's languages match a role's requirement. */}
+          <div className="col-span-12 flex flex-col gap-2 tablet-md:col-span-1">
+            <TypographyMuted className="text-xs">
+              {tP("languagesRequired")}
+            </TypographyMuted>
+            <Controller
+              control={control}
+              name={`openPositions.${props.index}.languagesRequired`}
+              render={({ field }) => (
+                <MultiSelectCombobox
+                  options={languageConstant}
+                  value={field.value ?? []}
+                  onChange={field.onChange}
+                  placeholder={tP("languagesRequiredPlaceholder")}
+                  emptyText={tP("languagesRequiredEmpty")}
+                  ariaLabel={tP("languagesRequired")}
+                  icon={<LucideLanguages />}
+                  contentClassName="profile-overlay profile-command-popover"
+                  disabled={!props.isEdit}
+                />
+              )}
+            />
+          </div>
         </div>
 
         {/* Experience and Education Requirements Section */}
         <div className="flex w-full flex-col gap-5 border-t border-border/70 pt-5">
           <div className="grid w-full grid-cols-2 gap-4 tablet-md:grid-cols-1">
+            {/* Experience Requirements Section — same scale as an employee's
+                years of experience, so the search filter can match. Creatable
+                so existing free-text values stay editable rather than blank. */}
             <LabelInput
               label={tP("experienceRequirements")}
               input={
-                <Input
-                  placeholder={
-                    props.isEdit
-                      ? tP("experienceRequirements")
-                      : props.experienceReqirement
-                  }
-                  id="experience-requirement"
-                  {...register(
-                    `openPositions.${props.index}.experienceRequirement`,
+                <Controller
+                  name={`openPositions.${props.index}.experienceRequirement`}
+                  control={control}
+                  render={({ field }) => (
+                    <CreatableCombobox
+                      options={yearOfExperienceConstant}
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      placeholder={tP("experienceRequirements")}
+                      ariaLabel={tP("experienceRequirements")}
+                      icon={<LucideBadgeCheck />}
+                      triggerId="experience-requirement"
+                      contentClassName="profile-overlay profile-command-popover"
+                      disabled={!props.isEdit}
+                    />
                   )}
-                  prefix={<LucideBadgeCheck />}
-                  disabled={!props.isEdit}
                 />
               }
             />
@@ -322,11 +358,13 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
               {skills &&
                 skills.length > 0 &&
                 skills.split(", ").map((item, index) => {
-                  const { bg } = getRandomBadgeColor(item);
                   return (
                     <div
                       key={index}
-                      className={`flex items-center ${props.isEdit && `${bg} border border-border pr-2`}`}
+                      className={cn(
+                        "flex items-center",
+                        props.isEdit && "border border-border bg-muted/50 pr-2",
+                      )}
                     >
                       <Tag label={item} />
                       {props.isEdit && (

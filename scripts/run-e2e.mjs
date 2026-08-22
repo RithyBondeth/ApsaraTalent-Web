@@ -153,7 +153,7 @@ try {
     "/login",
     "/login/phone-number",
     "/login/phone-number/phone-otp",
-    "/login/email-verification/smoke-test-id",
+    "/login/email-verification?email=smoke%40example.com",
     "/forgot-password",
     "/reset-password",
     "/signup",
@@ -203,7 +203,10 @@ try {
       `${route} returned ${response.status} instead of redirecting`,
     );
     const location = response.headers.get("location") ?? "";
-    assert(location.includes("/login?callbackUrl="), `${route} did not redirect to login`);
+    assert(
+      location.includes("/login?callbackUrl="),
+      `${route} did not redirect to login`,
+    );
     assert(
       decodeURIComponent(location).includes(`callbackUrl=${route}`),
       `${route} did not preserve its callback URL`,

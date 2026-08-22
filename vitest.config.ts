@@ -26,7 +26,6 @@ export default defineConfig({
       provider: "v8",
       include: [
         "app/**/validation.ts",
-        "app/**/validate.ts",
         "app/**/route.ts",
         "app/**/favorite-page-client.tsx",
         "app/**/matching-page-client.tsx",

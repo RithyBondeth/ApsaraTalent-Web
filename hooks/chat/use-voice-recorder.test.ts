@@ -68,7 +68,10 @@ describe("useVoiceRecorder", () => {
   it("records, samples audio, uploads it, and returns a message attachment", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ url: "/uploads/voice.webm", filename: "saved.webm" }),
+      json: async () => ({
+        url: "/uploads/voice.webm",
+        filename: "saved.webm",
+      }),
     } as Response);
     const onSend = vi.fn();
     const { result } = renderHook(() => useVoiceRecorder());
@@ -87,7 +90,11 @@ describe("useVoiceRecorder", () => {
     expect(uploaded).toBe(true);
     expect(fetch).toHaveBeenCalledWith(
       expect.stringContaining("/chat/upload"),
-      expect.objectContaining({ method: "POST", credentials: "include", body: expect.any(FormData) }),
+      expect.objectContaining({
+        method: "POST",
+        credentials: "include",
+        body: expect.any(FormData),
+      }),
     );
     expect(onSend).toHaveBeenCalledWith({
       url: "/uploads/voice.webm",
@@ -106,7 +113,9 @@ describe("useVoiceRecorder", () => {
   });
 
   it("reports microphone permission denial", async () => {
-    vi.mocked(navigator.mediaDevices.getUserMedia).mockRejectedValueOnce(new Error("denied"));
+    vi.mocked(navigator.mediaDevices.getUserMedia).mockRejectedValueOnce(
+      new Error("denied"),
+    );
     const { result } = renderHook(() => useVoiceRecorder());
 
     await act(async () => result.current.startRecording());
@@ -129,7 +138,10 @@ describe("useVoiceRecorder", () => {
 
     expect(latestRecorder?.stop).toHaveBeenCalled();
     expect(fetchSpy).not.toHaveBeenCalled();
-    expect(result.current).toMatchObject({ recordingState: "idle", errorMessage: null });
+    expect(result.current).toMatchObject({
+      recordingState: "idle",
+      errorMessage: null,
+    });
   });
 
   it("returns to idle and exposes upload errors", async () => {

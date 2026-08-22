@@ -27,14 +27,14 @@ export default function MissingCard(props: IMissingCardProps) {
 
   /* --------------------------- Render UI -------------------------- */
   return (
-    <div className="rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[4px_4px_0_hsl(var(--foreground)/0.05)] px-4 py-4 flex flex-col gap-2.5 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+    <div className="flex flex-col gap-2.5 rounded-none border border-l-[5px] border-border border-l-foreground bg-card px-4 py-4 shadow-hard duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
       {/* Skill Name and Criticality Badge Section */}
       <div className="flex items-start justify-between gap-3">
-        <p className="text-sm font-semibold text-foreground leading-snug">
+        <p className="text-sm font-semibold leading-snug text-foreground">
           {skill}
         </p>
         <span
-          className={`shrink-0 inline-flex text-[11px] font-semibold px-2.5 py-0.5 rounded-none border border-current/15 ${chipColor}`}
+          className={`border-current/15 inline-flex shrink-0 rounded-none border px-2.5 py-0.5 text-[11px] font-semibold ${chipColor}`}
         >
           {critLabel}
         </span>
@@ -49,13 +49,13 @@ export default function MissingCard(props: IMissingCardProps) {
       )}
 
       {/* Learning Tip Section */}
-      <div className="rounded-none bg-primary/5 border border-primary/10 border-l-[4px] border-l-primary px-3 py-2.5 flex gap-2">
-        <LucideBookOpen className="size-3.5 text-primary shrink-0 mt-0.5" />
+      <div className="flex gap-2 rounded-none border border-l-[4px] border-primary/10 border-l-primary bg-primary/5 px-3 py-2.5">
+        <LucideBookOpen className="mt-0.5 size-3.5 shrink-0 text-primary" />
         <div>
-          <p className="text-[11px] font-bold text-primary uppercase tracking-wider mb-1">
+          <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-primary">
             {t("learningTip")}
           </p>
-          <p className="text-xs text-foreground/80 leading-relaxed">{tip}</p>
+          <p className="text-xs leading-relaxed text-foreground/80">{tip}</p>
         </div>
       </div>
     </div>

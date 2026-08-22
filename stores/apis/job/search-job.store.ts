@@ -33,7 +33,14 @@ type TSearchJobResponse = {
   title: string;
   description: string;
   type: string;
+  /** Legacy free-text range; older postings have only this. */
   salary: string;
+  // Decimal columns, so these arrive as strings over the wire.
+  salaryMin?: number | string | null;
+  salaryMax?: number | string | null;
+  salaryCurrency?: string | null;
+  workMode?: string | null;
+  languagesRequired?: string[] | null;
   experience: string;
   education: string;
   skills: string[];

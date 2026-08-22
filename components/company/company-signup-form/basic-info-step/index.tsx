@@ -2,6 +2,7 @@ import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import {
   Select,
   SelectContent,
@@ -16,20 +17,22 @@ import {
   companyTypeConstant,
   locationConstant,
 } from "@/utils/constants/ui.constant";
+import { getFoundedYearOptions } from "@/utils/functions/date";
 import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import {
-  Building2,
-  CalendarDays,
-  Factory,
-  FileText,
-  Globe2,
-  Loader2,
-  MapPin,
-  Shapes,
-  Sparkles,
-  Users,
+  LucideBuilding2,
+  LucideCalendarDays,
+  LucideFactory,
+  LucideFileText,
+  LucideGlobe2,
+  LucideLoader2,
+  LucideMapPin,
+  LucideShapes,
+  LucideSparkles,
+  LucideUsers,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -71,6 +74,25 @@ export default function BasicInfoStepForm({
     "Tbong Khmum": tLoc("tbongKhmum"),
   };
 
+  // Built once per mount — the year list is ~125 entries and never changes
+  // while the form is open.
+  const foundedYearOptions = useMemo(() => getFoundedYearOptions(), []);
+
+  const companyTypeOptions = companyTypeConstant.map((item) => ({
+    ...item,
+    label: t(
+      item.value === "startup"
+        ? "companyTypeStartup"
+        : item.value === "sme"
+          ? "companyTypeSme"
+          : item.value === "enterprise"
+            ? "companyTypeEnterprise"
+            : item.value === "ngo"
+              ? "companyTypeNgo"
+              : "companyTypeGovernment",
+    ),
+  }));
+
   /* ----------------------------- API Integration ---------------------------- */
   const { isRefining, refineContent } = useAIRefine();
 
@@ -100,18 +122,18 @@ export default function BasicInfoStepForm({
       {/* Form Section */}
       <Input
         placeholder={`${t("cmpBasicInfoCompanyNamePlaceholder")} *`}
-        prefix={<Building2 />}
+        prefix={<LucideBuilding2 />}
         aria-required="true"
         id="company-name"
         {...register("basicInfo.name")}
         validationMessage={errors!.basicInfo?.name?.message}
       />
-      <div className="w-full flex flex-col items-start gap-2">
-        <div className="w-full flex flex-col items-start gap-2">
+      <div className="flex w-full flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
           <Textarea
             autoResize
             placeholder={`${t("cmpBasicInfoDescriptionPlaceholder")} *`}
-            prefix={<FileText />}
+            prefix={<LucideFileText />}
             action={
               descValue ? (
                 <Button
@@ -120,12 +142,12 @@ export default function BasicInfoStepForm({
                   size="sm"
                   onClick={handleRefine}
                   disabled={isRefining}
-                  className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                  className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                 >
                   {isRefining ? (
-                    <Loader2 size={10} className="animate-spin" />
+                    <LucideLoader2 size={10} className="animate-spin" />
                   ) : (
-                    <Sparkles size={10} />
+                    <LucideSparkles size={10} />
                   )}
                   {tr("aiRefine")}
                 </Button>
@@ -141,7 +163,7 @@ export default function BasicInfoStepForm({
       <div className="field-row w-full">
         <Input
           placeholder={`${t("cmpBasicInfoIndustryPlaceholder")} *`}
-          prefix={<Factory />}
+          prefix={<LucideFactory />}
           aria-required="true"
           id="industry"
           {...register("basicInfo.industry")}
@@ -150,7 +172,7 @@ export default function BasicInfoStepForm({
         <Input
           type="number"
           placeholder={`${t("cmpBasicInfoCompanySizePlaceholder")} *`}
-          prefix={<Users />}
+          prefix={<LucideUsers />}
           aria-required="true"
           id="company-size"
           {...register("basicInfo.companySize")}
@@ -158,17 +180,31 @@ export default function BasicInfoStepForm({
         />
       </div>
       <div className="field-row w-full">
-        <Input
-          type="number"
-          placeholder={`${t("cmpBasicInfoFoundedYearPlaceholder")} *`}
-          prefix={<CalendarDays />}
-          aria-required="true"
-          id="founded-year"
-          {...register("basicInfo.foundedYear")}
-          validationMessage={errors!.basicInfo?.foundedYear?.message}
-        />
-        <div className="w-full flex flex-col items-start gap-2">
-          <div className="w-full flex flex-col items-start gap-2">
+        {/* Founded Year Section */}
+        <div className="flex w-full flex-col items-start gap-2">
+          <Controller
+            name="basicInfo.foundedYear"
+            control={control!}
+            render={({ field }) => (
+              <CreatableCombobox
+                options={foundedYearOptions}
+                value={field.value || ""}
+                onChange={field.onChange}
+                placeholder={`${t("cmpBasicInfoFoundedYearPlaceholder")} *`}
+                emptyText={t("cmpBasicInfoFoundedYearEmpty")}
+                ariaLabel={t("cmpBasicInfoFoundedYear")}
+                icon={<LucideCalendarDays />}
+                triggerId="founded-year"
+                allowCreate={false}
+                required
+              />
+            )}
+          />
+          <ErrorMessage>{errors!.basicInfo?.foundedYear?.message}</ErrorMessage>
+        </div>
+
+        <div className="flex w-full flex-col items-start gap-2">
+          <div className="flex w-full flex-col items-start gap-2">
             <Controller
               name="basicInfo.location"
               control={control!}
@@ -181,7 +217,7 @@ export default function BasicInfoStepForm({
                     className="h-12 text-muted-foreground"
                     aria-required="true"
                   >
-                    <MapPin className="mr-2 size-[18px] shrink-0" />
+                    <LucideMapPin className="mr-2 size-[18px] shrink-0" />
                     <SelectValue
                       placeholder={`${t("cmpBasicInfoLocationPlaceholder")} *`}
                     />
@@ -206,33 +242,28 @@ export default function BasicInfoStepForm({
         {/* Website URL Section */}
         <Input
           placeholder={t("cmpBasicInfoWebsiteUrlPlaceholder")}
-          prefix={<Globe2 />}
+          prefix={<LucideGlobe2 />}
           id="website-url"
           {...register("basicInfo.websiteUrl")}
           validationMessage={errors!.basicInfo?.websiteUrl?.message}
         />
 
         {/* Company Type Section */}
-        <div className="w-full flex flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
           <Controller
             name="basicInfo.companyType"
             control={control!}
             render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value ?? ""}>
-                <SelectTrigger className="h-12 text-muted-foreground">
-                  <Shapes className="mr-2 size-[18px] shrink-0" />
-                  <SelectValue
-                    placeholder={t("cmpBasicInfoCompanyTypePlaceholder")}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {companyTypeConstant.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <CreatableCombobox
+                options={companyTypeOptions}
+                value={field.value ?? ""}
+                onChange={field.onChange}
+                placeholder={t("cmpBasicInfoCompanyTypePlaceholder")}
+                emptyText={t("cmpBasicInfoCompanyTypeEmpty")}
+                ariaLabel={t("cmpBasicInfoCompanyType")}
+                icon={<LucideShapes />}
+                triggerId="company-type"
+              />
             )}
           />
           <ErrorMessage>{errors!.basicInfo?.companyType?.message}</ErrorMessage>

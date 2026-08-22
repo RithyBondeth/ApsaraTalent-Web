@@ -3,7 +3,6 @@
 import {
   LucideBuilding,
   LucideBuilding2,
-  LucideCircleCheck,
   LucideExternalLink,
   LucideMapPin,
   LucideUsers,
@@ -23,6 +22,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
 import { translateLocation, getNameInitials } from "@/utils/functions/text";
+import { BenefitValueChip } from "@/components/utils/data-display/benefit-value-chip";
 
 export default function CompanyDialog(props: ICompanyDialogProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -37,9 +37,12 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
-      <DialogContent className="flex max-h-[90dvh] flex-col gap-0 overflow-hidden rounded-none p-0 sm:max-w-lg sm:rounded-none tablet-sm:!bottom-0 tablet-sm:!left-0 tablet-sm:!top-auto tablet-sm:!w-full tablet-sm:!max-w-none tablet-sm:!translate-x-0 tablet-sm:!translate-y-0 tablet-sm:!rounded-none tablet-sm:max-h-[92dvh] [&>button]:rounded-none">
+      <DialogContent
+        variant="flush"
+        className="max-h-[90dvh] tablet-sm:!bottom-0 tablet-sm:!left-0 tablet-sm:!top-auto tablet-sm:max-h-[92dvh] tablet-sm:!w-full tablet-sm:!max-w-none tablet-sm:!translate-x-0 tablet-sm:!translate-y-0"
+      >
         {/* Drag Handle Section — Mobile Only */}
-        <div className="hidden tablet-sm:flex justify-center pt-3 pb-1 shrink-0">
+        <div className="hidden shrink-0 justify-center pb-1 pt-3 tablet-sm:flex">
           <div className="h-1 w-10 rounded-none bg-muted-foreground/30" />
         </div>
 
@@ -51,20 +54,20 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
               alt={`${props.name} cover`}
               width={1200}
               height={224}
-              className="w-full h-28 object-cover"
+              className="h-28 w-full object-cover"
               unoptimized
             />
           ) : (
-            <div className="w-full h-28 bg-gradient-to-br from-primary/80 to-primary/30" />
+            <div className="h-28 w-full bg-gradient-to-br from-primary/80 to-primary/30" />
           )}
           {/* Avatar Overlapping The Cover Section */}
           <div className="absolute -bottom-9 left-4">
             <Avatar
-              className="!size-20 !rounded-none ring-4 ring-background shadow-lg"
+              className="!size-20 !rounded-none shadow-lg ring-4 ring-background"
               rounded="md"
             >
               <AvatarImage src={props.avatar!} />
-              <AvatarFallback className="uppercase text-lg font-semibold">
+              <AvatarFallback className="text-lg font-semibold uppercase">
                 {getNameInitials(props.name)}
               </AvatarFallback>
             </Avatar>
@@ -72,15 +75,15 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
         </div>
 
         {/* Name, Industry, Location, CompanySize, FoundedYear, Progress Section */}
-        <div className="pt-12 px-4 shrink-0">
+        <div className="shrink-0 px-4 pt-12">
           <DialogTitle className="text-base font-bold leading-tight">
             {props.name}
           </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground mt-0.5">
+          <DialogDescription className="mt-0.5 text-sm text-muted-foreground">
             {props.industry}
           </DialogDescription>
 
-          <div className="flex flex-wrap gap-1.5 mt-3">
+          <div className="mt-3 flex flex-wrap gap-1.5">
             {props.location && (
               <span className="inline-flex items-center gap-1 rounded-none bg-muted px-2.5 py-1 text-xs text-muted-foreground">
                 <LucideMapPin className="h-3 w-3 shrink-0" />
@@ -103,10 +106,10 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
         </div>
 
         {/* Scrollable Body Section */}
-        <div className="flex-1 overflow-y-auto min-h-0 px-4 py-4 space-y-5">
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 py-4">
           {/* Empty State Section */}
           {isEmpty && (
-            <TypographyMuted className="text-sm text-center py-6">
+            <TypographyMuted className="py-6 text-center text-sm">
               {t("dialogEmptyProfile")}
             </TypographyMuted>
           )}
@@ -114,10 +117,10 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           {/* About Section */}
           {props.description && (
             <section>
-              <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-1.5">
+              <TypographyP className="mb-1.5 text-sm font-semibold [&:not(:first-child)]:mt-0">
                 {t("dialogAboutCompany", { name: props.name })}
               </TypographyP>
-              <TypographyMuted className="text-sm text-muted-foreground leading-relaxed">
+              <TypographyMuted className="text-sm leading-relaxed text-muted-foreground">
                 {props.description}
               </TypographyMuted>
             </section>
@@ -126,18 +129,16 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           {/* Benefits Section */}
           {props.benefits && props.benefits.length > 0 && (
             <section>
-              <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
+              <TypographyP className="mb-2 text-sm font-semibold [&:not(:first-child)]:mt-0">
                 {t("dialogBenefits")}
               </TypographyP>
               <div className="flex flex-wrap gap-2">
                 {props.benefits.map((benefit, index) => (
-                  <span
+                  <BenefitValueChip
                     key={index}
-                    className="inline-flex items-center gap-1.5 rounded-none bg-blue-50 px-2.5 py-1.5 text-xs font-medium text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
-                  >
-                    <LucideCircleCheck className="h-3.5 w-3.5 shrink-0" />
-                    {benefit.label}
-                  </span>
+                    kind="benefit"
+                    label={benefit.label}
+                  />
                 ))}
               </div>
             </section>
@@ -146,18 +147,16 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           {/* Values Section */}
           {props.values && props.values.length > 0 && (
             <section>
-              <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
+              <TypographyP className="mb-2 text-sm font-semibold [&:not(:first-child)]:mt-0">
                 {t("dialogValues")}
               </TypographyP>
               <div className="flex flex-wrap gap-2">
                 {props.values.map((value, index) => (
-                  <span
+                  <BenefitValueChip
                     key={index}
-                    className="inline-flex items-center gap-1.5 rounded-none bg-green-50 px-2.5 py-1.5 text-xs font-medium text-green-700 dark:bg-green-950/40 dark:text-green-300"
-                  >
-                    <LucideCircleCheck className="h-3.5 w-3.5 shrink-0" />
-                    {value.label}
-                  </span>
+                    kind="value"
+                    label={value.label}
+                  />
                 ))}
               </div>
             </section>
@@ -165,12 +164,12 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
         </div>
 
         {/* Sticky CTA Section */}
-        <div className="shrink-0 px-4 pb-4 pt-2 border-t border-border/60 bg-background">
+        <div className="shrink-0 border-t border-border/60 bg-background px-4 pb-4 pt-2">
           <Link href={`/feed/company/${props.id}`} className="w-full">
             <Button className="w-full gap-2 rounded-none">
               <LucideBuilding2 className="h-4 w-4" />
               {t("dialogViewCompany")}
-              <LucideExternalLink className="h-3.5 w-3.5 ml-auto opacity-70" />
+              <LucideExternalLink className="ml-auto h-3.5 w-3.5 opacity-70" />
             </Button>
           </Link>
         </div>

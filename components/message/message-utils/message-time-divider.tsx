@@ -10,15 +10,15 @@ export default function MessageTimeDivider({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex items-center gap-4 my-8">
+    <div className="my-8 flex items-center gap-4">
       {/* Time Divider Line Section */}
-      <div className="flex-1 h-[1px] bg-muted-foreground/10" />
+      <div className="h-[1px] flex-1 bg-muted-foreground/10" />
       {/* Time Divider Label Section */}
-      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest whitespace-nowrap">
+      <div className="whitespace-nowrap text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
         {label}
       </div>
       {/* Time Divider Line Section */}
-      <div className="flex-1 h-[1px] bg-muted-foreground/10" />
+      <div className="h-[1px] flex-1 bg-muted-foreground/10" />
     </div>
   );
 }

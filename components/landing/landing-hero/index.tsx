@@ -37,7 +37,7 @@ export default function LandingHero() {
       <div className="landing-grid pointer-events-none absolute inset-0" />
       <GridRunners className="landing-grid-runners" density="quiet" />
 
-      <div className="relative mx-auto grid min-h-[calc(100dvh-72px)] max-w-7xl border-x border-border lg:grid-cols-[1.08fr_0.92fr]"> 
+      <div className="relative mx-auto grid min-h-[calc(100dvh-72px)] max-w-7xl border-x border-border lg:grid-cols-[1.08fr_0.92fr]">
         {/* Hero Content Section */}
         <div
           data-hero-content
@@ -57,7 +57,7 @@ export default function LandingHero() {
           {/* Heading Section */}
           <TypographyH1
             data-hero="heading"
-            className="max-w-3xl text-4xl font-bold tracking-[-0.04em] opacity-0 sm:text-5xl md:text-6xl lg:text-[4.25rem] !leading-[1.02]"
+            className="max-w-3xl text-4xl font-bold !leading-[1.02] tracking-[-0.04em] opacity-0 sm:text-5xl md:text-6xl lg:text-[4.25rem]"
           >
             {t("heroHeading1")} <br />
             {t("heroHeading2")} {t("heroHeadingTalent")} {t("heroHeadingAnd")}{" "}
@@ -66,7 +66,7 @@ export default function LandingHero() {
             </span>
           </TypographyH1>
 
-          {/* Description Section */} 
+          {/* Description Section */}
           <TypographyMuted
             data-hero="description"
             className="mt-7 max-w-xl text-base !leading-relaxed opacity-0 sm:text-lg"
@@ -74,7 +74,6 @@ export default function LandingHero() {
             {t("heroDescription")}
           </TypographyMuted>
 
-          
           {/* CTA Buttons Section */}
           <div
             data-hero="cta"

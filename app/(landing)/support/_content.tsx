@@ -13,7 +13,6 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   StaticBullet,
   StaticCard,
-  StaticPageArtworkSlot,
   StaticPageShell,
   StaticSection,
 } from "@/components/static-content/static-page";
@@ -36,9 +35,7 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
         className="group flex w-full items-center justify-between gap-4 py-5 text-left text-sm font-semibold text-foreground transition-colors hover:text-muted-foreground"
       >
         <span>{question}</span>
-        <LucideChevronDown
-          className="static-page-faq-chevron size-4 shrink-0 text-muted-foreground transition-transform duration-300"
-        />
+        <LucideChevronDown className="static-page-faq-chevron size-4 shrink-0 text-muted-foreground transition-transform duration-300" />
       </button>
       <div id={answerId} className="static-page-faq-answer">
         <div className="overflow-hidden">
@@ -330,98 +327,91 @@ export function SupportContent() {
       subtitle={t.subtitle}
       tocHeading={t.tocHeading}
       toc={t.toc}
-      icon={<LucideHelpCircle />}
-      heroVisual={
-        <StaticPageArtworkSlot
-          icon={<LucideHelpCircle />}
-          label={t.pageTitle}
-        />
-      }
     >
-          {/* FAQ Section */}
-          <StaticSection
-            id="faq"
-            number="01"
-            icon={<LucideHelpCircle />}
-            title={t.faqTitle}
-          >
-            <TypographyP>{t.faqIntro}</TypographyP>
-            <div className="flex flex-col gap-2 mt-1">
-              {t.faqs.map((faq, i) => (
-                <FaqItem key={i} question={faq.q} answer={faq.a} />
-              ))}
-            </div>
-          </StaticSection>
+      {/* FAQ Section */}
+      <StaticSection
+        id="faq"
+        number="01"
+        icon={<LucideHelpCircle />}
+        title={t.faqTitle}
+      >
+        <TypographyP>{t.faqIntro}</TypographyP>
+        <div className="mt-1 flex flex-col gap-2">
+          {t.faqs.map((faq, i) => (
+            <FaqItem key={i} question={faq.q} answer={faq.a} />
+          ))}
+        </div>
+      </StaticSection>
 
-          {/* Contact Us Section */}
-          <StaticSection
-            id="contact"
-            number="02"
-            icon={<LucideMail />}
-            title={t.contactTitle}
-          >
-            <TypographyP>{t.contactIntro}</TypographyP>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-1">
-              {t.contacts.map((c, i) => (
-                <StaticCard
-                  key={i}
-                  icon={contactIcons[i]}
-                  title={c.title}
-                  description={c.description}
-                  footer={
-                    <span className="text-xs font-semibold text-foreground">
-                      {c.action}
-                    </span>
-                  }
-                />
-              ))}
-            </div>
-          </StaticSection>
+      {/* Contact Us Section */}
+      <StaticSection
+        id="contact"
+        number="02"
+        icon={<LucideMail />}
+        title={t.contactTitle}
+      >
+        <TypographyP>{t.contactIntro}</TypographyP>
+        <div className="mt-1 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {t.contacts.map((c, i) => (
+            <StaticCard
+              key={i}
+              icon={contactIcons[i]}
+              title={c.title}
+              description={c.description}
+              footer={
+                <span className="text-xs font-semibold text-foreground">
+                  {c.action}
+                </span>
+              }
+            />
+          ))}
+        </div>
+      </StaticSection>
 
-          {/* Mobile App Support Section */}
-          <StaticSection
-            id="mobile-support"
-            number="03"
-            icon={<LucideSmartphone />}
-            title={t.mobileTitle}
-          >
-            <TypographyP>{t.mobileIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.mobileBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-          </StaticSection>
+      {/* Mobile App Support Section */}
+      <StaticSection
+        id="mobile-support"
+        number="03"
+        icon={<LucideSmartphone />}
+        title={t.mobileTitle}
+      >
+        <TypographyP>{t.mobileIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.mobileBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+      </StaticSection>
 
-          {/* Community Section */}
-          <StaticSection
-            id="community"
-            number="04"
-            icon={<LucideUsers />}
-            title={t.communityTitle}
-          >
-            <TypographyP>{t.communityIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.communityBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-          </StaticSection>
+      {/* Community Section */}
+      <StaticSection
+        id="community"
+        number="04"
+        icon={<LucideUsers />}
+        title={t.communityTitle}
+      >
+        <TypographyP>{t.communityIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.communityBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+      </StaticSection>
 
-          {/* Resources Section */}
-          <StaticSection
-            id="resources"
-            number="05"
-            icon={<LucideBookOpen />}
-            title={t.resourcesTitle}
-          >
-            <TypographyP>{t.resourcesIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.resourcesBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-          </StaticSection>
+      {/* Resources Section */}
+      <StaticSection
+        id="resources"
+        number="05"
+        icon={<LucideBookOpen />}
+        title={t.resourcesTitle}
+      >
+        <TypographyP>{t.resourcesIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.resourcesBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+      </StaticSection>
     </StaticPageShell>
   );
 }

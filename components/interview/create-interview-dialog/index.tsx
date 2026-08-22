@@ -176,7 +176,7 @@ export function CreateInterviewDialog({
         <LucideCalendarCheck className="size-5 text-background" />
       </div>
       <div>
-        <p className="text-xs text-muted-foreground mt-0.5">
+        <p className="mt-0.5 text-xs text-muted-foreground">
           {t("scheduleDescription")}
         </p>
       </div>
@@ -194,7 +194,7 @@ export function CreateInterviewDialog({
         }}
       >
         <DialogTrigger asChild>{trigger}</DialogTrigger>
-        <DialogContent className="flex max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-[520px]">
+        <DialogContent variant="flush" className="sm:max-w-[520px]">
           <DialogHeader className="shrink-0 px-6 pb-4 pt-6">
             <DialogTitle className="text-lg font-semibold">
               {t("scheduleInterview")}

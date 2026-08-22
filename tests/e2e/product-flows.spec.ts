@@ -18,7 +18,9 @@ const productRoutes = [
   "/setting",
 ] as const;
 
-test("core product pages handle successful empty API responses", async ({ page }) => {
+test("core product pages handle successful empty API responses", async ({
+  page,
+}) => {
   test.setTimeout(150_000);
   await mockApi(page, successfulEmployeeApi);
   await loginEmployee(page);
@@ -35,9 +37,7 @@ test("core product pages handle successful empty API responses", async ({ page }
       new RegExp(`${route.replaceAll("/", "\\/")}$`),
     );
     await expect(routePage.locator("body")).not.toBeEmpty();
-    failures.push(
-      ...routeFailures.map((failure) => `${route}: ${failure}`),
-    );
+    failures.push(...routeFailures.map((failure) => `${route}: ${failure}`));
     await routePage.close();
   }
 
@@ -74,7 +74,9 @@ test("search pages recover from malformed paginated API responses", async ({
   expect(relevantFailures).toEqual([]);
 });
 
-test("search updates its shareable URL and can clear the keyword", async ({ page }) => {
+test("search updates its shareable URL and can clear the keyword", async ({
+  page,
+}) => {
   await mockApi(page, successfulEmployeeApi);
   await loginEmployee(page, "/search/employee");
   const keyword = page.getByPlaceholder("Job title, keywords");
@@ -94,6 +96,11 @@ test("settings persist theme and language choices", async ({ page }) => {
   await expect(page.locator("html")).toHaveClass(/dark/);
   await page.getByRole("button", { name: /Khmer/ }).click();
   await expect
-    .poll(async () => (await page.context().cookies()).find((cookie) => cookie.name === "language")?.value)
+    .poll(
+      async () =>
+        (await page.context().cookies()).find(
+          (cookie) => cookie.name === "language",
+        )?.value,
+    )
     .toBe("km");
 });

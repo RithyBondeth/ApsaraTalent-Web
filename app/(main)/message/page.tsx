@@ -13,19 +13,24 @@ import {
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useChatStore } from "@/stores/features/chat/chat.store";
 import { useCallStore } from "@/stores/features/call/call.store";
+import { useInitiateChatStore } from "@/stores/apis/chat/initiate-chat.store";
+import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
+import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
+import NewChatDialog from "@/components/message/new-chat-dialog";
+import type { INewChatCandidate } from "@/components/message/new-chat-dialog/props";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import MessageLoadingSkeleton, {
   MessagePaneSkeleton,
   MessageThreadSkeleton,
 } from "@/components/message/skeleton/index";
-import { messageEmptySvg } from "@/utils/constants/asset.constant";
 import { CHAT_LOADING_TIMEOUT_MS } from "@/utils/constants/chat.constant";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { useTranslations } from "next-intl";
 import { PageState } from "@/components/utils/feedback/page-state";
+import { LucideMessageSquareDashed } from "lucide-react";
 
 export default function MessagePageContent() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -39,6 +44,8 @@ export default function MessagePageContent() {
   const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
   const [replyTarget, setReplyTarget] = useState<IMessage | null>(null);
   const [loadingTimedOut, setLoadingTimedOut] = useState<boolean>(false);
+  const [isNewChatOpen, setNewChatOpen] = useState<boolean>(false);
+  const [startingChatId, setStartingChatId] = useState<string | null>(null);
 
   /* ----------------------------- API Integration ---------------------------- */
   // Current User
@@ -60,6 +67,42 @@ export default function MessagePageContent() {
 
   // Voice Call Initiation
   const initiateCall = useCallStore((s) => s.initiateCall);
+
+  // New Chat: only matched people may be messaged, so the picker is fed by the
+  // same matching lists the matching page uses — companies for an employee,
+  // employees for a company.
+  const { initiateChat } = useInitiateChatStore();
+  const isEmployee = currentUser?.role === "employee";
+  const {
+    currentEmployeeMatching: matchedCompanies,
+    loading: matchedCompaniesLoading,
+    queryCurrentEmployeeMatching,
+  } = useGetCurrentEmployeeMatchingStore();
+  const {
+    currentCompanyMatching: matchedEmployees,
+    loading: matchedEmployeesLoading,
+    queryCurrentCompanyMatching,
+  } = useGetCurrentCompanyMatchingStore();
+
+  const newChatCandidates: INewChatCandidate[] = useMemo(() => {
+    if (isEmployee) {
+      return (matchedCompanies ?? []).map((company) => ({
+        id: company.id ?? "",
+        name: company.name ?? t("unknown"),
+        avatar: company.avatar,
+        subtitle: company.industry,
+      }));
+    }
+    return (matchedEmployees ?? []).map((employee) => ({
+      id: employee.id ?? "",
+      name:
+        [employee.firstname, employee.lastname].filter(Boolean).join(" ") ||
+        employee.username ||
+        t("unknown"),
+      avatar: employee.avatar,
+      subtitle: employee.job,
+    }));
+  }, [isEmployee, matchedCompanies, matchedEmployees, t]);
 
   /* --------------------------------- Effects --------------------------------- */
   // Keep resizable panel state in sync with the sidebar toggle (avoid calling
@@ -155,6 +198,45 @@ export default function MessagePageContent() {
     });
   };
 
+  // ── Handle New Chat ───────────────────────────────────────
+  // Matches are fetched when the picker opens rather than on mount, so the
+  // message page does not pay for a list most visits never use.
+  const handleOpenNewChat = useCallback(() => {
+    setNewChatOpen(true);
+    const profileId = isEmployee
+      ? currentUser?.employee?.id
+      : currentUser?.company?.id;
+    if (!profileId) return;
+    if (isEmployee) void queryCurrentEmployeeMatching(profileId);
+    else void queryCurrentCompanyMatching(profileId);
+  }, [
+    currentUser,
+    isEmployee,
+    queryCurrentCompanyMatching,
+    queryCurrentEmployeeMatching,
+  ]);
+
+  const handleSelectNewChat = useCallback(
+    async (candidate: INewChatCandidate) => {
+      const senderId = isEmployee
+        ? currentUser?.employee?.id
+        : currentUser?.company?.id;
+      if (!senderId || !candidate.id || startingChatId) return;
+
+      setStartingChatId(candidate.id);
+      try {
+        const chat = await initiateChat(senderId, candidate.id);
+        setNewChatOpen(false);
+        router.push(`/message?chatId=${chat.id}`);
+      } catch (error) {
+        console.error("Failed to start chat:", error);
+      } finally {
+        setStartingChatId(null);
+      }
+    },
+    [currentUser, initiateChat, isEmployee, router, startingChatId],
+  );
+
   // ── Send Message ─────────────────────────────────────────
   const handleSendMessage = (
     text: string,
@@ -247,7 +329,7 @@ export default function MessagePageContent() {
   /* -------------------------------- Render UI -------------------------------- */
   // Chat View Section
   const chatView = activeChat ? (
-    <div className="flex flex-col h-full min-h-0 min-w-0 bg-card">
+    <div className="flex h-full min-h-0 min-w-0 flex-col bg-card">
       {/* Chat Header Section */}
       <ChatHeader
         chat={activeChat}
@@ -287,22 +369,32 @@ export default function MessagePageContent() {
         variant="empty"
         title={t("selectConversationTitle")}
         description={t("selectConversation")}
-        image={messageEmptySvg}
+        icon={LucideMessageSquareDashed}
         compact
       />
     </div>
   );
 
   return (
-    <div className="message-editorial mx-auto w-full max-w-[1500px] h-full min-h-0 flex bg-card overflow-hidden relative animate-page-in border border-border border-t-[5px] border-t-primary shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <div className="message-editorial animate-page-in relative mx-auto flex h-full min-h-0 w-full max-w-[1500px] overflow-hidden border border-t-[5px] border-border border-t-foreground bg-card shadow-hard">
       {/* Call Overlay + Incoming Modal Section */}
       <CallOrchestrator />
 
+      {/* New Chat Picker Section */}
+      <NewChatDialog
+        open={isNewChatOpen}
+        onOpenChange={setNewChatOpen}
+        candidates={newChatCandidates}
+        loading={isEmployee ? matchedCompaniesLoading : matchedEmployeesLoading}
+        startingId={startingChatId}
+        onSelect={handleSelectNewChat}
+      />
+
       {/* Desktop Resizable Layout Section */}
-      <div className="hidden lg:flex w-full h-full min-h-0">
+      <div className="hidden h-full min-h-0 w-full lg:flex">
         <ResizablePanelGroup
           direction="horizontal"
-          className="w-full h-full min-h-0"
+          className="h-full min-h-0 w-full"
         >
           <ResizablePanel
             ref={sidebarPanelRef}
@@ -322,21 +414,21 @@ export default function MessagePageContent() {
               className="h-full"
               currentUserId={currentUser?.id}
               onChatSelect={(chat) => router.push(`/message?chatId=${chat.id}`)}
-              onNewChat={() => router.push("/message")}
+              onNewChat={handleOpenNewChat}
             />
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel minSize={60} className="flex flex-col min-w-0">
+          <ResizablePanel minSize={60} className="flex min-w-0 flex-col">
             {chatView ?? desktopEmptyStateView}
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
 
       {/* Mobile Content Area Section */}
-      <div className="lg:hidden flex-1 flex flex-col min-w-0 h-full min-h-0">
+      <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col lg:hidden">
         {/* Mobile Section: show full-height sidebar list when no chat is selected */}
         {!chatId && (
-          <div className="h-full min-h-0 flex flex-col">
+          <div className="flex h-full min-h-0 flex-col">
             <ChatSidebar
               chats={activeChats}
               activeChat={activeChat}
@@ -344,7 +436,7 @@ export default function MessagePageContent() {
               className="h-full w-full"
               currentUserId={currentUser?.id}
               onChatSelect={handleChatSelect}
-              onNewChat={() => router.push("/message")}
+              onNewChat={handleOpenNewChat}
             />
           </div>
         )}
@@ -352,7 +444,7 @@ export default function MessagePageContent() {
         {/* Chat View Section: shown when a chatId is in the URL */}
         {chatId && chatView}
         {chatId && !chatView && (
-          <div className="flex-1 min-w-0 min-h-0">
+          <div className="min-h-0 min-w-0 flex-1">
             <MessagePaneSkeleton />
           </div>
         )}

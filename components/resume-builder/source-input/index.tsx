@@ -4,7 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { ClipboardPaste, ShieldCheck, Sparkles, UserRound } from "lucide-react";
+import {
+  LucideClipboardPaste,
+  LucideShieldCheck,
+  LucideSparkles,
+  LucideUserRound,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { IResumeSourceInputProps } from "./props";
 
@@ -18,14 +23,14 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <section className="w-full border border-border border-t-[5px] border-t-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-5">
+    <section className="w-full border border-t-[5px] border-border border-t-foreground bg-card p-4 shadow-hard sm:p-5">
       <div className="flex flex-col gap-5">
         {/* Header Section */}
         <div className="flex flex-col gap-3">
           {/* Left Section */}
           <div className="flex items-start gap-3">
             <div className="grid size-9 shrink-0 place-items-center border border-foreground bg-foreground text-background">
-              <Sparkles className="size-4" />
+              <LucideSparkles className="size-4" />
             </div>
             <div className="min-w-0">
               <h2 className="text-base font-black tracking-[-0.02em] text-foreground">
@@ -47,9 +52,9 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
             )}
           >
             {usingPastedInfo ? (
-              <ClipboardPaste className="size-3.5" />
+              <LucideClipboardPaste className="size-3.5" />
             ) : (
-              <UserRound className="size-3.5" />
+              <LucideUserRound className="size-3.5" />
             )}
             {usingPastedInfo ? t("usingPastedInfo") : t("usingProfileInfo")}
           </div>
@@ -93,7 +98,7 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
             className="flex flex-col gap-2 border-t border-border pt-3 text-[11px] leading-4 text-muted-foreground"
           >
             <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="size-3.5 shrink-0 text-emerald-500" />
+              <LucideShieldCheck className="size-3.5 shrink-0 text-emerald-500" />
               {t("pasteInfoPrivacy")}
             </span>
             <span className="tabular-nums">

@@ -13,7 +13,7 @@ export function ThemeCard(props: IThemeCardProps) {
       className={cn(
         "relative flex w-full cursor-pointer flex-col items-center gap-2 border-2 p-3 text-left transition-all duration-200",
         active
-          ? "border-primary bg-primary/5 shadow-[3px_3px_0_hsl(var(--primary)/0.18)]"
+          ? "border-primary bg-primary/5 shadow-hard-primary"
           : "border-border bg-card hover:border-primary/40 hover:bg-accent/50",
       )}
     >
@@ -22,10 +22,10 @@ export function ThemeCard(props: IThemeCardProps) {
         className={cn(
           "flex h-14 w-full flex-col gap-1 overflow-hidden border p-1.5",
           value === "dark"
-            ? "bg-zinc-900 border-zinc-700"
+            ? "border-zinc-700 bg-zinc-900"
             : value === "light"
-              ? "bg-white border-zinc-200"
-              : "bg-gradient-to-br from-white via-zinc-100 to-zinc-800 border-zinc-300",
+              ? "border-zinc-200 bg-white"
+              : "border-zinc-300 bg-gradient-to-br from-white via-zinc-100 to-zinc-800",
         )}
       >
         <div
@@ -40,7 +40,7 @@ export function ThemeCard(props: IThemeCardProps) {
             value === "dark" ? "bg-zinc-700" : "bg-zinc-200",
           )}
         />
-        <div className="flex gap-1 mt-0.5">
+        <div className="mt-0.5 flex gap-1">
           <div
             className={cn(
               "h-3 flex-1",
@@ -57,7 +57,7 @@ export function ThemeCard(props: IThemeCardProps) {
       </div>
 
       {/* Label Section */}
-      <div className="flex items-center gap-1.5 justify-center">
+      <div className="flex items-center justify-center gap-1.5">
         <span
           className={cn(
             "[&>svg]:size-3.5",

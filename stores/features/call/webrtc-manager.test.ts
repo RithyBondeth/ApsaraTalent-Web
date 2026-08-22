@@ -51,7 +51,9 @@ describe("WebRTC manager", () => {
     setPendingOffer(offer);
     expect(getPendingOffer()).toEqual(offer);
     expect(stopStream(stream)).toBeNull();
-    expect(tracks.every((track) => track.stop.mock.calls.length === 1)).toBe(true);
+    expect(tracks.every((track) => track.stop.mock.calls.length === 1)).toBe(
+      true,
+    );
   });
 
   it("clears ring and connection timers before they fire", () => {
@@ -88,9 +90,12 @@ describe("WebRTC manager", () => {
       addIceCandidate,
       close: vi.fn(),
     } as unknown as RTCPeerConnection;
-    vi.stubGlobal("RTCIceCandidate", function MockIceCandidate(candidate: RTCIceCandidateInit) {
-      return candidate;
-    });
+    vi.stubGlobal(
+      "RTCIceCandidate",
+      function MockIceCandidate(candidate: RTCIceCandidateInit) {
+        return candidate;
+      },
+    );
     setPc(pc);
     addPendingIceCandidate({ candidate: "ice-1" });
     addPendingIceCandidate({ candidate: "ice-2" });

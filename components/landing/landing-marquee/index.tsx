@@ -30,10 +30,8 @@ export default function LandingMarquee() {
         <div key={key} className="flex items-center">
           <span
             className={cn(
-              "px-6 text-2xl font-semibold uppercase tracking-[-0.03em] whitespace-nowrap sm:px-10 sm:text-4xl md:text-5xl",
-              index % 2 === 0
-                ? "text-white/90"
-                : "text-stroke-neutral",
+              "whitespace-nowrap px-6 text-2xl font-semibold uppercase tracking-[-0.03em] sm:px-10 sm:text-4xl md:text-5xl",
+              index % 2 === 0 ? "text-white/90" : "text-stroke-neutral",
             )}
           >
             {t(key)}

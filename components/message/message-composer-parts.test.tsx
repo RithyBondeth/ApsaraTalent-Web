@@ -6,7 +6,11 @@ import { MessageReplyPreview } from "./message-input/reply-preview";
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) =>
-    ({ you: "You", unknown: "Unknown sender", deletedMessage: "Deleted message" })[key] ?? key,
+    ({
+      you: "You",
+      unknown: "Unknown sender",
+      deletedMessage: "Deleted message",
+    })[key] ?? key,
 }));
 
 describe("message composer parts", () => {
@@ -17,10 +21,22 @@ describe("message composer parts", () => {
     const onRemoveFile = vi.fn();
     render(
       <MessageAttachmentStrip
-        pendingFiles={[
-          { id: "ready", filename: "photo.png", preview: "blob:photo", status: "ready" },
-          { id: "failed", filename: "resume.pdf", status: "error", error: "Too large" },
-        ] as never}
+        pendingFiles={
+          [
+            {
+              id: "ready",
+              filename: "photo.png",
+              preview: "blob:photo",
+              status: "ready",
+            },
+            {
+              id: "failed",
+              filename: "resume.pdf",
+              status: "error",
+              error: "Too large",
+            },
+          ] as never
+        }
         atFileLimit={false}
         inputDisabled={false}
         isUploadingAny={false}
@@ -44,7 +60,9 @@ describe("message composer parts", () => {
   it("shows uploading state and hides add when the file limit is reached", () => {
     render(
       <MessageAttachmentStrip
-        pendingFiles={[{ id: "upload", filename: "file.pdf", status: "uploading" }] as never}
+        pendingFiles={
+          [{ id: "upload", filename: "file.pdf", status: "uploading" }] as never
+        }
         atFileLimit
         inputDisabled
         isUploadingAny
@@ -56,7 +74,9 @@ describe("message composer parts", () => {
       />,
     );
     expect(screen.getByText("Uploading…")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Add more files" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Add more files" }),
+    ).not.toBeInTheDocument();
   });
 
   it("labels, truncates, and cancels replies", async () => {

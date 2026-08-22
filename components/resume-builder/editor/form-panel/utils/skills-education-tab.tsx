@@ -8,7 +8,7 @@ import { useState } from "react";
 import { IFormPanelProps } from "../props";
 import { FieldLabel } from "./field-label";
 import { useTranslations } from "next-intl";
-import { Sparkles, Loader2, Wand2 } from "lucide-react";
+import { LucideSparkles, LucideLoader2, LucideWand2 } from "lucide-react";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import { toast } from "sonner";
 
@@ -112,36 +112,36 @@ export function SkillsEducationTab({
             size="sm"
             onClick={handleSuggestSkills}
             disabled={skillsLoading}
-            className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+            className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
           >
             {skillsLoading ? (
-              <Loader2 size={10} className="animate-spin" />
+              <LucideLoader2 size={10} className="animate-spin" />
             ) : (
-              <Sparkles size={10} />
+              <LucideSparkles size={10} />
             )}
             {t("suggest")}
           </Button>
         </div>
 
         {/* Skills List Section */}
-        <div className="flex flex-wrap gap-1.5 mb-2 min-h-[28px]">
+        <div className="mb-2 flex min-h-[28px] flex-wrap gap-1.5">
           {skills.map((skill, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1 bg-primary/10 text-primary text-[11px] px-2 py-0.5 rounded-none border border-primary/20"
+              className="inline-flex items-center gap-1 rounded-none border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] text-primary"
             >
               {skill}
               <button
                 type="button"
                 onClick={() => removeSkill(i)}
-                className="text-primary/60 hover:text-destructive transition-colors ml-0.5"
+                className="ml-0.5 text-primary/60 transition-colors hover:text-destructive"
               >
                 ×
               </button>
             </span>
           ))}
           {skills.length === 0 && (
-            <span className="text-[11px] text-muted-foreground italic">
+            <span className="text-[11px] italic text-muted-foreground">
               {t("noSkillsAdded")}
             </span>
           )}
@@ -186,12 +186,12 @@ export function SkillsEducationTab({
               size="sm"
               onClick={handleEduStandardize}
               disabled={eduLoading}
-              className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+              className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
             >
               {eduLoading ? (
-                <Loader2 size={10} className="animate-spin" />
+                <LucideLoader2 size={10} className="animate-spin" />
               ) : (
-                <Wand2 size={10} />
+                <LucideWand2 size={10} />
               )}
               {t("polish")}
             </Button>
@@ -203,9 +203,9 @@ export function SkillsEducationTab({
           className="min-h-[80px] text-xs leading-relaxed"
           {...register("education")}
         />
-        <TypographyMuted className="text-[10px] mt-1 pl-1">
+        <TypographyMuted className="mt-1 pl-1 text-[10px]">
           {t("separateDegrees")}{" "}
-          <code className="text-[10px] bg-muted px-1 rounded font-bold">|</code>
+          <code className="rounded bg-muted px-1 text-[10px] font-bold">|</code>
         </TypographyMuted>
       </div>
 
@@ -215,24 +215,24 @@ export function SkillsEducationTab({
       <div className="space-y-2">
         <FieldLabel>{t("careerInterests")}</FieldLabel>
         {/* Career Scopes List Section */}
-        <div className="flex flex-wrap gap-1.5 mb-2 min-h-[28px]">
+        <div className="mb-2 flex min-h-[28px] flex-wrap gap-1.5">
           {careerScopes.map((scope, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 text-[11px] px-2 py-0.5 rounded-none border border-emerald-200/50 dark:border-emerald-800/50"
+              className="inline-flex items-center gap-1 rounded-none border border-emerald-200/50 bg-emerald-50 px-2 py-0.5 text-[11px] text-emerald-700 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400"
             >
               {scope}
               <button
                 type="button"
                 onClick={() => removeScope(i)}
-                className="text-emerald-500 hover:text-destructive transition-colors ml-0.5"
+                className="ml-0.5 text-emerald-500 transition-colors hover:text-destructive"
               >
                 ×
               </button>
             </span>
           ))}
           {careerScopes.length === 0 && (
-            <span className="text-[11px] text-muted-foreground italic">
+            <span className="text-[11px] italic text-muted-foreground">
               {t("noInterestsAdded")}
             </span>
           )}

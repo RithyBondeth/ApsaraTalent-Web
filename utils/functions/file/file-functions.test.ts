@@ -24,8 +24,12 @@ describe("file functions", () => {
   });
 
   it("creates, clicks, and cleans up a download link", () => {
-    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
-    const create = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:test");
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {});
+    const create = vi
+      .spyOn(URL, "createObjectURL")
+      .mockReturnValue("blob:test");
     const revoke = vi.spyOn(URL, "revokeObjectURL");
 
     downloadBase64File(btoa("hello"), "text/plain", "hello.txt");

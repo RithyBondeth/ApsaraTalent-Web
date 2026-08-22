@@ -25,7 +25,11 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { careerScopesListConstant } from "@/utils/constants/ui.constant";
 import { getPaginationPages } from "@/utils/functions/ui";
-import { ChevronLeft, ChevronRight, LucideSearch } from "lucide-react";
+import {
+  LucideChevronLeft,
+  LucideChevronRight,
+  LucideSearch,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
@@ -83,7 +87,7 @@ export default function CompanyCareerScopeStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-stretch gap-8">
+    <div className="flex w-full flex-col items-stretch gap-8">
       {/* Title and SubTitle Section */}
       <div className="phone-xl:mt-10">
         <TypographyH4>{t("careerScopeTitle")}</TypographyH4>
@@ -132,7 +136,7 @@ export default function CompanyCareerScopeStepForm({
           return (
             <Card
               key={index}
-              className={`flex items-center gap-2 p-2 transition-all hover:scale-105 cursor-pointer ${
+              className={`flex cursor-pointer items-center gap-2 p-2 transition-all hover:scale-105 ${
                 isChecked ? "border-primary" : ""
               }`}
             >
@@ -162,7 +166,7 @@ export default function CompanyCareerScopeStepForm({
               onClick={() => goToPage(Math.max(currentPage - 1, 1))}
               className={`h-10 w-10 cursor-pointer gap-1 px-0 sm:w-auto sm:px-3 ${currentPage === 1 ? "pointer-events-none opacity-50" : ""}`}
             >
-              <ChevronLeft className="h-4 w-4" />
+              <LucideChevronLeft className="h-4 w-4" />
               <span className="hidden sm:inline">{tCommon("previous")}</span>
             </PaginationLink>
           </PaginationItem>
@@ -192,7 +196,7 @@ export default function CompanyCareerScopeStepForm({
               className={`h-10 w-10 cursor-pointer gap-1 px-0 sm:w-auto sm:px-3 ${currentPage === totalPages ? "pointer-events-none opacity-50" : ""}`}
             >
               <span className="hidden sm:inline">{tCommon("next")}</span>
-              <ChevronRight className="h-4 w-4" />
+              <LucideChevronRight className="h-4 w-4" />
             </PaginationLink>
           </PaginationItem>
         </PaginationContent>

@@ -18,7 +18,7 @@ export default function renderTextWithLinks(text: string): React.ReactNode[] {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="underline underline-offset-2 break-all hover:opacity-80"
+        className="break-all underline underline-offset-2 hover:opacity-80"
         onClick={(e) => e.stopPropagation()}
       >
         {url}

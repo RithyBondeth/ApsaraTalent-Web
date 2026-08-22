@@ -19,7 +19,7 @@ import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/cou
 import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
+import { PlatformIcon } from "@/components/utils/brand/platform-icon";
 import { translateLocation } from "@/utils/functions/text";
 import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { formatShortDate } from "@/utils/functions/date";
@@ -48,8 +48,8 @@ import {
   LucidePhone,
   LucideTransgender,
   LucideUser,
+  LucideUserX,
   LucideZap,
-  User,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -58,9 +58,9 @@ import { EmployeeDetailPageLoadingSkeleton } from "@/components/employee/skeleto
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 import { useFeedActionEffect } from "@/components/utils/effects/feed-action-effect";
 import MetaChip from "@/components/utils/data-display/meta-chip";
+import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { SectionTitle } from "@/components/utils/layout/section-title";
-import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
 import UserModerationMenu from "@/components/moderation/user-moderation-menu";
 import { API_GET_EMP_DOCUMENT_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
 import { ProfileDetailHero } from "@/components/feed/detail/profile-detail-hero";
@@ -254,6 +254,8 @@ export default function EmployeeDetailPage() {
         <PageState
           variant="empty"
           title={tf("employeeNotFound")}
+          description={tf("employeeNotFoundDescription")}
+          icon={LucideUserX}
           action={{ label: tf("backToFeed"), href: "/feed" }}
         />
       </div>
@@ -270,13 +272,13 @@ export default function EmployeeDetailPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="profile-detail-page mx-auto flex w-full max-w-7xl flex-col gap-4 animate-page-in sm:gap-5 tablet-sm:pb-28">
+    <div className="profile-detail-page animate-page-in mx-auto flex w-full max-w-7xl flex-col gap-4 tablet-sm:pb-28 sm:gap-5">
       {/* Feed Action Effect Portal Section */}
       {effectPortal}
 
       {/* Back Navigation Header Section */}
       <header className="sticky top-0 z-30 -mx-3 border-b border-border bg-background/95 px-3 backdrop-blur-xl sm:-mx-4 sm:px-4 lg:-mx-5 lg:px-5">
-        <div className="mx-auto flex h-16 max-w-7xl min-w-0 items-center gap-3">
+        <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center gap-3">
           <button
             type="button"
             onClick={() => router.back()}
@@ -313,17 +315,13 @@ export default function EmployeeDetailPage() {
           employeeData.username ? (
             employeeData.username.slice(0, AVATAR_INITIALS_LENGTH)
           ) : (
-            <User />
+            <LucideUser />
           )
         }
         onAvatarClick={() => setOpenProfilePopup(true)}
         status={
           employeeData.availability ? (
-            <span
-              className={`border border-current/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(employeeData.availability)}`}
-            >
-              {employeeData.availability}
-            </span>
+            <AvailabilityBadge availability={employeeData.availability} />
           ) : undefined
         }
         meta={
@@ -410,11 +408,7 @@ export default function EmployeeDetailPage() {
                 {employeeData.skills.map((item: ISkill) => (
                   <HoverCard key={item.id}>
                     <HoverCardTrigger>
-                      <Tag
-                        label={item.name}
-                        neutral
-                        className="!rounded-none border border-border"
-                      />
+                      <Tag label={item.name} />
                     </HoverCardTrigger>
                     <HoverCardContent className="flex flex-col gap-1">
                       <TypographySmall className="text-sm">
@@ -443,28 +437,28 @@ export default function EmployeeDetailPage() {
                   (item: IExperience, i: number) => (
                     <div key={item.id} className="flex gap-3">
                       {/* Timeline dot + line */}
-                      <div className="flex flex-col items-center pt-1 flex-shrink-0">
+                      <div className="flex flex-shrink-0 flex-col items-center pt-1">
                         <div className="size-2.5 flex-shrink-0 border border-foreground bg-foreground" />
                         {i < employeeData.experiences.length - 1 && (
-                          <div className="w-px flex-1 bg-border/60 mt-1.5" />
+                          <div className="mt-1.5 w-px flex-1 bg-border/60" />
                         )}
                       </div>
                       {/* Content Section */}
                       <div
-                        className={`flex-1 min-w-0 ${i < employeeData.experiences.length - 1 ? "pb-3" : ""}`}
+                        className={`min-w-0 flex-1 ${i < employeeData.experiences.length - 1 ? "pb-3" : ""}`}
                       >
-                        <div className="profile-detail-timeline-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-[3px_3px_0_hsl(var(--foreground)/0.05)]">
+                        <div className="profile-detail-timeline-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-hard-sm">
                           <p className="text-base font-bold tracking-tight">
                             {item.title}
                           </p>
-                          <p className="text-xs text-muted-foreground mt-0.5">
+                          <p className="mt-0.5 text-xs text-muted-foreground">
                             {formatShortDate(item.startDate)} —{" "}
                             {item.endDate
                               ? formatShortDate(item.endDate)
                               : tf("present")}
                           </p>
                           {item.description && (
-                            <TypographyMuted className="text-sm leading-relaxed mt-2">
+                            <TypographyMuted className="mt-2 text-sm leading-relaxed">
                               {item.description}
                             </TypographyMuted>
                           )}
@@ -489,7 +483,7 @@ export default function EmployeeDetailPage() {
                 {employeeData.educations.map((item: IEducation) => (
                   <div
                     key={item.id}
-                    className="flex items-start gap-3 border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-[3px_3px_0_hsl(var(--foreground)/0.05)]"
+                    className="flex items-start gap-3 border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-hard-sm"
                   >
                     <div className="flex size-9 flex-shrink-0 items-center justify-center border border-border bg-muted/60">
                       <LucideGraduationCap
@@ -498,12 +492,12 @@ export default function EmployeeDetailPage() {
                       />
                     </div>
                     <div className="min-w-0">
-                      <p className="font-semibold text-sm">{item.school}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p className="text-sm font-semibold">{item.school}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
                         {item.degree}
                       </p>
                       {item.year && (
-                        <p className="text-xs text-muted-foreground/70 mt-0.5 flex items-center gap-1">
+                        <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground/70">
                           <LucideCalendar className="size-3" />
                           {formatShortDate(item.year)}
                         </p>
@@ -547,16 +541,16 @@ export default function EmployeeDetailPage() {
                         key={suffix}
                         className="flex items-center justify-between gap-2 border border-border bg-muted/40 px-3 py-2.5"
                       >
-                        <div className="flex items-center gap-2 min-w-0">
+                        <div className="flex min-w-0 items-center gap-2">
                           <LucideFileText
-                            className="size-4 text-muted-foreground flex-shrink-0"
+                            className="size-4 flex-shrink-0 text-muted-foreground"
                             strokeWidth={1.5}
                           />
-                          <span className="text-xs text-muted-foreground truncate">
+                          <span className="truncate text-xs text-muted-foreground">
                             {extractCleanFilename(file!)}
                           </span>
                         </div>
-                        <div className="flex gap-0.5 flex-shrink-0">
+                        <div className="flex flex-shrink-0 gap-0.5">
                           <Link href={documentUrl} target="_blank">
                             <Button
                               variant="ghost"
@@ -617,14 +611,14 @@ export default function EmployeeDetailPage() {
                 .filter((r) => r.val)
                 .map((row) => (
                   <div key={row.label} className="flex items-start gap-2.5">
-                    <span className="text-muted-foreground mt-0.5 flex-shrink-0 [&>svg]:size-4 [&>svg]:stroke-[1.5]">
+                    <span className="mt-0.5 flex-shrink-0 text-muted-foreground [&>svg]:size-4 [&>svg]:stroke-[1.5]">
                       {row.icon}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                         {row.label}
                       </p>
-                      <p className="text-sm mt-0.5 break-words">{row.val}</p>
+                      <p className="mt-0.5 break-words text-sm">{row.val}</p>
                     </div>
                   </div>
                 ))}
@@ -648,7 +642,7 @@ export default function EmployeeDetailPage() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-semibold transition-colors hover:border-foreground/30 hover:bg-muted"
                   >
-                    {getSocialPlatformTypeIcon(item.platform as TPlatform)}
+                    <PlatformIcon platform={item.platform as TPlatform} />
                     {item.platform}
                   </Link>
                 ))}
@@ -659,7 +653,7 @@ export default function EmployeeDetailPage() {
       </div>
 
       {/* Mobile Sticky Action Bar Section */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 hidden gap-2 border-t border-border bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-xl [&>button]:flex-1 [&>button]:rounded-none tablet-md:flex">
+      <div className="fixed bottom-0 left-0 right-0 z-30 hidden gap-2 border-t border-border bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-xl tablet-md:flex [&>button]:flex-1 [&>button]:rounded-none">
         {!isFav && (
           <Button
             variant="outline"

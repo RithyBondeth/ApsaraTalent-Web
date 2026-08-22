@@ -1,126 +1,53 @@
-import Header from "@/components/header";
+import Header from "@/components/landing/landing-header";
 import LandingFooter from "@/components/landing/landing-footer";
 import { GridRunners } from "@/components/ui/grid-runners";
-import { ScrollProgress } from "@/components/utils/animations/scroll-progress";
+import { PageBanner } from "@/components/utils/layout/page-banner";
+import { ScrollProgressBar } from "@/components/utils/layout/scroll-progress-bar";
 import {
   IStaticBulletProps,
   IStaticCardProps,
   IStaticNoteProps,
-  IStaticPageArtworkSlotProps,
   IStaticPageShellProps,
   IStaticSectionProps,
   IStaticStepProps,
 } from "./props";
 
-;
-
 export function StaticPageShell(props: IStaticPageShellProps) {
   /* ------------------------------- Props ------------------------------- */
-  const {
-    pageNumber,
-    pageTotal = "04",
-    title,
-    subtitle,
-    tocHeading,
-    toc,
-    icon,
-    meta,
-    heroVisual,
-    children,
-  } = props;
+  const { pageNumber, title, subtitle, tocHeading, toc, stats, children } =
+    props;
 
   /* ----------------------------- Render UI ----------------------------- */
   return (
     <div className="landing-scope static-page-scope relative min-h-screen bg-background text-foreground">
       {/* Page Progress Section */}
-      <ScrollProgress />
+      <ScrollProgressBar />
 
       {/* Page Header Section */}
       <Header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl" />
 
       {/* Page Hero Section */}
+      {/* The hero used to be a two-column split whose right half was a dark
+          panel holding a decorative artwork box, the page number as "06 / 06",
+          a repeat of the title (twice), and four of the sixteen contents links
+          already listed in the sidebar below — no information that was not
+          elsewhere on screen, for 45% of the banner. It is now the same
+          PageBanner every signed-in page uses, and the space goes to metadata a
+          reader of a policy actually wants. Same reasoning, and the same
+          component, as the hero illustrations that were removed app-wide. */}
       <section className="relative overflow-hidden border-b border-border pt-[72px]">
         {/* Hero Background Animation Section */}
         <div className="landing-grid pointer-events-none absolute inset-0" />
         <GridRunners className="landing-grid-runners" density="quiet" />
 
-        {/* Hero Content Grid Section */}
-        <div className="relative mx-auto grid min-h-[420px] max-w-7xl border-x border-border lg:grid-cols-[1.08fr_0.92fr]">
-          {/* Hero Copy Section */}
-          <div className="flex flex-col justify-center px-6 py-12 sm:px-10 sm:py-14 lg:px-14 lg:py-16">
-            <div className="static-page-reveal flex items-center gap-3">
-              <span className="h-px w-8 bg-foreground" />
-              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                Apsara Talent · {pageNumber}
-              </span>
-            </div>
-
-            <h1 className="static-page-reveal static-page-reveal-delay mt-6 max-w-3xl text-3xl font-bold leading-[1.03] tracking-[-0.04em] sm:text-4xl md:text-5xl lg:text-[3.75rem]">
-              {title}
-            </h1>
-            <p className="static-page-reveal static-page-reveal-delay-2 mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-              {subtitle}
-            </p>
-            {meta ? (
-              <div className="static-page-reveal static-page-reveal-delay-2 mt-6 flex items-center gap-2 text-xs text-muted-foreground">
-                {meta}
-              </div>
-            ) : null}
-          </div>
-
-          {/* Hero Visual Panel Section */}
-          <div className="landing-swap-panel relative flex min-h-[350px] flex-col overflow-hidden border-t border-border p-6 sm:p-8 lg:min-h-0 lg:border-l lg:border-t-0 lg:p-9">
-            {/* Visual Panel Background Section */}
-            <div className="landing-dark-grid pointer-events-none absolute inset-0" />
-            <GridRunners
-              className="landing-swap-grid-runners"
-              density="quiet"
-            />
-
-            {/* Visual Panel Header Section */}
-            <div className="relative z-10 flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--landing-panel-ink)/0.52)]">
-              <span>{title}</span>
-              <span>
-                {pageNumber} / {pageTotal}
-              </span>
-            </div>
-
-            {/* Hero Artwork Section */}
-            <div className="relative z-10 my-auto flex items-center justify-center py-6">
-              {heroVisual ? (
-                <div className="static-page-legal-visual">{heroVisual}</div>
-              ) : (
-                <div className="static-page-orbit">
-                  <div className="static-page-orbit-ring static-page-orbit-ring-one" />
-                  <div className="static-page-orbit-ring static-page-orbit-ring-two" />
-                  <div className="static-page-hero-icon">{icon}</div>
-                </div>
-              )}
-            </div>
-
-            {/* Hero Table of Contents Section */}
-            <div className="relative z-10 border-t border-[hsl(var(--landing-panel-ink)/0.16)]">
-              <div className="py-4 text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--landing-panel-ink)/0.45)]">
-                {tocHeading}
-              </div>
-              <div className="grid grid-cols-2 border-t border-[hsl(var(--landing-panel-ink)/0.16)]">
-                {toc.slice(0, 4).map((item, index) => (
-                  <a
-                    key={item.id}
-                    href={`#${item.id}`}
-                    className="group flex min-h-14 items-center gap-3 border-b border-[hsl(var(--landing-panel-ink)/0.16)] px-3 text-xs transition-colors odd:border-r hover:bg-[hsl(var(--landing-panel-ink)/0.06)]"
-                  >
-                    <span className="text-[10px] tabular-nums text-[hsl(var(--landing-panel-ink)/0.35)]">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="line-clamp-1 text-[hsl(var(--landing-panel-ink)/0.75)] transition-colors group-hover:text-[hsl(var(--landing-panel-ink))]">
-                      {item.label}
-                    </span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
+        {/* Hero Banner Section */}
+        <div className="relative mx-auto max-w-7xl border-x border-border px-6 py-10 sm:px-10 sm:py-12 lg:px-14">
+          <PageBanner
+            eyebrow={`Apsara Talent · ${pageNumber}`}
+            title={title}
+            subtitle={subtitle}
+            stats={stats}
+          />
         </div>
       </section>
 
@@ -289,38 +216,6 @@ export function StaticNote(props: IStaticNoteProps) {
         {icon}
       </span>
       <div className="text-xs font-medium leading-relaxed">{children}</div>
-    </div>
-  );
-}
-
-export function StaticPageArtworkSlot(props: IStaticPageArtworkSlotProps) {
-  /* ------------------------------- Props ------------------------------- */
-  const { icon, label } = props;
-
-  /* ----------------------------- Render UI ----------------------------- */
-  return (
-    <div
-      className="static-page-artwork-slot"
-      role="img"
-      aria-label={`${label} artwork`}
-    >
-      {/* Static Artwork Slot Section */}
-      {/* Artwork Background Section */}
-      <div className="static-page-artwork-slot-grid" />
-
-      {/* Artwork Mark Section */}
-      <div className="static-page-artwork-slot-mark">
-        <span className="[&>svg]:size-8 [&>svg]:stroke-[1.25]">{icon}</span>
-      </div>
-      {/* Artwork Caption Section */}
-      <div className="relative z-10 mt-auto flex w-full items-end justify-between border-t border-[hsl(var(--landing-panel-ink)/0.16)] pt-4">
-        <span className="text-xs font-medium text-[hsl(var(--landing-panel-ink)/0.8)]">
-          {label}
-        </span>
-        <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--landing-panel-ink)/0.38)]">
-          Apsara Talent
-        </span>
-      </div>
     </div>
   );
 }

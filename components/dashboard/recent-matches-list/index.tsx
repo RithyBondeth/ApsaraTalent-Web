@@ -1,7 +1,7 @@
 "use client";
 
 import CachedAvatar from "@/components/ui/cached-avatar";
-import { Handshake } from "lucide-react";
+import { LucideHandshake } from "lucide-react";
 import { IRecentMatchesListProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -26,7 +26,7 @@ export function RecentMatchesList({
         className="flex flex-col items-center justify-center border border-dashed border-border bg-muted/20 px-5 py-8 text-center"
       >
         <span className="mb-3 grid size-11 place-items-center bg-primary/10 text-primary">
-          <Handshake className="size-5" aria-hidden />
+          <LucideHandshake className="size-5" aria-hidden />
         </span>
         <TypographyMuted className="text-sm text-muted-foreground">
           {t("noMatchesYet", {
@@ -43,7 +43,7 @@ export function RecentMatchesList({
       {matches.map((match) => (
         <div
           key={match.id}
-          className="flex items-center gap-3 border border-border border-l-[3px] border-l-foreground bg-muted/25 p-3 transition-all hover:-translate-y-0.5 hover:bg-muted/45"
+          className="flex items-center gap-3 border border-l-[3px] border-border border-l-foreground bg-muted/25 p-3 transition-all hover:-translate-y-0.5 hover:bg-muted/45"
         >
           {/* Avatar Section */}
           <CachedAvatar
@@ -58,8 +58,8 @@ export function RecentMatchesList({
           </CachedAvatar>
 
           {/* Info Section */}
-          <div className="flex-1 min-w-0">
-            <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-medium truncate">
+          <div className="min-w-0 flex-1">
+            <TypographyP className="truncate text-sm font-medium [&:not(:first-child)]:mt-0">
               {match.name}
             </TypographyP>
             <TypographyMuted className="text-[11px] text-muted-foreground">

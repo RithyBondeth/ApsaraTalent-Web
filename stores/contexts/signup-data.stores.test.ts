@@ -13,10 +13,14 @@ describe("signup data stores", () => {
     const data = { phone: "+85512345678", rememberMe: true, role: "employee" };
 
     useBasicPhoneSignupDataStore.getState().setBasicPhoneSignupData(data);
-    expect(useBasicPhoneSignupDataStore.getState().basicPhoneSignupData).toEqual(data);
+    expect(
+      useBasicPhoneSignupDataStore.getState().basicPhoneSignupData,
+    ).toEqual(data);
 
     useBasicPhoneSignupDataStore.getState().clearSetupBasicSignupData();
-    expect(useBasicPhoneSignupDataStore.getState().basicPhoneSignupData).toBeNull();
+    expect(
+      useBasicPhoneSignupDataStore.getState().basicPhoneSignupData,
+    ).toBeNull();
   });
 
   it("stores and clears multi-step signup data", () => {
@@ -47,6 +51,8 @@ describe("signup data stores", () => {
     });
     useBasicSignupDataStore.getState().setBasicSignupData({ firstName: "New" });
 
-    expect(useBasicSignupDataStore.getState().basicSignupData).toEqual({ firstName: "New" });
+    expect(useBasicSignupDataStore.getState().basicSignupData).toEqual({
+      firstName: "New",
+    });
   });
 });

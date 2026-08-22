@@ -1,6 +1,7 @@
 "use client";
 
 import OpenPositionForm from "@/components/company/profile/open-position-form";
+import { GridRunners } from "@/components/ui/grid-runners";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +24,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -46,6 +48,7 @@ import LabelInput from "@/components/utils/forms/label-input";
 import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { LoginMethodIcon } from "@/components/utils/brand/login-method-icon";
 import { useCmpAvatarCoverState } from "@/hooks/profile/company/use-cmp-avatar-cover-state";
 import useCmpBenefitValueState from "@/hooks/profile/company/use-cmp-benefit-value-state";
 import { useCmpCareerScopesState } from "@/hooks/profile/company/use-cmp-careerscope-state";
@@ -68,30 +71,31 @@ import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-s
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import {
   companyTypeConstant,
-  COMPANY_ICON_COLOR,
   locationConstant,
   loginMethodConstant,
   platformConstant,
 } from "@/utils/constants/ui.constant";
-import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
+import { PlatformIcon } from "@/components/utils/brand/platform-icon";
 import { capitalizeWords, getNameInitials } from "@/utils/functions/text";
-import { isUuid } from "@/utils/functions/validation/check-uuid";
-import { parseMaybeDate } from "@/utils/functions/date";
+import { isUuid } from "@/utils/functions/validation";
+import { getFoundedYearOptions, parseMaybeDate } from "@/utils/functions/date";
 import {
   isSupportedProfileImage,
   readImageFileAsDataUrl,
 } from "@/utils/functions/file";
 import { MAX_IMAGE_SIZE } from "@/utils/constants/config.constant";
+import { BenefitValueChip } from "@/components/utils/data-display/benefit-value-chip";
 import { IBenefits } from "@/utils/interfaces/user/company.interface";
 import { IValues } from "@/utils/interfaces/user/company.interface";
 import { TPlatform } from "@/utils/types/user/platform.type";
 import {
-  ChevronDown,
+  LucideChevronDown,
   LucideBriefcase,
   LucideBuilding,
   LucideCalendarDays,
   LucideCamera,
   LucideCircleCheck,
+  LucideClipboardList,
   LucideCompass,
   LucideEdit,
   LucideGlobe,
@@ -107,12 +111,12 @@ import {
   LucideUsers,
   LucideXCircle,
   LucideZap,
-  Sparkles,
+  LucideSparkles,
 } from "lucide-react";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Controller,
   type Resolver,
@@ -121,7 +125,6 @@ import {
   useWatch,
 } from "react-hook-form";
 import type { TCompanyProfileForm } from "./validation";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import { getCompanyProfileCompletion } from "@/utils/functions/profile";
 import { CompanyProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
 import { SectionTitle } from "@/components/utils/layout/section-title";
@@ -130,11 +133,9 @@ import ProfileEditActionBar from "@/components/profile/profile-edit-action-bar";
 import MissingProfileFieldButton from "@/components/profile/missing-profile-field-button";
 import { PageState } from "@/components/utils/feedback/page-state";
 
-
-  /* -------------------------------- Helpers --------------------------------- */
+/* -------------------------------- Helpers --------------------------------- */
 let companyProfileResolverPromise:
-  | Promise<Resolver<TCompanyProfileForm>>
-  | undefined;
+  Promise<Resolver<TCompanyProfileForm>> | undefined;
 
 const lazyCompanyProfileResolver: Resolver<TCompanyProfileForm> = async (
   ...args
@@ -156,6 +157,9 @@ export default function ProfilePage() {
   const tCommon = useTranslations("common");
   const tP = useTranslations("profile");
   const tr = useTranslations("resumeBuilder");
+
+  // Built once per mount — ~125 entries that never change while editing.
+  const foundedYearOptions = useMemo(() => getFoundedYearOptions(), []);
 
   /* -------------------------------- All States -------------------------------- */
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -340,7 +344,7 @@ export default function ProfilePage() {
     };
   }, [getCurrentUser]);
 
-   // ── Avatar and Cover Effect ───────────────────────
+  // ── Avatar and Cover Effect ───────────────────────
   useEffect(() => {
     // Reset error states whenever the image sources change
     setAvatarLoadError(false);
@@ -391,7 +395,7 @@ export default function ProfilePage() {
     return () => window.removeEventListener("beforeunload", handler);
   }, [isEdit, form.formState.isDirty]);
 
- // ── FieldArray for OpenPositions  ─────────────────── 
+  // ── FieldArray for OpenPositions  ───────────────────
   const openPositionFA = useFieldArray({
     control: form.control,
     name: "openPositions",
@@ -430,6 +434,7 @@ export default function ProfilePage() {
             salaryCurrency: op.salaryCurrency ?? "USD",
             workMode: op.workMode ?? null,
             location: op.location ?? "",
+            languagesRequired: op.languagesRequired ?? [],
             openingsCount: op.openingsCount ?? null,
             deadlineDate: parseMaybeDate(op.deadlineDate),
             skills: Array.isArray(op.skills)
@@ -1183,7 +1188,9 @@ export default function ProfilePage() {
   /* -------------------------------- Profile Completion ----------------------- */
   const profileCompletion = getCompanyProfileCompletion({
     ...company,
-    email: user.email,
+    // The API omits `email` rather than sending null, and the completion
+    // helper distinguishes "absent" as null.
+    email: user.email ?? null,
     avatar: avatarLoadError ? undefined : company.avatar,
     cover: coverLoadError ? undefined : company.cover,
   });
@@ -1193,7 +1200,7 @@ export default function ProfilePage() {
     <form
       onSubmit={handleSubmit}
       data-profile-editing={isEdit}
-      className="profile-editorial profile-company flex flex-col gap-6 animate-page-in sm:gap-7"
+      className="profile-editorial profile-company animate-page-in flex flex-col gap-6 sm:gap-7"
       onKeyDown={(e) => {
         if (
           e.key === "Enter" &&
@@ -1225,17 +1232,22 @@ export default function ProfilePage() {
       <section className="profile-hero profile-company-hero overflow-hidden border border-border bg-card">
         {/* Cover Image Section */}
         <div
-          className={`profile-cover relative h-48 bg-cover bg-center bg-no-repeat sm:h-64 ${!company.cover ? "bg-foreground" : ""}`}
+          className={`profile-cover relative h-48 overflow-hidden bg-cover bg-center bg-no-repeat sm:h-64 ${!company.cover ? "bg-foreground" : ""}`}
           style={
             company.cover
               ? { backgroundImage: `url(${avatarOrCoverPreview.cover})` }
               : {}
           }
         >
-          {/* Overlay for Gradient Cover Section */}
-          {!company.cover && (
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_48%,hsl(var(--background)/0.09)_48%,hsl(var(--background)/0.09)_50%,transparent_50%,transparent_100%)] bg-[length:34px_34px]" />
-          )}
+          {/* Cover Background Section: the same grid the detail heroes use.
+              Drawn over a cover photo as well, which is what the detail
+              pages do — gating it on "no photo" is what made the two
+              covers diverge. */}
+          <div className="profile-detail-hero-grid" aria-hidden />
+          <GridRunners
+            className="profile-detail-grid-runners"
+            density="quiet"
+          />
 
           <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/65 to-transparent" />
           <span className="absolute bottom-4 left-5 text-[10px] font-bold uppercase tracking-[0.24em] text-white sm:left-6">
@@ -1279,12 +1291,12 @@ export default function ProfilePage() {
         </div>
 
         {/* Identity Row Section */}
-        <div className="px-5 sm:px-6 pb-6">
-          <div className="flex items-end gap-4 -mt-10 sm:-mt-12 tablet-md:flex-col tablet-md:items-center">
+        <div className="px-5 pb-6 sm:px-6">
+          <div className="-mt-10 flex items-end gap-4 tablet-md:flex-col tablet-md:items-center sm:-mt-12">
             {/* Avatar Section */}
             <div className="relative flex-shrink-0">
               <Avatar
-                className="size-24 cursor-pointer border-[6px] border-card bg-card shadow-none sm:size-28 !rounded-none"
+                className="size-24 cursor-pointer !rounded-none border-[6px] border-card bg-card shadow-none sm:size-28"
                 rounded="md"
                 onClick={(e) => {
                   if (!isEdit && company.avatar) handleClickAvatarPopup(e);
@@ -1294,13 +1306,13 @@ export default function ProfilePage() {
                   src={avatarOrCoverPreview.avatar}
                   onError={() => setAvatarLoadError(true)}
                 />
-                <AvatarFallback className="uppercase text-lg font-semibold">
+                <AvatarFallback className="text-lg font-semibold uppercase">
                   {getNameInitials(company.name)}
                 </AvatarFallback>
               </Avatar>
 
               {(isEdit || !company.avatar) && (
-                <div className="flex items-center gap-1 absolute -bottom-1 -right-1">
+                <div className="absolute -bottom-1 -right-1 flex items-center gap-1">
                   <Button
                     className="size-7 rounded-none bg-foreground p-0 text-primary-foreground shadow-none"
                     onClick={() => {
@@ -1421,7 +1433,7 @@ export default function ProfilePage() {
             />
 
             {/* Name and Industry Section */}
-            <div className="flex-1 min-w-0 pb-1 tablet-md:text-center">
+            <div className="min-w-0 flex-1 pb-1 tablet-md:text-center">
               <h1 className="truncate text-2xl font-black leading-tight tracking-[-0.04em] sm:text-3xl">
                 {company.name}
               </h1>
@@ -1505,7 +1517,7 @@ export default function ProfilePage() {
               />
 
               <div className="col-span-12 flex w-full flex-col items-start gap-1 tablet-md:col-span-1">
-                <div className="w-full flex items-center justify-between">
+                <div className="flex w-full items-center justify-between">
                   <TypographyMuted className="text-xs font-bold text-foreground">
                     {tP("companyDescription")}
                   </TypographyMuted>
@@ -1537,12 +1549,12 @@ export default function ProfilePage() {
                         if (result) toast.success(tr("refinedSuccess"));
                       }}
                       disabled={descLoading}
-                      className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                      className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                     >
                       {descLoading ? (
                         <LucideLoader2 size={10} className="animate-spin" />
                       ) : (
-                        <Sparkles size={10} />
+                        <LucideSparkles size={10} />
                       )}
                       {tr("aiRefine")}
                     </Button>
@@ -1660,30 +1672,18 @@ export default function ProfilePage() {
                         onClick={() => beginEditingField("company-type", true)}
                       />
                     ) : (
-                      <Select
+                      <CreatableCombobox
+                        options={companyTypeConstant}
                         value={field.value ?? ""}
-                        onValueChange={field.onChange}
+                        onChange={field.onChange}
+                        placeholder={tP("companyTypePlaceholder")}
+                        emptyText={tP("companyTypeEmpty")}
+                        ariaLabel={tP("companyType")}
+                        icon={<LucideShapes />}
+                        triggerId="company-type"
+                        contentClassName="profile-overlay profile-command-popover"
                         disabled={!isEdit}
-                      >
-                        <SelectTrigger
-                          id="company-type"
-                          className="h-12 gap-2 text-muted-foreground [&>svg:last-child]:ml-auto"
-                        >
-                          <div className="flex min-w-0 items-center gap-2">
-                            <LucideShapes className="size-[18px] shrink-0" />
-                            <SelectValue
-                              placeholder={tP("companyTypePlaceholder")}
-                            />
-                          </div>
-                        </SelectTrigger>
-                        <SelectContent className="profile-overlay profile-select-content">
-                          {companyTypeConstant.map((item) => (
-                            <SelectItem key={item.value} value={item.value}>
-                              {item.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      />
                     )
                   }
                 />
@@ -1723,16 +1723,29 @@ export default function ProfilePage() {
                       label={tP("addMissingField", {
                         field: tP("foundedYear"),
                       })}
-                      onClick={() => beginEditingField("company-founded-year")}
+                      onClick={() =>
+                        beginEditingField("company-founded-year", true)
+                      }
                     />
                   ) : (
-                    <Input
-                      type="number"
-                      placeholder={tP("foundedYear")}
-                      id="company-founded-year"
-                      {...form.register("basicInfo.foundedYear")}
-                      prefix={<LucideCalendarDays />}
-                      disabled={!isEdit}
+                    <Controller
+                      name="basicInfo.foundedYear"
+                      control={form.control}
+                      render={({ field }) => (
+                        <CreatableCombobox
+                          options={foundedYearOptions}
+                          value={field.value ? String(field.value) : ""}
+                          onChange={(value) => field.onChange(Number(value))}
+                          placeholder={tP("foundedYear")}
+                          emptyText={tP("foundedYearEmpty")}
+                          ariaLabel={tP("foundedYear")}
+                          icon={<LucideCalendarDays />}
+                          triggerId="company-founded-year"
+                          contentClassName="profile-overlay profile-command-popover"
+                          allowCreate={false}
+                          disabled={!isEdit}
+                        />
+                      )}
                     />
                   )
                 }
@@ -1845,17 +1858,13 @@ export default function ProfilePage() {
                     );
                   })
                 ) : (
-                  <div className="w-full flex flex-col items-center justify-center p-5">
-                    {/* Add New OpenPosition Section */}
-                    <Image
-                      alt="empty"
-                      src={emptySvg}
-                      className="size-44 animate-float"
-                    />
-                    <TypographyMuted className="text-sm">
-                      {tP("noOpenPositionAvailable")}
-                    </TypographyMuted>
-                  </div>
+                  <PageState
+                    variant="empty"
+                    title={tP("openPositionEmpty")}
+                    description={tP("openPositionEmptyDescription")}
+                    icon={LucideClipboardList}
+                    compact
+                  />
                 )}
               </div>
 
@@ -1899,7 +1908,7 @@ export default function ProfilePage() {
                   return (
                     <CarouselItem
                       key={index}
-                      className="max-w-[280px] relative"
+                      className="relative max-w-[280px]"
                     >
                       <div
                         onClick={(e) => {
@@ -1915,7 +1924,7 @@ export default function ProfilePage() {
                       />
                       {isEdit && (
                         <LucideXCircle
-                          className="absolute top-3 right-1 cursor-pointer text-red-500"
+                          className="absolute right-1 top-3 cursor-pointer text-destructive"
                           type="button"
                           onClick={() => {
                             if (img?.id === "" || img?.id === undefined) {
@@ -1998,35 +2007,21 @@ export default function ProfilePage() {
             </div>
 
             {/* Benefit List Section */}
-            <div className="w-full flex flex-col items-stretch gap-3">
-              <div className="w-full flex flex-wrap gap-3">
+            <div className="flex w-full flex-col items-stretch gap-3">
+              <div className="flex w-full flex-wrap gap-2">
                 {benefits.length > 0 ? (
                   benefits.map((benefit) => (
-                    <div
-                      className="flex cursor-pointer items-center gap-2 border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
+                    <BenefitValueChip
                       key={benefit.label}
-                    >
-                      <IconLabel
-                        icon={
-                          <LucideCircleCheck
-                            stroke="white"
-                            fill={COMPANY_ICON_COLOR.BENEFIT}
-                          />
-                        }
-                        className="[&>p]:text-[#0073E6] font-medium"
-                        text={benefit.label}
-                      />
-                      {isEdit && (
-                        <LucideXCircle
-                          className="text-muted-foreground cursor-pointer text-red-500"
-                          width={"18px"}
-                          onClick={() => removeBenefit(benefit.label)}
-                        />
-                      )}
-                    </div>
+                      kind="benefit"
+                      label={benefit.label}
+                      onRemove={
+                        isEdit ? () => removeBenefit(benefit.label) : undefined
+                      }
+                    />
                   ))
                 ) : (
-                  <div className="w-full flex items-center justify-center">
+                  <div className="flex w-full items-center justify-center">
                     {/* No Benefit Section */}
                     <TypographyMuted className="text-sm">
                       {tP("noBenefitAvailable")}
@@ -2095,36 +2090,21 @@ export default function ProfilePage() {
             </div>
 
             {/* Value List Section */}
-            <div className="w-full flex flex-col items-stretch gap-3">
-              <div className="w-full flex flex-wrap gap-3">
+            <div className="flex w-full flex-col items-stretch gap-3">
+              <div className="flex w-full flex-wrap gap-2">
                 {values.length > 0 ? (
                   values.map((value, index) => (
-                    <div
-                      className="flex cursor-pointer items-center gap-2 border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
+                    <BenefitValueChip
                       key={index}
-                    >
-                      <IconLabel
-                        icon={
-                          <LucideCircleCheck
-                            stroke="white"
-                            fill={COMPANY_ICON_COLOR.VALUE}
-                          />
-                        }
-                        className="[&>p]:text-[#69B41E] font-medium"
-                        text={value.label}
-                      />
-                      {isEdit && (
-                        // Remove Value Button Section
-                        <LucideXCircle
-                          className="text-muted-foreground cursor-pointer text-red-500"
-                          width={"18px"}
-                          onClick={() => removeValue(value.label)}
-                        />
-                      )}
-                    </div>
+                      kind="value"
+                      label={value.label}
+                      onRemove={
+                        isEdit ? () => removeValue(value.label) : undefined
+                      }
+                    />
                   ))
                 ) : (
-                  <div className="w-full flex items-center justify-center">
+                  <div className="flex w-full items-center justify-center">
                     {/* No Value Section */}
                     <TypographyMuted className="text-sm">
                       {tP("noValueAvailable")}
@@ -2194,18 +2174,14 @@ export default function ProfilePage() {
             </div>
 
             {/* Career Scopes List Section */}
-            <div className="w-full flex flex-wrap gap-3">
+            <div className="flex w-full flex-wrap gap-3">
               {careerScopes.length > 0 ? (
                 careerScopes.map((career, index) => (
                   <div key={index} className="flex items-center gap-1">
                     <HoverCard>
                       <HoverCardTrigger asChild>
                         <div>
-                          <Tag
-                            label={career.name}
-                            neutral
-                            className="!rounded-none border border-border hover:shadow-none"
-                          />
+                          <Tag label={career.name} />
                         </div>
                       </HoverCardTrigger>
                       <HoverCardContent>
@@ -2223,13 +2199,16 @@ export default function ProfilePage() {
                         onClick={() => removeCareerScope(career.name)}
                         className="inline-flex items-center justify-center"
                       >
-                        <LucideXCircle className="text-red-500" width="18px" />
+                        <LucideXCircle
+                          className="text-destructive"
+                          width="18px"
+                        />
                       </button>
                     )}
                   </div>
                 ))
               ) : (
-                <div className="w-full flex items-center justify-center">
+                <div className="flex w-full items-center justify-center">
                   {/* No CareerScopes Section */}
                   <TypographyMuted className="text-sm">
                     {tP("noCareerScopeAvailable")}
@@ -2261,7 +2240,7 @@ export default function ProfilePage() {
                             (c) => c.name === careerScopeInput.name,
                           )?.name
                         : tP("selectCareers")}
-                      <ChevronDown className="opacity-50" />
+                      <LucideChevronDown className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent
@@ -2344,7 +2323,7 @@ export default function ProfilePage() {
               <div className="flex flex-wrap gap-2">
                 {socials.map((item, index) => (
                   <div
-                    className="flex items-center gap-1.5 max-w-full"
+                    className="flex max-w-full items-center gap-1.5"
                     key={index}
                   >
                     <Link
@@ -2352,13 +2331,13 @@ export default function ProfilePage() {
                       className="inline-flex max-w-[200px] items-center gap-1.5 overflow-hidden border border-border bg-muted/50 px-3 py-1.5 text-foreground hover:bg-muted sm:max-w-[260px]"
                     >
                       <span className="flex-shrink-0">
-                        {getSocialPlatformTypeIcon(item.platform as TPlatform)}
+                        <PlatformIcon platform={item.platform as TPlatform} />
                       </span>
-                      <span className="text-sm truncate">{item.platform}</span>
+                      <span className="truncate text-sm">{item.platform}</span>
                     </Link>
                     {isEdit && (
                       <LucideXCircle
-                        className="flex-shrink-0 cursor-pointer text-red-500 hover:text-red-600 transition-colors"
+                        className="flex-shrink-0 cursor-pointer text-destructive transition-colors hover:text-destructive-accent"
                         size={18}
                         onClick={() => removeSocial(item.platform as TPlatform)}
                       />
@@ -2367,7 +2346,7 @@ export default function ProfilePage() {
                 ))}
               </div>
             ) : (
-              <div className="w-full flex items-center justify-center pt-2">
+              <div className="flex w-full items-center justify-center pt-2">
                 {/* No Social Section */}
                 <TypographyMuted className="text-sm">
                   {tP("noSocialAvailable")}
@@ -2380,8 +2359,8 @@ export default function ProfilePage() {
               <div>
                 {isEdit && (
                   <div className="mt-3 flex w-full flex-col items-start gap-4 overflow-hidden border border-border p-4">
-                    <div className="w-full flex flex-col gap-3">
-                      <div className="w-full flex-shrink-0 flex flex-col items-start gap-1">
+                    <div className="flex w-full flex-col gap-3">
+                      <div className="flex w-full flex-shrink-0 flex-col items-start gap-1">
                         <TypographyMuted className="text-xs">
                           {tP("platform")}
                         </TypographyMuted>
@@ -2401,9 +2380,9 @@ export default function ProfilePage() {
                             <div className="flex min-w-0 items-center gap-2">
                               <span className="flex size-5 shrink-0 items-center justify-center [&>svg]:size-4">
                                 {socialInput?.platform ? (
-                                  getSocialPlatformTypeIcon(
-                                    socialInput.platform as TPlatform,
-                                  )
+                                  <PlatformIcon
+                                    platform={socialInput.platform as TPlatform}
+                                  />
                                 ) : (
                                   <LucideGlobe />
                                 )}
@@ -2419,9 +2398,9 @@ export default function ProfilePage() {
                               >
                                 <span className="flex items-center gap-2">
                                   <span className="flex size-5 shrink-0 items-center justify-center [&>svg]:size-4">
-                                    {getSocialPlatformTypeIcon(
-                                      platform.value as TPlatform,
-                                    )}
+                                    <PlatformIcon
+                                      platform={platform.value as TPlatform}
+                                    />
                                   </span>
                                   {platform.label}
                                 </span>
@@ -2431,7 +2410,7 @@ export default function ProfilePage() {
                         </Select>
                       </div>
 
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <LabelInput
                           label={tP("link")}
                           input={
@@ -2464,7 +2443,7 @@ export default function ProfilePage() {
                 <Button
                   type="button"
                   variant="secondary"
-                  className="text-xs w-full"
+                  className="w-full text-xs"
                   onClick={() => {
                     const openPlatformSelect = () => {
                       const el = socialSelectPlatformRef.current;
@@ -2511,7 +2490,7 @@ export default function ProfilePage() {
               title={tP("authentication")}
             />
 
-            <div className="w-full flex flex-col items-start gap-3">
+            <div className="flex w-full flex-col items-start gap-3">
               {/* Google, Facebook, LinkedIn and Github Methods Section */}
               {loginMethodConstant.map((item) => (
                 <div
@@ -2519,26 +2498,22 @@ export default function ProfilePage() {
                   key={item.id}
                 >
                   <div className="flex items-center gap-2">
-                    <Image
-                      src={item.icon}
-                      alt={item.label}
-                      width={30}
-                      height={30}
-                      className="rounded-full"
-                    />
+                    <span className="mx-1 flex items-center">
+                      <LoginMethodIcon method={item.label} />
+                    </span>
                     <TypographySmall>{item.label}</TypographySmall>
                   </div>
 
                   {user.lastLoginMethod &&
                   user.lastLoginMethod.toUpperCase() ===
                     item.label.toUpperCase() ? (
-                    <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
+                    <div className="cursor-pointer border border-destructive-border bg-destructive-subtle px-3 py-1 text-destructive-accent">
                       <TypographySmall className="text-xs font-medium">
                         {tP("disconnect")}
                       </TypographySmall>
                     </div>
                   ) : (
-                    <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
+                    <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
                       <TypographySmall className="text-xs font-medium">
                         {tP("connect")}
                       </TypographySmall>
@@ -2554,13 +2529,13 @@ export default function ProfilePage() {
                   <TypographySmall>{tP("email")}</TypographySmall>
                 </div>
                 {user.email ? (
-                  <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
+                  <div className="cursor-pointer border border-destructive-border bg-destructive-subtle px-3 py-1 text-destructive-accent">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
+                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>
@@ -2575,13 +2550,13 @@ export default function ProfilePage() {
                   <TypographySmall>{tP("phoneOtp")}</TypographySmall>
                 </div>
                 {user.phone ? (
-                  <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
+                  <div className="cursor-pointer border border-destructive-border bg-destructive-subtle px-3 py-1 text-destructive-accent">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
+                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>

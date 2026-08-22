@@ -5,7 +5,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CHAT_REACTION_EMOJIS } from "@/utils/constants/chat.constant";
-import { Smile } from "lucide-react";
+import { LucideSmile } from "lucide-react";
 
 export const ReactionPicker = (props: {
   onReact: (emoji: string | null) => void;
@@ -28,16 +28,16 @@ export const ReactionPicker = (props: {
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-none opacity-0 group-hover:opacity-100 transition-opacity bg-background/50 backdrop-blur-sm"
+          className="h-8 w-8 rounded-none bg-background/50 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100"
         >
-          <Smile className="h-4 w-4 text-muted-foreground" />
+          <LucideSmile className="h-4 w-4 text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       {/* Reaction Picker Section */}
       <PopoverContent
         side="top"
         align="center"
-        className="w-fit p-1 rounded-none shadow-lg border-muted bg-background/95 backdrop-blur-md"
+        className="w-fit rounded-none border-muted bg-background/95 p-1 shadow-hard-lg backdrop-blur-md"
       >
         {/* Emoji List Section */}
         <div className="flex gap-1">
@@ -45,8 +45,8 @@ export const ReactionPicker = (props: {
             <button
               key={emoji}
               onClick={() => handleReactionSelect(emoji)}
-              className={`p-2 transition-all hover:scale-125 rounded-none hover:bg-muted ${
-                currentReaction === emoji ? "bg-primary/20 scale-110" : ""
+              className={`rounded-none p-2 transition-all hover:scale-125 hover:bg-muted ${
+                currentReaction === emoji ? "scale-110 bg-primary/20" : ""
               }`}
             >
               <span className="text-xl leading-none">{emoji}</span>

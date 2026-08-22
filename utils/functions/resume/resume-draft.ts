@@ -7,7 +7,7 @@ import {
 } from "@/utils/constants/resume.constant";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { RESUME_TEMPLATE_KEYS } from "@/utils/types/resume/resume.type";
-import { CUSTOM_ACCENT_PATTERN } from "@/utils/functions/resume/resume-color";
+import { CUSTOM_ACCENT_PATTERN } from "@/utils/functions/resume";
 
 const templateSchema = z.enum(RESUME_TEMPLATE_KEYS);
 

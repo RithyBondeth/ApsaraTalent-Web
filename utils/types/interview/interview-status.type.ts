@@ -1,6 +1,2 @@
 export type TInterviewStatus =
-  | "pending"
-  | "accepted"
-  | "declined"
-  | "cancelled"
-  | "completed";
+  "pending" | "accepted" | "declined" | "cancelled" | "completed";

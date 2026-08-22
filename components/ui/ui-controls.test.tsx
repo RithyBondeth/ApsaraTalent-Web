@@ -20,7 +20,9 @@ describe("shared UI controls", () => {
         <a href="/profile">Profile</a>
       </Button>,
     );
-    expect(screen.getByRole("link", { name: "Profile" })).toHaveAttribute("data-ui-button");
+    expect(screen.getByRole("link", { name: "Profile" })).toHaveAttribute(
+      "data-ui-button",
+    );
   });
 
   it("renders input adornments and accessible validation state", () => {
@@ -63,13 +65,26 @@ describe("shared UI controls", () => {
     expect(onClick).toHaveBeenCalledOnce();
   });
 
-  it.each(["light", "dark", "system"] as const)("renders and selects the %s theme", async (value) => {
-    const onClick = vi.fn();
-    const user = userEvent.setup();
-    render(<ThemeCard value={value} label={`${value} theme`} icon={<span>icon</span>} active={value === "dark"} onClick={onClick} />);
-    const button = screen.getByRole("button", { name: new RegExp(`${value} theme`) });
-    await user.click(button);
-    expect(onClick).toHaveBeenCalledOnce();
-    if (value === "dark") expect(button).toHaveClass("border-primary");
-  });
+  it.each(["light", "dark", "system"] as const)(
+    "renders and selects the %s theme",
+    async (value) => {
+      const onClick = vi.fn();
+      const user = userEvent.setup();
+      render(
+        <ThemeCard
+          value={value}
+          label={`${value} theme`}
+          icon={<span>icon</span>}
+          active={value === "dark"}
+          onClick={onClick}
+        />,
+      );
+      const button = screen.getByRole("button", {
+        name: new RegExp(`${value} theme`),
+      });
+      await user.click(button);
+      expect(onClick).toHaveBeenCalledOnce();
+      if (value === "dark") expect(button).toHaveClass("border-primary");
+    },
+  );
 });

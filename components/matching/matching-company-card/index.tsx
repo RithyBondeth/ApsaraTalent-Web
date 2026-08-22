@@ -21,6 +21,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
+import MatchScoreBadge from "@/components/matching/match-score-badge";
 import { IMatchingCompanyCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo, useState } from "react";
@@ -47,7 +48,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <article className="group w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+    <article className="group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-hard transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-hard-lg">
       <div className="flex gap-4 p-4 sm:gap-5 sm:p-5">
         {/* Avatar Section */}
         <Avatar
@@ -64,9 +65,12 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
         <div className="flex min-w-0 flex-1 flex-col gap-3">
           {/* Header Section: Name, Industry, Founded Year and Score Badge */}
           <div>
-            <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
-              {props.name}
-            </h3>
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
+                {props.name}
+              </h3>
+              <MatchScoreBadge score={props.matchScore} />
+            </div>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1">
                 <LucideBuilding className="size-3.5" />
@@ -81,7 +85,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
 
           {/* Description Section */}
           {props.description && (
-            <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            <TypographyMuted className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
               {props.description}
             </TypographyMuted>
           )}
@@ -90,12 +94,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
           {props.openPosition.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {props.openPosition.slice(0, 6).map((op) => (
-                <Tag
-                  label={op.title}
-                  key={op.id}
-                  neutral
-                  className="!rounded-none border border-border hover:shadow-none"
-                />
+                <Tag label={op.title} key={op.id} />
               ))}
             </div>
           )}
@@ -165,7 +164,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
             onClick={() => setUnmatchDialogOpen(true)}
           >
             {isUnmatching ? (
-              <LucideLoader2 className="size-3.5 animate-spin shrink-0" />
+              <LucideLoader2 className="size-3.5 shrink-0 animate-spin" />
             ) : (
               <LucideUserX className="size-3.5 shrink-0" />
             )}
@@ -226,7 +225,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
             disabled={props.isChatLoading}
           >
             {props.isChatLoading ? (
-              <LucideLoader2 className="size-3.5 animate-spin shrink-0" />
+              <LucideLoader2 className="size-3.5 shrink-0 animate-spin" />
             ) : (
               <LucideMessageCircle className="size-3.5 shrink-0" />
             )}

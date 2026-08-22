@@ -2,8 +2,10 @@ import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
+import { MultiSelectCombobox } from "@/components/ui/multi-select-combobox";
 import {
   Popover,
   PopoverContent,
@@ -22,28 +24,31 @@ import Tag from "@/components/utils/data-display/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
+  availabilityConstant,
+  languageConstant,
   salaryCurrencyConstant,
   workModeConstant,
+  yearOfExperienceConstant,
 } from "@/utils/constants/ui.constant";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { getRandomBadgeColor } from "@/utils/functions/ui";
 import {
-  BadgeCheck,
-  BarChart3,
-  BriefcaseBusiness,
-  CircleDollarSign,
-  FileText,
-  GraduationCap,
-  Laptop,
-  ListChecks,
+  LucideBadgeCheck,
+  LucideBarChart3,
+  LucideBriefcaseBusiness,
+  LucideCircleDollarSign,
+  LucideFileText,
+  LucideGraduationCap,
+  LucideLanguages,
+  LucideLaptop,
+  LucideListChecks,
   LucidePlus,
   LucideTrash2,
   LucideXCircle,
-  MapPin,
-  Sparkles,
-  Loader2,
-  Users,
+  LucideMapPin,
+  LucideSparkles,
+  LucideLoader2,
+  LucideUsers,
 } from "lucide-react";
 import { useState } from "react";
 import { Controller, useFieldArray, useWatch } from "react-hook-form";
@@ -61,6 +66,41 @@ export default function OpenPositionStepForm({
   const t = useTranslations("auth");
   const tr = useTranslations("resumeBuilder");
   const tToast = useTranslations("toast");
+
+  // Both lists are shared with the employee side on purpose: the job search
+  // filters compare these values to `employee.availability` and
+  // `employee.yearsOfExperience` by exact string equality.
+  const availabilityOptions = availabilityConstant.map((item) => ({
+    ...item,
+    label: t(
+      item.value === "full_time"
+        ? "availabilityFullTime"
+        : item.value === "part_time"
+          ? "availabilityPartTime"
+          : item.value === "internship"
+            ? "availabilityInternship"
+            : item.value === "contract"
+              ? "availabilityContract"
+              : "availabilityFreelance",
+    ),
+  }));
+
+  const experienceOptions = yearOfExperienceConstant.map((item) => ({
+    ...item,
+    label: t(
+      item.value === "No Experience"
+        ? "yearOfExpNoExperience"
+        : item.value === "Less than 1 year"
+          ? "yearOfExpLessThan1Year"
+          : item.value === "1 - 2 years"
+            ? "yearOfExp1To2Years"
+            : item.value === "3 - 5 years"
+              ? "yearOfExp3To5Years"
+              : item.value === "6 - 10 years"
+                ? "yearOfExp6To10Years"
+                : "yearOfExp10Plus",
+    ),
+  }));
 
   /* ----------------------------- API Integration ---------------------------- */
   const { isRefining, refineContent } = useAIRefine();
@@ -128,6 +168,7 @@ export default function OpenPositionStepForm({
       experienceRequirement: "",
       educationRequirement: "",
       skills: [],
+      languagesRequired: [],
       types: "",
       salaryMin: undefined,
       salaryMax: undefined,
@@ -193,7 +234,7 @@ export default function OpenPositionStepForm({
             {/* Position and Type Section */}
             <div className="field-row w-full">
               <Input
-                prefix={<BriefcaseBusiness />}
+                prefix={<LucideBriefcaseBusiness />}
                 placeholder={`${t("cmpOpenPositionTitlePlaceholder")} *`}
                 aria-label={t("cmpOpenPositionFieldTitle")}
                 aria-required="true"
@@ -202,21 +243,34 @@ export default function OpenPositionStepForm({
                   errors?.openPositions?.[index]?.title?.message
                 }
               />
-              <Input
-                prefix={<BadgeCheck />}
-                placeholder={`${t("cmpOpenPositionTypePlaceholder")} *`}
-                aria-label={t("cmpOpenPositionType")}
-                aria-required="true"
-                {...register(`openPositions.${index}.types`)}
-                validationMessage={errors?.openPositions?.[
-                  index
-                ]?.types?.message?.toString()}
-              />
+              {/* Position Type Section — same vocabulary as an employee's
+                  availability, so the job-type search filter can match. */}
+              <div className="flex w-full flex-col items-start gap-2">
+                <Controller
+                  control={control!}
+                  name={`openPositions.${index}.types`}
+                  render={({ field }) => (
+                    <CreatableCombobox
+                      options={availabilityOptions}
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      placeholder={`${t("cmpOpenPositionTypePlaceholder")} *`}
+                      emptyText={t("cmpOpenPositionTypeEmpty")}
+                      ariaLabel={t("cmpOpenPositionType")}
+                      icon={<LucideBadgeCheck />}
+                      required
+                    />
+                  )}
+                />
+                <ErrorMessage>
+                  {errors?.openPositions?.[index]?.types?.message?.toString()}
+                </ErrorMessage>
+              </div>
             </div>
 
             {/* Description Section */}
             <Textarea
-              prefix={<FileText />}
+              prefix={<LucideFileText />}
               placeholder={`${t("cmpOpenPositionDescriptionPlaceholder")} *`}
               aria-label={t("cmpOpenPositionDescription")}
               aria-required="true"
@@ -232,9 +286,9 @@ export default function OpenPositionStepForm({
                     className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                   >
                     {isRefining ? (
-                      <Loader2 size={10} className="animate-spin" />
+                      <LucideLoader2 size={10} className="animate-spin" />
                     ) : (
-                      <Sparkles size={10} />
+                      <LucideSparkles size={10} />
                     )}
                     {tr("aiRefine")}
                   </Button>
@@ -248,18 +302,34 @@ export default function OpenPositionStepForm({
 
             {/* Experience and Education Section */}
             <div className="field-row w-full">
+              {/* Experience Section — same scale as an employee's years of
+                  experience, so candidate and requirement compare directly. */}
+              <div className="flex w-full flex-col items-start gap-2">
+                <Controller
+                  control={control!}
+                  name={`openPositions.${index}.experienceRequirement`}
+                  render={({ field }) => (
+                    <CreatableCombobox
+                      options={experienceOptions}
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      placeholder={`${t("cmpOpenPositionExpPlaceholder")} *`}
+                      emptyText={t("cmpOpenPositionExpEmpty")}
+                      ariaLabel={t("cmpOpenPositionExpRequired")}
+                      icon={<LucideBarChart3 />}
+                      required
+                    />
+                  )}
+                />
+                <ErrorMessage>
+                  {
+                    errors?.openPositions?.[index]?.experienceRequirement
+                      ?.message
+                  }
+                </ErrorMessage>
+              </div>
               <Input
-                prefix={<BarChart3 />}
-                placeholder={`${t("cmpOpenPositionExpPlaceholder")} *`}
-                aria-label={t("cmpOpenPositionExpRequired")}
-                aria-required="true"
-                {...register(`openPositions.${index}.experienceRequirement`)}
-                validationMessage={
-                  errors?.openPositions?.[index]?.experienceRequirement?.message
-                }
-              />
-              <Input
-                prefix={<GraduationCap />}
+                prefix={<LucideGraduationCap />}
                 placeholder={`${t("cmpOpenPositionEduPlaceholder")} *`}
                 aria-label={t("cmpOpenPositionEduRequired")}
                 aria-required="true"
@@ -284,7 +354,7 @@ export default function OpenPositionStepForm({
                       className="col-span-3 h-12 w-full sm:col-span-1"
                       aria-label={t("cmpOpenPositionSalaryCurrency")}
                     >
-                      <CircleDollarSign className="mr-2 size-[18px] shrink-0" />
+                      <LucideCircleDollarSign className="mr-2 size-[18px] shrink-0" />
                       <SelectValue placeholder="USD" />
                     </SelectTrigger>
                     <SelectContent>
@@ -362,7 +432,7 @@ export default function OpenPositionStepForm({
                       className="h-12 text-muted-foreground"
                       aria-label={t("cmpOpenPositionWorkMode")}
                     >
-                      <Laptop className="mr-2 size-[18px] shrink-0" />
+                      <LucideLaptop className="mr-2 size-[18px] shrink-0" />
                       <SelectValue
                         placeholder={t("cmpOpenPositionWorkModePlaceholder")}
                       />
@@ -401,10 +471,33 @@ export default function OpenPositionStepForm({
               </div>
             </div>
 
+            {/* Required Languages Section — mirrors the employee languages
+                list so a candidate's languages match a role's requirement. */}
+            <div className="flex w-full flex-col items-start gap-2">
+              <Controller
+                control={control!}
+                name={`openPositions.${index}.languagesRequired`}
+                render={({ field }) => (
+                  <MultiSelectCombobox
+                    options={languageConstant}
+                    value={field.value ?? []}
+                    onChange={field.onChange}
+                    placeholder={t("cmpOpenPositionLanguagesPlaceholder")}
+                    emptyText={t("cmpOpenPositionLanguagesEmpty")}
+                    ariaLabel={t("cmpOpenPositionLanguages")}
+                    icon={<LucideLanguages />}
+                  />
+                )}
+              />
+              <ErrorMessage>
+                {errors?.openPositions?.[index]?.languagesRequired?.message}
+              </ErrorMessage>
+            </div>
+
             {/* Location and Openings Count Section */}
             <div className="field-row w-full">
               <Input
-                prefix={<MapPin />}
+                prefix={<LucideMapPin />}
                 placeholder={t("cmpOpenPositionLocationPlaceholder")}
                 aria-label={t("cmpOpenPositionLocation")}
                 {...register(`openPositions.${index}.location`)}
@@ -415,7 +508,7 @@ export default function OpenPositionStepForm({
                 render={({ field }) => (
                   <Input
                     type="number"
-                    prefix={<Users />}
+                    prefix={<LucideUsers />}
                     placeholder={t("cmpOpenPositionOpeningsCountPlaceholder")}
                     aria-label={t("cmpOpenPositionOpeningsCount")}
                     {...field}
@@ -440,11 +533,10 @@ export default function OpenPositionStepForm({
               <div className="flex flex-wrap gap-2">
                 {(getValues?.(`openPositions.${index}.skills`) || []).map(
                   (skill, skillIndex) => {
-                    const { bg } = getRandomBadgeColor(skill);
                     return (
                       <div
                         key={`${skill}-${skillIndex}`}
-                        className={`flex items-center ${bg} pr-2`}
+                        className="flex items-center bg-muted/50 pr-2"
                       >
                         <Tag label={skill} />
                         <LucideXCircle
@@ -472,7 +564,7 @@ export default function OpenPositionStepForm({
                     className="h-12 w-full justify-between px-3 text-xs"
                   >
                     <span className="flex items-center gap-2">
-                      <ListChecks className="size-[18px] text-muted-foreground" />
+                      <LucideListChecks className="size-[18px] text-muted-foreground" />
                       {t("cmpOpenPositionAddSkillBtn")} *
                     </span>
                     <LucidePlus size={14} />
@@ -517,7 +609,7 @@ export default function OpenPositionStepForm({
         ))}
 
         {/* Add More Button Section */}
-        <div className="w-full flex justify-end">
+        <div className="flex w-full justify-end">
           <Button
             variant="secondary"
             size="sm"

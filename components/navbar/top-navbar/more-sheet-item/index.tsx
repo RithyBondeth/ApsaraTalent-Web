@@ -18,7 +18,7 @@ export default function MoreSheetItem(props: IMoreSheetItemProps) {
         "group relative flex min-h-20 items-center gap-3 border p-3 transition-[background-color,border-color,color,transform]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
         active
-          ? "border-primary bg-primary text-primary-foreground shadow-[3px_3px_0_hsl(var(--primary)/0.22)]"
+          ? "border-primary bg-primary text-primary-foreground shadow-hard-primary"
           : "border-border bg-background hover:border-foreground/35 hover:bg-muted/60 active:translate-y-px",
       )}
     >
@@ -52,7 +52,7 @@ export default function MoreSheetItem(props: IMoreSheetItemProps) {
       >
         {label}
       </span>
-      
+
       <span
         aria-hidden="true"
         className={cn(

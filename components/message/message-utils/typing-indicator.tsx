@@ -23,17 +23,19 @@ export function ChatTypingIndicator(props: { activeChat: IChatPreview }) {
         <div className="flex items-start justify-center gap-2">
           <Avatar className="h-7 w-7 rounded-none border border-border">
             <AvatarImage src={avatar} alt={name} />
-            <AvatarFallback className="text-xs rounded-none">{initials}</AvatarFallback>
+            <AvatarFallback className="rounded-none text-xs">
+              {initials}
+            </AvatarFallback>
           </Avatar>
           <TypographyMuted>{name}</TypographyMuted>
         </div>
 
         {/* Typing Animation Section */}
-        <div className="bg-card text-foreground rounded-none border border-border border-l-[4px] border-l-foreground shadow-[3px_3px_0_hsl(var(--foreground)/0.05)] px-4 py-3 flex items-center gap-1">
+        <div className="flex items-center gap-1 rounded-none border border-l-[4px] border-border border-l-foreground bg-card px-4 py-3 text-foreground shadow-hard-sm">
           <style>{CHAT_TYPING_INDICATOR_STYLES}</style>
-          <span className="typing-dot w-2 h-2 rounded-full bg-primary inline-block" />
-          <span className="typing-dot w-2 h-2 rounded-full bg-primary inline-block" />
-          <span className="typing-dot w-2 h-2 rounded-full bg-primary inline-block" />
+          <span className="typing-dot inline-block h-2 w-2 rounded-full bg-primary" />
+          <span className="typing-dot inline-block h-2 w-2 rounded-full bg-primary" />
+          <span className="typing-dot inline-block h-2 w-2 rounded-full bg-primary" />
         </div>
 
         {/* Typing Label Section */}

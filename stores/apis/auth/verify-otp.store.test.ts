@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { post, clearAuthCookies, setSessionRole, clearUser } = vi.hoisted(() => ({
-  post: vi.fn(),
-  clearAuthCookies: vi.fn(),
-  setSessionRole: vi.fn(),
-  clearUser: vi.fn(),
-}));
+const { post, clearAuthCookies, setSessionRole, clearUser } = vi.hoisted(
+  () => ({
+    post: vi.fn(),
+    clearAuthCookies: vi.fn(),
+    setSessionRole: vi.fn(),
+    clearUser: vi.fn(),
+  }),
+);
 
 vi.mock("@/lib/axios", () => ({ default: { post } }));
 vi.mock("@/utils/auth/cookie-manager", () => ({
@@ -38,9 +40,7 @@ describe("verify OTP store", () => {
       },
     });
 
-    await useVerifyOTPStore
-      .getState()
-      .verifyOtp("012345678", "123456", true);
+    await useVerifyOTPStore.getState().verifyOtp("012345678", "123456", true);
 
     expect(post).toHaveBeenCalledWith(expect.any(String), {
       phone: "012345678",
@@ -64,9 +64,7 @@ describe("verify OTP store", () => {
       },
     });
 
-    await useVerifyOTPStore
-      .getState()
-      .verifyOtp("012345678", "123456", false);
+    await useVerifyOTPStore.getState().verifyOtp("012345678", "123456", false);
 
     expect(setSessionRole).not.toHaveBeenCalled();
     expect(clearAuthCookies).toHaveBeenCalledOnce();
@@ -76,9 +74,7 @@ describe("verify OTP store", () => {
   it("exposes invalid OTP failures without authenticating", async () => {
     post.mockRejectedValueOnce(new Error("Invalid OTP"));
 
-    await useVerifyOTPStore
-      .getState()
-      .verifyOtp("012345678", "000000", false);
+    await useVerifyOTPStore.getState().verifyOtp("012345678", "000000", false);
 
     expect(useVerifyOTPStore.getState()).toMatchObject({
       loading: false,

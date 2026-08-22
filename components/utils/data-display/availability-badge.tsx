@@ -1,38 +1,80 @@
 import { formatAvailabilityWords } from "@/utils/functions/text";
+import { cn } from "@/lib/utils";
 
-export function AvailabilityBadge({ availability }: { availability: string }) {
-  /* ---------------------------------- Utils --------------------------------- */
+/* ---------------------------------------------------------------------------
+ * The one availability badge — employee card, matching, favourites, search,
+ * the employee detail page and the quick-view dialog.
+ *
+ * Availability is a category, not a state — a freelancer is not "warning" — so
+ * this reads from the categorical ramp rather than the status one. Each entry
+ * is a literal class string because Tailwind only compiles class names it can
+ * see spelled out.
+ *
+ * This used to have a twin: `getAvailabilityStyleClass` returned the same three
+ * hue pairs and four call sites pasted them into a hand-written span, so the
+ * same value rendered as an uppercase micro-label on the cards and a dotted
+ * sentence-case chip in the dialog. Both spellings also carried
+ * `border-current/15`, which is not a real Tailwind utility and compiled to
+ * nothing — every one of those badges was falling back to the default neutral
+ * border instead of a tinted one. The typography now follows StatusPill, which
+ * is what a small state badge looks like everywhere else in the app.
+ * ------------------------------------------------------------------------- */
+
+const VARIANTS = {
+  full: {
+    surface:
+      "bg-category-teal-subtle text-category-teal-accent border-category-teal-accent/20",
+    dot: "bg-category-teal",
+  },
+  part: {
+    surface:
+      "bg-category-indigo-subtle text-category-indigo-accent border-category-indigo-accent/20",
+    dot: "bg-category-indigo",
+  },
+  free: {
+    surface:
+      "bg-category-violet-subtle text-category-violet-accent border-category-violet-accent/20",
+    dot: "bg-category-violet",
+  },
+  other: {
+    surface: "bg-muted text-muted-foreground border-border",
+    dot: "bg-muted-foreground",
+  },
+} as const;
+
+function resolveVariant(availability: string) {
   const lower = availability.toLowerCase();
-  const config = lower.includes("full")
-    ? {
-        color:
-          "bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-300",
-        dot: "bg-green-500",
-      }
-    : lower.includes("part")
-      ? {
-          color:
-            "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300",
-          dot: "bg-blue-500",
-        }
-      : lower.includes("free")
-        ? {
-            color:
-              "bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300",
-            dot: "bg-purple-500",
-          }
-        : {
-            color: "bg-muted text-muted-foreground",
-            dot: "bg-muted-foreground",
-          };
+  if (lower.includes("full")) return VARIANTS.full;
+  if (lower.includes("part")) return VARIANTS.part;
+  if (lower.includes("free")) return VARIANTS.free;
+  return VARIANTS.other;
+}
+
+export function AvailabilityBadge({
+  availability,
+  className,
+}: {
+  availability: string;
+  /** Layout only — nowrap, shrink-0. The badge owns its own colour and type. */
+  className?: string;
+}) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const config = resolveVariant(availability);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <span
-      className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-none border border-current/15 font-medium ${config.color}`}
+      className={cn(
+        "inline-flex items-center gap-1.5 border px-2.5 py-1 text-xs font-semibold uppercase tracking-wide",
+        config.surface,
+        className,
+      )}
     >
       {/* Availability Dot Section */}
-      <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${config.dot}`} />
+      <span
+        aria-hidden
+        className={cn("size-1.5 shrink-0 rounded-full", config.dot)}
+      />
 
       {/* Availability Label Section */}
       {formatAvailabilityWords(availability)}

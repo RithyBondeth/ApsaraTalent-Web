@@ -18,3 +18,7 @@ export const API_GET_COMPANY_RECOMMENDATIONS_URL = (
 ) =>
   API_BASE_URL +
   `/user/recommendation/company/${companyId}${limit ? `?limit=${limit}` : ""}`;
+
+// Support — problem reports raised from the profile menu.
+export const API_REPORT_PROBLEM_URL =
+  API_BASE_URL + "/user/support/report-problem";

@@ -96,9 +96,7 @@ describe.each(providers)("$name social-login store", (provider) => {
         this.closed = true;
       },
     };
-    vi.spyOn(window, "open").mockReturnValueOnce(
-      popup as unknown as Window,
-    );
+    vi.spyOn(window, "open").mockReturnValueOnce(popup as unknown as Window);
 
     provider.login();
     window.dispatchEvent(

@@ -1,7 +1,13 @@
 "use client";
 
 import CanvasTemplate from "../canvas-template";
-import { Eye, Files, RefreshCw, ZoomIn, ZoomOut } from "lucide-react";
+import {
+  LucideEye,
+  LucideFiles,
+  LucideRefreshCw,
+  LucideZoomIn,
+  LucideZoomOut,
+} from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 import { Button } from "@/components/ui/button";
@@ -14,7 +20,7 @@ import {
   RESUME_EDITOR_ZOOM_MIN,
   RESUME_EDITOR_ZOOM_MAX,
 } from "@/utils/constants/resume.constant";
-import { estimateResumePages } from "@/utils/functions/resume/resume-pages";
+import { estimateResumePages } from "@/utils/functions/resume";
 
 export default function ResumeEditorPreviewPanel({
   data,
@@ -105,9 +111,9 @@ export default function ResumeEditorPreviewPanel({
       {/* Top Bar Section */}
       <div className="resume-editor-controls flex shrink-0 items-center justify-between gap-2 border-b border-border bg-card px-2.5 py-2 sm:gap-3 sm:px-4">
         {/* Left Section: Title and Page Count */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex shrink-0 items-center gap-2">
           <div className="flex items-center gap-1.5 text-xs font-medium text-foreground sm:text-sm">
-            <Eye size={15} className="text-muted-foreground" />
+            <LucideEye size={15} className="text-muted-foreground" />
             {t("resumeCanvas")}
           </div>
           {/* Page-Count Chip Section: Amber once the resume spills past one page */}
@@ -120,16 +126,16 @@ export default function ResumeEditorPreviewPanel({
             )}
             title={t("resumeCanvasPages", { count: pageCount })}
           >
-            <Files size={11} />
+            <LucideFiles size={11} />
             {t("resumeCanvasPages", { count: pageCount })}
           </span>
         </div>
 
         {/* Centre Section: Hint or Updating Badge */}
-        <div className="flex-1 flex justify-center">
+        <div className="flex flex-1 justify-center">
           {updating ? (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground animate-pulse">
-              <RefreshCw size={11} className="animate-spin" />
+            <div className="flex animate-pulse items-center gap-1.5 text-xs text-muted-foreground">
+              <LucideRefreshCw size={11} className="animate-spin" />
               {t("updatingCanvas")}
             </div>
           ) : (
@@ -140,7 +146,7 @@ export default function ResumeEditorPreviewPanel({
         </div>
 
         {/* Right Section: Zoom Controls */}
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex shrink-0 items-center gap-1">
           <Button
             variant="ghost"
             size="icon"
@@ -149,7 +155,7 @@ export default function ResumeEditorPreviewPanel({
             disabled={zoomMultiplier <= RESUME_EDITOR_ZOOM_MIN}
             title={t("zoomOut")}
           >
-            <ZoomOut size={14} />
+            <LucideZoomOut size={14} />
           </Button>
 
           <Button
@@ -170,7 +176,7 @@ export default function ResumeEditorPreviewPanel({
             disabled={zoomMultiplier >= RESUME_EDITOR_ZOOM_MAX}
             title={t("zoomIn")}
           >
-            <ZoomIn size={14} />
+            <LucideZoomIn size={14} />
           </Button>
         </div>
       </div>
@@ -183,7 +189,7 @@ export default function ResumeEditorPreviewPanel({
       >
         {/* Shell Section: Layout dimensions after CSS transform */}
         <div
-          className="relative shadow-2xl shrink-0 bg-white"
+          className="relative shrink-0 bg-white shadow-2xl"
           style={{
             width: RESUME_EDITOR_A4_WIDTH * scale,
             height: scaledHeight || "auto",

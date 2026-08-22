@@ -79,15 +79,18 @@ describe("cookie manager", () => {
   it.each([
     [true, true],
     [false, false],
-  ])("returns %s when the server logout response is %s", async (ok, expected) => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({ ok } as Response);
+  ])(
+    "returns %s when the server logout response is %s",
+    async (ok, expected) => {
+      vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({ ok } as Response);
 
-    await expect(clearAuthCookiesServerSide()).resolves.toBe(expected);
-    expect(fetch).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({ method: "POST", credentials: "include" }),
-    );
-  });
+      await expect(clearAuthCookiesServerSide()).resolves.toBe(expected);
+      expect(fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ method: "POST", credentials: "include" }),
+      );
+    },
+  );
 
   it("returns false when the server logout request fails", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValueOnce(new Error("offline"));

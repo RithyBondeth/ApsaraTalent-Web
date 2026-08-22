@@ -43,29 +43,32 @@ export default function NotificationLikeCard(
           : t("likedYourCompany", { name: props.user.name })
       }
       icon={<LucideHeart strokeWidth={1.5} className="size-full" />}
-      iconBgColor="bg-pink-100 dark:bg-pink-900/30"
-      iconColor="text-pink-500"
-      unreadColor="bg-pink-500"
+      iconBgColor="bg-category-magenta-subtle"
+      iconColor="text-category-magenta-accent"
+      unreadColor="bg-category-magenta"
       onDelete={props.onDelete}
       onClick={handleNavigate}
     >
-      <div className="w-full flex items-center justify-between gap-2 tablet-sm:flex-col tablet-sm:items-start tablet-sm:gap-3">
+      <div className="flex w-full items-center justify-between gap-2 tablet-sm:flex-col tablet-sm:items-start tablet-sm:gap-3">
         {/* User Info Section */}
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="flex min-w-0 items-center gap-3">
           {/* Avatar and Name Section */}
-          <div className="flex items-center gap-2 min-w-0">
-            <Avatar rounded="md" className="size-8 shrink-0 !rounded-none border border-border bg-secondary">
+          <div className="flex min-w-0 items-center gap-2">
+            <Avatar
+              rounded="md"
+              className="size-8 shrink-0 !rounded-none border border-border bg-secondary"
+            >
               <AvatarFallback className="text-sm">
                 {getNameInitials(props.user.name)}
               </AvatarFallback>
               <AvatarImage src={props.user.avatar} />
             </Avatar>
-            <div className="flex flex-col min-w-0">
-              <TypographySmall className="font-bold text-foreground line-clamp-1">
+            <div className="flex min-w-0 flex-col">
+              <TypographySmall className="line-clamp-1 font-bold text-foreground">
                 {props.user.name}
               </TypographySmall>
               {(props.user.position || props.user.industry) && (
-                <TypographySmall className="text-[10px] text-muted-foreground line-clamp-1">
+                <TypographySmall className="line-clamp-1 text-[10px] text-muted-foreground">
                   {props.role === USER_ROLE.EMPLOYEE
                     ? props.user.industry
                     : props.user.position}
@@ -75,7 +78,7 @@ export default function NotificationLikeCard(
           </div>
 
           {/* Like Badge Section */}
-          <div className="shrink-0 border border-pink-500/15 bg-pink-100 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-pink-500 dark:bg-pink-900/30">
+          <div className="shrink-0 border border-category-magenta/20 bg-category-magenta-subtle px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-category-magenta-accent">
             {t("likeBadge")}
           </div>
         </div>

@@ -25,6 +25,17 @@ const AUTH_ROUTES = [
 
 const GUEST_LANDING_ROUTES = ["/", "/product", "/learn", "/safety", "/support"];
 
+/**
+ * Auth-prefixed routes an authenticated user still needs.
+ *
+ * Email verification runs *after* registration, and registration already
+ * signs the person in. Without this exception the generic "authenticated
+ * users don't belong on /login/*" rule bounces them to /feed at the exact
+ * moment the page matters, and — since the mail now carries a code rather
+ * than a link — there is no second way back to it.
+ */
+const AUTH_ROUTE_EXCEPTIONS = ["/login/email-verification"];
+
 function isRouteMatch(pathname: string, routes: string[]) {
   return routes.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
@@ -42,11 +53,11 @@ function buildCallbackUrl(request: NextRequest) {
 export function middleware(request: NextRequest) {
   try {
     const { pathname } = request.nextUrl;
-    const role =
-      request.cookies.get(COOKIE_CONFIG.SESSION_ROLE)?.value ?? null;
+    const role = request.cookies.get(COOKIE_CONFIG.SESSION_ROLE)?.value ?? null;
     const isAuthenticated = role !== null;
 
     const isAuthRoute = isRouteMatch(pathname, AUTH_ROUTES);
+    const isAuthRouteException = isRouteMatch(pathname, AUTH_ROUTE_EXCEPTIONS);
     const isProtectedRoute = isRouteMatch(pathname, PROTECTED_ROUTES);
     const isGuestLandingRoute = isLandingRoute(pathname);
 
@@ -76,7 +87,7 @@ export function middleware(request: NextRequest) {
     }
 
     // Fully authenticated users shouldn't access auth or guest landing pages
-    if (isAuthRoute || isGuestLandingRoute) {
+    if ((isAuthRoute && !isAuthRouteException) || isGuestLandingRoute) {
       return NextResponse.redirect(new URL("/feed", request.url));
     }
 

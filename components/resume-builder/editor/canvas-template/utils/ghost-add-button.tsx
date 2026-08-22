@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { LucidePlus } from "lucide-react";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
 
 export function GhostAddButton(props: { label: string; onClick: () => void }) {
@@ -12,7 +12,7 @@ export function GhostAddButton(props: { label: string; onClick: () => void }) {
         e.stopPropagation();
         onClick();
       }}
-      className="group/add flex items-center gap-1 opacity-0 group-hover/section:opacity-100 transition-opacity duration-150 mt-2"
+      className="group/add mt-2 flex items-center gap-1 opacity-0 transition-opacity duration-150 group-hover/section:opacity-100"
       style={{
         fontSize: 11,
         color: RESUME_COLOR.ACCENT,
@@ -25,7 +25,7 @@ export function GhostAddButton(props: { label: string; onClick: () => void }) {
         justifyContent: "center",
       }}
     >
-      <Plus size={11} />
+      <LucidePlus size={11} />
       {label}
     </button>
   );

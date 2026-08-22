@@ -90,6 +90,9 @@ export default function CompanySignup() {
         selectRequired: (field) => {
           const labels: Record<string, string> = {
             location: tv("fieldLabelLocation"),
+            "founded year": tv("fieldLabelFoundedYear"),
+            "experience level": tv("fieldLabelExperienceReq"),
+            "position type": tv("fieldLabelType"),
           };
           return tv("selectRequired", { field: labels[field] ?? field });
         },
@@ -109,6 +112,8 @@ export default function CompanySignup() {
         companySize: "",
         foundedYear: "",
         location: "",
+        websiteUrl: "",
+        companyType: "",
       },
       openPositions: [
         {
@@ -117,6 +122,7 @@ export default function CompanySignup() {
           experienceRequirement: "",
           educationRequirement: "",
           skills: [],
+          languagesRequired: [],
           types: "",
           salaryMin: undefined,
           salaryMax: undefined,
@@ -158,6 +164,43 @@ export default function CompanySignup() {
   };
 
   /* --------------------------------- Methods --------------------------------- */
+  // ── Build Company Payload ──────────────────────────────────────
+  // Everything the form collects that is not tied to how the account was
+  // authenticated. Shared by the email and phone paths below so a field added
+  // to the wizard cannot reach one path and silently miss the other.
+  const buildCompanyPayload = (data: TCompanySignup) => ({
+    name: data.basicInfo.name,
+    description: data.basicInfo.description,
+    industry: data.basicInfo.industry,
+    location: data.basicInfo.location,
+    companySize: Number(data.basicInfo.companySize),
+    foundedYear: Number(data.basicInfo.foundedYear),
+    websiteUrl: data.basicInfo.websiteUrl || null,
+    companyType: data.basicInfo.companyType || null,
+    openPositions: data.openPositions?.map((job) => ({
+      title: job.title,
+      description: job.description,
+      type: job.types,
+      experience: job.experienceRequirement,
+      education: job.educationRequirement,
+      skills: job.skills,
+      languagesRequired: job.languagesRequired ?? [],
+      salaryMin: job.salaryMin ?? null,
+      salaryMax: job.salaryMax ?? null,
+      salaryCurrency: job.salaryCurrency ?? "USD",
+      workMode: job.workMode ?? null,
+      location: job.location || null,
+      openingsCount: job.openingsCount ?? null,
+      deadlineDate: job.deadlineDate.toISOString(),
+    })),
+    benefits:
+      data.benefitsAndValues.benefits?.map((bf) => ({ label: bf })) ?? [],
+    values:
+      data.benefitsAndValues.values?.map((value) => ({ label: value })) ?? [],
+    careerScopes: data.careerScopes.map((cs) => ({ name: cs })),
+    socials: [],
+  });
+
   // ── Navigation Helpers Function ────────────────────────────────
   // Handle Previous Step
   const prevStep = () => setStep((prev) => prev - 1);
@@ -176,37 +219,11 @@ export default function CompanySignup() {
           if (basicSignupData) {
             // Signup company first to get companyID
             const companyId = await cmpSignup.signup({
+              ...buildCompanyPayload(data),
               authEmail: true,
               email: basicSignupData.email!,
               password: basicSignupData.password!,
-              name: data.basicInfo.name,
-              description: data.basicInfo.description,
               phone: basicSignupData.phone!,
-              industry: data.basicInfo.industry,
-              location: data.basicInfo.location,
-              companySize: Number(data.basicInfo.companySize),
-              foundedYear: Number(data.basicInfo.foundedYear),
-              openPositions: data.openPositions?.map((job) => ({
-                title: job.title,
-                description: job.description,
-                type: job.types,
-                experience: job.experienceRequirement,
-                education: job.educationRequirement,
-                skills: job.skills,
-                deadlineDate: job.deadlineDate.toISOString(),
-              })),
-              benefits:
-                data.benefitsAndValues.benefits?.map((bf) => ({
-                  label: bf,
-                })) ?? [],
-              values:
-                data.benefitsAndValues.values?.map((value) => ({
-                  label: value,
-                })) ?? [],
-              careerScopes: data.careerScopes.map((cs) => ({
-                name: cs,
-              })),
-              socials: [],
             });
 
             if (!companyId) {
@@ -234,37 +251,11 @@ export default function CompanySignup() {
           if (basicPhoneSignupData) {
             // Signup company first to get companyID
             const companyId = await cmpSignup.signup({
+              ...buildCompanyPayload(data),
               authEmail: false,
               email: null,
               password: null,
-              name: data.basicInfo.name,
-              description: data.basicInfo.description,
               phone: basicPhoneSignupData.phone!,
-              industry: data.basicInfo.industry,
-              location: data.basicInfo.location,
-              companySize: Number(data.basicInfo.companySize),
-              foundedYear: Number(data.basicInfo.foundedYear),
-              openPositions: data.openPositions?.map((job) => ({
-                title: job.title,
-                description: job.description,
-                type: job.types,
-                experience: job.experienceRequirement,
-                education: job.educationRequirement,
-                skills: job.skills,
-                deadlineDate: job.deadlineDate.toISOString(),
-              })),
-              benefits:
-                data.benefitsAndValues.benefits?.map((bf) => ({
-                  label: bf,
-                })) ?? [],
-              values:
-                data.benefitsAndValues.values?.map((value) => ({
-                  label: value,
-                })) ?? [],
-              careerScopes: data.careerScopes.map((cs) => ({
-                name: cs,
-              })),
-              socials: [],
             });
 
             if (!companyId) {
@@ -308,7 +299,16 @@ export default function CompanySignup() {
       toast.success(t("signupSuccessful"), {
         duration: TOAST_DURATION_MS.SHORT,
       });
-      setTimeout(() => router.replace("/feed"), DEFAULT_REDIRECT_DELAY_MS);
+      // An email signup is not finished until the address is verified, and
+      // the mail now carries a code rather than a link — so this redirect is
+      // the only way the person reaches the page. Phone signups have nothing
+      // to verify and go straight to the feed.
+      const pendingEmail = basicSignupData?.email ?? null;
+      const destination = pendingEmail
+        ? `/login/email-verification?email=${encodeURIComponent(pendingEmail)}`
+        : "/feed";
+
+      setTimeout(() => router.replace(destination), DEFAULT_REDIRECT_DELAY_MS);
     }
 
     const errorList = [
@@ -339,6 +339,7 @@ export default function CompanySignup() {
     uploadCover.message,
     uploadsComplete,
     router,
+    basicSignupData?.email,
   ]);
 
   /* ------------------------------ Loading State ------------------------------ */
@@ -356,18 +357,18 @@ export default function CompanySignup() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="auth-wizard w-full max-w-4xl mx-auto flex flex-col gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
+    <div className="auth-wizard mx-auto flex w-full max-w-4xl flex-col gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Step Progress Indicator Section */}
-      <div className="auth-wizard-progress w-full overflow-x-auto border border-border border-t-[5px] border-t-foreground bg-card p-4 shadow-[4px_4px_0_hsl(var(--foreground)/0.05)]">
-        <div className="w-full min-w-[280px] flex items-center gap-0">
+      <div className="auth-wizard-progress w-full overflow-x-auto border border-t-[5px] border-border border-t-foreground bg-card p-4 shadow-hard">
+        <div className="flex w-full min-w-[280px] items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => (
-              <div key={st} className="w-full flex items-center">
+              <div key={st} className="flex w-full items-center">
                 {/* Step Circle Section */}
                 <div
-                  className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-none font-bold transition-all ${
+                  className={`flex size-8 items-center justify-center rounded-none text-xs font-bold transition-all sm:size-9 sm:text-sm ${
                     step >= st
-                      ? "bg-primary text-primary-foreground shadow-[2px_2px_0_hsl(var(--foreground)/0.16)]"
+                      ? "bg-primary text-primary-foreground shadow-hard-xs"
                       : "bg-muted text-muted-foreground"
                   }`}
                 >
@@ -375,9 +376,9 @@ export default function CompanySignup() {
                 </div>
                 {/* Line Between Steps Section (Only Render Before Last Step) */}
                 {index < totalSteps - 1 && (
-                  <div className="flex-1 h-1 bg-muted rounded-none relative">
+                  <div className="relative h-1 flex-1 rounded-none bg-muted">
                     <div
-                      className={`absolute top-0 left-0 h-full rounded-none bg-primary transition-all duration-300 ${
+                      className={`absolute left-0 top-0 h-full rounded-none bg-primary transition-all duration-300 ${
                         step > st ? "w-full" : "w-0"
                       }`}
                     />

@@ -2,7 +2,7 @@ import { TResumeTemplate } from "@/utils/types/resume/resume.type";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { IUser } from "@/utils/interfaces/user/user.interface";
 import { RESUME_EDITOR_DEFAULT_SECTION_ORDER } from "@/utils/constants/resume.constant";
-import { isSafeInlineResumeAvatar } from "@/utils/functions/resume/prepare-resume-avatar";
+import { isSafeInlineResumeAvatar } from "@/utils/functions/resume";
 
 /* ---------------------------------- Helper ---------------------------------- */
 /**
