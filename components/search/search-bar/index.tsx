@@ -14,7 +14,11 @@ import {
 } from "@/utils/constants/ui.constant";
 import { TLocations } from "@/utils/types/user/location.type";
 import { SelectValue } from "@radix-ui/react-select";
-import { BriefcaseBusiness, MapPin, Search } from "lucide-react";
+import {
+  LucideBriefcaseBusiness,
+  LucideMapPin,
+  LucideSearch,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { FieldValues, Path, UseFormRegisterReturn } from "react-hook-form";
@@ -78,7 +82,7 @@ export default function SearchBar<T extends FieldValues>(
           placeholder={
             props.isEmployee ? t("jobTitleKeywords") : t("positionKeywords")
           }
-          prefix={<Search />}
+          prefix={<LucideSearch />}
           className="h-12 rounded-none border-0 pr-16 focus-visible:ring-0 focus-visible:ring-offset-0"
           ref={(el) => {
             registerRef(el);
@@ -107,7 +111,7 @@ export default function SearchBar<T extends FieldValues>(
             aria-label={t("location")}
             className="h-12 justify-start rounded-none border-0 text-muted-foreground focus:ring-0 [&>span]:flex-1 [&>span]:text-left"
           >
-            <MapPin className="mr-2 size-[18px] shrink-0" />
+            <LucideMapPin className="mr-2 size-[18px] shrink-0" />
             <SelectValue placeholder={t("location")} />
           </SelectTrigger>
           <SelectContent className="rounded-none border-border shadow-hard [&_[role=option]]:rounded-none">
@@ -152,7 +156,7 @@ export default function SearchBar<T extends FieldValues>(
           placeholder={t("jobType")}
           ariaLabel={t("jobType")}
           emptyText={t("typeJobType")}
-          icon={<BriefcaseBusiness />}
+          icon={<LucideBriefcaseBusiness />}
           triggerClassName="rounded-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
           contentClassName="rounded-none border-border shadow-hard [&_*]:rounded-none"
         />

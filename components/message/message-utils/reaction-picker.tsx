@@ -5,7 +5,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CHAT_REACTION_EMOJIS } from "@/utils/constants/chat.constant";
-import { Smile } from "lucide-react";
+import { LucideSmile } from "lucide-react";
 
 export const ReactionPicker = (props: {
   onReact: (emoji: string | null) => void;
@@ -30,7 +30,7 @@ export const ReactionPicker = (props: {
           size="icon"
           className="h-8 w-8 rounded-none bg-background/50 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100"
         >
-          <Smile className="h-4 w-4 text-muted-foreground" />
+          <LucideSmile className="h-4 w-4 text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       {/* Reaction Picker Section */}

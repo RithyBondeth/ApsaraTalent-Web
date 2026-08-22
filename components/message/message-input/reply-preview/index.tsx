@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { X } from "lucide-react";
+import { LucideX } from "lucide-react";
 import { IMessageReplyPreviewProps } from "./props";
 import { useTranslations } from "next-intl";
 
@@ -42,7 +42,7 @@ export function MessageReplyPreview(props: IMessageReplyPreviewProps) {
         onClick={onCancelReply}
         aria-label="Cancel reply"
       >
-        <X className="h-3.5 w-3.5" />
+        <LucideX className="h-3.5 w-3.5" />
       </Button>
     </div>
   );

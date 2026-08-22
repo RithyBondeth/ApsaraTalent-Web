@@ -1,7 +1,13 @@
 "use client";
 
 import CanvasTemplate from "../canvas-template";
-import { Eye, Files, RefreshCw, ZoomIn, ZoomOut } from "lucide-react";
+import {
+  LucideEye,
+  LucideFiles,
+  LucideRefreshCw,
+  LucideZoomIn,
+  LucideZoomOut,
+} from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 import { Button } from "@/components/ui/button";
@@ -107,7 +113,7 @@ export default function ResumeEditorPreviewPanel({
         {/* Left Section: Title and Page Count */}
         <div className="flex shrink-0 items-center gap-2">
           <div className="flex items-center gap-1.5 text-xs font-medium text-foreground sm:text-sm">
-            <Eye size={15} className="text-muted-foreground" />
+            <LucideEye size={15} className="text-muted-foreground" />
             {t("resumeCanvas")}
           </div>
           {/* Page-Count Chip Section: Amber once the resume spills past one page */}
@@ -120,7 +126,7 @@ export default function ResumeEditorPreviewPanel({
             )}
             title={t("resumeCanvasPages", { count: pageCount })}
           >
-            <Files size={11} />
+            <LucideFiles size={11} />
             {t("resumeCanvasPages", { count: pageCount })}
           </span>
         </div>
@@ -129,7 +135,7 @@ export default function ResumeEditorPreviewPanel({
         <div className="flex flex-1 justify-center">
           {updating ? (
             <div className="flex animate-pulse items-center gap-1.5 text-xs text-muted-foreground">
-              <RefreshCw size={11} className="animate-spin" />
+              <LucideRefreshCw size={11} className="animate-spin" />
               {t("updatingCanvas")}
             </div>
           ) : (
@@ -149,7 +155,7 @@ export default function ResumeEditorPreviewPanel({
             disabled={zoomMultiplier <= RESUME_EDITOR_ZOOM_MIN}
             title={t("zoomOut")}
           >
-            <ZoomOut size={14} />
+            <LucideZoomOut size={14} />
           </Button>
 
           <Button
@@ -170,7 +176,7 @@ export default function ResumeEditorPreviewPanel({
             disabled={zoomMultiplier >= RESUME_EDITOR_ZOOM_MAX}
             title={t("zoomIn")}
           >
-            <ZoomIn size={14} />
+            <LucideZoomIn size={14} />
           </Button>
         </div>
       </div>

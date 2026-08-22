@@ -10,7 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { enUS, km } from "date-fns/locale";
 import { format, isValid } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { LucideCalendar } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
@@ -85,7 +85,7 @@ export function DatePicker({
           ) : (
             <span>{resolvedPlaceholder}</span>
           )}
-          <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
+          <LucideCalendar className="ml-auto h-5 w-5 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent

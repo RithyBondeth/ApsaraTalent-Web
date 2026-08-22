@@ -4,11 +4,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  Phone,
-  Users,
+  LucideArrowLeft,
+  LucideChevronLeft,
+  LucideChevronRight,
+  LucideMenu,
+  LucidePhone,
+  LucideUsers,
 } from "lucide-react";
 import { IChatHeaderProps } from "./props";
 import { useTranslations } from "next-intl";
@@ -49,7 +50,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
             onClick={onBack}
             aria-label="Back to conversations"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <LucideArrowLeft className="h-4 w-4" />
           </Button>
         )}
 
@@ -62,9 +63,9 @@ export default function ChatHeader(props: IChatHeaderProps) {
           aria-label={sidebarToggleLabel}
         >
           {isSidebarOpen ? (
-            <ChevronLeft className="h-5 w-5" />
+            <LucideChevronLeft className="h-5 w-5" />
           ) : (
-            <ChevronRight className="h-5 w-5" />
+            <LucideChevronRight className="h-5 w-5" />
           )}
         </Button>
 
@@ -73,7 +74,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           <Avatar className="h-8 w-8 rounded-none border border-border sm:h-9 sm:w-9">
             {chat.isGroup ? (
               <AvatarFallback className="rounded-none bg-primary/10">
-                <Users className="h-4 w-4 text-primary" />
+                <LucideUsers className="h-4 w-4 text-primary" />
               </AvatarFallback>
             ) : (
               <>
@@ -118,7 +119,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           onClick={onStartVoiceCall}
           aria-label="Start voice call"
         >
-          <Phone className="h-4 w-4" />
+          <LucidePhone className="h-4 w-4" />
         </Button>
 
         {/* Mobile Conversations Button */}
@@ -130,19 +131,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
             onClick={onOpenMobileSidebar}
             aria-label="Open conversations"
           >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
+            <LucideMenu className="h-5 w-5" />
           </Button>
         )}
 

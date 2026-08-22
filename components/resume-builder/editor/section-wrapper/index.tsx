@@ -1,6 +1,6 @@
 "use client";
 
-import { GripVertical } from "lucide-react";
+import { LucideGripVertical } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
@@ -59,7 +59,7 @@ export function SectionWrapper(props: ISectionWrapperProps) {
             isSelected ? "!opacity-80" : "",
           ].join(" ")}
         >
-          <GripVertical size={14} className="text-blue-500" />
+          <LucideGripVertical size={14} className="text-blue-500" />
         </div>
       )}
 

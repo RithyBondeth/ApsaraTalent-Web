@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { Phone, PhoneOff } from "lucide-react";
+import { LucidePhone, LucidePhoneOff } from "lucide-react";
 import { IIncomingCallModalProps } from "./props";
 import { useTranslations } from "next-intl";
 import { getNameInitials } from "@/utils/functions/text";
@@ -87,7 +87,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
               className="flex h-14 w-14 items-center justify-center rounded-full bg-red-500 shadow-lg transition-colors hover:bg-red-600 active:bg-red-700"
               aria-label="Decline call"
             >
-              <PhoneOff className="h-6 w-6 text-white" />
+              <LucidePhoneOff className="h-6 w-6 text-white" />
             </button>
             <span className="text-xs text-muted-foreground">
               {t("decline")}
@@ -102,7 +102,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
               className="flex h-14 w-14 items-center justify-center rounded-full bg-green-500 shadow-lg transition-colors hover:bg-green-600 active:bg-green-700 motion-safe:animate-call-pulse"
               aria-label="Accept call"
             >
-              <Phone className="h-6 w-6 text-white" />
+              <LucidePhone className="h-6 w-6 text-white" />
             </button>
             <span className="text-xs text-muted-foreground">{t("accept")}</span>
           </div>

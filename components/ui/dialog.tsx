@@ -1,6 +1,6 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cva, type VariantProps } from "class-variance-authority";
-import { X } from "lucide-react";
+import { LucideX } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -95,7 +95,7 @@ const DialogContent = React.forwardRef<
           carried a `[&>button]:rounded-none` override to undo it. */}
       {hideClose ? null : (
         <DialogPrimitive.Close className="absolute right-3 top-3 z-[110] flex size-8 items-center justify-center rounded-none border border-border bg-background/90 text-foreground opacity-80 backdrop-blur-xl transition-all hover:bg-foreground hover:text-background hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95 disabled:pointer-events-none">
-          <X className="size-4" />
+          <LucideX className="size-4" />
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>
       )}

@@ -6,7 +6,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { IMessageBubbleProps } from "./props";
 import { formatMessageTime } from "@/utils/functions/date";
-import { Check, CheckCheck, Clock, Phone, X } from "lucide-react";
+import {
+  LucideCheck,
+  LucideCheckCheck,
+  LucideClock,
+  LucidePhone,
+  LucideX,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MessageBubbleActions } from "./message-bubble-action";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,10 +30,14 @@ function DeliveryStatusIcon({
 }) {
   if (!status) return null;
   if (status === "sending")
-    return <Clock className="inline-block h-3 w-3 text-muted-foreground/60" />;
+    return (
+      <LucideClock className="inline-block h-3 w-3 text-muted-foreground/60" />
+    );
   if (status === "seen")
-    return <CheckCheck className="inline-block h-3 w-3 text-green-500" />;
-  return <Check className="inline-block h-3 w-3 text-muted-foreground/60" />;
+    return <LucideCheckCheck className="inline-block h-3 w-3 text-green-500" />;
+  return (
+    <LucideCheck className="inline-block h-3 w-3 text-muted-foreground/60" />
+  );
 }
 
 function MessageBubble(props: IMessageBubbleProps) {
@@ -205,7 +215,7 @@ function MessageBubble(props: IMessageBubbleProps) {
               /* Call Section */
               <div className="flex min-w-[150px] flex-col gap-2 sm:min-w-[180px]">
                 <div className="flex items-center gap-2 text-sm font-medium">
-                  <Phone className="h-4 w-4" />
+                  <LucidePhone className="h-4 w-4" />
                   <span>{message.content || t("callLabel")}</span>
                 </div>
                 <Button
@@ -246,7 +256,7 @@ function MessageBubble(props: IMessageBubbleProps) {
                     onClick={cancelEditing}
                     aria-label="Cancel edit"
                   >
-                    <X className="h-3.5 w-3.5" />
+                    <LucideX className="h-3.5 w-3.5" />
                   </Button>
                   {/* Confirm Edit Button */}
                   <Button
@@ -256,7 +266,7 @@ function MessageBubble(props: IMessageBubbleProps) {
                     onClick={confirmEdit}
                     aria-label="Confirm edit"
                   >
-                    <Check className="h-3.5 w-3.5" />
+                    <LucideCheck className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </div>

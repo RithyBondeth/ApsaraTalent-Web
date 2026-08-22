@@ -1,7 +1,11 @@
 import { formatFileSize } from "@/utils/functions/file";
 import { normalizeMediaUrl } from "@/utils/functions/media";
 import { AudioPlayer } from "../audio-player";
-import { Download, ExternalLink, FileText } from "lucide-react";
+import {
+  LucideDownload,
+  LucideExternalLink,
+  LucideFileText,
+} from "lucide-react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import Image from "next/image";
@@ -65,7 +69,7 @@ export default function AttachmentRender(props: {
     >
       {/* File Section */}
       <div className="flex items-center gap-3 px-4 py-3">
-        <FileText
+        <LucideFileText
           className={`h-8 w-8 shrink-0 ${
             isMe ? "text-primary-foreground/70" : "text-muted-foreground/60"
           }`}
@@ -102,8 +106,8 @@ export default function AttachmentRender(props: {
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          <Download className="h-3 w-3" />
-          Download
+          <LucideDownload className="h-3 w-3" />
+          LucideDownload
         </a>
         <a
           href={fullUrl}
@@ -116,7 +120,7 @@ export default function AttachmentRender(props: {
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          <ExternalLink className="h-3 w-3" />
+          <LucideExternalLink className="h-3 w-3" />
           Preview
         </a>
       </div>

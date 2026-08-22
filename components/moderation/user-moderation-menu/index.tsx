@@ -21,7 +21,12 @@ import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import { Textarea } from "@/components/ui/textarea";
 import { useModerationStore } from "@/stores/apis/moderation/moderation.store";
 import { TReportReason } from "@/utils/types/moderation/report.type";
-import { Ban, Flag, MoreVertical, ShieldOff } from "lucide-react";
+import {
+  LucideBan,
+  LucideFlag,
+  LucideMoreVertical,
+  LucideShieldOff,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -125,7 +130,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
             className={cn(isEditorial && "rounded-none", triggerClassName)}
             aria-label={t("moreOptions")}
           >
-            <MoreVertical className="h-5 w-5" />
+            <LucideMoreVertical className="h-5 w-5" />
           </Button>
         </DropdownMenuTrigger>
 
@@ -149,12 +154,12 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
           >
             {blockedByMe ? (
               <>
-                <ShieldOff className="h-4 w-4" />
+                <LucideShieldOff className="h-4 w-4" />
                 {t("unblock")}
               </>
             ) : (
               <>
-                <Ban className="h-4 w-4" />
+                <LucideBan className="h-4 w-4" />
                 {t("block")}
               </>
             )}
@@ -172,7 +177,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
                 "min-h-11 rounded-none px-3 py-2.5 font-medium focus:bg-destructive/10",
             )}
           >
-            <Flag className="h-4 w-4" />
+            <LucideFlag className="h-4 w-4" />
             {t("report")}
           </DropdownMenuItem>
         </DropdownMenuContent>

@@ -1,5 +1,5 @@
 import { formatDurationClock } from "@/utils/functions/date";
-import { Check, Loader2, X } from "lucide-react";
+import { LucideCheck, LucideLoader2, LucideX } from "lucide-react";
 import { IVoiceRecordingUIProps } from "./props";
 import { useTranslations } from "next-intl";
 
@@ -27,7 +27,7 @@ export function VoiceRecordingUI(props: IVoiceRecordingUIProps) {
         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
         aria-label="Cancel recording"
       >
-        <X className="h-4 w-4" />
+        <LucideX className="h-4 w-4" />
       </button>
 
       {/* Recording Duration Section */}
@@ -51,9 +51,9 @@ export function VoiceRecordingUI(props: IVoiceRecordingUIProps) {
         aria-label={isUploading ? "Uploading…" : "Stop and send voice message"}
       >
         {isUploading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <LucideLoader2 className="h-4 w-4 animate-spin" />
         ) : (
-          <Check className="h-4 w-4" />
+          <LucideCheck className="h-4 w-4" />
         )}
       </button>
     </div>

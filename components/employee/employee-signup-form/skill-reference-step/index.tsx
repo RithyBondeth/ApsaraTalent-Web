@@ -14,7 +14,12 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/functions/error";
-import { LucidePlus, LucideXCircle, Sparkles, Loader2 } from "lucide-react";
+import {
+  LucidePlus,
+  LucideXCircle,
+  LucideSparkles,
+  LucideLoader2,
+} from "lucide-react";
 import { useState } from "react";
 import { useWatch } from "react-hook-form";
 import { IStepFormProps } from "../props";
@@ -116,9 +121,9 @@ export default function SkillReferenceStepForm({
               className="h-7 gap-1 border border-primary/20 px-2 text-[10px] text-primary hover:bg-primary/5 hover:text-primary"
             >
               {isRefining ? (
-                <Loader2 size={12} className="animate-spin" />
+                <LucideLoader2 size={12} className="animate-spin" />
               ) : (
-                <Sparkles size={12} />
+                <LucideSparkles size={12} />
               )}
               Suggest
             </Button>

@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { IWeeklyActivityChartProps } from "./props";
 import { CHART_COLOR } from "@/utils/constants/ui.constant";
-import { BarChart3 } from "lucide-react";
+import { LucideBarChart3 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
@@ -30,7 +30,7 @@ export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
         className="flex h-[250px] flex-col items-center justify-center gap-3 border border-dashed border-border bg-muted/20 px-5 text-center text-sm text-muted-foreground"
       >
         <span className="grid size-11 place-items-center bg-primary/10 text-primary">
-          <BarChart3 className="size-5" aria-hidden />
+          <LucideBarChart3 className="size-5" aria-hidden />
         </span>
         <span className="max-w-sm">{t("noActivityThisWeek")}</span>
       </div>

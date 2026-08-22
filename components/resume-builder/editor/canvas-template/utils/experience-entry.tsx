@@ -3,7 +3,7 @@ import { IExperience as Experience } from "@/utils/interfaces/resume/resume.inte
 import { UseFormSetValue, UseFormGetValues } from "react-hook-form";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, X, Plus } from "lucide-react";
+import { LucideGripVertical, LucideX, LucidePlus } from "lucide-react";
 import { Editable } from "./editable";
 import { InlineDateField } from "./inline-date-field";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
@@ -71,7 +71,10 @@ export function ExperienceEntry(props: {
         title={t("dragToReorder")}
         className="absolute -left-5 top-2 cursor-grab opacity-0 transition-opacity active:cursor-grabbing group-hover/entry:opacity-50"
       >
-        <GripVertical size={12} style={{ color: RESUME_COLOR.TEXT_SUBTLE }} />
+        <LucideGripVertical
+          size={12}
+          style={{ color: RESUME_COLOR.TEXT_SUBTLE }}
+        />
       </div>
 
       {/* Delete Button Section */}
@@ -84,7 +87,7 @@ export function ExperienceEntry(props: {
         className="absolute -right-5 top-0 opacity-0 transition-opacity hover:!opacity-100 group-hover/entry:opacity-60"
         style={{ color: RESUME_COLOR.DANGER }}
       >
-        <X size={13} />
+        <LucideX size={13} />
       </button>
 
       {/* Position and Dates Row Section */}
@@ -226,7 +229,7 @@ export function ExperienceEntry(props: {
                 style={{ color: RESUME_COLOR.DANGER }}
                 title={t("removeAchievement")}
               >
-                <X size={10} />
+                <LucideX size={10} />
               </button>
             </li>
           ))}
@@ -247,7 +250,7 @@ export function ExperienceEntry(props: {
         style={{ fontSize: 10, color: theme.accent }}
         title={t("addAchievement")}
       >
-        <Plus size={9} />
+        <LucidePlus size={9} />
         {t("achievement").toLocaleLowerCase()}
       </button>
     </div>

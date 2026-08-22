@@ -2,7 +2,7 @@
 
 import { useAnalyticsStore } from "@/stores/apis/matching/analytics.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { Activity, BarChart3, LucideUsers } from "lucide-react";
+import { LucideActivity, LucideBarChart3, LucideUsers } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { statisticCardConstants } from "@/utils/constants/dashboard.constant";
 import dynamic from "next/dynamic";
@@ -162,7 +162,7 @@ export default function DashboardPage() {
         <SectionHeader
           number="01"
           title={t("overview")}
-          icon={<Activity className="size-4" />}
+          icon={<LucideActivity className="size-4" />}
         />
 
         {/* Profile Completeness Card Section */}
@@ -194,7 +194,7 @@ export default function DashboardPage() {
         <SectionHeader
           number="02"
           title={t("performance")}
-          icon={<BarChart3 className="size-4" />}
+          icon={<LucideBarChart3 className="size-4" />}
         />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {/* Weekly Activity Bar Chart Section */}

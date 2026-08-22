@@ -24,7 +24,12 @@ import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/
 import { useModerationStore } from "@/stores/apis/moderation/moderation.store";
 import { ICompany } from "@/utils/interfaces/user/company.interface";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
-import { Building2, LucideNewspaper, Sparkles, Users } from "lucide-react";
+import {
+  LucideBuilding2,
+  LucideNewspaper,
+  LucideSparkles,
+  LucideUsers,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, {
   useCallback,
@@ -655,12 +660,12 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
             }`}
             stats={[
               {
-                icon: isEmployee ? Building2 : Users,
+                icon: isEmployee ? LucideBuilding2 : LucideUsers,
                 label: isEmployee ? tFeed("allCompanies") : tFeed("allTalent"),
                 value: allUsers.length,
               },
               {
-                icon: Sparkles,
+                icon: LucideSparkles,
                 label: tFeed("recommendedForYou"),
                 value:
                   (isEmployee
@@ -700,7 +705,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                       {tFeed("recommendedForYou")}
                     </h2>
                   </div>
-                  <Sparkles className="size-5 text-foreground" />
+                  <LucideSparkles className="size-5 text-foreground" />
                 </div>
                 <div className={FEED_CARD_GRID_CLASS}>
                   {Array.from({ length: 3 }).map((_, i) =>
@@ -773,7 +778,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                     {tFeed("recommendedForYou")}
                   </h2>
                 </div>
-                <Sparkles className="size-5 text-foreground" />
+                <LucideSparkles className="size-5 text-foreground" />
               </div>
               <div className={FEED_CARD_GRID_CLASS}>
                 {isEmployee
@@ -834,9 +839,9 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
           </div>
           <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
             {isEmployee ? (
-              <Building2 className="size-4" />
+              <LucideBuilding2 className="size-4" />
             ) : (
-              <Users className="size-4" />
+              <LucideUsers className="size-4" />
             )}
           </div>
         </FadeIn>

@@ -7,7 +7,7 @@ import {
   LucideClock,
   LucideMapPin,
   LucideUsers,
-  MoveUpRight,
+  LucideMoveUpRight,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
@@ -117,7 +117,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
           onClick={() => router.replace(`/feed/company/${props.id}`)}
         >
           {t("viewDetail")}
-          <MoveUpRight className="size-3.5" />
+          <LucideMoveUpRight className="size-3.5" />
         </Button>
       </div>
     </article>

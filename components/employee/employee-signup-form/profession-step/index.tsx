@@ -23,15 +23,15 @@ import { Controller, useWatch } from "react-hook-form";
 import { IStepFormProps } from "../props";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import {
-  AlignLeft,
-  BarChart3,
-  Briefcase,
-  CalendarClock,
-  Clock3,
-  Languages,
-  Laptop,
-  Loader2,
-  Sparkles,
+  LucideAlignLeft,
+  LucideBarChart3,
+  LucideBriefcase,
+  LucideCalendarClock,
+  LucideClock3,
+  LucideLanguages,
+  LucideLaptop,
+  LucideLoader2,
+  LucideSparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -130,7 +130,7 @@ export default function ProfessionStepForm({
           render={({ field }) => (
             <Input
               placeholder={`${t("empProfessionLookingForPositionPlaceholder")} *`}
-              prefix={<Briefcase />}
+              prefix={<LucideBriefcase />}
               suffix={
                 jobValue ? (
                   <Button
@@ -142,9 +142,9 @@ export default function ProfessionStepForm({
                     className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                   >
                     {jobLoading ? (
-                      <Loader2 size={10} className="animate-spin" />
+                      <LucideLoader2 size={10} className="animate-spin" />
                     ) : (
-                      <Sparkles size={10} />
+                      <LucideSparkles size={10} />
                     )}
                     {tr("aiRefine")}
                   </Button>
@@ -173,7 +173,7 @@ export default function ProfessionStepForm({
                   value={field.value || ""}
                   onChange={field.onChange}
                   placeholder={`${t("empProfessionYearOfExperiencePlaceholder")} *`}
-                  icon={<BarChart3 />}
+                  icon={<LucideBarChart3 />}
                   required
                 />
               )}
@@ -196,7 +196,7 @@ export default function ProfessionStepForm({
                   value={field.value || ""}
                   onChange={field.onChange}
                   placeholder={`${t("empProfessionAvailabilityPlaceholder")} *`}
-                  icon={<CalendarClock />}
+                  icon={<LucideCalendarClock />}
                   required
                 />
               )}
@@ -223,7 +223,7 @@ export default function ProfessionStepForm({
                   className="h-12 text-muted-foreground"
                   aria-label={t("empProfessionWorkMode")}
                 >
-                  <Laptop className="mr-2 size-[18px] shrink-0" />
+                  <LucideLaptop className="mr-2 size-[18px] shrink-0" />
                   <SelectValue
                     placeholder={t("empProfessionWorkModePlaceholder")}
                   />
@@ -253,7 +253,7 @@ export default function ProfessionStepForm({
                   className="h-12 text-muted-foreground"
                   aria-label={t("empProfessionNoticePeriod")}
                 >
-                  <Clock3 className="mr-2 size-[18px] shrink-0" />
+                  <LucideClock3 className="mr-2 size-[18px] shrink-0" />
                   <SelectValue
                     placeholder={t("empProfessionNoticePeriodPlaceholder")}
                   />
@@ -288,7 +288,7 @@ export default function ProfessionStepForm({
               placeholder={t("empProfessionLanguagesPlaceholder")}
               emptyText={t("empProfessionLanguagesEmpty")}
               ariaLabel={t("empProfessionLanguages")}
-              icon={<Languages />}
+              icon={<LucideLanguages />}
             />
           )}
         />
@@ -305,7 +305,7 @@ export default function ProfessionStepForm({
               <Textarea
                 autoResize
                 placeholder={`${t("empProfessionDescriptionPlaceholder")} *`}
-                prefix={<AlignLeft />}
+                prefix={<LucideAlignLeft />}
                 action={
                   descValue ? (
                     <Button
@@ -317,9 +317,9 @@ export default function ProfessionStepForm({
                       className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                     >
                       {descLoading ? (
-                        <Loader2 size={10} className="animate-spin" />
+                        <LucideLoader2 size={10} className="animate-spin" />
                       ) : (
-                        <Sparkles size={10} />
+                        <LucideSparkles size={10} />
                       )}
                       {tr("aiRefine")}
                     </Button>

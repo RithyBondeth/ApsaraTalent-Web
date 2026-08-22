@@ -7,7 +7,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  LucideCalendar,
+  LucideChevronLeft,
+  LucideChevronRight,
+} from "lucide-react";
 import { useState } from "react";
 
 interface YearPickerProps {
@@ -71,7 +75,7 @@ export function YearPicker({
           ) : (
             <span>{placeholder}</span>
           )}
-          <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
+          <LucideCalendar className="ml-auto h-5 w-5 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -89,7 +93,7 @@ export function YearPicker({
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <LucideChevronLeft className="h-4 w-4" />
           </Button>
           <span className="text-sm font-medium">
             {pageStartYear} - {pageEndYear}
@@ -102,7 +106,7 @@ export function YearPicker({
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1}
           >
-            <ChevronRight className="h-4 w-4" />
+            <LucideChevronRight className="h-4 w-4" />
           </Button>
         </div>
 

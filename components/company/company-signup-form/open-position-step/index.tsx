@@ -33,22 +33,22 @@ import {
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
-  BadgeCheck,
-  BarChart3,
-  BriefcaseBusiness,
-  CircleDollarSign,
-  FileText,
-  GraduationCap,
-  Languages,
-  Laptop,
-  ListChecks,
+  LucideBadgeCheck,
+  LucideBarChart3,
+  LucideBriefcaseBusiness,
+  LucideCircleDollarSign,
+  LucideFileText,
+  LucideGraduationCap,
+  LucideLanguages,
+  LucideLaptop,
+  LucideListChecks,
   LucidePlus,
   LucideTrash2,
   LucideXCircle,
-  MapPin,
-  Sparkles,
-  Loader2,
-  Users,
+  LucideMapPin,
+  LucideSparkles,
+  LucideLoader2,
+  LucideUsers,
 } from "lucide-react";
 import { useState } from "react";
 import { Controller, useFieldArray, useWatch } from "react-hook-form";
@@ -234,7 +234,7 @@ export default function OpenPositionStepForm({
             {/* Position and Type Section */}
             <div className="field-row w-full">
               <Input
-                prefix={<BriefcaseBusiness />}
+                prefix={<LucideBriefcaseBusiness />}
                 placeholder={`${t("cmpOpenPositionTitlePlaceholder")} *`}
                 aria-label={t("cmpOpenPositionFieldTitle")}
                 aria-required="true"
@@ -257,7 +257,7 @@ export default function OpenPositionStepForm({
                       placeholder={`${t("cmpOpenPositionTypePlaceholder")} *`}
                       emptyText={t("cmpOpenPositionTypeEmpty")}
                       ariaLabel={t("cmpOpenPositionType")}
-                      icon={<BadgeCheck />}
+                      icon={<LucideBadgeCheck />}
                       required
                     />
                   )}
@@ -270,7 +270,7 @@ export default function OpenPositionStepForm({
 
             {/* Description Section */}
             <Textarea
-              prefix={<FileText />}
+              prefix={<LucideFileText />}
               placeholder={`${t("cmpOpenPositionDescriptionPlaceholder")} *`}
               aria-label={t("cmpOpenPositionDescription")}
               aria-required="true"
@@ -286,9 +286,9 @@ export default function OpenPositionStepForm({
                     className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                   >
                     {isRefining ? (
-                      <Loader2 size={10} className="animate-spin" />
+                      <LucideLoader2 size={10} className="animate-spin" />
                     ) : (
-                      <Sparkles size={10} />
+                      <LucideSparkles size={10} />
                     )}
                     {tr("aiRefine")}
                   </Button>
@@ -316,7 +316,7 @@ export default function OpenPositionStepForm({
                       placeholder={`${t("cmpOpenPositionExpPlaceholder")} *`}
                       emptyText={t("cmpOpenPositionExpEmpty")}
                       ariaLabel={t("cmpOpenPositionExpRequired")}
-                      icon={<BarChart3 />}
+                      icon={<LucideBarChart3 />}
                       required
                     />
                   )}
@@ -329,7 +329,7 @@ export default function OpenPositionStepForm({
                 </ErrorMessage>
               </div>
               <Input
-                prefix={<GraduationCap />}
+                prefix={<LucideGraduationCap />}
                 placeholder={`${t("cmpOpenPositionEduPlaceholder")} *`}
                 aria-label={t("cmpOpenPositionEduRequired")}
                 aria-required="true"
@@ -354,7 +354,7 @@ export default function OpenPositionStepForm({
                       className="col-span-3 h-12 w-full sm:col-span-1"
                       aria-label={t("cmpOpenPositionSalaryCurrency")}
                     >
-                      <CircleDollarSign className="mr-2 size-[18px] shrink-0" />
+                      <LucideCircleDollarSign className="mr-2 size-[18px] shrink-0" />
                       <SelectValue placeholder="USD" />
                     </SelectTrigger>
                     <SelectContent>
@@ -432,7 +432,7 @@ export default function OpenPositionStepForm({
                       className="h-12 text-muted-foreground"
                       aria-label={t("cmpOpenPositionWorkMode")}
                     >
-                      <Laptop className="mr-2 size-[18px] shrink-0" />
+                      <LucideLaptop className="mr-2 size-[18px] shrink-0" />
                       <SelectValue
                         placeholder={t("cmpOpenPositionWorkModePlaceholder")}
                       />
@@ -485,7 +485,7 @@ export default function OpenPositionStepForm({
                     placeholder={t("cmpOpenPositionLanguagesPlaceholder")}
                     emptyText={t("cmpOpenPositionLanguagesEmpty")}
                     ariaLabel={t("cmpOpenPositionLanguages")}
-                    icon={<Languages />}
+                    icon={<LucideLanguages />}
                   />
                 )}
               />
@@ -497,7 +497,7 @@ export default function OpenPositionStepForm({
             {/* Location and Openings Count Section */}
             <div className="field-row w-full">
               <Input
-                prefix={<MapPin />}
+                prefix={<LucideMapPin />}
                 placeholder={t("cmpOpenPositionLocationPlaceholder")}
                 aria-label={t("cmpOpenPositionLocation")}
                 {...register(`openPositions.${index}.location`)}
@@ -508,7 +508,7 @@ export default function OpenPositionStepForm({
                 render={({ field }) => (
                   <Input
                     type="number"
-                    prefix={<Users />}
+                    prefix={<LucideUsers />}
                     placeholder={t("cmpOpenPositionOpeningsCountPlaceholder")}
                     aria-label={t("cmpOpenPositionOpeningsCount")}
                     {...field}
@@ -564,7 +564,7 @@ export default function OpenPositionStepForm({
                     className="h-12 w-full justify-between px-3 text-xs"
                   >
                     <span className="flex items-center gap-2">
-                      <ListChecks className="size-[18px] text-muted-foreground" />
+                      <LucideListChecks className="size-[18px] text-muted-foreground" />
                       {t("cmpOpenPositionAddSkillBtn")} *
                     </span>
                     <LucidePlus size={14} />

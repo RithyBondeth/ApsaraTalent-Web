@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { Users } from "lucide-react";
+import { LucideUsers } from "lucide-react";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
@@ -43,7 +43,7 @@ export default function CollapsedChatList(props: IChatListProps) {
                 >
                   {chat.isGroup ? (
                     <div className="flex h-10 w-10 items-center justify-center rounded-none border border-border bg-muted">
-                      <Users className="h-5 w-5 text-muted-foreground" />
+                      <LucideUsers className="h-5 w-5 text-muted-foreground" />
                     </div>
                   ) : (
                     /* Avatar Section */

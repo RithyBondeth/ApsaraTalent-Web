@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Trash2 } from "lucide-react";
+import { LucideTrash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 /* ----------------------------------- Helper ---------------------------------- */
@@ -59,7 +59,7 @@ export default function RemoveAlertDialog(props: IRemoveAlertDialog) {
 
         <DialogHeader className="flex-row items-start gap-4 space-y-0 px-6 pb-6 pt-5 text-left">
           <div className="flex size-12 shrink-0 items-center justify-center border border-destructive/25 bg-destructive/10 text-destructive">
-            <Trash2 className="size-5" />
+            <LucideTrash2 className="size-5" />
           </div>
 
           <div className="min-w-0 space-y-2 pr-8">
@@ -87,7 +87,7 @@ export default function RemoveAlertDialog(props: IRemoveAlertDialog) {
             className="min-w-24 rounded-none"
             onClick={onYesClick}
           >
-            <Trash2 className="size-4" />
+            <LucideTrash2 className="size-4" />
             {t("remove")}
           </Button>
         </DialogFooter>

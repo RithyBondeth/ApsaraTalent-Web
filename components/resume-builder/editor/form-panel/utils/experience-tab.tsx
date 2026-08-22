@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { IExperience as Experience } from "@/utils/interfaces/resume/resume.interface";
 import { useFieldArray } from "react-hook-form";
-import { PlusCircle } from "lucide-react";
+import { LucidePlusCircle } from "lucide-react";
 import { IFormPanelProps } from "../props";
 import { ExperienceCard } from "./experience-card";
 import { useTranslations } from "next-intl";
@@ -57,7 +57,7 @@ export function ExperienceTab({
         className="w-full border-dashed text-xs"
         onClick={addExperience}
       >
-        <PlusCircle size={13} className="mr-1.5" />
+        <LucidePlusCircle size={13} className="mr-1.5" />
         {t("addExperience")}
       </Button>
     </div>

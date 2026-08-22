@@ -12,10 +12,9 @@ import { InterviewCard } from "@/components/interview/interview-card";
 import { CreateInterviewDialog } from "@/components/interview/create-interview-dialog";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import {
-  CalendarCheck2,
-  CalendarClock,
-  CircleCheckBig,
+  LucideCalendarCheck2,
   LucideCalendarClock,
+  LucideCircleCheckBig,
 } from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
@@ -129,18 +128,18 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
             ? undefined
             : [
                 {
-                  icon: CalendarCheck2,
+                  icon: LucideCalendarCheck2,
                   label: t("statScheduled"),
                   value: interviews.length,
                 },
                 {
-                  icon: CalendarClock,
+                  icon: LucideCalendarClock,
                   label: t("statPending"),
                   value: interviews.filter((i) => i.status === "pending")
                     .length,
                 },
                 {
-                  icon: CircleCheckBig,
+                  icon: LucideCircleCheckBig,
                   label: t("statAccepted"),
                   value: interviews.filter((i) => i.status === "accepted")
                     .length,
@@ -180,7 +179,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
             />
           ) : (
             <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
-              <CalendarCheck2 className="size-4" />
+              <LucideCalendarCheck2 className="size-4" />
             </div>
           )}
         </div>

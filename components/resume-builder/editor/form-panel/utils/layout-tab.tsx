@@ -3,7 +3,7 @@
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 import { TResumeContentSection } from "@/utils/interfaces/resume/resume.interface";
 import { Switch } from "@/components/ui/switch";
-import { GripVertical, Eye, EyeOff } from "lucide-react";
+import { LucideGripVertical, LucideEye, LucideEyeOff } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   DndContext,
@@ -59,7 +59,7 @@ function SectionItem({
           {...listeners}
           className="cursor-grab text-muted-foreground active:cursor-grabbing"
         >
-          <GripVertical size={16} />
+          <LucideGripVertical size={16} />
         </div>
 
         {/* Section Name and Status Section */}
@@ -74,9 +74,9 @@ function SectionItem({
       {/* Visibility Toggle Section */}
       <div className="flex items-center gap-2">
         {isVisible ? (
-          <Eye size={14} className="text-primary" />
+          <LucideEye size={14} className="text-primary" />
         ) : (
-          <EyeOff size={14} className="text-muted-foreground" />
+          <LucideEyeOff size={14} className="text-muted-foreground" />
         )}
         <Switch
           checked={isVisible}

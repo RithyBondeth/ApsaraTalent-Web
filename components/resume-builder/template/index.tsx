@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import ImagePopup from "@/components/utils/data-display/image-popup";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { Check, Eye } from "lucide-react";
+import { LucideCheck, LucideEye } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { ITemplateCardProps } from "./props";
@@ -37,7 +37,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
               : "border-border bg-background/90 text-muted-foreground backdrop-blur"
           }`}
         >
-          {props.selected ? <Check className="size-3" /> : null}
+          {props.selected ? <LucideCheck className="size-3" /> : null}
           {props.selected ? t("selectedTemplate") : t("templateLabel")}
         </div>
 
@@ -67,7 +67,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
                 setPopupResume(true);
               }}
             >
-              <Eye size={14} />
+              <LucideEye size={14} />
               {t("preview")}
             </button>
           </div>
@@ -97,7 +97,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
           <span>
             {props.selected ? t("selectedTemplate") : t("useTemplate")}
           </span>
-          {props.selected ? <Check className="size-3.5" /> : null}
+          {props.selected ? <LucideCheck className="size-3.5" /> : null}
         </Button>
       </div>
 

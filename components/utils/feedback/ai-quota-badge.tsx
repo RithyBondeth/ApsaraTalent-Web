@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Sparkles } from "lucide-react";
+import { LucideSparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAiQuotaStore } from "@/stores/apis/ai/get-ai-quota.store";
 
@@ -76,7 +76,7 @@ export function AiQuotaBadge({ className }: { className?: string }) {
         date: new Date(data.resetsAt).toLocaleString(),
       })}
     >
-      <Sparkles className={cn("size-3.5 shrink-0", tone.text)} />
+      <LucideSparkles className={cn("size-3.5 shrink-0", tone.text)} />
       <span className={cn("whitespace-nowrap text-xs font-medium", tone.text)}>
         {t("usesLeftToday", { remaining, limit })}
       </span>

@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GridRunners } from "@/components/ui/grid-runners";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { cn } from "@/lib/utils";
-import { User } from "lucide-react";
+import { LucideUser } from "lucide-react";
 import { IProfileDetailHeroProps } from "./props";
 
 export function ProfileDetailHero(props: IProfileDetailHeroProps) {
@@ -35,7 +35,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
     >
       <AvatarImage src={avatar ?? ""} alt={name} className="object-cover" />
       <AvatarFallback className="bg-background text-xl font-bold uppercase text-foreground">
-        {fallback ?? <User className="size-6" />}
+        {fallback ?? <LucideUser className="size-6" />}
       </AvatarFallback>
     </Avatar>
   );

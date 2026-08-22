@@ -3,7 +3,7 @@
 import { Control, UseFormSetValue, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import {
-  ChevronDown,
+  LucideChevronDown,
   LucideDices,
   LucidePipette,
   LucideRotateCcw,
@@ -92,7 +92,7 @@ function AdvancedDesignSection({
             {description}
           </span>
         </span>
-        <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+        <LucideChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
       </CollapsibleTrigger>
 
       {/* Collapsible Content Section */}

@@ -13,7 +13,7 @@ import {
 } from "@/utils/types/resume/resume.type";
 import { RESUME_TEMPLATE_LABEL_KEYS } from "@/utils/constants/resume.constant";
 import { useTranslations } from "next-intl";
-import { Layout } from "lucide-react";
+import { LucideLayout } from "lucide-react";
 
 export default function TemplateSelector({
   value,
@@ -35,7 +35,7 @@ export default function TemplateSelector({
         {/* Select Template Trigger Section */}
         <SelectTrigger className="h-8 w-[150px] rounded-none bg-background text-xs sm:w-[180px]">
           <div className="flex items-center gap-2">
-            <Layout size={14} className="text-muted-foreground" />
+            <LucideLayout size={14} className="text-muted-foreground" />
             <SelectValue placeholder={t("selectTemplate")} />
           </div>
         </SelectTrigger>

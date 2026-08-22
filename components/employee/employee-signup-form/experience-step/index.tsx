@@ -7,7 +7,12 @@ import ErrorMessage from "@/components/utils/feedback/error-message";
 import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { LucidePlus, LucideTrash2, Sparkles, Loader2 } from "lucide-react";
+import {
+  LucidePlus,
+  LucideTrash2,
+  LucideSparkles,
+  LucideLoader2,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { Controller, useFieldArray, useWatch } from "react-hook-form";
@@ -157,9 +162,9 @@ export default function ExperienceStepForm({
                   className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                 >
                   {isRefining ? (
-                    <Loader2 size={10} className="animate-spin" />
+                    <LucideLoader2 size={10} className="animate-spin" />
                   ) : (
-                    <Sparkles size={10} />
+                    <LucideSparkles size={10} />
                   )}
                   {tr("aiRefine")}
                 </Button>
