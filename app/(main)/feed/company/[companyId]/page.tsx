@@ -19,7 +19,7 @@ import Tag from "@/components/utils/data-display/tag";
 import { BenefitValueChip } from "@/components/utils/data-display/benefit-value-chip";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { getSocialPlatformTypeIcon } from "@/utils/functions/ui";
+import { PlatformIcon } from "@/components/utils/brand/platform-icon";
 import {
   formatAvailabilityWords,
   translateLocation,
@@ -51,7 +51,6 @@ import {
   LucideLanguages,
   LucideUser,
   LucideUsers,
-  User,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -319,7 +318,7 @@ export default function CompanyDetailPage() {
         avatar={companyData.avatar}
         cover={companyData.cover}
         fallback={
-          companyData.name ? getNameInitials(companyData.name) : <User />
+          companyData.name ? getNameInitials(companyData.name) : <LucideUser />
         }
         onAvatarClick={() => setOpenProfilePopup(true)}
         meta={
@@ -694,7 +693,7 @@ export default function CompanyDetailPage() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-semibold transition-colors hover:border-foreground/30 hover:bg-muted"
                   >
-                    {getSocialPlatformTypeIcon(s.platform as TPlatform)}
+                    <PlatformIcon platform={s.platform as TPlatform} />
                     {s.platform}
                   </Link>
                 ))}

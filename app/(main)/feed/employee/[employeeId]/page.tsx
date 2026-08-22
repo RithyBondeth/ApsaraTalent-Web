@@ -19,7 +19,7 @@ import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/cou
 import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { getSocialPlatformTypeIcon } from "@/utils/functions/ui";
+import { PlatformIcon } from "@/components/utils/brand/platform-icon";
 import { translateLocation } from "@/utils/functions/text";
 import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { formatShortDate } from "@/utils/functions/date";
@@ -50,7 +50,6 @@ import {
   LucideUser,
   LucideUserX,
   LucideZap,
-  User,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -316,7 +315,7 @@ export default function EmployeeDetailPage() {
           employeeData.username ? (
             employeeData.username.slice(0, AVATAR_INITIALS_LENGTH)
           ) : (
-            <User />
+            <LucideUser />
           )
         }
         onAvatarClick={() => setOpenProfilePopup(true)}
@@ -643,7 +642,7 @@ export default function EmployeeDetailPage() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-semibold transition-colors hover:border-foreground/30 hover:bg-muted"
                   >
-                    {getSocialPlatformTypeIcon(item.platform as TPlatform)}
+                    <PlatformIcon platform={item.platform as TPlatform} />
                     {item.platform}
                   </Link>
                 ))}

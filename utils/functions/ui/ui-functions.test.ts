@@ -1,9 +1,7 @@
-import React from "react";
 import { describe, expect, it } from "vitest";
 import { getStatusBadgeStyleClass } from "./get-interview-status-class";
 import { getPaginationPages } from "./get-pagination-pages";
 import { getScoreTone } from "./get-score-tone";
-import { getSocialPlatformTypeIcon } from "./get-social-type";
 
 describe("UI functions", () => {
   // These assert the token family each state maps to, not a specific hue.
@@ -64,12 +62,5 @@ describe("UI functions", () => {
     ).toEqual([1, 2, "...", 5]);
     expect(getPaginationPages({ currentPage: 5, totalPages: 5 })).toEqual([5]);
     expect(getPaginationPages({ currentPage: 99, totalPages: 3 })).toEqual([3]);
-  });
-
-  it("returns social icons", () => {
-    expect(React.isValidElement(getSocialPlatformTypeIcon("Github"))).toBe(
-      true,
-    );
-    expect(getSocialPlatformTypeIcon("Unknown" as never)).toBeNull();
   });
 });

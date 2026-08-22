@@ -48,6 +48,7 @@ import LabelInput from "@/components/utils/forms/label-input";
 import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { LoginMethodIcon } from "@/components/utils/brand/login-method-icon";
 import { useCmpAvatarCoverState } from "@/hooks/profile/company/use-cmp-avatar-cover-state";
 import useCmpBenefitValueState from "@/hooks/profile/company/use-cmp-benefit-value-state";
 import { useCmpCareerScopesState } from "@/hooks/profile/company/use-cmp-careerscope-state";
@@ -74,7 +75,7 @@ import {
   loginMethodConstant,
   platformConstant,
 } from "@/utils/constants/ui.constant";
-import { getSocialPlatformTypeIcon } from "@/utils/functions/ui";
+import { PlatformIcon } from "@/components/utils/brand/platform-icon";
 import { capitalizeWords, getNameInitials } from "@/utils/functions/text";
 import { isUuid } from "@/utils/functions/validation";
 import { getFoundedYearOptions, parseMaybeDate } from "@/utils/functions/date";
@@ -88,7 +89,7 @@ import { IBenefits } from "@/utils/interfaces/user/company.interface";
 import { IValues } from "@/utils/interfaces/user/company.interface";
 import { TPlatform } from "@/utils/types/user/platform.type";
 import {
-  ChevronDown,
+  LucideChevronDown,
   LucideBriefcase,
   LucideBuilding,
   LucideCalendarDays,
@@ -110,7 +111,7 @@ import {
   LucideUsers,
   LucideXCircle,
   LucideZap,
-  Sparkles,
+  LucideSparkles,
 } from "lucide-react";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import Image from "next/image";
@@ -1553,7 +1554,7 @@ export default function ProfilePage() {
                       {descLoading ? (
                         <LucideLoader2 size={10} className="animate-spin" />
                       ) : (
-                        <Sparkles size={10} />
+                        <LucideSparkles size={10} />
                       )}
                       {tr("aiRefine")}
                     </Button>
@@ -2239,7 +2240,7 @@ export default function ProfilePage() {
                             (c) => c.name === careerScopeInput.name,
                           )?.name
                         : tP("selectCareers")}
-                      <ChevronDown className="opacity-50" />
+                      <LucideChevronDown className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent
@@ -2330,7 +2331,7 @@ export default function ProfilePage() {
                       className="inline-flex max-w-[200px] items-center gap-1.5 overflow-hidden border border-border bg-muted/50 px-3 py-1.5 text-foreground hover:bg-muted sm:max-w-[260px]"
                     >
                       <span className="flex-shrink-0">
-                        {getSocialPlatformTypeIcon(item.platform as TPlatform)}
+                        <PlatformIcon platform={item.platform as TPlatform} />
                       </span>
                       <span className="truncate text-sm">{item.platform}</span>
                     </Link>
@@ -2379,9 +2380,9 @@ export default function ProfilePage() {
                             <div className="flex min-w-0 items-center gap-2">
                               <span className="flex size-5 shrink-0 items-center justify-center [&>svg]:size-4">
                                 {socialInput?.platform ? (
-                                  getSocialPlatformTypeIcon(
-                                    socialInput.platform as TPlatform,
-                                  )
+                                  <PlatformIcon
+                                    platform={socialInput.platform as TPlatform}
+                                  />
                                 ) : (
                                   <LucideGlobe />
                                 )}
@@ -2397,9 +2398,9 @@ export default function ProfilePage() {
                               >
                                 <span className="flex items-center gap-2">
                                   <span className="flex size-5 shrink-0 items-center justify-center [&>svg]:size-4">
-                                    {getSocialPlatformTypeIcon(
-                                      platform.value as TPlatform,
-                                    )}
+                                    <PlatformIcon
+                                      platform={platform.value as TPlatform}
+                                    />
                                   </span>
                                   {platform.label}
                                 </span>
@@ -2497,13 +2498,9 @@ export default function ProfilePage() {
                   key={item.id}
                 >
                   <div className="flex items-center gap-2">
-                    <Image
-                      src={item.icon}
-                      alt={item.label}
-                      width={30}
-                      height={30}
-                      className="rounded-full"
-                    />
+                    <span className="mx-1 flex items-center">
+                      <LoginMethodIcon method={item.label} />
+                    </span>
                     <TypographySmall>{item.label}</TypographySmall>
                   </div>
 
