@@ -37,7 +37,7 @@ describe("login store", () => {
       message: null,
       user: null,
       requiresTwoFactor: false,
-      pendingUserId: null,
+      pendingTwoFactorToken: null,
       pendingRememberMe: false,
     });
   });
@@ -68,7 +68,7 @@ describe("login store", () => {
       data: {
         message: "Two-factor required",
         requiresTwoFactor: true,
-        userId: "user-1",
+        twoFactorToken: "challenge-token",
       },
     });
 
@@ -78,7 +78,7 @@ describe("login store", () => {
     expect(useLoginStore.getState()).toMatchObject({
       isAuthenticated: false,
       requiresTwoFactor: true,
-      pendingUserId: "user-1",
+      pendingTwoFactorToken: "challenge-token",
       pendingRememberMe: false,
     });
   });
@@ -100,14 +100,14 @@ describe("login store", () => {
     useLoginStore.setState({
       isAuthenticated: true,
       requiresTwoFactor: true,
-      pendingUserId: "user-1",
+      pendingTwoFactorToken: "challenge-token",
       pendingRememberMe: true,
     });
 
     useLoginStore.getState().clearTwoFactorPending();
     expect(useLoginStore.getState()).toMatchObject({
       requiresTwoFactor: false,
-      pendingUserId: null,
+      pendingTwoFactorToken: null,
       pendingRememberMe: false,
     });
 

@@ -90,7 +90,7 @@ function LoginPage() {
     error,
     loading,
     requiresTwoFactor,
-    pendingUserId,
+    pendingTwoFactorToken,
     pendingRememberMe,
     clearTwoFactorPending,
   } = useLoginStore();
@@ -216,10 +216,10 @@ function LoginPage() {
 
   // ── 2FA Verify Function ──────────────────────────────────────
   const handleTwoFactorVerify = async () => {
-    if (!pendingUserId || twoFactorOtp.length < 6) return;
+    if (!pendingTwoFactorToken || twoFactorOtp.length < 6) return;
     setTwoFactorInitiated(true);
     const success = await twoFactorStore.verifyLogin(
-      pendingUserId,
+      pendingTwoFactorToken,
       twoFactorOtp,
       pendingRememberMe,
     );

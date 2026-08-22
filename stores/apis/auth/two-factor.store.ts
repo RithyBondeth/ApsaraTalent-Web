@@ -32,7 +32,7 @@ type T2FAState = {
   enable: (otp: string) => Promise<boolean>;
   disable: (otp: string) => Promise<boolean>;
   verifyLogin: (
-    userId: string,
+    twoFactorToken: string,
     otp: string,
     rememberMe: boolean,
   ) => Promise<boolean>;
@@ -93,12 +93,16 @@ export const useTwoFactorStore = create<T2FAState>()((set) => ({
     }
   },
 
-  verifyLogin: async (userId: string, otp: string, rememberMe: boolean) => {
+  verifyLogin: async (
+    twoFactorToken: string,
+    otp: string,
+    rememberMe: boolean,
+  ) => {
     set({ loading: true, error: null });
     try {
       const response = await axios.post<T2FAVerifyLoginResponse>(
         API_2FA_VERIFY_LOGIN_URL,
-        { userId, otp },
+        { twoFactorToken, otp },
       );
       setSessionRole(response.data.user.role, rememberMe);
       set({ loading: false });
