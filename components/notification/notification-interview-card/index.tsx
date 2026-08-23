@@ -54,9 +54,9 @@ export default function NotificationInterviewCard(
       title={t(titleKey as Parameters<typeof t>[0])}
       description={description}
       icon={<LucideCalendarCheck strokeWidth={1.5} className="size-full" />}
-      iconBgColor="bg-category-orange-subtle"
-      iconColor="text-category-orange-accent"
-      unreadColor="bg-category-orange"
+      iconBgColor="bg-category-blue-subtle"
+      iconColor="text-category-blue-accent"
+      unreadColor="bg-category-blue"
       onDelete={props.onDelete}
       onClick={handleNavigate}
     >
@@ -89,7 +89,7 @@ export default function NotificationInterviewCard(
           </div>
 
           {/* Interview Badge Section */}
-          <div className="shrink-0 border border-category-orange/20 bg-category-orange-subtle px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-category-orange-accent">
+          <div className="shrink-0 border border-category-blue/20 bg-category-blue-subtle px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-category-blue-accent">
             {t("interviewBadge")}
           </div>
         </div>

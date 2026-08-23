@@ -181,7 +181,7 @@ function MessageBubble(props: IMessageBubbleProps) {
             className={`rounded-none border text-sm shadow-hard-sm transition-all ${
               message.isMe
                 ? "border-primary bg-primary text-primary-foreground"
-                : "border-l-[4px] border-border border-l-foreground bg-card text-foreground"
+                : "border-border bg-card text-foreground"
             } ${message.isDeleted ? "px-3 py-2 opacity-60" : "p-3"}`}
           >
             {/* Reply / Quote block Section */}

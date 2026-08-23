@@ -61,7 +61,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
   // ── Grid variant: flat card, top border divider, no vertical gap ──────────
   return (
     <>
-      <div className="group relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-none border border-t-[5px] border-border border-t-foreground bg-card transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:border-foreground/45 hover:border-t-foreground hover:shadow-hard-lg active:translate-y-0 active:scale-[0.985] active:shadow-none">
+      <div className="group relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-none border border-border bg-card transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:border-foreground/35 hover:border-t-foreground hover:shadow-hard-lg active:translate-y-0 active:scale-[0.985] active:shadow-none">
         {/* Cover Banner Section */}
         <div className="relative h-32 w-full shrink-0 overflow-hidden bg-gradient-to-br from-muted via-background to-muted/40 tablet-md:h-24">
           {props.cover && (
@@ -79,7 +79,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
               size="icon"
               variant="ghost"
               aria-label="Like"
-              className="size-8 rounded-none border border-border bg-background/90 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-foreground hover:text-background"
+              className="size-8 rounded-none border border-border bg-background/90 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
               onClick={props.onLikeClick}
               disabled={props.onLikeClickDisable}
             >
@@ -93,7 +93,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
               size="icon"
               variant="ghost"
               aria-label="Quick view"
-              className="size-8 rounded-none border border-border bg-background/90 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-foreground hover:text-background"
+              className="size-8 rounded-none border border-border bg-background/90 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
               onClick={handleClickDialog}
             >
               <LucideEye className="!size-4" />

@@ -1,7 +1,6 @@
 "use client";
 
 import OpenPositionForm from "@/components/company/profile/open-position-form";
-import { GridRunners } from "@/components/ui/grid-runners";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -1232,25 +1231,21 @@ export default function ProfilePage() {
       <section className="profile-hero profile-company-hero overflow-hidden border border-border bg-card">
         {/* Cover Image Section */}
         <div
-          className={`profile-cover relative h-48 overflow-hidden bg-cover bg-center bg-no-repeat sm:h-64 ${!company.cover ? "bg-foreground" : ""}`}
+          className={`profile-cover relative h-48 overflow-hidden bg-cover bg-center bg-no-repeat sm:h-64 ${!company.cover ? "border-b border-border bg-muted" : ""}`}
           style={
             company.cover
               ? { backgroundImage: `url(${avatarOrCoverPreview.cover})` }
               : {}
           }
         >
-          {/* Cover Background Section: the same grid the detail heroes use.
-              Drawn over a cover photo as well, which is what the detail
-              pages do — gating it on "no photo" is what made the two
-              covers diverge. */}
-          <div className="profile-detail-hero-grid" aria-hidden />
-          <GridRunners
-            className="profile-detail-grid-runners"
-            density="quiet"
-          />
-
-          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/65 to-transparent" />
-          <span className="absolute bottom-4 left-5 text-[10px] font-bold uppercase tracking-[0.24em] text-white sm:left-6">
+          {company.cover && (
+            <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-scrim/65 to-transparent" />
+          )}
+          <span
+            className={`absolute bottom-4 left-5 text-[10px] font-bold uppercase tracking-[0.24em] sm:left-6 ${
+              company.cover ? "text-white" : "text-foreground"
+            }`}
+          >
             {tP("companyProfileLabel")}
           </span>
 
@@ -1258,7 +1253,7 @@ export default function ProfilePage() {
           {(isEdit || !company.cover) && (
             <div className="absolute bottom-3 right-3 flex items-center gap-2">
               <Button
-                className="flex h-8 items-center gap-1.5 rounded-none border border-white/30 bg-background/90 px-3 text-xs text-foreground backdrop-blur-sm hover:bg-background"
+                className="flex h-8 items-center gap-1.5 rounded-none border border-input bg-background/90 px-3 text-xs text-foreground backdrop-blur-sm hover:bg-background"
                 onClick={() => {
                   if (isEdit) {
                     coverInputRef.current?.click();
@@ -1314,7 +1309,7 @@ export default function ProfilePage() {
               {(isEdit || !company.avatar) && (
                 <div className="absolute -bottom-1 -right-1 flex items-center gap-1">
                   <Button
-                    className="size-7 rounded-none bg-foreground p-0 text-primary-foreground shadow-none"
+                    className="size-7 rounded-none border-primary bg-primary p-0 text-primary-foreground shadow-none"
                     onClick={() => {
                       if (isEdit) {
                         avatarInputRef.current?.click();
@@ -1924,7 +1919,7 @@ export default function ProfilePage() {
                       />
                       {isEdit && (
                         <LucideXCircle
-                          className="absolute right-1 top-3 cursor-pointer text-destructive"
+                          className="absolute right-1 top-3 size-3.5 cursor-pointer text-destructive"
                           type="button"
                           onClick={() => {
                             if (img?.id === "" || img?.id === undefined) {
@@ -2199,10 +2194,7 @@ export default function ProfilePage() {
                         onClick={() => removeCareerScope(career.name)}
                         className="inline-flex items-center justify-center"
                       >
-                        <LucideXCircle
-                          className="text-destructive"
-                          width="18px"
-                        />
+                        <LucideXCircle className="size-3.5 text-destructive" />
                       </button>
                     )}
                   </div>
@@ -2337,7 +2329,7 @@ export default function ProfilePage() {
                     </Link>
                     {isEdit && (
                       <LucideXCircle
-                        className="flex-shrink-0 cursor-pointer text-destructive transition-colors hover:text-destructive-accent"
+                        className="size-3.5 flex-shrink-0 cursor-pointer text-destructive transition-colors hover:text-destructive-accent"
                         size={18}
                         onClick={() => removeSocial(item.platform as TPlatform)}
                       />

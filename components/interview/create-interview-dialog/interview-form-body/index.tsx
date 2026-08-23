@@ -151,7 +151,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
               </SelectContent>
             </Select>
           ) : (
-            <TypographyMuted className="rounded-none border-l-[4px] border-l-foreground bg-muted/50 px-3 py-2.5 text-sm">
+            <TypographyMuted className="rounded-none bg-muted/50 px-3 py-2.5 text-sm">
               {t("noMatchedEmployees")}
             </TypographyMuted>
           )}

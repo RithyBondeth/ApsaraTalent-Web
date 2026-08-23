@@ -138,7 +138,7 @@ export default function SkillReferenceStepForm({
               >
                 <Tag label={skill} />
                 <LucideXCircle
-                  className="cursor-pointer text-muted-foreground text-red-500"
+                  className="size-3.5 cursor-pointer text-muted-foreground text-red-500"
                   width={"18px"}
                   onClick={() => removeSkill(skill)}
                 />
@@ -186,7 +186,7 @@ export default function SkillReferenceStepForm({
               <TypographyMuted className="text-xs">
                 {t("empReferenceResume")}
               </TypographyMuted>
-              <div className="flex w-full items-center justify-between rounded-none border border-l-[4px] border-border border-l-foreground bg-muted p-3">
+              <div className="flex w-full items-center justify-between rounded-none border border-border bg-muted p-3">
                 <TypographyMuted className="truncate pr-2">
                   {resumeFile.name.trim()}
                 </TypographyMuted>
@@ -230,7 +230,7 @@ export default function SkillReferenceStepForm({
               <TypographyMuted className="text-xs">
                 {t("empReferenceCoverLetter")}
               </TypographyMuted>
-              <div className="flex w-full items-center justify-between rounded-none border border-l-[4px] border-border border-l-foreground bg-muted p-3">
+              <div className="flex w-full items-center justify-between rounded-none border border-border bg-muted p-3">
                 <TypographyMuted className="truncate pr-2">
                   {coverLetterFile.name.trim()}
                 </TypographyMuted>

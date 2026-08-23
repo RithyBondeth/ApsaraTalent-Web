@@ -61,7 +61,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
   return (
     <>
-      <article className="relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-none border border-t-[5px] border-border border-t-foreground bg-card transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:border-foreground/45 hover:border-t-foreground hover:shadow-hard-lg active:translate-y-0 active:scale-[0.985] active:shadow-none">
+      <article className="relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-none border border-border bg-card transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:border-foreground/35 hover:border-t-foreground hover:shadow-hard-lg active:translate-y-0 active:scale-[0.985] active:shadow-none">
         {/* Header Section: Avatar, Identity, Quick View and Like */}
         <div className="flex items-start gap-3 p-4 pb-3">
           <CachedAvatar
@@ -104,7 +104,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
               size="icon"
               variant="ghost"
               aria-label="Like"
-              className="size-8 rounded-none border border-border text-muted-foreground transition-all duration-200 hover:bg-foreground hover:text-background"
+              className="size-8 rounded-none border border-border text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
               onClick={props.onLikeClick}
               disabled={props.onLikeClickDisable}
             >
@@ -118,7 +118,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
               size="icon"
               variant="ghost"
               aria-label="Quick view"
-              className="size-8 rounded-none border border-border text-muted-foreground transition-all duration-200 hover:bg-foreground hover:text-background"
+              className="size-8 rounded-none border border-border text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
               onClick={handleClickDialog}
             >
               <LucideEye className="!size-4" />

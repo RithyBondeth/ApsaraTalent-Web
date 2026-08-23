@@ -106,7 +106,9 @@ export function OnboardingFlow() {
       {/* Backdrop Section */}
       <div
         className={cn(
-          "fixed inset-0 z-50 bg-foreground/30 backdrop-blur-[2px] transition-opacity duration-300",
+          // bg-scrim, not bg-foreground: --foreground inverts per theme, so
+          // this backdrop was washing the dark theme in 30% near-white.
+          "fixed inset-0 z-50 bg-scrim/30 backdrop-blur-[2px] transition-opacity duration-300",
           closing ? "opacity-0" : "opacity-100",
         )}
         onClick={dismiss}
@@ -121,7 +123,7 @@ export function OnboardingFlow() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Card Container Section */}
-        <div className="relative flex flex-col gap-4 rounded-none border border-t-[5px] border-border border-t-foreground bg-card p-5 shadow-hard-lg">
+        <div className="relative flex flex-col gap-4 rounded-none border border-border bg-card p-5 shadow-hard-lg">
           {/* Close Button Section */}
           <button
             onClick={dismiss}
@@ -164,7 +166,7 @@ export function OnboardingFlow() {
                   className={cn(
                     "rounded-none transition-all duration-200",
                     i === step
-                      ? "h-2 w-5 bg-foreground"
+                      ? "h-2 w-5 bg-primary"
                       : "h-2 w-2 bg-border hover:bg-muted-foreground/50",
                   )}
                 />

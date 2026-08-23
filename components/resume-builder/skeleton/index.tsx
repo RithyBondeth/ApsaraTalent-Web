@@ -34,12 +34,12 @@ export default function ResumeBuilderLoadingSkeleton() {
             <Skeleton className="h-3 w-3/5 rounded-none" />
           </div>
         </div>
-        <div className="relative flex min-h-[300px] w-2/5 min-w-0 shrink-0 items-center justify-center overflow-hidden bg-foreground p-7 tablet-md:p-3">
+        <div className="relative flex min-h-[300px] w-2/5 min-w-0 shrink-0 items-center justify-center overflow-hidden border border-border bg-muted p-7 tablet-md:p-3">
           <div className="absolute left-4 top-4 flex items-center gap-2 tablet-md:left-2 tablet-md:top-2">
             <Skeleton className="size-7 rounded-none opacity-20" />
             <Skeleton className="h-3 w-28 rounded-none opacity-20 tablet-md:hidden" />
           </div>
-          <div className="relative mt-5 h-[206px] w-[84%] max-w-[330px] border border-background/15 p-3 tablet-md:h-[124px] tablet-md:w-[78%] tablet-md:p-1.5">
+          <div className="relative mt-5 h-[206px] w-[84%] max-w-[330px] border border-border p-3 tablet-md:h-[124px] tablet-md:w-[78%] tablet-md:p-1.5">
             <div className="absolute -bottom-2 -right-2 h-full w-full border border-background/10" />
             <Skeleton className="relative h-full w-full rounded-none opacity-20" />
           </div>
@@ -63,7 +63,7 @@ export default function ResumeBuilderLoadingSkeleton() {
           <StepHeaderSkeleton />
 
           {/* Source Input Skeleton Section */}
-          <div className="flex w-full flex-col gap-5 border border-t-[5px] border-border border-t-foreground bg-card p-5 shadow-hard">
+          <div className="flex w-full flex-col gap-5 border border-border bg-card p-5 shadow-hard">
             <div className="flex items-start gap-3">
               <Skeleton className="size-9 shrink-0 rounded-none" />
               <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -155,7 +155,7 @@ export function ResumeEditorLoadingSkeleton() {
   return (
     <div className="resume-editor-shell flex h-[calc(100dvh-4rem)] flex-col overflow-hidden">
       {/* Top Action Bar Section */}
-      <div className="resume-editor-controls flex flex-col gap-2 border-b border-t-[5px] border-border border-t-foreground bg-card px-3 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-5">
+      <div className="resume-editor-controls flex flex-col gap-2 border-b border-border bg-card px-3 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-5">
         <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
           {/* Back Button */}
           <Skeleton className="h-8 w-20 shrink-0 rounded-none" />

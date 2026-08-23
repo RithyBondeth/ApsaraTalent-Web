@@ -125,35 +125,35 @@ export default {
         // Categorical — for labels that differ in kind, not severity.
         // Never borrow a status token for these; see globals.css.
         category: {
-          violet: {
-            DEFAULT: "hsl(var(--category-violet))",
-            accent: "hsl(var(--category-violet-accent))",
-            subtle: "hsl(var(--category-violet-subtle))",
+          purple: {
+            DEFAULT: "hsl(var(--category-purple))",
+            accent: "hsl(var(--category-purple-accent))",
+            subtle: "hsl(var(--category-purple-subtle))",
           },
-          magenta: {
-            DEFAULT: "hsl(var(--category-magenta))",
-            accent: "hsl(var(--category-magenta-accent))",
-            subtle: "hsl(var(--category-magenta-subtle))",
+          pink: {
+            DEFAULT: "hsl(var(--category-pink))",
+            accent: "hsl(var(--category-pink-accent))",
+            subtle: "hsl(var(--category-pink-subtle))",
           },
-          teal: {
-            DEFAULT: "hsl(var(--category-teal))",
-            accent: "hsl(var(--category-teal-accent))",
-            subtle: "hsl(var(--category-teal-subtle))",
+          brown: {
+            DEFAULT: "hsl(var(--category-brown))",
+            accent: "hsl(var(--category-brown-accent))",
+            subtle: "hsl(var(--category-brown-subtle))",
+          },
+          blue: {
+            DEFAULT: "hsl(var(--category-blue))",
+            accent: "hsl(var(--category-blue-accent))",
+            subtle: "hsl(var(--category-blue-subtle))",
           },
           orange: {
             DEFAULT: "hsl(var(--category-orange))",
             accent: "hsl(var(--category-orange-accent))",
             subtle: "hsl(var(--category-orange-subtle))",
           },
-          indigo: {
-            DEFAULT: "hsl(var(--category-indigo))",
-            accent: "hsl(var(--category-indigo-accent))",
-            subtle: "hsl(var(--category-indigo-subtle))",
-          },
-          lime: {
-            DEFAULT: "hsl(var(--category-lime))",
-            accent: "hsl(var(--category-lime-accent))",
-            subtle: "hsl(var(--category-lime-subtle))",
+          gray: {
+            DEFAULT: "hsl(var(--category-gray))",
+            accent: "hsl(var(--category-gray-accent))",
+            subtle: "hsl(var(--category-gray-subtle))",
           },
         },
         scrim: "hsl(var(--scrim))",

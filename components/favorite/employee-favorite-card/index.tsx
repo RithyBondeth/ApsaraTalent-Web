@@ -29,7 +29,7 @@ export default function FavoriteEmployeeCard(
   return (
     <article
       className={cn(
-        "group w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-hard transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-hard-lg",
+        "group w-full overflow-hidden rounded-none border border-border bg-card shadow-hard transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-hard-lg",
         props.isRemoving && "animate-card-pop-shrink",
       )}
     >

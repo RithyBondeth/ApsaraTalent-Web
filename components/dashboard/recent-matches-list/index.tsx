@@ -43,7 +43,7 @@ export function RecentMatchesList({
       {matches.map((match) => (
         <div
           key={match.id}
-          className="flex items-center gap-3 border border-l-[3px] border-border border-l-foreground bg-muted/25 p-3 transition-all hover:-translate-y-0.5 hover:bg-muted/45"
+          className="flex items-center gap-3 border border-border bg-muted/25 p-3 transition-all hover:-translate-y-0.5 hover:bg-muted/45"
         >
           {/* Avatar Section */}
           <CachedAvatar

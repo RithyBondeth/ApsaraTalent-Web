@@ -62,7 +62,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
             <a
               key={item.id}
               href={`#${item.id}`}
-              className="shrink-0 border border-border px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/30 hover:bg-muted hover:text-foreground"
+              className="shrink-0 border border-border px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/35 hover:bg-muted hover:text-foreground"
             >
               <span className="mr-2 text-[10px] tabular-nums text-foreground">
                 {String(index + 1).padStart(2, "0")}

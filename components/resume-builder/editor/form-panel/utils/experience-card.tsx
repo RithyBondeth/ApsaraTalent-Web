@@ -103,7 +103,7 @@ export function ExperienceCard({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-background shadow-hard">
+    <div className="overflow-hidden rounded-none border border-border bg-background shadow-hard">
       {/* Card Header Section */}
       <div
         className="flex cursor-pointer select-none items-center justify-between border-b border-border/40 bg-muted/30 px-3 py-2"
@@ -226,7 +226,7 @@ export function ExperienceCard({
               {achFields.map((f, ai) => (
                 <div
                   key={f.id}
-                  className="group/ach flex flex-col gap-1.5 rounded-none border border-l-[4px] border-border border-l-foreground bg-muted/20 p-2"
+                  className="group/ach flex flex-col gap-1.5 rounded-none border border-border bg-muted/20 p-2"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold uppercase text-muted-foreground">

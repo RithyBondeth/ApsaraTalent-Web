@@ -23,13 +23,13 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <section className="w-full border border-t-[5px] border-border border-t-foreground bg-card p-4 shadow-hard sm:p-5">
+    <section className="w-full border border-border bg-card p-4 shadow-hard sm:p-5">
       <div className="flex flex-col gap-5">
         {/* Header Section */}
         <div className="flex flex-col gap-3">
           {/* Left Section */}
           <div className="flex items-start gap-3">
-            <div className="grid size-9 shrink-0 place-items-center border border-foreground bg-foreground text-background">
+            <div className="grid size-9 shrink-0 place-items-center border border-border bg-muted/60 text-foreground">
               <LucideSparkles className="size-4" />
             </div>
             <div className="min-w-0">
@@ -47,7 +47,7 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
             className={cn(
               "inline-flex w-full items-center gap-2 border px-3 py-2 text-xs font-semibold",
               usingPastedInfo
-                ? "border-foreground bg-foreground text-background"
+                ? "border-primary bg-primary text-primary-foreground"
                 : "border-border bg-muted/35 text-muted-foreground",
             )}
           >

@@ -13,9 +13,9 @@ export type TCoverLetterStyle = (typeof COVER_LETTER_STYLES)[number]["id"];
 // Question kind, not question severity — categorical tokens, so a "Situational"
 // chip no longer wears the same amber as a real warning.
 export const INTERVIEW_PREP_CHIP: Record<string, string> = {
-  Technical: "bg-category-indigo-subtle text-category-indigo-accent",
-  Behavioral: "bg-category-violet-subtle text-category-violet-accent",
-  Situational: "bg-category-orange-subtle text-category-orange-accent",
-  "Culture Fit": "bg-category-teal-subtle text-category-teal-accent",
+  Technical: "bg-category-orange-subtle text-category-orange-accent",
+  Behavioral: "bg-category-purple-subtle text-category-purple-accent",
+  Situational: "bg-category-blue-subtle text-category-blue-accent",
+  "Culture Fit": "bg-category-brown-subtle text-category-brown-accent",
 } as const;
 export const INTERVIEW_PREP_CHIP_FALLBACK = "bg-muted text-muted-foreground";

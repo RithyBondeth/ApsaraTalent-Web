@@ -23,18 +23,18 @@ import { cn } from "@/lib/utils";
 const VARIANTS = {
   full: {
     surface:
-      "bg-category-teal-subtle text-category-teal-accent border-category-teal-accent/20",
-    dot: "bg-category-teal",
+      "bg-category-brown-subtle text-category-brown-accent border-category-brown-accent/20",
+    dot: "bg-category-brown",
   },
   part: {
     surface:
-      "bg-category-indigo-subtle text-category-indigo-accent border-category-indigo-accent/20",
-    dot: "bg-category-indigo",
+      "bg-category-orange-subtle text-category-orange-accent border-category-orange-accent/20",
+    dot: "bg-category-orange",
   },
   free: {
     surface:
-      "bg-category-violet-subtle text-category-violet-accent border-category-violet-accent/20",
-    dot: "bg-category-violet",
+      "bg-category-purple-subtle text-category-purple-accent border-category-purple-accent/20",
+    dot: "bg-category-purple",
   },
   other: {
     surface: "bg-muted text-muted-foreground border-border",

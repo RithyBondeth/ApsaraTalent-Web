@@ -25,7 +25,7 @@ export default function MobileTabItem(props: IMobileTabItemProps) {
       <span
         aria-hidden="true"
         className={cn(
-          "absolute left-1/2 top-0 h-[3px] -translate-x-1/2 bg-foreground transition-[width,opacity] duration-200",
+          "absolute left-1/2 top-0 h-[3px] -translate-x-1/2 bg-primary transition-[width,opacity] duration-200",
           active ? "w-8 opacity-100" : "w-0 opacity-0",
         )}
       />

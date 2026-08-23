@@ -33,7 +33,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
         <div
           className={`absolute left-3 top-3 z-20 flex h-7 items-center gap-1.5 border px-2 text-[10px] font-black uppercase tracking-[0.12em] transition-colors ${
             props.selected
-              ? "border-foreground bg-foreground text-background"
+              ? "border-primary bg-primary text-primary-foreground"
               : "border-border bg-background/90 text-muted-foreground backdrop-blur"
           }`}
         >

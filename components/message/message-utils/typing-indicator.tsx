@@ -31,7 +31,7 @@ export function ChatTypingIndicator(props: { activeChat: IChatPreview }) {
         </div>
 
         {/* Typing Animation Section */}
-        <div className="flex items-center gap-1 rounded-none border border-l-[4px] border-border border-l-foreground bg-card px-4 py-3 text-foreground shadow-hard-sm">
+        <div className="flex items-center gap-1 rounded-none border border-border bg-card px-4 py-3 text-foreground shadow-hard-sm">
           <style>{CHAT_TYPING_INDICATOR_STYLES}</style>
           <span className="typing-dot inline-block h-2 w-2 rounded-full bg-primary" />
           <span className="typing-dot inline-block h-2 w-2 rounded-full bg-primary" />

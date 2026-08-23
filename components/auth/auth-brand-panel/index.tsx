@@ -1,6 +1,5 @@
 "use client";
 
-import { GridRunners } from "@/components/ui/grid-runners";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -46,12 +45,6 @@ export default function AuthBrandPanel(props: IAuthBrandPanelProps) {
         className,
       )}
     >
-      {/* Ambient Art Layers Section */}
-      <div className="auth-panel-grid" aria-hidden />
-      <GridRunners className="auth-grid-runners" />
-      <div className="auth-nimbus" aria-hidden />
-      <div className="auth-spotlight" aria-hidden />
-
       {/* Hero Artwork Section */}
       <div className="relative z-[1] flex flex-1 items-center justify-center py-8">
         {image && (

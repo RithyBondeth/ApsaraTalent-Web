@@ -2,7 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { LucideCheck, LucideGlobe } from "lucide-react";
+import { LucideCheck, LucideLanguages } from "lucide-react";
 import { SettingWrapper } from "../setting-wrapper";
 import { ILanguageCardProps, ILanguageSectionProps } from "./props";
 import { useTranslations } from "next-intl";
@@ -17,7 +17,7 @@ export function LanguageSection(props: ILanguageSectionProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <SettingWrapper
-      icon={<LucideGlobe />}
+      icon={<LucideLanguages />}
       title={t("language")}
       description={t("languageDescription")}
     >

@@ -17,8 +17,8 @@ describe("BenefitValueChip", () => {
     const benefitClass = benefit.querySelector("span")!.className;
     const valueClass = value.querySelector("span")!.className;
 
-    expect(benefitClass).toContain("category-magenta");
-    expect(valueClass).toContain("category-lime");
+    expect(benefitClass).toContain("category-pink");
+    expect(valueClass).toContain("category-gray");
     expect(benefitClass).not.toEqual(valueClass);
   });
 

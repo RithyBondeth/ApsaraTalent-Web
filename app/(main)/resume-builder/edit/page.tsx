@@ -356,7 +356,7 @@ export default function ResumeEditorPage() {
   return (
     <div className="resume-editor-shell animate-page-in flex h-[calc(100dvh-4rem)] flex-col overflow-hidden text-foreground">
       {/* Primary Action Bar Section */}
-      <div className="resume-editor-controls flex flex-col gap-2 border-b border-t-[5px] border-border border-t-foreground bg-card px-3 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-5">
+      <div className="resume-editor-controls flex flex-col gap-2 border-b border-border bg-card px-3 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-5">
         {/* Editor Identity and Template Section */}
         <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
           <Button
@@ -462,7 +462,7 @@ export default function ResumeEditorPage() {
           onClick={() => setMobileWorkspace("edit")}
           className={`flex h-9 items-center justify-center gap-2 border text-xs font-bold transition-colors ${
             mobileWorkspace === "edit"
-              ? "border-foreground bg-foreground text-background"
+              ? "border-primary bg-primary text-primary-foreground"
               : "border-border bg-background text-muted-foreground"
           }`}
         >
@@ -475,7 +475,7 @@ export default function ResumeEditorPage() {
           onClick={() => setMobileWorkspace("preview")}
           className={`flex h-9 items-center justify-center gap-2 border border-l-0 text-xs font-bold transition-colors ${
             mobileWorkspace === "preview"
-              ? "border-foreground bg-foreground text-background"
+              ? "border-primary bg-primary text-primary-foreground"
               : "border-border bg-background text-muted-foreground"
           }`}
         >
@@ -569,10 +569,9 @@ export default function ResumeEditorPage() {
           size="md"
           className="w-[calc(100%-1.5rem)] bg-card"
         >
-          <header className="relative overflow-hidden border-b border-foreground bg-foreground p-5 text-background">
-            <div className="profile-detail-hero-grid" aria-hidden />
+          <header className="relative overflow-hidden border-b border-border bg-muted p-5 text-foreground">
             <div className="relative z-[2] flex items-center gap-3 pr-8">
-              <span className="flex size-11 shrink-0 items-center justify-center border border-background/25 bg-background/10">
+              <span className="flex size-11 shrink-0 items-center justify-center border border-border bg-card">
                 <LucideRotateCcw size={18} />
               </span>
               <DialogTitle className="text-xl font-bold tracking-tight sm:text-2xl">

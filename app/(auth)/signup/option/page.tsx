@@ -105,10 +105,10 @@ export default function SingUpOption() {
 
   /* ---------------------------------------- Render UI ---------------------------------------- */
   return (
-    <div className="mx-auto flex w-full max-w-[540px] flex-col items-start gap-6 border border-t-[5px] border-border border-t-foreground bg-card p-6 shadow-hard tablet-lg:my-4 sm:p-8">
+    <div className="mx-auto flex w-full max-w-[540px] flex-col items-start gap-6 border border-border bg-card p-6 shadow-hard tablet-lg:my-4 sm:p-8">
       {/* Icon Badge Section */}
-      <div className="flex size-14 items-center justify-center rounded-none bg-foreground">
-        <LucideUsers className="size-6 text-background" />
+      <div className="flex size-14 items-center justify-center rounded-none border border-border bg-muted/60">
+        <LucideUsers className="size-6 text-foreground" />
       </div>
 
       {/* Title Section */}

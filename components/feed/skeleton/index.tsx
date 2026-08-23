@@ -28,7 +28,7 @@ function RecommendedCardSkeleton({ isEmployee }: { isEmployee?: boolean }) {
 /* ------------ Neutral Card Skeleton (Shown Before user role is known) ------------ */
 function NeutralCardSkeleton() {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden border border-t-[5px] border-border border-t-foreground bg-card">
+    <div className="flex h-full w-full flex-col overflow-hidden border border-border bg-card">
       <div className="flex items-start gap-3 p-4 pb-3">
         <Skeleton className="size-16 shrink-0 rounded-none" />
         <div className="flex flex-1 flex-col gap-1.5">

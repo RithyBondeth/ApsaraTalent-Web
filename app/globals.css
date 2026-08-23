@@ -7,22 +7,27 @@
     --font-ubuntu: "Ubuntu";
     --font-kantumruy: "Kantumruy Pro";
 
-    /* Off-white page bg — pure white cards float above it */
-    --background: 220 20% 97%;
-    --foreground: 224 14% 10%;
+    /* Pure white page. The cards on it are white too, so the surface step
+       that used to separate them is gone — a card is now delineated by its
+       --border hairline (1.45:1 against the page) and its hard offset shadow,
+       which is what this square UI leans on anyway. `check:contrast` gates
+       that border pair in place of the old background→card step. */
+    --background: 0 0% 100%;
+    --foreground: 45 7.8% 20%;
     --card: 0 0% 100%;
-    --card-foreground: 224 14% 10%;
+    --card-foreground: 45 7.8% 20%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 14% 10%;
-    /* Apsara Cobalt Accent Section */
-    --primary: 221 83% 53%;
+    --popover-foreground: 45 7.8% 20%;
+    /* Apsara Gold Accent Section — the deep gold of the dancer's outline,
+       darkened just enough that it clears AA as link text on the ivory page. */
+    --primary: 209.8 76.7% 46.7%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 94%;
-    --secondary-foreground: 224 14% 10%;
-    --muted: 220 14% 94%;
-    --muted-foreground: 220 8% 44%;
-    --accent: 214 95% 93%;
-    --accent-foreground: 224 64% 33%;
+    --secondary: 60 6.7% 94.1%;
+    --secondary-foreground: 45 7.8% 20%;
+    --muted: 45 20% 96.1%;
+    --muted-foreground: 45 1.7% 44.1%;
+    --accent: 197.6 54.8% 93.9%;
+    --accent-foreground: 201.9 53.6% 39.9%;
 
     /* ---------------------------------------------------------------- */
     /* Status colours                                                   */
@@ -41,32 +46,32 @@
     /* Every pair is contrast-verified — `npm run check:contrast` fails */
     /* the build if an edit here drops one below its WCAG threshold.    */
     /* ---------------------------------------------------------------- */
-    --success: 145 63% 48%;
-    --success-foreground: 145 45% 11%;
-    --success-accent: 145 63% 31%;
-    --success-subtle: 145 63% 95%;
-    --success-border: 145 47% 78%;
+    --success: 147.6 31.7% 39%;
+    --success-foreground: 0 0% 100%;
+    --success-accent: 147.6 31.7% 36.1%;
+    --success-subtle: 111.4 22.6% 93.9%;
+    --success-border: 111.4 22.6% 79.9%;
 
-    --warning: 38 92% 48%;
-    --warning-foreground: 38 45% 11%;
-    --warning-accent: 38 92% 31.5%;
-    --warning-subtle: 38 88% 95%;
-    --warning-border: 38 69% 78%;
+    --warning: 37.7 62.4% 49%;
+    --warning-foreground: 37.7 55% 14%;
+    --warning-accent: 37.7 62.4% 35.1%;
+    --warning-subtle: 45 80% 92.2%;
+    --warning-border: 45 80% 72.4%;
 
-    --info: 192 82% 48%;
-    --info-foreground: 192 45% 11%;
-    --info-accent: 192 82% 32%;
-    --info-subtle: 192 82% 95%;
-    --info-border: 192 62% 78%;
+    --info: 201.9 53.6% 42.9%;
+    --info-foreground: 0 0% 100%;
+    --info-accent: 201.9 53.6% 39.9%;
+    --info-subtle: 197.6 54.8% 93.9%;
+    --info-border: 197.6 54.8% 79.9%;
 
     /* Destructive doubles as the danger status. Its lightness is picked
        so the one token works both as a fill (with --destructive-foreground
        on top) and as `text-destructive` on the page. */
-    --destructive: 0 72% 48%;
+    --destructive: 2.1 62.1% 53.8%;
     --destructive-foreground: 0 0% 100%;
-    --destructive-accent: 0 72% 34%;
-    --destructive-subtle: 0 72% 95%;
-    --destructive-border: 0 54% 78%;
+    --destructive-accent: 2.1 62.1% 48.7%;
+    --destructive-subtle: 356.7 81.8% 95.7%;
+    --destructive-border: 356.7 81.8% 81.7%;
 
     /* ---------------------------------------------------------------- */
     /* Categorical colours                                              */
@@ -77,45 +82,48 @@
     /* amber on it is what stops a real warning from standing out.      */
     /*                                                                  */
     /* Hues are spaced around the wheel and kept clear of the status    */
-    /* hues and the cobalt brand, so a category never reads as a state. */
+    /* hues and the gold brand, so a category never reads as a state. The     */
+    /* orange slot became `blue` in the gold rebrand: orange sat 10 degrees   */
+    /* off the new --primary, and retiring cobalt from brand duty left the    */
+    /* wheel's best-separated hue going spare.                                */
     /* Three roles each: solid (dots), -accent (text), -subtle (chip).  */
     /* ---------------------------------------------------------------- */
-    --category-violet: 265 70% 50%;
-    --category-violet-accent: 265 70% 36%;
-    --category-violet-subtle: 265 70% 95%;
+    --category-purple: 274.4 32.2% 54.3%;
+    --category-purple-accent: 274.4 32.2% 52%;
+    --category-purple-subtle: 270 33.3% 96.5%;
 
-    --category-magenta: 322 70% 50%;
-    --category-magenta-accent: 322 70% 36%;
-    --category-magenta-subtle: 322 70% 95%;
+    --category-pink: 328.2 48.5% 52.7%;
+    --category-pink-accent: 328.2 48.5% 49.5%;
+    --category-pink-subtle: 333.3 47.4% 96.3%;
 
-    --category-teal: 168 70% 37%;
-    --category-teal-accent: 168 70% 29.5%;
-    --category-teal-subtle: 168 70% 95%;
+    --category-brown: 18.9 31.4% 47.5%;
+    --category-brown-accent: 18.9 31.4% 43.4%;
+    --category-brown-subtle: 0 21.4% 94.5%;
 
-    --category-orange: 28 70% 49%;
-    --category-orange-accent: 28 70% 36%;
-    --category-orange-subtle: 28 70% 95%;
+    --category-blue: 201.9 53.6% 43.1%;
+    --category-blue-accent: 201.9 53.6% 39.9%;
+    --category-blue-subtle: 197.6 54.8% 93.9%;
 
-    --category-indigo: 240 70% 50%;
-    --category-indigo-accent: 240 70% 36%;
-    --category-indigo-subtle: 240 70% 95%;
+    --category-orange: 30 88.7% 45.1%;
+    --category-orange-accent: 30 88.7% 34.3%;
+    --category-orange-subtle: 29 74.4% 92.4%;
 
-    --category-lime: 95 70% 37%;
-    --category-lime-accent: 95 70% 29.5%;
-    --category-lime-subtle: 95 70% 95%;
+    --category-gray: 45 1.7% 46.3%;
+    --category-gray-accent: 45 1.7% 42.9%;
+    --category-gray-subtle: 60 6.7% 94.1%;
 
     /* --border is decorative (dividers, card edges) and stays quiet.
        --input bounds interactive controls, so it carries the 3:1 that
        WCAG 1.4.11 asks of a component boundary. They are deliberately
        different values; don't collapse them back together. */
-    --border: 220 13% 84%;
-    --input: 220 13% 58%;
-    --ring: 221 83% 53%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --border: 60 4.3% 87.9%;
+    --input: 60 4.3% 56.7%;
+    --ring: 209.8 76.7% 46.7%;
+    --chart-1: 209.8 76.7% 46.7%;
+    --chart-2: 147.6 31.7% 36.1%;
+    --chart-3: 30 88.7% 34.3%;
+    --chart-4: 274.4 32.2% 52%;
+    --chart-5: 328.2 48.5% 49.5%;
     /* Square by design — the UI is hard-edged throughout (1100+
        rounded-none against a handful of rounded-lg). This token exists so
        the shadcn primitives that reference it agree with that, rather
@@ -145,7 +153,7 @@
     --elevation-lg: 8px 8px 0 hsl(var(--foreground) / 0.08);
 
     /* The active navigation item and a selected setting card are filled
-       cobalt; a foreground-coloured shadow under them reads as grime, so
+       gold; a foreground-coloured shadow under them reads as grime, so
        they cast their own colour instead. Same ladder, primary hue. */
     --elevation-primary-xs: 2px 2px 0 hsl(var(--primary) / 0.22);
     --elevation-primary: 3px 3px 0 hsl(var(--primary) / 0.22);
@@ -153,110 +161,111 @@
     /* The scrim behind a modal. Deliberately NOT derived from --foreground:
        that token inverts per theme, so `bg-foreground/80` would put a white
        veil over the page in dark mode. A scrim darkens in both themes. */
-    --scrim: 224 20% 4%;
+    --scrim: 0 0% 5.9%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 221 83% 53%;
+    --sidebar-background: 45 20% 96.1%;
+    --sidebar-foreground: 45 7.8% 20%;
+    --sidebar-primary: 209.8 76.7% 46.7%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 214 95% 93%;
-    --sidebar-accent-foreground: 224 64% 33%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-accent: 197.6 54.8% 93.9%;
+    --sidebar-accent-foreground: 201.9 53.6% 39.9%;
+    --sidebar-border: 60 4.3% 87.9%;
+    --sidebar-ring: 209.8 76.7% 46.7%;
   }
   .dark {
-    /* Deep blue-charcoal with clear layered depth and a cobalt finish Section */
-    --background: 226 22% 6%;
-    --foreground: 213 27% 94%;
+    /* Warm near-black with clear layered depth and a gold finish Section */
+    --background: 0 0% 9.8%;
+    --foreground: 0 0% 83.1%;
     /* Surfaces step up in lightness: page 6% → card 10% → popover 15% →
        muted 19%. Dark mode has no usable drop shadow to lean on (the hard
        offset shadow is near-white at 5% alpha), so the step itself is what
        separates one surface from the next. Popover and muted used to both
        sit at 13%, which made a muted chip inside a popover invisible. */
-    --card: 222 18% 10%;
-    --card-foreground: 213 27% 94%;
-    --popover: 222 16% 15%;
-    --popover-foreground: 213 27% 94%;
-    /* Apsara Cobalt Accent Section */
-    --primary: 213 94% 68%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 222 16% 14%;
-    --secondary-foreground: 213 27% 94%;
-    --muted: 222 14% 19%;
-    --muted-foreground: 220 11% 62%;
-    --accent: 217 42% 18%;
-    --accent-foreground: 213 94% 80%;
+    --card: 0 0% 12.5%;
+    --card-foreground: 0 0% 83.1%;
+    --popover: 0 0% 18.4%;
+    --popover-foreground: 0 0% 83.1%;
+    /* Apsara Gold Accent Section — dark mode takes the logo's highlight gold
+       rather than its outline gold; the deep tone disappears on a black page. */
+    --primary: 203 53.1% 55.7%;
+    --primary-foreground: 209.8 60% 12%;
+    --secondary: 0 0% 18.4%;
+    --secondary-foreground: 0 0% 83.1%;
+    --muted: 0 0% 21.6%;
+    --muted-foreground: 0 0% 60.8%;
+    --accent: 200.7 59.2% 19.2%;
+    --accent-foreground: 203 53.1% 60%;
 
     /* Status colours — dark. Same five roles as :root, re-solved against
        the dark surfaces, so component markup never needs a `dark:` twin. */
-    --success: 145 55% 58%;
-    --success-foreground: 145 45% 11%;
-    --success-accent: 145 55% 74%;
-    --success-subtle: 145 23% 15%;
-    --success-border: 145 30% 30%;
+    --success: 145.3 31.7% 47.1%;
+    --success-foreground: 145.3 31.7% 12%;
+    --success-accent: 145.3 31.7% 54.3%;
+    --success-subtle: 148.8 25.8% 19%;
+    --success-border: 148.8 25.8% 31%;
 
-    --warning: 38 85% 58%;
-    --warning-foreground: 38 45% 11%;
-    --warning-accent: 38 85% 74%;
-    --warning-subtle: 38 36% 15%;
-    --warning-border: 38 47% 30%;
+    --warning: 36.7 54.9% 53.9%;
+    --warning-foreground: 36.7 54.9% 12%;
+    --warning-accent: 36.7 54.9% 64.5%;
+    --warning-subtle: 33.8 29.3% 26.1%;
+    --warning-border: 33.8 29.3% 38.1%;
 
-    --info: 192 72% 58%;
-    --info-foreground: 192 45% 11%;
-    --info-accent: 192 72% 74%;
-    --info-subtle: 192 30% 15%;
-    --info-border: 192 40% 30%;
+    --info: 217 49.8% 57.8%;
+    --info-foreground: 217 49.8% 12%;
+    --info-accent: 217 49.8% 66.5%;
+    --info-subtle: 200.7 59.2% 19.2%;
+    --info-border: 200.7 59.2% 31.2%;
 
     /* Was 0 75% 52%, which only reached 3.8:1 as text on a dark card —
        error copy sat below AA. 62% clears it while still taking a dark
        foreground when used as a fill. */
-    --destructive: 0 72% 62%;
-    --destructive-foreground: 0 45% 11%;
-    --destructive-accent: 0 72% 74%;
-    --destructive-subtle: 0 30% 15%;
-    --destructive-border: 0 40% 30%;
+    --destructive: 0.9 68.8% 61.4%;
+    --destructive-foreground: 0.9 55% 12%;
+    --destructive-accent: 0.9 68.8% 71%;
+    --destructive-subtle: 6 32.3% 24.3%;
+    --destructive-border: 6 32.3% 36.3%;
 
     /* Categorical colours — dark. Same six hues, re-solved. */
-    --category-violet: 265 62% 58%;
-    --category-violet-accent: 265 62% 74%;
-    --category-violet-subtle: 265 28% 15%;
+    --category-purple: 269.7 54.9% 61.8%;
+    --category-purple-accent: 269.7 54.9% 70%;
+    --category-purple-subtle: 272.1 23.7% 23.1%;
 
-    --category-magenta: 322 62% 58%;
-    --category-magenta-accent: 322 62% 74%;
-    --category-magenta-subtle: 322 28% 15%;
+    --category-pink: 329 57% 58%;
+    --category-pink-accent: 329 57% 68.7%;
+    --category-pink-subtle: 331.8 27.9% 23.9%;
 
-    --category-teal: 168 62% 58%;
-    --category-teal-accent: 168 62% 74%;
-    --category-teal-subtle: 168 28% 15%;
+    --category-brown: 17 34.9% 58.4%;
+    --category-brown-accent: 17 34.9% 64.1%;
+    --category-brown-subtle: 17.6 29.8% 22.4%;
 
-    --category-orange: 28 62% 58%;
-    --category-orange-accent: 28 62% 74%;
-    --category-orange-subtle: 28 28% 15%;
+    --category-blue: 217 49.8% 57.8%;
+    --category-blue-accent: 217 49.8% 66.5%;
+    --category-blue-subtle: 200.7 59.2% 19.2%;
 
-    --category-indigo: 240 62% 58.5%;
-    --category-indigo-accent: 240 62% 74%;
-    --category-indigo-subtle: 240 28% 15%;
+    --category-orange: 25 53.1% 53.1%;
+    --category-orange-accent: 25 53.1% 67.1%;
+    --category-orange-subtle: 25.3 44.9% 24.9%;
 
-    --category-lime: 95 62% 58%;
-    --category-lime-accent: 95 62% 74%;
-    --category-lime-subtle: 95 28% 15%;
+    --category-gray: 0 0% 60.8%;
+    --category-gray-accent: 0 0% 60.8%;
+    --category-gray-subtle: 0 0% 18.4%;
 
-    --border: 222 14% 19%;
-    --input: 220 13% 50%;
-    --ring: 213 94% 68%;
-    --chart-1: 217 91% 60%;
-    --chart-2: 142 71% 48%;
-    --chart-3: 25 95% 53%;
-    --chart-4: 271 84% 66%;
-    --chart-5: 338 84% 58%;
-    --sidebar-background: 226 22% 6%;
-    --sidebar-foreground: 213 27% 94%;
-    --sidebar-primary: 213 94% 68%;
-    --sidebar-primary-foreground: 222 47% 11%;
-    --sidebar-accent: 217 42% 18%;
-    --sidebar-accent-foreground: 213 94% 80%;
-    --sidebar-border: 222 14% 19%;
-    --sidebar-ring: 213 94% 68%;
+    --border: 0 0% 18.3%;
+    --input: 0 0% 41.4%;
+    --ring: 203 53.1% 55.7%;
+    --chart-1: 203 53.1% 55.7%;
+    --chart-2: 145.3 31.7% 54.3%;
+    --chart-3: 25 53.1% 67.1%;
+    --chart-4: 269.7 54.9% 70%;
+    --chart-5: 329 57% 68.7%;
+    --sidebar-background: 0 0% 12.5%;
+    --sidebar-foreground: 0 0% 83.1%;
+    --sidebar-primary: 203 53.1% 55.7%;
+    --sidebar-primary-foreground: 209.8 60% 12%;
+    --sidebar-accent: 200.7 59.2% 19.2%;
+    --sidebar-accent-foreground: 203 53.1% 60%;
+    --sidebar-border: 0 0% 18.3%;
+    --sidebar-ring: 203 53.1% 55.7%;
 
     /* Elevation — dark. The offset shadow is now near-white on a near
        black page, so the light-mode alphas render as an invisible haze.
@@ -269,7 +278,7 @@
     --elevation-lg: 8px 8px 0 hsl(var(--foreground) / 0.2);
     --elevation-primary-xs: 2px 2px 0 hsl(var(--primary) / 0.3);
     --elevation-primary: 3px 3px 0 hsl(var(--primary) / 0.3);
-    --scrim: 224 30% 2%;
+    --scrim: 0 0% 4%;
   }
 }
 
@@ -315,24 +324,8 @@
     transform 0.25s ease;
 }
 
-.profile-editorial .profile-section::before {
-  content: "";
-  position: absolute;
-  top: -1px;
-  left: -1px;
-  width: 52px;
-  height: 4px;
-  background: hsl(var(--foreground));
-  pointer-events: none;
-}
-
 .profile-editorial[data-profile-editing="true"] .profile-section {
   border-color: hsl(var(--foreground) / 0.28);
-}
-
-.profile-editorial .profile-section h3 {
-  font-weight: 900;
-  letter-spacing: -0.025em;
 }
 
 .profile-editorial .profile-section button,
@@ -350,16 +343,6 @@
   :is(.rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl),
 .profile-editorial .profile-section .rounded-full:not(img) {
   border-radius: 0 !important;
-}
-
-.profile-editorial .profile-section div:has(> h3) > div:first-child {
-  border: 1px solid hsl(var(--border));
-  border-radius: 0 !important;
-  background: hsl(var(--foreground));
-}
-
-.profile-editorial .profile-section div:has(> h3) > div:first-child svg {
-  color: hsl(var(--background)) !important;
 }
 
 .profile-editorial[data-profile-editing="false"]
@@ -463,7 +446,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .profile-editorial .profile-section:hover {
-    border-color: hsl(var(--foreground) / 0.32);
+    border-color: hsl(var(--foreground) / 0.35);
     box-shadow: var(--elevation-lg);
     transform: translateY(-1px);
   }
@@ -644,7 +627,10 @@
 
 /* ── Employee and company detail pages ───────────────────────────────── */
 .profile-detail-hero {
-  --profile-detail-hero-ink: var(--background);
+  /* A hero with no cover photo is an ordinary surface, so it takes ordinary
+     ink. Only .profile-detail-hero-cover — a real photo under a dark scrim —
+     opposes the page, and it sets its own white below. */
+  --profile-detail-hero-ink: var(--foreground);
   background-position: center;
   background-size: cover;
   color: hsl(var(--profile-detail-hero-ink));
@@ -668,32 +654,6 @@
   );
 }
 
-.profile-detail-hero-grid {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  background-image:
-    linear-gradient(
-      hsl(var(--profile-detail-hero-ink) / 0.1) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      hsl(var(--profile-detail-hero-ink) / 0.1) 1px,
-      transparent 1px
-    );
-  background-size: 36px 36px;
-  -webkit-mask-image: linear-gradient(90deg, #000, transparent 92%);
-  mask-image: linear-gradient(90deg, #000, transparent 92%);
-}
-
-.profile-detail-grid-runners {
-  z-index: 1;
-  --grid-runner-color: var(--profile-detail-hero-ink);
-  --grid-runner-blend: screen;
-  opacity: 0.66;
-}
-
 .profile-detail-hero-brand {
   border-color: hsl(var(--profile-detail-hero-ink) / 0.25);
   color: hsl(var(--profile-detail-hero-ink) / 0.76);
@@ -703,11 +663,6 @@
 .profile-detail-hero-corner {
   border-color: hsl(var(--profile-detail-hero-ink) / 0.2);
   background: hsl(var(--profile-detail-hero-ink) / 0.05);
-}
-
-.dark .profile-detail-grid-runners {
-  --grid-runner-blend: multiply;
-  opacity: 0.5;
 }
 
 .profile-detail-meta > span {
@@ -728,38 +683,6 @@
 
 .profile-detail-employee-intro {
   --profile-detail-hero-ink: var(--background);
-}
-
-.profile-detail-employee-intro::after {
-  position: absolute;
-  z-index: 1;
-  right: -4rem;
-  bottom: -5rem;
-  width: 14rem;
-  height: 14rem;
-  border: 1px solid hsl(var(--background) / 0.16);
-  content: "";
-  transform: rotate(18deg);
-}
-
-.profile-detail-employee-focus::before {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 4.5rem;
-  height: 4.5rem;
-  border-bottom: 1px solid hsl(var(--border));
-  border-left: 1px solid hsl(var(--border));
-  content: "";
-  background:
-    linear-gradient(
-      135deg,
-      transparent 48%,
-      hsl(var(--border)) 49%,
-      hsl(var(--border)) 51%,
-      transparent 52%
-    ),
-    hsl(var(--muted) / 0.38);
 }
 
 .profile-detail-focus-index {
@@ -795,20 +718,6 @@
   box-shadow: 0 8px 0 hsl(var(--foreground) / 0.07);
 }
 
-.profile-detail-company-cover::after {
-  position: absolute;
-  z-index: 1;
-  right: 0;
-  bottom: 0;
-  width: min(38vw, 28rem);
-  height: 7rem;
-  border-top: 1px solid hsl(var(--profile-detail-hero-ink) / 0.18);
-  border-left: 1px solid hsl(var(--profile-detail-hero-ink) / 0.18);
-  content: "";
-  background: hsl(var(--profile-detail-hero-ink) / 0.055);
-  clip-path: polygon(24% 0, 100% 0, 100% 100%, 0 100%);
-}
-
 .profile-detail-company-meta > span {
   min-height: 3.25rem;
 }
@@ -820,41 +729,6 @@
 }
 
 .profile-detail-employee-about::before,
-.profile-detail-company-about::before {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  content: "";
-  background: hsl(var(--foreground));
-}
-
-.profile-detail-employee-about::after {
-  position: absolute;
-  right: -2.5rem;
-  bottom: -4rem;
-  width: 9rem;
-  height: 9rem;
-  border: 1px solid hsl(var(--foreground) / 0.08);
-  content: "";
-  transform: rotate(26deg);
-}
-
-.profile-detail-company-about::after {
-  position: absolute;
-  right: 1.25rem;
-  bottom: 1.25rem;
-  width: 4rem;
-  height: 4rem;
-  content: "";
-  background-image:
-    linear-gradient(hsl(var(--foreground) / 0.11) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--foreground) / 0.11) 1px, transparent 1px);
-  background-size: 10px 10px;
-  opacity: 0.6;
-}
-
 .profile-detail-employee-skills {
   background:
     linear-gradient(120deg, hsl(var(--muted) / 0.55), transparent 50%),
@@ -867,17 +741,8 @@
   padding-left: 1rem;
 }
 
-.profile-detail-skill-cloud > *:nth-child(3n + 1) > div {
-  border-color: hsl(var(--foreground));
-  background: hsl(var(--foreground));
-}
-
-.profile-detail-skill-cloud > *:nth-child(3n + 1) > div p {
-  color: hsl(var(--background));
-}
-
 .profile-detail-timeline-card {
-  border-left-width: 3px;
+  border-left-width: 1px;
   background: linear-gradient(90deg, hsl(var(--muted) / 0.5), transparent 42%);
 }
 
@@ -909,7 +774,7 @@
   width: 4px;
   height: 100%;
   content: "";
-  background: hsl(var(--foreground));
+  background: hsl(var(--primary));
   transform: scaleY(0.2);
   transform-origin: top;
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -920,20 +785,19 @@
 }
 
 .profile-detail-company-gallery {
-  border-bottom-width: 4px;
+  border-bottom-width: 1px;
 }
 
 .profile-detail-company-information {
-  border-top-width: 4px;
+  border-top-width: 1px;
 }
 
 .logout-dialog-header {
-  --profile-detail-hero-ink: var(--background);
+  --profile-detail-hero-ink: var(--foreground);
 }
 
-/* The own-profile cover reuses the detail pages' hero grid so the two read as
-   the same surface. The cover is `bg-foreground`, which inverts per theme, so
-   the grid ink is `--background` — the token that inverts with it. */
+/* The own-profile cover reuses the detail pages' hero surface so the two read
+   as the same thing. */
 .profile-cover {
   --profile-detail-hero-ink: var(--background);
 }
@@ -964,11 +828,6 @@
   .profile-detail-focus-index {
     right: -2rem;
     bottom: -1rem;
-  }
-
-  .profile-detail-company-cover::after {
-    width: 56vw;
-    height: 4rem;
   }
 }
 
@@ -1126,83 +985,7 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
-}
-
-/* ─────────────────────── Switcher Animations ─────────────────────── */
-
-@keyframes switcher-enter {
-  0% {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.92);
-    filter: blur(4px);
-  }
-  60% {
-    opacity: 1;
-    filter: blur(0);
-  }
-  100% {
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes switcher-glow-pulse {
-  0%,
-  100% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(1.05);
-  }
-}
-
-@keyframes switcher-star-fly {
-  0% {
-    transform: rotate(var(--angle)) translateY(0) scale(0);
-    opacity: 0;
-  }
-  25% {
-    opacity: 1;
-  }
-  100% {
-    transform: rotate(var(--angle)) translateY(-20px) scale(1);
-    opacity: 0;
-  }
-}
-
-@keyframes switcher-sun-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes switcher-moon-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-1px);
-  }
-}
-
-@keyframes switcher-theme-flash {
-  0% {
-    background: transparent;
-  }
-  40% {
-    background: hsl(38 92% 50% / 0.15);
-  }
-  100% {
-    background: transparent;
-  }
-}
-
-/* Whole-page theme reveal. The new theme expands from the toggle while the
+} /* Whole-page theme reveal. The new theme expands from the toggle while the
    previous page remains perfectly still beneath it. */
 html[data-theme-transition]::view-transition-old(root),
 html[data-theme-transition]::view-transition-new(root) {
@@ -1246,655 +1029,8 @@ html.theme-fallback-transition body *::after {
 }
 
 @layer components {
-  /* ── Container ── */
-  .switcher-enter {
-    animation: switcher-enter 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: 0.3s;
-  }
-
-  .switcher-pill {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 0;
-    padding: 4px;
-    border-radius: 9999px;
-    background: hsl(0 0% 100% / 0.7);
-    border: 1px solid hsl(0 0% 0% / 0.06);
-    backdrop-filter: blur(20px) saturate(1.6);
-    -webkit-backdrop-filter: blur(20px) saturate(1.6);
-    box-shadow:
-      0 1px 2px hsl(0 0% 0% / 0.04),
-      0 4px 12px hsl(0 0% 0% / 0.03),
-      inset 0 1px 0 hsl(0 0% 100% / 0.8);
-    transition:
-      box-shadow 0.4s ease,
-      border-color 0.4s ease;
-  }
-
-  .switcher-pill:hover {
-    box-shadow:
-      0 1px 2px hsl(0 0% 0% / 0.04),
-      0 4px 16px hsl(0 0% 0% / 0.06),
-      0 0 0 1px hsl(38 92% 50% / 0.08),
-      inset 0 1px 0 hsl(0 0% 100% / 0.8);
-    border-color: hsl(38 92% 50% / 0.12);
-  }
-
-  .dark .switcher-pill {
-    background: hsl(222 18% 10% / 0.75);
-    border-color: hsl(0 0% 100% / 0.06);
-    box-shadow:
-      0 1px 2px hsl(0 0% 0% / 0.2),
-      0 4px 12px hsl(0 0% 0% / 0.15),
-      inset 0 1px 0 hsl(0 0% 100% / 0.05);
-  }
-
-  .dark .switcher-pill:hover {
-    box-shadow:
-      0 1px 2px hsl(0 0% 0% / 0.2),
-      0 4px 16px hsl(0 0% 0% / 0.2),
-      0 0 0 1px hsl(38 92% 50% / 0.1),
-      inset 0 1px 0 hsl(0 0% 100% / 0.06);
-    border-color: hsl(38 92% 50% / 0.15);
-  }
-
-  /* ── Ambient Glow ── */
-  .switcher-glow {
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    background: conic-gradient(
-      from 180deg,
-      hsl(38 92% 50% / 0.12),
-      hsl(45 100% 70% / 0.08),
-      hsl(38 92% 50% / 0.12)
-    );
-    opacity: 0;
-    filter: blur(6px);
-    z-index: -1;
-    transition: opacity 0.5s ease;
-    animation: switcher-glow-pulse 4s ease-in-out infinite;
-  }
-
-  .switcher-pill:hover .switcher-glow {
-    opacity: 1;
-  }
-
-  /* ── Language Segment ── */
-  .switcher-lang-segment {
-    position: relative;
-    display: flex;
-    align-items: center;
-    border-radius: 9999px;
-    padding: 2px;
-  }
-
-  .switcher-lang-indicator {
-    position: absolute;
-    inset: 2px;
-    border-radius: 9999px;
-    background: hsl(38 92% 50% / 0.1);
-    border: 1px solid hsl(38 92% 50% / 0.15);
-    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-    z-index: 0;
-    box-shadow: 0 1px 3px hsl(38 92% 50% / 0.08);
-  }
-
-  .dark .switcher-lang-indicator {
-    background: hsl(38 92% 50% / 0.12);
-    border-color: hsl(38 92% 50% / 0.18);
-    box-shadow: 0 1px 3px hsl(38 92% 50% / 0.1);
-  }
-
-  .switcher-lang-option {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px 14px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    outline: none;
-    border-radius: 9999px;
-    min-width: 44px;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .switcher-lang-option:focus-visible {
-    box-shadow: 0 0 0 2px hsl(38 92% 50% / 0.5);
-  }
-
-  .switcher-lang-text {
-    position: relative;
-    z-index: 1;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    line-height: 1;
-    color: hsl(224 14% 10%);
-    transition:
-      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 0.35s ease,
-      color 0.35s ease;
-    white-space: nowrap;
-  }
-
-  .dark .switcher-lang-text {
-    color: hsl(213 27% 94%);
-  }
-
-  .switcher-lang-active .switcher-lang-text {
-    color: hsl(38 92% 45%);
-  }
-
-  .dark .switcher-lang-active .switcher-lang-text {
-    color: hsl(38 92% 65%);
-  }
-
-  /* ── Divider ── */
-  .switcher-divider {
-    width: 1px;
-    height: 18px;
-    background: hsl(0 0% 0% / 0.08);
-    margin: 0 2px;
-    flex-shrink: 0;
-    border-radius: 9999px;
-  }
-
-  .dark .switcher-divider {
-    background: hsl(0 0% 100% / 0.08);
-  }
-
-  /* ── Theme Toggle Button ── */
-  .switcher-theme-btn {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    border-radius: 9999px;
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
-    transition: background 0.3s ease;
-  }
-
-  .switcher-theme-btn:hover {
-    background: hsl(38 92% 50% / 0.08);
-  }
-
-  .dark .switcher-theme-btn:hover {
-    background: hsl(38 92% 50% / 0.1);
-  }
-
-  .switcher-theme-btn:focus-visible {
-    box-shadow: 0 0 0 2px hsl(38 92% 50% / 0.5);
-  }
-
-  .switcher-theme-flash {
-    animation: switcher-theme-flash 0.5s ease-out;
-  }
-
-  /* ── Icon Wrapper ── */
-  .switcher-icon-wrap {
-    position: relative;
-    width: 18px;
-    height: 18px;
-  }
-
-  /* ── Lucide Icon Transitions ── */
-  .switcher-lucide-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-top: -9px;
-    margin-left: -9px;
-    color: hsl(224 14% 25%);
-    opacity: 0;
-    transform: scale(0.3) rotate(-90deg);
-    transition:
-      opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-    pointer-events: none;
-  }
-
-  .dark .switcher-lucide-icon {
-    color: hsl(38 92% 65%);
-  }
-
-  .switcher-lucide-visible {
-    opacity: 1 !important;
-    transform: scale(1) rotate(0deg) !important;
-    pointer-events: auto;
-  }
-
-  /* Sun-specific: spinning rays */
-  .switcher-sun-icon {
-    animation: none;
-  }
-
-  .switcher-sun-icon.switcher-lucide-visible {
-    animation: switcher-sun-spin 10s linear infinite;
-  }
-
-  /* Moon-specific: gentle float */
-  .switcher-moon-icon {
-    animation: none;
-  }
-
-  .switcher-moon-icon.switcher-lucide-visible {
-    animation: switcher-moon-float 3s ease-in-out infinite;
-  }
-
-  /* ── Star Particles (only animate when .switcher-stars-container exists in DOM) ── */
-  .switcher-stars-container {
-    position: absolute;
-    inset: -4px;
-    pointer-events: none;
-  }
-
-  .switcher-star-particle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 3px;
-    height: 3px;
-    margin: -1.5px 0 0 -1.5px;
-    border-radius: 9999px;
-    background: hsl(38 92% 55%);
-    animation: switcher-star-fly 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  .dark .switcher-star-particle {
-    background: hsl(38 92% 70%);
-  }
 }
-
-/* ── Unified preference switcher ──────────────────────────────────────── */
-/* A neutral editorial control shared by the landing and auth experiences. */
-@keyframes switcher-frame-in {
-  from {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.96);
-    filter: blur(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
-}
-
-@keyframes switcher-sheen-sweep {
-  from {
-    transform: translateX(-180%) skewX(-18deg);
-  }
-  to {
-    transform: translateX(320%) skewX(-18deg);
-  }
-}
-
-@keyframes switcher-label-pop {
-  0% {
-    transform: translateY(3px) scale(0.92);
-    opacity: 0.45;
-  }
-  55% {
-    transform: translateY(-1px) scale(1.05);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes switcher-orbit-ring {
-  0% {
-    opacity: 0.55;
-    transform: scale(0.65);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.8);
-  }
-}
-
-@keyframes switcher-neutral-spark {
-  0% {
-    opacity: 0;
-    transform: rotate(var(--angle)) translateY(0) scale(0);
-  }
-  25% {
-    opacity: 0.65;
-  }
-  100% {
-    opacity: 0;
-    transform: rotate(var(--angle)) translateY(-12px) scale(1);
-  }
-}
-
-.switcher-enter {
-  animation: switcher-frame-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.switcher-pill,
-.dark .switcher-pill {
-  position: relative;
-  isolation: isolate;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  overflow: hidden;
-  padding: 4px;
-  border: 1px solid hsl(var(--border));
-  border-radius: 2px;
-  background: hsl(var(--card) / 0.88);
-  backdrop-filter: blur(18px) saturate(1.2);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
-  box-shadow:
-    0 1px 0 hsl(var(--foreground) / 0.04),
-    0 8px 24px hsl(var(--foreground) / 0.07),
-    inset 0 1px 0 hsl(var(--background) / 0.7);
-  transition:
-    border-color 0.3s ease,
-    background-color 0.3s ease,
-    box-shadow 0.3s ease,
-    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.switcher-pill:hover,
-.dark .switcher-pill:hover {
-  border-color: hsl(var(--foreground) / 0.3);
-  box-shadow:
-    0 1px 0 hsl(var(--foreground) / 0.05),
-    0 12px 30px hsl(var(--foreground) / 0.1),
-    inset 0 1px 0 hsl(var(--background) / 0.78);
-  transform: translateY(-1px);
-}
-
-.switcher-sheen {
-  position: absolute;
-  z-index: 4;
-  top: -30%;
-  bottom: -30%;
-  left: -26%;
-  width: 22%;
-  pointer-events: none;
-  transform: translateX(-180%) skewX(-18deg);
-  background: linear-gradient(
-    90deg,
-    transparent,
-    hsl(var(--foreground) / 0.1),
-    transparent
-  );
-}
-
-.switcher-pill:not([data-animating="idle"]) .switcher-sheen {
-  animation: switcher-sheen-sweep 0.72s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.switcher-lang-segment {
-  position: relative;
-  display: grid;
-  width: 102px;
-  height: 46px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: stretch;
-  padding: 0;
-  border: 1px solid hsl(var(--border) / 0.76);
-  border-radius: 1px;
-  background: hsl(var(--muted) / 0.56);
-}
-
-.switcher-lang-indicator,
-.dark .switcher-lang-indicator {
-  position: absolute;
-  z-index: 0;
-  top: 2px;
-  bottom: 2px;
-  left: 2px;
-  right: auto;
-  width: calc(50% - 2px);
-  border: 1px solid hsl(var(--foreground) / 0.08);
-  border-radius: 0;
-  background: hsl(var(--foreground));
-  box-shadow:
-    0 2px 6px hsl(var(--foreground) / 0.16),
-    inset 0 1px 0 hsl(var(--background) / 0.15);
-  will-change: transform;
-  transform: translateX(0);
-  transition:
-    transform 0.5s cubic-bezier(0.22, 1.35, 0.36, 1),
-    background-color 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.switcher-pill[data-language="km"] .switcher-lang-indicator {
-  transform: translateX(100%);
-}
-
-.switcher-lang-option {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  min-width: 44px;
-  min-height: 44px;
-  height: 100%;
-  place-items: center;
-  padding: 0 5px;
-  border: 0;
-  border-radius: 0;
-  outline: none;
-  background: transparent;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.switcher-lang-option:focus-visible {
-  box-shadow: inset 0 0 0 2px hsl(var(--ring) / 0.5);
-}
-
-.switcher-lang-text,
-.dark .switcher-lang-text {
-  position: relative;
-  z-index: 1;
-  color: hsl(var(--foreground) / 0.72);
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-  transform: scale(0.94);
-  opacity: 1;
-  transition:
-    color 0.35s ease,
-    opacity 0.35s ease,
-    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.switcher-lang-text-km {
-  letter-spacing: 0;
-}
-
-.switcher-lang-option[aria-pressed="true"] .switcher-lang-text,
-.dark .switcher-lang-option[aria-pressed="true"] .switcher-lang-text {
-  color: hsl(var(--background));
-  transform: scale(1);
-  opacity: 1;
-}
-
-.switcher-pill[data-animating="language"]
-  .switcher-lang-option[aria-pressed="true"]
-  .switcher-lang-text {
-  animation: switcher-label-pop 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.switcher-divider,
-.dark .switcher-divider {
-  width: 1px;
-  height: 20px;
-  flex-shrink: 0;
-  margin: 0 1px;
-  border-radius: 0;
-  background: hsl(var(--border));
-}
-
-.switcher-theme-btn {
-  position: relative;
-  display: grid;
-  width: 46px;
-  height: 44px;
-  place-items: center;
-  padding: 0;
-  border: 0;
-  border-radius: 1px;
-  outline: none;
-  background: transparent;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.switcher-theme-btn:hover,
-.dark .switcher-theme-btn:hover {
-  background: hsl(var(--foreground) / 0.045);
-}
-
-.switcher-theme-btn:focus-visible {
-  box-shadow: inset 0 0 0 2px hsl(var(--ring) / 0.45);
-}
-
-.switcher-theme-track {
-  position: relative;
-  display: block;
-  width: 42px;
-  height: 28px;
-  overflow: hidden;
-  border: 1px solid hsl(var(--border));
-  border-radius: 999px;
-  background: hsl(var(--muted) / 0.8);
-  transition:
-    border-color 0.3s ease,
-    background-color 0.4s ease,
-    box-shadow 0.4s ease;
-}
-
-.switcher-pill[data-theme="dark"] .switcher-theme-track {
-  border-color: hsl(var(--foreground) / 0.22);
-  background: hsl(var(--foreground) / 0.08);
-}
-
-.switcher-theme-knob {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  display: grid;
-  width: 22px;
-  height: 22px;
-  place-items: center;
-  border-radius: 999px;
-  background: hsl(var(--foreground));
-  color: hsl(var(--background));
-  box-shadow: 0 2px 7px hsl(var(--foreground) / 0.22);
-  will-change: transform;
-  transform: translateX(0);
-  transition:
-    transform 0.52s cubic-bezier(0.22, 1.35, 0.36, 1),
-    background-color 0.35s ease,
-    color 0.35s ease,
-    box-shadow 0.35s ease;
-}
-
-.switcher-pill[data-theme="dark"] .switcher-theme-knob {
-  transform: translateX(14px);
-}
-
-.switcher-theme-knob::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border: 1px solid hsl(var(--foreground) / 0.45);
-  border-radius: inherit;
-  opacity: 0;
-}
-
-.switcher-pill[data-animating="theme"] .switcher-theme-knob::after {
-  animation: switcher-orbit-ring 0.66s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.switcher-theme-icon {
-  position: absolute;
-  width: 13px;
-  height: 13px;
-  stroke-width: 1.8;
-  transition:
-    opacity 0.42s ease,
-    transform 0.52s cubic-bezier(0.22, 1.35, 0.36, 1);
-}
-
-.switcher-sun-icon {
-  opacity: 1;
-  transform: rotate(0deg) scale(1);
-}
-
-.switcher-moon-icon {
-  opacity: 0;
-  transform: rotate(70deg) scale(0.45);
-}
-
-.switcher-pill[data-theme="dark"] .switcher-sun-icon {
-  opacity: 0;
-  transform: rotate(-70deg) scale(0.45);
-}
-
-.switcher-pill[data-theme="dark"] .switcher-moon-icon {
-  opacity: 1;
-  transform: rotate(0deg) scale(1);
-}
-
-.switcher-sparks {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.switcher-sparks > span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 2px;
-  height: 2px;
-  margin: -1px 0 0 -1px;
-  border-radius: 999px;
-  background: hsl(var(--foreground) / 0.72);
-  opacity: 0;
-}
-
-.switcher-pill[data-animating="theme"] .switcher-sparks > span {
-  animation: switcher-neutral-spark 0.62s cubic-bezier(0.22, 1, 0.36, 1)
-    var(--spark-delay) both;
-}
-
 @media (max-width: 420px) {
-  .switcher-lang-segment {
-    width: 92px;
-  }
-
-  .switcher-pill,
-  .dark .switcher-pill {
-    gap: 2px;
-  }
-
-  .switcher-divider,
-  .dark .switcher-divider {
-    margin: 0;
-  }
 }
 
 /* ─────────────────────── Landing Page Animations ─────────────────────── */
@@ -2040,15 +1176,19 @@ html.theme-fallback-transition body *::after {
 body:has(.auth-scope),
 .auth-scope {
   /* Light mode: light form surface paired with a charcoal brand panel. */
-  --auth-paper: 224 14% 10%;
-  --auth-ink: 220 14% 94%;
+  --auth-paper: 45 7.8% 20%;
+  --auth-ink: 60 6.7% 94.1%;
 }
 
 .dark body:has(.auth-scope),
 .dark .auth-scope {
-  /* Dark mode deliberately reverses the split: dark form, white brand panel. */
-  --auth-paper: 0 0% 100%;
-  --auth-ink: 224 14% 10%;
+  /* Dark mode keeps both halves dark. The panel used to invert to white, which
+     put a full-height white slab beside a dark form — the split was legible but
+     the page read as two different products. It is now a lifted dark surface:
+     1.48:1 against the form side, so the seam still shows, with the normal ink
+     on top at 8:1. Light mode keeps the strong charcoal-against-white split. */
+  --auth-paper: 0 0% 21.6%;
+  --auth-ink: 0 0% 83.1%;
 }
 
 /* Size container: auth fields respond to the form column width, not the      */
@@ -2124,27 +1264,7 @@ body:has(.auth-scope),
     hsl(var(--auth-paper)) 0%,
     hsl(var(--auth-paper) / 0) 38%
   );
-}
-
-/* Faint ruled-paper grid, masked to fade at the edges */
-.auth-panel-grid {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-image:
-    linear-gradient(hsl(var(--auth-ink) / 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--auth-ink) / 0.05) 1px, transparent 1px);
-  background-size: 44px 44px;
-  -webkit-mask-image: radial-gradient(
-    78% 68% at 50% 42%,
-    #000 22%,
-    transparent 80%
-  );
-  mask-image: radial-gradient(78% 68% at 50% 42%, #000 22%, transparent 80%);
-  opacity: 0.7;
-}
-
-/* Small light trails run directly along individual grid lines. Their cycles
+} /* Small light trails run directly along individual grid lines. Their cycles
    are intentionally staggered so the background feels alive, never busy. */
 .grid-runners {
   position: absolute;
@@ -2159,17 +1279,6 @@ body:has(.auth-scope),
   );
   mask-image: radial-gradient(82% 72% at 50% 43%, #000 25%, transparent 84%);
 }
-
-.auth-grid-runners {
-  --grid-runner-color: var(--auth-ink);
-  --grid-runner-blend: screen;
-}
-
-.dark .auth-grid-runners {
-  --grid-runner-blend: multiply;
-  opacity: 0.62;
-}
-
 .landing-grid-runners {
   --grid-runner-color: var(--foreground);
   --grid-runner-blend: multiply;
@@ -2180,24 +1289,6 @@ body:has(.auth-scope),
   --grid-runner-blend: screen;
   opacity: 0.68;
 }
-
-.landing-dark-grid-runners {
-  --grid-runner-color: var(--auth-ink);
-  --grid-runner-blend: screen;
-  opacity: 0.78;
-}
-
-.landing-swap-grid-runners {
-  --grid-runner-color: var(--landing-panel-ink);
-  --grid-runner-blend: screen;
-  opacity: 0.78;
-}
-
-.dark .landing-swap-grid-runners {
-  --grid-runner-blend: multiply;
-  opacity: 0.58;
-}
-
 .grid-runner {
   position: absolute;
   display: block;
@@ -2387,38 +1478,6 @@ body:has(.auth-scope),
     transform: translate3d(0, calc(-100vh - 100%), 0);
   }
 }
-
-/* Soft ambient halo behind the artwork */
-.auth-nimbus {
-  position: absolute;
-  z-index: 0;
-  top: 44%;
-  left: 50%;
-  width: 72%;
-  aspect-ratio: 1;
-  translate: -50% -50%;
-  border-radius: 9999px;
-  background: radial-gradient(
-    circle,
-    hsl(var(--auth-ink) / 0.08),
-    transparent 62%
-  );
-  filter: blur(10px);
-  animation: auth-nimbus-breathe 10s ease-in-out infinite;
-}
-
-@keyframes auth-nimbus-breathe {
-  0%,
-  100% {
-    opacity: 0.7;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.05);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .grid-runner {
     animation: none;
@@ -2445,27 +1504,7 @@ body:has(.auth-scope),
   50% {
     transform: translateY(-10px);
   }
-}
-
-/* Pointer-follow spotlight — a gentle paper highlight */
-.auth-spotlight {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: radial-gradient(
-    360px circle at var(--mx, 60%) var(--my, 40%),
-    hsl(var(--auth-ink) / 0.05),
-    transparent 60%
-  );
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-.auth-panel:hover .auth-spotlight {
-  opacity: 1;
-}
-
-/* Eyebrow */
+} /* Eyebrow */
 .auth-eyebrow {
   font-size: 11px;
   font-weight: 600;
@@ -2668,7 +1707,7 @@ body:has(.auth-scope),
     background-color 0.2s ease;
 }
 .auth-submit:hover {
-  box-shadow: 0 4px 16px hsl(var(--foreground) / 0.14);
+  box-shadow: var(--elevation-md);
 }
 
 /* Social buttons — quiet lift on hover */
@@ -2701,7 +1740,7 @@ body:has(.auth-scope),
 }
 .auth-social:hover {
   transform: translateY(-1px);
-  border-color: hsl(var(--foreground) / 0.24) !important;
+  border-color: hsl(var(--input)) !important;
   box-shadow: 0 4px 14px hsl(var(--foreground) / 0.08);
 }
 
@@ -2746,7 +1785,6 @@ body:has(.auth-scope),
 .auth-wizard-form {
   overflow: hidden;
   border: 1px solid hsl(var(--border));
-  border-top: 5px solid hsl(var(--foreground));
   border-radius: 0;
   background: hsl(var(--card) / 0.5);
   padding: 1.25rem;
@@ -2982,14 +2020,13 @@ body:has(.auth-scope) .auth-dialog-footer > * {
 /* pair below is inherited by .landing-swap-panel and friends.               */
 body:has(.landing-scope),
 .landing-scope {
-  --auth-paper: 224 14% 10%;
-  --auth-ink: 220 14% 94%;
-}
-
-.dark body:has(.landing-scope),
-.dark .landing-scope {
-  --auth-paper: 0 0% 100%;
-  --auth-ink: 224 14% 10%;
+  /* Landing panels are ordinary app surfaces now — a muted fill with the normal
+     ink on it, resolving per theme like every card in the app. They used to run
+     on --auth-paper/--auth-ink, the opposing pair the auth brand panel uses,
+     which made them invert; that was the retired dossier language and it is
+     what made this page look like the old product. */
+  --landing-panel-bg: var(--muted);
+  --landing-panel-ink: var(--foreground);
 }
 
 .landing-grid {
@@ -3006,21 +2043,21 @@ body:has(.landing-scope),
 }
 
 .landing-dark-panel {
-  color: hsl(var(--auth-ink));
+  color: hsl(var(--landing-panel-ink));
+  border: 1px solid hsl(var(--border));
   background:
     radial-gradient(
       90% 70% at 90% 5%,
-      hsl(var(--auth-ink) / 0.055),
+      hsl(var(--landing-panel-ink) / 0.035),
       transparent 62%
     ),
-    hsl(var(--auth-paper));
+    hsl(var(--landing-panel-bg));
 }
 
-/* The hero's right panel always opposes the page theme: dark on a light page,
-   then paper-light on a dark page. Its content and motion share one ink token. */
+/* The hero's right panel. It used to oppose the page theme; it now reads from
+   the same pair as every other landing panel, so it is a surface rather than an
+   inversion. Content and motion still share the one ink token. */
 .landing-swap-panel {
-  --landing-panel-bg: var(--auth-paper);
-  --landing-panel-ink: var(--auth-ink);
   color: hsl(var(--landing-panel-ink));
   background:
     radial-gradient(
@@ -3031,12 +2068,8 @@ body:has(.landing-scope),
     hsl(var(--landing-panel-bg));
 }
 
-/* The bg/ink pair is not restated here: `.dark .landing-scope` already flips
-   --auth-paper/--auth-ink, and this panel reads them through var(). It used to
-   hardcode a second copy, which is how it kept the old cream after the scope
-   above had moved on. Only the edge needs a value of its own. */
 .dark .landing-swap-panel {
-  border-color: hsl(220 13% 78%);
+  border-color: hsl(var(--border));
 }
 
 /* ═════════════════════════ Static Editorial Pages ═══════════════════ */
@@ -3124,30 +2157,6 @@ body:has(.landing-scope),
     transition: none !important;
   }
 }
-
-.landing-dark-grid {
-  background-image:
-    linear-gradient(hsl(var(--auth-ink) / 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--auth-ink) / 0.05) 1px, transparent 1px);
-  background-size: 44px 44px;
-  -webkit-mask-image: radial-gradient(
-    78% 72% at 54% 42%,
-    #000 20%,
-    transparent 84%
-  );
-  mask-image: radial-gradient(78% 72% at 54% 42%, #000 20%, transparent 84%);
-}
-
-.landing-swap-panel .landing-dark-grid {
-  background-image:
-    linear-gradient(hsl(var(--landing-panel-ink) / 0.065) 1px, transparent 1px),
-    linear-gradient(
-      90deg,
-      hsl(var(--landing-panel-ink) / 0.065) 1px,
-      transparent 1px
-    );
-}
-
 @keyframes landing-match-float-left {
   0%,
   100% {
@@ -3195,15 +2204,15 @@ body:has(.landing-scope),
   70%,
   100% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 hsl(var(--auth-ink) / 0);
+    box-shadow: 0 0 0 0 hsl(var(--landing-panel-ink) / 0);
   }
   78% {
     transform: scale(1.025);
-    box-shadow: 0 0 0 7px hsl(var(--auth-ink) / 0.08);
+    box-shadow: 0 0 0 7px hsl(var(--landing-panel-ink) / 0.08);
   }
   86% {
     transform: scale(1);
-    box-shadow: 0 0 0 12px hsl(var(--auth-ink) / 0);
+    box-shadow: 0 0 0 12px hsl(var(--landing-panel-ink) / 0);
   }
 }
 
@@ -3211,17 +2220,17 @@ body:has(.landing-scope),
   0% {
     opacity: 0.42;
     transform: scale(0.96);
-    box-shadow: 0 0 0 0 hsl(var(--auth-ink) / 0);
+    box-shadow: 0 0 0 0 hsl(var(--landing-panel-ink) / 0);
   }
   45% {
     opacity: 1;
     transform: scale(1.08);
-    box-shadow: 0 0 0 10px hsl(var(--auth-ink) / 0.1);
+    box-shadow: 0 0 0 10px hsl(var(--landing-panel-ink) / 0.1);
   }
   100% {
     opacity: 1;
     transform: scale(1);
-    box-shadow: 0 0 0 18px hsl(var(--auth-ink) / 0);
+    box-shadow: 0 0 0 18px hsl(var(--landing-panel-ink) / 0);
   }
 }
 
@@ -3298,11 +2307,11 @@ body:has(.landing-scope),
   0%,
   100% {
     transform: translateY(0) scale(1);
-    border-color: hsl(var(--auth-ink) / 0.18);
+    border-color: hsl(var(--landing-panel-ink) / 0.18);
   }
   50% {
     transform: translateY(-3px) scale(1.012);
-    border-color: hsl(var(--auth-ink) / 0.3);
+    border-color: hsl(var(--landing-panel-ink) / 0.3);
   }
 }
 
@@ -3322,28 +2331,6 @@ body:has(.landing-scope),
   isolation: isolate;
 }
 
-.landing-profile-cover {
-  background:
-    linear-gradient(135deg, hsl(var(--auth-paper) / 0.12), transparent 62%),
-    repeating-linear-gradient(
-      -45deg,
-      hsl(var(--auth-paper) / 0.04) 0,
-      hsl(var(--auth-paper) / 0.04) 1px,
-      transparent 1px,
-      transparent 10px
-    );
-}
-
-.landing-company-cover {
-  background:
-    radial-gradient(
-      circle at 74% 28%,
-      hsl(var(--auth-paper) / 0.14),
-      transparent 22%
-    ),
-    linear-gradient(115deg, hsl(var(--auth-paper) / 0.1), transparent 65%);
-}
-
 .landing-match-device-float-left,
 .landing-match-device-float-right {
   opacity: 0;
@@ -3356,6 +2343,74 @@ body:has(.landing-scope),
 
 .landing-match-device-float-right {
   transform: translate3d(90px, 26px, 0) rotate(5deg) scale(0.92);
+}
+
+/* ── Real-time chat beat ── */
+/* The thread builds instead of appearing whole: each bubble rises as the stage
+   enters view, then the typing dots loop. Reduced motion gets the finished
+   thread with no movement — the content is the point, the animation is not. */
+@keyframes landing-chat-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes landing-chat-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+.landing-chat-msg,
+.landing-chat-typing {
+  opacity: 0;
+  animation: landing-chat-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.landing-chat-stage:not(.is-visible) .landing-chat-msg,
+.landing-chat-stage:not(.is-visible) .landing-chat-typing {
+  animation-play-state: paused;
+}
+
+.landing-chat-msg:nth-of-type(1) {
+  animation-delay: 0.15s;
+}
+.landing-chat-msg:nth-of-type(2) {
+  animation-delay: 0.75s;
+}
+.landing-chat-msg:nth-of-type(3) {
+  animation-delay: 1.35s;
+}
+.landing-chat-typing {
+  animation-delay: 1.95s;
+}
+
+.landing-chat-dot {
+  animation: landing-chat-dot 1.1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-chat-msg,
+  .landing-chat-typing {
+    opacity: 1;
+    animation: none;
+  }
+  .landing-chat-dot {
+    animation: none;
+    opacity: 0.6;
+  }
 }
 
 .landing-match-like {
@@ -3374,7 +2429,7 @@ body:has(.landing-scope),
   left: -74px;
   height: 1px;
   overflow: hidden;
-  background: hsl(var(--auth-ink) / 0.14);
+  background: hsl(var(--landing-panel-ink) / 0.14);
   opacity: 0;
   transform: scaleX(0.04);
   transform-origin: center;
@@ -3391,7 +2446,7 @@ body:has(.landing-scope),
   background: linear-gradient(
     90deg,
     transparent,
-    hsl(var(--auth-ink) / 0.72),
+    hsl(var(--landing-panel-ink) / 0.72),
     transparent
   );
   filter: blur(0.5px);
@@ -3979,8 +3034,7 @@ body:has(.landing-scope),
 
 /* Shared landing/auth button motion: calm lift on hover, tactile press on
    pointer-down, and a brief centered flash as the click releases. */
-.landing-scope [data-ui-button],
-body:has(.auth-scope) [data-ui-button] {
+.landing-scope [data-ui-button] {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -3994,8 +3048,7 @@ body:has(.auth-scope) [data-ui-button] {
     color 0.2s ease !important;
 }
 
-.landing-scope [data-ui-button]::after,
-body:has(.auth-scope) [data-ui-button]::after {
+.landing-scope [data-ui-button]::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -4010,33 +3063,28 @@ body:has(.auth-scope) [data-ui-button]::after {
     transform 0.46s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.landing-scope [data-ui-button] svg,
-body:has(.auth-scope) [data-ui-button] svg {
+.landing-scope [data-ui-button] svg {
   transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .landing-scope [data-ui-button]:not(:disabled):hover,
-  body:has(.auth-scope) [data-ui-button]:not(:disabled):hover {
+  .landing-scope [data-ui-button]:not(:disabled):hover {
     transform: translate3d(0, -2px, 0) scale(1.01);
     box-shadow: 0 10px 24px hsl(var(--foreground) / 0.13);
   }
 
-  .landing-scope [data-ui-button]:not(:disabled):hover svg,
-  body:has(.auth-scope) [data-ui-button]:not(:disabled):hover svg {
+  .landing-scope [data-ui-button]:not(:disabled):hover svg {
     transform: scale(1.08);
   }
 }
 
-.landing-scope [data-ui-button]:not(:disabled):active,
-body:has(.auth-scope) [data-ui-button]:not(:disabled):active {
+.landing-scope [data-ui-button]:not(:disabled):active {
   transform: translate3d(0, 1px, 0) scale(0.965);
   box-shadow: 0 3px 8px hsl(var(--foreground) / 0.08);
   transition-duration: 70ms !important;
 }
 
-.landing-scope [data-ui-button]:not(:disabled):active::after,
-body:has(.auth-scope) [data-ui-button]:not(:disabled):active::after {
+.landing-scope [data-ui-button]:not(:disabled):active::after {
   opacity: 0.14;
   transform: scale(1);
   transition-duration: 0ms;
@@ -4148,15 +3196,11 @@ body:has(.auth-scope) [data-ui-button]:not(:disabled):active::after {
 @media (prefers-reduced-motion: reduce) {
   .landing-scope [data-ui-button],
   .landing-scope [data-ui-button]:hover,
-  .landing-scope [data-ui-button]:active,
-  body:has(.auth-scope) [data-ui-button],
-  body:has(.auth-scope) [data-ui-button]:hover,
-  body:has(.auth-scope) [data-ui-button]:active {
+  .landing-scope [data-ui-button]:active {
     transform: none !important;
   }
 
-  .landing-scope [data-ui-button]::after,
-  body:has(.auth-scope) [data-ui-button]::after {
+  .landing-scope [data-ui-button]::after {
     display: none;
   }
 

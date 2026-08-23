@@ -47,7 +47,7 @@ function Calendar({
         caption_dropdowns:
           "col-start-2 row-start-1 flex min-w-0 items-center justify-center gap-2",
         dropdown:
-          "h-9 w-full appearance-none border border-input bg-background px-2 text-center text-sm font-medium text-foreground outline-none transition-colors hover:border-foreground/30 focus:border-foreground focus:ring-2 focus:ring-ring/10",
+          "h-9 w-full appearance-none border border-input bg-background px-2 text-center text-sm font-medium text-foreground outline-none transition-colors hover:border-foreground/35 focus:border-foreground focus:ring-2 focus:ring-ring/10",
         dropdown_month: "flex min-w-0 flex-1",
         dropdown_year: "flex w-[5.25rem] shrink-0",
         dropdown_icon: "hidden",

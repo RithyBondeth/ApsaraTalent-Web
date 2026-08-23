@@ -64,7 +64,11 @@ function contrast(a, b) {
  * while `:root` was correctly holding 3:1. Add a scope here the moment you add
  * one to globals.css.
  */
-const SCOPES = ["auth", "landing"];
+// `landing` was here until the landing panels stopped opposing the page theme.
+// It no longer declares a palette of its own — it reads --landing-panel-bg/ink,
+// which are aliases of --muted/--foreground — so the base light and dark checks
+// already cover it. `auth` still overrides --auth-paper/--auth-ink and stays.
+const SCOPES = ["auth"];
 
 const declarations = (body) => {
   const out = {};
@@ -135,6 +139,11 @@ const PAIRS = [
   ["primary", "card", TEXT, "primary as link text on card"],
   ["secondary-foreground", "secondary", TEXT, "label on secondary"],
   ["accent-foreground", "accent", TEXT, "label on accent"],
+  // In light mode this is the *only* thing telling a card from the page, the
+  // background→card lightness step having gone when the page turned white. It
+  // is a hairline, not a component boundary, so it is nowhere near the 3:1 of
+  // 1.4.11 — but it must not be allowed to fade into the paper either.
+  ["border", "background", 1.3, "card edge against the page"],
   ["input", "background", UI, "input border on page"],
   ["input", "card", UI, "input border on card"],
   ["ring", "background", UI, "focus ring on page"],
@@ -172,7 +181,7 @@ PAIRS.push(
 
 // Categorical hues carry three roles rather than five: a solid for dots, an
 // accent for the label, and a subtle surface behind it.
-for (const c of ["violet", "magenta", "teal", "orange", "indigo", "lime"]) {
+for (const c of ["brown", "orange", "purple", "pink", "gray", "blue"]) {
   PAIRS.push(
     [`category-${c}-accent`, "background", TEXT, `category ${c}: text on page`],
     [`category-${c}-accent`, "card", TEXT, `category ${c}: text on card`],
@@ -194,11 +203,14 @@ for (const c of ["violet", "magenta", "teal", "orange", "indigo", "lime"]) {
  * inside a popover once became invisible. 1.10 is roughly the point where a
  * flat edge stops reading as an edge.
  *
- * Light mode is exempt for card/popover: both are pure white by design and
- * lean on the hard offset shadow instead.
+ * Light mode has no ladder at all any more: the page, the card and the popover
+ * are all pure white, so nothing there separates by lightness. What separates
+ * them is the --border hairline and the hard offset shadow, and the border is
+ * checked as a normal pair below (`card edge against the page`) so the light
+ * theme is not simply left ungated.
  */
 const LADDER = {
-  light: [["background", "card"]],
+  light: [],
   dark: [
     ["background", "card"],
     ["card", "popover"],
