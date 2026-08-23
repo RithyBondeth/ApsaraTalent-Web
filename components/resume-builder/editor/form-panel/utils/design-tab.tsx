@@ -59,7 +59,7 @@ function PillGroup<T extends string>({
             className={cn(
               "rounded-none border px-2.5 py-1 text-[11px] capitalize transition-colors",
               option === value
-                ? "border-primary bg-primary/10 font-medium text-primary"
+                ? "border-primary bg-primary/10 font-medium text-accent-foreground"
                 : "border-border/70 bg-card text-muted-foreground hover:border-border hover:text-foreground",
             )}
           >
@@ -358,7 +358,7 @@ export function DesignTab({
                       className={cn(
                         "rounded-none border px-2.5 py-1 text-[11px] capitalize transition-colors",
                         selected
-                          ? "border-primary bg-primary/10 font-medium text-primary"
+                          ? "border-primary bg-primary/10 font-medium text-accent-foreground"
                           : "border-border/70 bg-card text-muted-foreground hover:border-border hover:text-foreground",
                       )}
                     >

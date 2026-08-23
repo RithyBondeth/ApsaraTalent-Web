@@ -2505,7 +2505,7 @@ export default function ProfilePage() {
                       </TypographySmall>
                     </div>
                   ) : (
-                    <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
+                    <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-accent-foreground">
                       <TypographySmall className="text-xs font-medium">
                         {tP("connect")}
                       </TypographySmall>
@@ -2527,7 +2527,7 @@ export default function ProfilePage() {
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
+                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-accent-foreground">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>
@@ -2548,7 +2548,7 @@ export default function ProfilePage() {
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
+                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-accent-foreground">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>

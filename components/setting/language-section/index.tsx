@@ -67,7 +67,10 @@ function LanguageCard(props: ILanguageCardProps) {
       {/* Label Section */}
       <div className="flex min-w-0 flex-1 flex-col">
         <span
-          className={cn("text-sm font-semibold", active ? "text-primary" : "")}
+          className={cn(
+            "text-sm font-semibold",
+            active ? "text-accent-foreground" : "",
+          )}
         >
           {label}
         </span>

@@ -216,6 +216,43 @@ for (const c of ["brown", "orange", "purple", "pink", "gray", "blue"]) {
   );
 }
 
+/* ------------------------------ Alpha tints -------------------------------- */
+
+/**
+ * Some surfaces are not tokens at all — they are a token at low alpha over the
+ * page (`bg-primary/5` behind an AI callout, `bg-primary/10` behind a selected
+ * card). Nothing above sees them, which is how `text-primary` shipped at 4.22:1
+ * on its own 5% tint and 3.97:1 on the 10% one; axe caught both and this gate
+ * did not. Each entry composites `token` at `alpha` over `over`, then checks
+ * the inks that actually land on it.
+ */
+const TINTS = [
+  {
+    token: "primary",
+    alpha: 0.05,
+    over: "background",
+    inks: ["accent-foreground", "foreground"],
+  },
+  {
+    token: "primary",
+    alpha: 0.1,
+    over: "background",
+    inks: ["accent-foreground", "foreground"],
+  },
+];
+
+function composite(fg, bg, alpha) {
+  const a = hslToRgb(...fg);
+  const b = hslToRgb(...bg);
+  return a.map((v, i) => v * alpha + b[i] * (1 - alpha));
+}
+
+function contrastRgb(a, b) {
+  const la = relativeLuminance(a);
+  const lb = relativeLuminance(b);
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+
 /* ------------------------------ Surface ladder ----------------------------- */
 
 /**
@@ -270,6 +307,24 @@ function main() {
         lines.push(
           `  ${tag}  ${ratio.toFixed(2).padStart(6)}:1  (needs ${threshold})  ${label}`,
         );
+      }
+    }
+
+    for (const { token, alpha, over, inks } of TINTS) {
+      if (!tokens[token] || !tokens[over]) continue;
+      const surface = composite(tokens[token], tokens[over], alpha);
+      for (const ink of inks) {
+        if (!tokens[ink]) continue;
+        checked++;
+        const ratio = contrastRgb(hslToRgb(...tokens[ink]), surface);
+        const ok = ratio >= TEXT;
+        const label = `${ink} on ${token}/${alpha * 100} tint`;
+        if (!ok) failures.push({ theme, label, ratio, threshold: TEXT });
+        if (!ok || VERBOSE) {
+          lines.push(
+            `  ${ok ? "ok  " : "FAIL"}  ${ratio.toFixed(2).padStart(6)}:1  (needs ${TEXT})  ${label}`,
+          );
+        }
       }
     }
 

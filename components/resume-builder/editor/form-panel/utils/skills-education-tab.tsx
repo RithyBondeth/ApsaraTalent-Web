@@ -128,7 +128,7 @@ export function SkillsEducationTab({
           {skills.map((skill, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1 rounded-none border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] text-primary"
+              className="inline-flex items-center gap-1 rounded-none border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] text-accent-foreground"
             >
               {skill}
               <button

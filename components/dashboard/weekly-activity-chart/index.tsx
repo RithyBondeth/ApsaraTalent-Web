@@ -29,7 +29,7 @@ export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
         aria-live="polite"
         className="flex h-[250px] flex-col items-center justify-center gap-3 border border-dashed border-border bg-muted/20 px-5 text-center text-sm text-muted-foreground"
       >
-        <span className="grid size-11 place-items-center bg-primary/10 text-primary">
+        <span className="grid size-11 place-items-center bg-primary/10 text-accent-foreground">
           <LucideBarChart3 className="size-5" aria-hidden />
         </span>
         <span className="max-w-sm">{t("noActivityThisWeek")}</span>

@@ -134,7 +134,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
                       <div className="flex items-center gap-2.5 py-0.5">
                         <Avatar className="size-6 shrink-0">
                           <AvatarImage src={emp.avatar} alt={name} />
-                          <AvatarFallback className="bg-primary/10 text-[10px] text-primary">
+                          <AvatarFallback className="bg-primary/10 text-[10px] text-accent-foreground">
                             {name.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>

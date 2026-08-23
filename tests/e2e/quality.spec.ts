@@ -38,6 +38,13 @@ async function expectAccessible(
   page: import("@playwright/test").Page,
   route: string,
 ) {
+  // Audit the settled page, not a frame of its entrance. The landing hero fades
+  // its heading and description in over ~1.6s, so an 800ms sample caught them
+  // mid-tween — axe read the transient opacity as a contrast failure on text
+  // that reaches full contrast a moment later. Reduced motion makes the state
+  // deterministic: the GSAP hooks show everything instantly under it, which is
+  // the same thing visual.spec.ts already does for its baselines.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.waitForTimeout(800);
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])

@@ -25,7 +25,7 @@ export function RecentMatchesList({
         aria-live="polite"
         className="flex flex-col items-center justify-center border border-dashed border-border bg-muted/20 px-5 py-8 text-center"
       >
-        <span className="mb-3 grid size-11 place-items-center bg-primary/10 text-primary">
+        <span className="mb-3 grid size-11 place-items-center bg-primary/10 text-accent-foreground">
           <LucideHandshake className="size-5" aria-hidden />
         </span>
         <TypographyMuted className="text-sm text-muted-foreground">

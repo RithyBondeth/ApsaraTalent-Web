@@ -61,7 +61,7 @@ export function ThemeCard(props: IThemeCardProps) {
         <span
           className={cn(
             "[&>svg]:size-3.5",
-            active ? "text-primary" : "text-muted-foreground",
+            active ? "text-accent-foreground" : "text-muted-foreground",
           )}
         >
           {icon}
@@ -69,7 +69,7 @@ export function ThemeCard(props: IThemeCardProps) {
         <span
           className={cn(
             "text-xs font-medium",
-            active ? "text-primary" : "text-muted-foreground",
+            active ? "text-accent-foreground" : "text-muted-foreground",
           )}
         >
           {label}
