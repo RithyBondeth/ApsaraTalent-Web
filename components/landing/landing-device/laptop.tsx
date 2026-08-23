@@ -19,7 +19,7 @@ export function LandingLaptop(props: ILandingLaptopProps) {
   return (
     <div className="landing-laptop relative w-full max-w-[560px]">
       {/* Lid Section */}
-      <div className="rounded-[14px] bg-scrim p-[9px] pb-[11px] shadow-[0_30px_70px_hsl(var(--scrim)/0.34)]">
+      <div className="mx-auto w-[93%] rounded-[14px] bg-scrim p-[9px] pb-[11px] shadow-[0_30px_70px_hsl(var(--scrim)/0.34)]">
         {/* Camera Section */}
         <div className="flex h-[7px] items-center justify-center">
           <span className="size-[3px] rounded-full bg-background/25" />
@@ -32,7 +32,7 @@ export function LandingLaptop(props: ILandingLaptopProps) {
       </div>
 
       {/* Hinge and Base Section */}
-      <div className="relative mx-auto h-[10px] w-[112%] max-w-none -translate-x-[5.35%] rounded-b-[10px] bg-scrim">
+      <div className="relative mx-auto h-[10px] w-full rounded-b-[10px] bg-scrim">
         {/* Notch Section */}
         <span
           aria-hidden

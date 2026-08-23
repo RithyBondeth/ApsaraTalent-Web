@@ -172,6 +172,28 @@ for (const s of ["success", "warning", "info", "destructive"]) {
   );
 }
 
+// Muted body copy does not only sit on the page and the card — it sits on every
+// tinted surface in the app: a status callout, a category chip, a muted panel.
+// Checking it against only `background` and `card` is what let it ship at
+// 4.18-4.44 on eleven of twelve `-subtle` surfaces, which axe caught in CI and
+// this gate did not. Every tinted surface a muted string can land on is checked.
+for (const surface of [
+  "muted",
+  "accent",
+  "success-subtle",
+  "warning-subtle",
+  "info-subtle",
+  "destructive-subtle",
+  "category-brown-subtle",
+  "category-orange-subtle",
+  "category-purple-subtle",
+  "category-pink-subtle",
+  "category-gray-subtle",
+  "category-blue-subtle",
+]) {
+  PAIRS.push(["muted-foreground", surface, TEXT, `muted text on ${surface}`]);
+}
+
 // destructive is the one status token used directly as text (`text-destructive`,
 // 60+ call sites), so it has to clear AA on its own — not only as a fill.
 PAIRS.push(
