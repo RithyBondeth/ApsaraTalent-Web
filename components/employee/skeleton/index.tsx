@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 /* ------------------------- Employee Card Skeleton ------------------------- */
 export default function EmployeeCardSkeleton() {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden rounded-none border border-t-[5px] border-border border-t-foreground bg-card">
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-none border border-border bg-card">
       {/* Header Section */}
       <div className="flex items-start gap-3 p-4 pb-3">
         <Skeleton className="size-16 shrink-0 rounded-none" />
@@ -94,8 +94,7 @@ export function EmployeeDetailPageLoadingSkeleton() {
       <SkeletonCard className="profile-detail-employee-card overflow-hidden">
         <div className="grid md:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
           {/* Editorial Identity Panel Section */}
-          <section className="profile-detail-employee-intro relative flex min-h-[300px] flex-col overflow-hidden bg-foreground p-5 sm:min-h-[340px] sm:p-7 md:min-h-[410px]">
-            <div className="profile-detail-hero-grid" aria-hidden />
+          <section className="profile-detail-employee-intro relative flex min-h-[300px] flex-col overflow-hidden bg-muted p-5 sm:min-h-[340px] sm:p-7 md:min-h-[410px]">
             <div className="relative z-[2] flex items-start justify-between gap-4">
               <Skeleton className="h-2.5 w-24 rounded-none opacity-25" />
               <Skeleton className="h-7 w-28 rounded-none opacity-25" />

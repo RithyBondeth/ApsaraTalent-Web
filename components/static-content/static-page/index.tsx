@@ -1,6 +1,5 @@
 import Header from "@/components/landing/landing-header";
 import LandingFooter from "@/components/landing/landing-footer";
-import { GridRunners } from "@/components/ui/grid-runners";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 import { ScrollProgressBar } from "@/components/utils/layout/scroll-progress-bar";
 import {
@@ -14,8 +13,16 @@ import {
 
 export function StaticPageShell(props: IStaticPageShellProps) {
   /* ------------------------------- Props ------------------------------- */
-  const { pageNumber, title, subtitle, tocHeading, toc, stats, children } =
-    props;
+  const {
+    pageNumber,
+    title,
+    subtitle,
+    tocHeading,
+    toc,
+    stats,
+    sessionRole,
+    children,
+  } = props;
 
   /* ----------------------------- Render UI ----------------------------- */
   return (
@@ -24,7 +31,10 @@ export function StaticPageShell(props: IStaticPageShellProps) {
       <ScrollProgressBar />
 
       {/* Page Header Section */}
-      <Header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl" />
+      <Header
+        sessionRole={sessionRole}
+        className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl"
+      />
 
       {/* Page Hero Section */}
       {/* The hero used to be a two-column split whose right half was a dark
@@ -35,11 +45,10 @@ export function StaticPageShell(props: IStaticPageShellProps) {
           PageBanner every signed-in page uses, and the space goes to metadata a
           reader of a policy actually wants. Same reasoning, and the same
           component, as the hero illustrations that were removed app-wide. */}
+      {/* The blueprint grid and its animated runners used to sit behind this
+          banner. They went with the rest of the dossier language, so the hero
+          is now the plain surface every other page opens on. */}
       <section className="relative overflow-hidden border-b border-border pt-[72px]">
-        {/* Hero Background Animation Section */}
-        <div className="landing-grid pointer-events-none absolute inset-0" />
-        <GridRunners className="landing-grid-runners" density="quiet" />
-
         {/* Hero Banner Section */}
         <div className="relative mx-auto max-w-7xl border-x border-border px-6 py-10 sm:px-10 sm:py-12 lg:px-14">
           <PageBanner
@@ -62,7 +71,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
             <a
               key={item.id}
               href={`#${item.id}`}
-              className="shrink-0 border border-border px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/30 hover:bg-muted hover:text-foreground"
+              className="shrink-0 border border-border px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/35 hover:bg-muted hover:text-foreground"
             >
               <span className="mr-2 text-[10px] tabular-nums text-foreground">
                 {String(index + 1).padStart(2, "0")}
@@ -121,7 +130,7 @@ export function StaticSection(props: IStaticSectionProps) {
       {/* Static Content Section */}
       <div className="grid gap-6 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-8">
         {/* Section Icon Section */}
-        <div className="flex size-12 items-center justify-center border border-border bg-muted/45 text-foreground sm:size-14">
+        <div className="flex size-12 items-center justify-center border border-border bg-muted text-foreground sm:size-14">
           <span className="[&>svg]:size-5 [&>svg]:stroke-[1.5]">{icon}</span>
         </div>
         {/* Section Copy Section */}
@@ -147,10 +156,10 @@ export function StaticBullet(props: IStaticBulletProps) {
 
   /* ----------------------------- Render UI ----------------------------- */
   return (
-    <li className="grid grid-cols-[22px_1fr] items-start gap-3 border-b border-border/65 py-3 first:border-t">
+    <li className="grid grid-cols-[22px_1fr] items-start gap-3 border-b border-border py-3 first:border-t">
       {/* Static Bullet Item Section */}
       {/* Bullet Marker Section */}
-      <span className="mt-[0.45rem] flex size-3 items-center justify-center border border-foreground/30">
+      <span className="mt-[0.45rem] flex size-3 items-center justify-center border border-foreground/35">
         <span className="size-1 bg-foreground/65" />
       </span>
       <span>{children}</span>
@@ -164,10 +173,10 @@ export function StaticCard(props: IStaticCardProps) {
 
   /* ----------------------------- Render UI ----------------------------- */
   return (
-    <article className="static-page-card group flex min-h-full flex-col border border-border bg-card/45 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-foreground/25 hover:bg-card sm:p-6">
+    <article className="static-page-card group flex min-h-full flex-col border border-border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-foreground/35 hover:bg-card sm:p-6">
       {/* Static Information Card Section */}
       {/* Card Icon Section */}
-      <div className="flex size-10 items-center justify-center border border-border bg-muted/60 text-foreground transition-colors group-hover:border-foreground/25 group-hover:bg-foreground group-hover:text-background">
+      <div className="flex size-10 items-center justify-center border border-border bg-muted text-foreground transition-colors group-hover:border-foreground/35 group-hover:bg-foreground group-hover:text-background">
         <span className="[&>svg]:size-4 [&>svg]:stroke-[1.6]">{icon}</span>
       </div>
       {/* Card Content Section */}
@@ -189,7 +198,7 @@ export function StaticStep(props: IStaticStepProps) {
     <div className="static-page-step relative grid grid-cols-[48px_1fr] gap-4 pb-6 last:pb-0">
       {/* Static Step Section */}
       {/* Step Number Section */}
-      <div className="relative z-10 flex size-10 items-center justify-center border border-foreground/25 bg-background text-xs font-semibold tabular-nums text-foreground">
+      <div className="relative z-10 flex size-10 items-center justify-center border border-foreground/35 bg-background text-xs font-semibold tabular-nums text-foreground">
         {String(step).padStart(2, "0")}
       </div>
       {/* Step Content Section */}
@@ -209,7 +218,7 @@ export function StaticNote(props: IStaticNoteProps) {
 
   /* ----------------------------- Render UI ----------------------------- */
   return (
-    <div className="static-page-note mt-2 flex items-start gap-3 border border-foreground/15 bg-foreground/[0.035] px-4 py-4 text-foreground">
+    <div className="static-page-note mt-2 flex items-start gap-3 border border-border bg-muted px-4 py-4 text-foreground">
       {/* Static Note Section */}
       {/* Note Icon Section */}
       <span className="mt-0.5 shrink-0 [&>svg]:size-4 [&>svg]:stroke-[1.6]">

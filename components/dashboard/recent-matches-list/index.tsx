@@ -25,7 +25,7 @@ export function RecentMatchesList({
         aria-live="polite"
         className="flex flex-col items-center justify-center border border-dashed border-border bg-muted/20 px-5 py-8 text-center"
       >
-        <span className="mb-3 grid size-11 place-items-center bg-primary/10 text-primary">
+        <span className="mb-3 grid size-11 place-items-center bg-primary/10 text-accent-foreground">
           <LucideHandshake className="size-5" aria-hidden />
         </span>
         <TypographyMuted className="text-sm text-muted-foreground">
@@ -43,7 +43,7 @@ export function RecentMatchesList({
       {matches.map((match) => (
         <div
           key={match.id}
-          className="flex items-center gap-3 border border-l-[3px] border-border border-l-foreground bg-muted/25 p-3 transition-all hover:-translate-y-0.5 hover:bg-muted/45"
+          className="flex items-center gap-3 border border-border bg-muted/25 p-3 transition-all hover:-translate-y-0.5 hover:bg-muted/45"
         >
           {/* Avatar Section */}
           <CachedAvatar

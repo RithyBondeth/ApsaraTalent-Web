@@ -385,11 +385,7 @@ export default function EmployeeDetailPage() {
           {/* About Section */}
           {employeeData.description && (
             <DetailCard className="profile-detail-employee-about p-5 sm:p-7">
-              <SectionTitle
-                icon={<LucideUser />}
-                title={tf("dialogAbout")}
-                variant="detail"
-              />
+              <SectionTitle icon={<LucideUser />} title={tf("dialogAbout")} />
               <p className="max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
                 {employeeData.description}
               </p>
@@ -399,11 +395,7 @@ export default function EmployeeDetailPage() {
           {/* Skills Section */}
           {employeeData.skills && employeeData.skills.length > 0 && (
             <DetailCard className="profile-detail-employee-skills p-5 sm:p-6">
-              <SectionTitle
-                icon={<LucideZap />}
-                title={tf("dialogSkills")}
-                variant="detail"
-              />
+              <SectionTitle icon={<LucideZap />} title={tf("dialogSkills")} />
               <div className="profile-detail-skill-cloud flex flex-wrap gap-2">
                 {employeeData.skills.map((item: ISkill) => (
                   <HoverCard key={item.id}>
@@ -430,7 +422,6 @@ export default function EmployeeDetailPage() {
               <SectionTitle
                 icon={<LucideBriefcaseBusiness />}
                 title={tf("experience")}
-                variant="detail"
               />
               <div className="flex flex-col gap-3">
                 {employeeData.experiences.map(
@@ -447,7 +438,7 @@ export default function EmployeeDetailPage() {
                       <div
                         className={`min-w-0 flex-1 ${i < employeeData.experiences.length - 1 ? "pb-3" : ""}`}
                       >
-                        <div className="profile-detail-timeline-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-hard-sm">
+                        <div className="profile-detail-timeline-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/35 hover:shadow-hard-sm">
                           <p className="text-base font-bold tracking-tight">
                             {item.title}
                           </p>
@@ -477,13 +468,12 @@ export default function EmployeeDetailPage() {
               <SectionTitle
                 icon={<LucideGraduationCap />}
                 title={tf("dialogEducation")}
-                variant="detail"
               />
               <div className="grid gap-3 sm:grid-cols-2">
                 {employeeData.educations.map((item: IEducation) => (
                   <div
                     key={item.id}
-                    className="flex items-start gap-3 border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-hard-sm"
+                    className="flex items-start gap-3 border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/35 hover:shadow-hard-sm"
                   >
                     <div className="flex size-9 flex-shrink-0 items-center justify-center border border-border bg-muted/60">
                       <LucideGraduationCap
@@ -515,11 +505,7 @@ export default function EmployeeDetailPage() {
           {/* Documents Section */}
           {(employeeData.resume || employeeData.coverLetter) && (
             <DetailCard className="p-5">
-              <SectionTitle
-                icon={<LucideFileText />}
-                title={tf("documents")}
-                variant="detail"
-              />
+              <SectionTitle icon={<LucideFileText />} title={tf("documents")} />
               <div className="flex flex-col gap-2.5">
                 {[
                   {
@@ -585,11 +571,7 @@ export default function EmployeeDetailPage() {
 
           {/* Contact Section */}
           <DetailCard className="p-5">
-            <SectionTitle
-              icon={<LucidePhone />}
-              title={tf("contact")}
-              variant="detail"
-            />
+            <SectionTitle icon={<LucidePhone />} title={tf("contact")} />
             <div className="space-y-3.5">
               {[
                 {
@@ -628,11 +610,7 @@ export default function EmployeeDetailPage() {
           {/* Socials Section */}
           {employeeData.socials && employeeData.socials.length > 0 && (
             <DetailCard className="p-5">
-              <SectionTitle
-                icon={<LucideGlobe />}
-                title={tf("socialLinks")}
-                variant="detail"
-              />
+              <SectionTitle icon={<LucideGlobe />} title={tf("socialLinks")} />
               <div className="flex flex-wrap gap-2">
                 {employeeData.socials.map((item: ISocialLink) => (
                   <Link
@@ -640,7 +618,7 @@ export default function EmployeeDetailPage() {
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-semibold transition-colors hover:border-foreground/30 hover:bg-muted"
+                    className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-semibold transition-colors hover:border-foreground/35 hover:bg-muted"
                   >
                     <PlatformIcon platform={item.platform as TPlatform} />
                     {item.platform}

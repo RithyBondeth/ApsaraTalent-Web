@@ -237,7 +237,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
       >
         <SheetContent
           side="right"
-          className="flex w-full flex-col gap-0 border-l-[5px] border-l-foreground p-0 sm:max-w-md"
+          className="flex w-full flex-col gap-0 p-0 sm:max-w-md"
         >
           {/* Header Section */}
           <SheetHeader className="border-b px-5 py-4">
@@ -280,7 +280,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
               <>
                 {/* Overall Feedback Section */}
                 {data.overallFeedback && (
-                  <div className="rounded-none border border-l-[5px] border-border border-l-foreground bg-muted/50 p-4 duration-200 animate-in fade-in-0 slide-in-from-bottom-1">
+                  <div className="rounded-none border border-border bg-muted/50 p-4 duration-200 animate-in fade-in-0 slide-in-from-bottom-1">
                     <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                       {t("overallFeedback")}
                     </p>
@@ -372,7 +372,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                     {data.experienceSuggestions.map((s) => (
                       <div
                         key={s.index}
-                        className="flex flex-col gap-2 rounded-none border border-l-[5px] border-border border-l-foreground bg-muted/20 p-3 duration-200 animate-in fade-in-0 slide-in-from-bottom-1"
+                        className="flex flex-col gap-2 rounded-none border border-border bg-muted/20 p-3 duration-200 animate-in fade-in-0 slide-in-from-bottom-1"
                       >
                         <div className="flex items-center justify-between">
                           <p className="text-xs font-medium text-foreground">
@@ -416,7 +416,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
 
                     {/* Skeleton For Next EXP Block While Still Streaming Section */}
                     {generating && (
-                      <div className="flex flex-col gap-2 rounded-none border border-l-[5px] border-border border-l-foreground bg-muted/20 p-3">
+                      <div className="flex flex-col gap-2 rounded-none border border-border bg-muted/20 p-3">
                         <Skeleton className="h-3 w-24 rounded-none" />
                         <Skeleton className="h-3 w-full rounded-none" />
                         <Skeleton className="h-3 w-5/6 rounded-none" />

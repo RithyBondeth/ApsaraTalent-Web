@@ -13,7 +13,7 @@ export default function StatisticCard({
 }: IStatisticCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <article className="group relative overflow-hidden border border-l-[5px] border-border border-l-foreground bg-card p-4 shadow-hard transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-hard-lg sm:p-5">
+    <article className="group relative overflow-hidden border border-border bg-card p-4 shadow-hard transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-hard-lg sm:p-5">
       {/* Subtle Gradient bg on hover Section */}
       <div
         className={`absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${bgColor}`}

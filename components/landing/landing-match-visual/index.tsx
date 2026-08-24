@@ -5,38 +5,72 @@ import { useGsapScrollAnimation } from "@/hooks/utils/use-gsap-animation";
 import { useMediaQuery } from "@/hooks/utils/use-media-query";
 import { cn } from "@/lib/utils";
 import {
+  LucideArrowLeft,
   LucideArrowLeftRight,
+  LucideBriefcase,
+  LucideCalendar,
+  LucideCircleUser,
+  LucideBookmark,
   LucideBriefcaseBusiness,
   LucideCheck,
+  LucideEllipsisVertical,
+  LucideGraduationCap,
   LucideHeart,
   LucideMapPin,
   LucideMessageCircle,
+  LucidePhone,
+  LucideSend,
   LucideSparkles,
+  LucideTimer,
+  LucideUsers,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { IDeviceChromeProps, ILandingMatchVisualProps } from "./props";
+import { LandingPhone } from "@/components/landing/landing-device/phone";
+import { ILandingMatchVisualProps } from "./props";
 
 gsap.registerPlugin(ScrollTrigger);
 
-function DeviceChrome(props: IDeviceChromeProps) {
-  /* ------------------------------- Props ------------------------------- */
-  const { children } = props;
-
-  /* ----------------------------- Render UI ----------------------------- */
+/* A skill / position chip, matching `Tag`. */
+function MiniTag(props: { label: string }) {
   return (
-    <div className="landing-match-device relative w-full max-w-[280px] border border-white/[0.18] bg-[hsl(var(--auth-paper))] p-2.5 shadow-[0_28px_80px_hsl(var(--auth-paper)/0.42)]">
-      {/* Device Frame Section */}
-      {/* Device Speaker Section */}
-      <div className="mb-2 flex h-4 items-center justify-center">
-        <span className="h-1 w-10 rounded-full bg-white/[0.18]" />
-      </div>
-      {/* Device Screen Section */}
-      <div className="overflow-hidden rounded-[14px] bg-[hsl(var(--auth-ink))] text-[hsl(var(--auth-paper))]">
-        {children}
-      </div>
+    <span className="rounded-none border border-border bg-muted/50 px-1.5 py-[3px] text-[8px] font-medium leading-none text-foreground/75">
+      {props.label}
+    </span>
+  );
+}
+
+/* One cell of the detail page's 2-up metadata grid. */
+function MiniMeta(props: { icon: ReactNode; value: string }) {
+  return (
+    <span className="flex items-center gap-1 border border-border bg-muted/55 px-1.5 py-[5px] text-[7px] leading-none text-foreground/90">
+      {props.icon}
+      <span className="truncate">{props.value}</span>
+    </span>
+  );
+}
+
+/* The detail page's sticky header: back, breadcrumb, overflow. */
+function DetailBar(props: { eyebrow: string; name: string }) {
+  return (
+    <div className="flex items-center gap-2 border-b border-border bg-background/95 px-3 py-1.5">
+      <span className="grid size-[18px] shrink-0 place-items-center rounded-none border border-border">
+        <LucideArrowLeft className="size-[9px]" strokeWidth={2} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[6px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+          {props.eyebrow}
+        </span>
+        <span className="block truncate text-[9px] font-bold leading-tight">
+          {props.name}
+        </span>
+      </span>
+      <LucideEllipsisVertical
+        className="size-[11px] shrink-0 text-muted-foreground"
+        strokeWidth={2}
+      />
     </div>
   );
 }
@@ -47,62 +81,114 @@ function CompanyDevice() {
 
   /* ----------------------------- Render UI ----------------------------- */
   return (
-    <DeviceChrome>
-      {/* Company Device Header Section */}
-      <div className="flex items-center justify-between border-b border-[hsl(var(--auth-paper)/0.1)] px-4 py-3">
-        <div>
-          <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[hsl(var(--auth-paper)/0.48)]">
-            {t("matchVisualCompanyView")}
-          </p>
-          <p className="mt-0.5 text-xs font-semibold">Kiri Labs</p>
+    <LandingPhone
+      bar={
+        <DetailBar eyebrow={t("matchVisualCompanyView")} name="Sophea Dara" />
+      }
+    >
+      {/* Employee Detail Section — mirrors feed/employee/[employeeId] */}
+      <div className="border border-border bg-card shadow-hard">
+        {/* Identity Panel Section */}
+        <div className="flex flex-col border-b border-border bg-muted p-2.5">
+          <div className="flex items-start justify-between gap-2">
+            <span className="text-[6px] font-extrabold uppercase tracking-[0.24em] opacity-65">
+              {t("matchVisualEmployeeEyebrow")}
+            </span>
+            <span className="border border-border bg-card px-1.5 py-[3px] text-[5px] font-extrabold uppercase tracking-[0.18em] opacity-75">
+              Apsara Talent
+            </span>
+          </div>
+          <div className="mt-4 flex items-end gap-2">
+            <span className="grid size-12 shrink-0 place-items-center rounded-none border border-border bg-card text-[11px] font-bold">
+              SD
+            </span>
+            <span className="min-w-0">
+              <span className="mb-0.5 block text-[5px] font-bold uppercase tracking-[0.2em] opacity-55">
+                Apsara profile
+              </span>
+              <span className="block text-[15px] font-bold leading-[0.95] tracking-[-0.045em]">
+                Sophea Dara
+              </span>
+            </span>
+          </div>
         </div>
-        <span className="grid size-7 place-items-center rounded-full border border-[hsl(var(--auth-paper)/0.14)]">
-          <LucideBriefcaseBusiness className="size-3.5" strokeWidth={1.6} />
-        </span>
-      </div>
 
-      {/* Employee Preview Content Section */}
-      <div className="p-4">
-        {/* Employee Cover and Avatar Section */}
-        <div className="landing-profile-cover relative mb-10 h-20 overflow-visible border border-[hsl(var(--auth-paper)/0.1)]">
-          <span className="absolute -bottom-7 left-3 grid size-14 place-items-center rounded-full border-4 border-[hsl(var(--auth-ink))] bg-[hsl(var(--auth-paper))] text-base font-semibold text-[hsl(var(--auth-ink))]">
-            SD
-          </span>
-        </div>
+        {/* Professional Focus Panel Section */}
+        <div className="bg-card p-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[6px] font-extrabold uppercase tracking-[0.22em] text-muted-foreground">
+              {t("matchVisualEmployeeEyebrow")}
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-none border border-category-brown-accent/20 bg-category-brown-subtle px-1.5 py-[3px] text-[6px] font-bold uppercase leading-none tracking-[0.1em] text-category-brown-accent">
+              <span className="size-1 shrink-0 rounded-full bg-category-brown" />
+              {t("matchVisualAvailable")}
+            </span>
+          </div>
 
-        {/* Employee Identity Section */}
-        <div className="mb-4">
-          <h3 className="text-base font-semibold tracking-tight">
-            Sophea Dara
-          </h3>
-          <p className="mt-1 text-[11px] text-[hsl(var(--auth-paper)/0.56)]">
+          <p className="mt-3 text-[17px] font-bold leading-[0.95] tracking-[-0.05em]">
             Senior Product Designer
           </p>
-          <p className="mt-2 flex items-center gap-1 text-[10px] text-[hsl(var(--auth-paper)/0.46)]">
-            <LucideMapPin className="size-3" strokeWidth={1.6} />
-            Phnom Penh, Cambodia
-          </p>
-        </div>
 
-        {/* Employee Skills Section */}
-        <div className="mb-5 flex flex-wrap gap-1.5">
-          {["Product", "Research", "Figma"].map((skill) => (
-            <span
-              key={skill}
-              className="border border-[hsl(var(--auth-paper)/0.12)] px-2 py-1 text-[9px] text-[hsl(var(--auth-paper)/0.62)]"
-            >
-              {skill}
+          {/* Metadata Grid Section */}
+          <div className="mt-3 grid grid-cols-2 gap-px">
+            <MiniMeta
+              icon={
+                <LucideMapPin className="size-2 shrink-0" strokeWidth={2} />
+              }
+              value="Phnom Penh"
+            />
+            <MiniMeta
+              icon={<LucideTimer className="size-2 shrink-0" strokeWidth={2} />}
+              value="6 years"
+            />
+            <MiniMeta
+              icon={
+                <LucideBriefcase className="size-2 shrink-0" strokeWidth={2} />
+              }
+              value="Product"
+            />
+            <MiniMeta
+              icon={
+                <LucideGraduationCap
+                  className="size-2 shrink-0"
+                  strokeWidth={2}
+                />
+              }
+              value="BA Design"
+            />
+          </div>
+
+          {/* Action Section — the like lands here */}
+          <div className="mt-3 flex items-center gap-1.5">
+            <span className="flex flex-1 items-center justify-center gap-1 rounded-none border border-input px-2 py-1.5 text-[8px] font-semibold text-foreground">
+              <LucideBookmark className="size-2.5" strokeWidth={2} />
+              {t("matchVisualSave")}
             </span>
-          ))}
-        </div>
-
-        {/* Company Like Action Section */}
-        <div className="landing-match-like landing-match-like-company flex items-center justify-center gap-2 bg-[hsl(var(--auth-paper))] px-3 py-3 text-xs font-semibold text-[hsl(var(--auth-ink))]">
-          <LucideHeart className="size-4 fill-current" strokeWidth={1.6} />
-          {t("matchVisualLiked")}
+            <span className="landing-match-like landing-match-like-company flex flex-1 items-center justify-center gap-1 rounded-none bg-primary px-2 py-1.5 text-[8px] font-bold text-primary-foreground">
+              <LucideHeart className="size-2.5 fill-current" strokeWidth={2} />
+              {t("matchVisualLiked")}
+            </span>
+          </div>
         </div>
       </div>
-    </DeviceChrome>
+
+      {/* About Card Section — the next card down the page */}
+      <div className="mt-2 border border-border bg-card p-2.5 shadow-hard">
+        <div className="mb-2 flex items-center gap-1.5 border-b border-border pb-1.5">
+          <span className="grid size-4 shrink-0 place-items-center border border-border bg-muted/60">
+            <LucideCircleUser className="size-2" strokeWidth={2} />
+          </span>
+          <span className="text-[8px] font-bold tracking-tight">
+            {t("matchVisualAbout")}
+          </span>
+        </div>
+        <div className="flex flex-wrap gap-1">
+          <MiniTag label="Product" />
+          <MiniTag label="Research" />
+          <MiniTag label="Figma" />
+        </div>
+      </div>
+    </LandingPhone>
   );
 }
 
@@ -112,56 +198,180 @@ function EmployeeDevice() {
 
   /* ----------------------------- Render UI ----------------------------- */
   return (
-    <DeviceChrome>
-      {/* Employee Device Header Section */}
-      <div className="flex items-center justify-between border-b border-[hsl(var(--auth-paper)/0.1)] px-4 py-3">
-        <div>
-          <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[hsl(var(--auth-paper)/0.48)]">
-            {t("matchVisualEmployeeView")}
-          </p>
-          <p className="mt-0.5 text-xs font-semibold">Sophea Dara</p>
-        </div>
-        <span className="grid size-7 place-items-center rounded-full border border-[hsl(var(--auth-paper)/0.14)]">
-          <span className="text-[9px] font-semibold">SD</span>
-        </span>
-      </div>
-
-      {/* Company Preview Content Section */}
-      <div className="p-4">
-        {/* Company Cover and Avatar Section */}
-        <div className="landing-company-cover relative mb-10 h-20 overflow-visible border border-[hsl(var(--auth-paper)/0.1)]">
-          <span className="absolute -bottom-7 left-3 grid size-14 place-items-center rounded-full border-4 border-[hsl(var(--auth-ink))] bg-[hsl(var(--auth-paper))] text-[11px] font-bold text-[hsl(var(--auth-ink))]">
-            KIRI
+    <LandingPhone
+      bar={
+        <DetailBar eyebrow={t("matchVisualEmployeeView")} name="Kiri Labs" />
+      }
+    >
+      {/* Company Detail Section — mirrors feed/company/[companyId] */}
+      <div className="border border-border bg-card shadow-hard">
+        {/* Company Cover Section */}
+        <div className="relative flex min-h-[104px] flex-col justify-end border-b border-border bg-muted p-2.5">
+          <div className="absolute inset-x-2.5 top-2.5 flex items-start justify-between gap-2">
+            <span className="text-[6px] font-extrabold uppercase tracking-[0.24em] opacity-65">
+              {t("matchVisualCompanyEyebrow")}
+            </span>
+            <span className="border border-border bg-card px-1.5 py-[3px] text-[5px] font-extrabold uppercase tracking-[0.18em] opacity-75">
+              Apsara Talent
+            </span>
+          </div>
+          <span className="text-[6px] font-bold uppercase tracking-[0.2em] opacity-55">
+            Technology
+          </span>
+          <span className="mt-0.5 block text-[17px] font-bold leading-[0.95] tracking-[-0.05em]">
+            Kiri Labs
           </span>
         </div>
 
-        {/* Company Identity Section */}
-        <div className="mb-4">
-          <h3 className="text-base font-semibold tracking-tight">Kiri Labs</h3>
-          <p className="mt-1 text-[11px] text-[hsl(var(--auth-paper)/0.56)]">
-            Product &amp; Technology
-          </p>
-          <p className="mt-2 flex items-center gap-1 text-[10px] text-[hsl(var(--auth-paper)/0.46)]">
-            <LucideMapPin className="size-3" strokeWidth={1.6} />
-            Phnom Penh, Cambodia
-          </p>
+        {/* Stats Row Section */}
+        <div className="grid grid-cols-2 gap-px bg-card p-2.5">
+          <MiniMeta
+            icon={
+              <LucideBriefcaseBusiness
+                className="size-2 shrink-0"
+                strokeWidth={2}
+              />
+            }
+            value="Technology"
+          />
+          <MiniMeta
+            icon={<LucideMapPin className="size-2 shrink-0" strokeWidth={2} />}
+            value="Phnom Penh"
+          />
+          <MiniMeta
+            icon={<LucideUsers className="size-2 shrink-0" strokeWidth={2} />}
+            value="50+ people"
+          />
+          <MiniMeta
+            icon={
+              <LucideCalendar className="size-2 shrink-0" strokeWidth={2} />
+            }
+            value="Since 2018"
+          />
         </div>
 
-        {/* Open Position Section */}
-        <div className="mb-5 border-y border-[hsl(var(--auth-paper)/0.1)] py-3">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[hsl(var(--auth-paper)/0.42)]">
-            {t("matchVisualHiringFor")}
-          </p>
-          <p className="mt-1.5 text-xs font-medium">Senior Product Designer</p>
-        </div>
-
-        {/* Employee Like Action Section */}
-        <div className="landing-match-like landing-match-like-employee flex items-center justify-center gap-2 bg-[hsl(var(--auth-paper))] px-3 py-3 text-xs font-semibold text-[hsl(var(--auth-ink))]">
-          <LucideHeart className="size-4 fill-current" strokeWidth={1.6} />
-          {t("matchVisualLiked")}
+        {/* Action Section — the like lands here */}
+        <div className="flex items-center gap-1.5 px-2.5 pb-2.5">
+          <span className="flex flex-1 items-center justify-center gap-1 rounded-none border border-input px-2 py-1.5 text-[8px] font-semibold text-foreground">
+            <LucideBookmark className="size-2.5" strokeWidth={2} />
+            {t("matchVisualSave")}
+          </span>
+          <span className="landing-match-like landing-match-like-employee flex flex-1 items-center justify-center gap-1 rounded-none bg-primary px-2 py-1.5 text-[8px] font-bold text-primary-foreground">
+            <LucideHeart className="size-2.5 fill-current" strokeWidth={2} />
+            {t("matchVisualLiked")}
+          </span>
         </div>
       </div>
-    </DeviceChrome>
+
+      {/* Open Positions Card Section */}
+      <div className="mt-2 border border-border bg-card p-2.5 shadow-hard">
+        <div className="mb-2 flex items-center justify-between gap-1.5 border-b border-border pb-1.5">
+          <span className="flex items-center gap-1.5">
+            <span className="grid size-4 shrink-0 place-items-center border border-border bg-muted/60">
+              <LucideBriefcaseBusiness className="size-2" strokeWidth={2} />
+            </span>
+            <span className="text-[8px] font-bold tracking-tight">
+              {t("matchVisualHiringFor")}
+            </span>
+          </span>
+          <span className="grid size-4 place-items-center border border-border bg-muted/60 text-[7px] font-bold">
+            1
+          </span>
+        </div>
+        <MiniTag label="Senior Product Designer" />
+      </div>
+    </LandingPhone>
+  );
+}
+
+/* ---------------------------------------------------------------------------
+ * The chat beat.
+ *
+ * Where the match resolves to: the same phone shell running the real message
+ * thread — the app's own header, its bubble treatment (primary fill for the
+ * sender, a bordered card for the recipient, both on shadow-hard-sm), the
+ * typing indicator and the composer. Messages reveal on scroll so the thread
+ * builds rather than appearing whole.
+ * ------------------------------------------------------------------------- */
+function ChatDevice() {
+  /* ------------------------------- Utils ------------------------------- */
+  const t = useTranslations("landing");
+
+  /* ----------------------------- Render UI ----------------------------- */
+  return (
+    <LandingPhone
+      activeTab={3}
+      bar={
+        <div className="flex items-center gap-2 border-b border-border bg-card px-3 py-2">
+          <span className="grid size-[18px] shrink-0 place-items-center rounded-none border border-border">
+            <LucideArrowLeft className="size-[9px]" strokeWidth={2} />
+          </span>
+          <span className="grid size-6 shrink-0 place-items-center rounded-none border border-border bg-muted text-[8px] font-bold">
+            KIRI
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-[9px] font-bold leading-tight">
+              Kiri Labs
+            </span>
+            <span className="flex items-center gap-1 text-[6px] text-muted-foreground">
+              <span className="size-1 rounded-full bg-success" />
+              {t("matchVisualOnline")}
+            </span>
+          </span>
+          <LucidePhone
+            className="size-[11px] shrink-0 text-muted-foreground"
+            strokeWidth={2}
+          />
+        </div>
+      }
+    >
+      {/* Message Thread Section */}
+      <div className="flex flex-col gap-2">
+        {/* Incoming Message Section */}
+        <div className="landing-chat-msg flex justify-start">
+          <span className="max-w-[78%] rounded-none border border-border bg-card p-2 text-[8px] leading-relaxed shadow-hard-sm">
+            {t("matchVisualChatOne")}
+          </span>
+        </div>
+
+        {/* Outgoing Message Section */}
+        <div className="landing-chat-msg flex justify-end">
+          <span className="max-w-[78%] rounded-none border border-primary bg-primary p-2 text-[8px] leading-relaxed text-primary-foreground shadow-hard-sm">
+            {t("matchVisualChatTwo")}
+          </span>
+        </div>
+
+        {/* Incoming Message Section */}
+        <div className="landing-chat-msg flex justify-start">
+          <span className="max-w-[78%] rounded-none border border-border bg-card p-2 text-[8px] leading-relaxed shadow-hard-sm">
+            {t("matchVisualChatThree")}
+          </span>
+        </div>
+
+        {/* Typing Indicator Section */}
+        <div className="landing-chat-typing flex justify-start">
+          <span className="flex items-center gap-1 rounded-none border border-border bg-card px-2.5 py-2 shadow-hard-sm">
+            {[0, 1, 2].map((i) => (
+              <span
+                key={i}
+                style={{ animationDelay: `${i * 0.16}s` }}
+                className="landing-chat-dot size-1 rounded-full bg-primary"
+              />
+            ))}
+          </span>
+        </div>
+      </div>
+
+      {/* Composer Section */}
+      <div className="absolute inset-x-2.5 bottom-[52px] flex items-center gap-1.5">
+        <span className="flex flex-1 items-center rounded-none border border-l-[3px] border-border bg-muted/20 px-2 py-1.5 text-[7px] text-muted-foreground shadow-hard-sm">
+          {t("matchVisualChatPlaceholder")}
+        </span>
+        <span className="grid size-[22px] shrink-0 place-items-center rounded-none border border-primary bg-primary text-primary-foreground">
+          <LucideSend className="size-[10px]" strokeWidth={2} />
+        </span>
+      </div>
+    </LandingPhone>
   );
 }
 
@@ -178,7 +388,27 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
 
   /* ---------------------------- All States ---------------------------- */
   const matchStageRef = useRef<HTMLDivElement>(null);
+  const chatStageRef = useRef<HTMLDivElement>(null);
   const [isMatchActive, setIsMatchActive] = useState(false);
+
+  /* ----------------------------- Effects ------------------------------ */
+  // The chat thread builds on entry rather than on load; without this the
+  // bubbles have finished animating long before the reader scrolls to them.
+  useEffect(() => {
+    const stage = chatStageRef.current;
+    if (!stage) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          stage.classList.add("is-visible");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, []);
 
   /* ----------------------------- Effects ------------------------------ */
   useEffect(() => {
@@ -367,8 +597,6 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
       )}
     >
       {/* Landing Match Visual Section */}
-      {/* Background Grid Section */}
-      <div className="landing-grid pointer-events-none absolute inset-0" />
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Match Visual Heading Section */}
         <div className="mb-12 grid gap-6 border-b border-border pb-10 sm:mb-16 md:grid-cols-[1fr_0.72fr] md:items-end">
@@ -398,15 +626,12 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
         <div
           ref={matchStageRef}
           data-match-active={isMatchActive}
-          className="landing-dark-panel landing-match-stage relative overflow-hidden border border-white/10 px-5 py-12 sm:px-10 sm:py-16 lg:min-h-[680px] lg:px-14"
+          className="landing-dark-panel landing-match-stage relative overflow-hidden border border-[hsl(var(--landing-panel-ink)/0.1)] px-5 py-12 sm:px-10 sm:py-16 lg:min-h-[680px] lg:px-14"
           role="img"
           aria-label={t("matchVisualAccessibleLabel")}
         >
-          {/* Stage Background Grid Section */}
-          <div className="landing-dark-grid pointer-events-none absolute inset-0" />
-
           {/* Stage Header Section */}
-          <div className="relative z-10 mb-10 flex items-center justify-between border-b border-white/[0.12] pb-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/[0.42] lg:mb-0">
+          <div className="relative z-10 mb-10 flex items-center justify-between border-b border-border pb-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--landing-panel-ink))]/[0.42] lg:mb-0">
             <span>{t("matchVisualMutualInterest")}</span>
             <span>Apsara Talent · Match</span>
           </div>
@@ -421,32 +646,58 @@ export default function LandingMatchVisual(props: ILandingMatchVisualProps) {
             {/* Match Connection Section */}
             <div className="landing-match-connection relative flex flex-col items-center justify-center py-2 lg:h-full">
               <div className="landing-match-beam hidden lg:block" aria-hidden />
-              <span className="landing-match-arrow mb-4 grid size-12 place-items-center rounded-full border border-white/[0.16] bg-white/[0.06] text-white/[0.72] backdrop-blur-sm">
+              <span className="landing-match-arrow mb-4 grid size-12 place-items-center rounded-none border border-border bg-muted/60 text-foreground">
                 <LucideArrowLeftRight className="size-5" strokeWidth={1.5} />
               </span>
               {/* Match Result Section */}
-              <div className="landing-match-result relative w-full max-w-[190px] border border-white/[0.18] bg-white/[0.07] px-4 py-5 text-center backdrop-blur-xl">
-                <span className="mx-auto mb-3 grid size-10 place-items-center rounded-full bg-white text-[hsl(var(--auth-paper))]">
+              <div className="landing-match-result relative w-full max-w-[190px] rounded-none border border-border bg-card px-4 py-5 text-center shadow-hard">
+                <span className="mx-auto mb-3 grid size-10 place-items-center rounded-none border border-success-border bg-success text-success-foreground">
                   <LucideCheck className="size-5" strokeWidth={2} />
                 </span>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-sm font-semibold text-foreground">
                   {t("matchVisualMatchReady")}
                 </p>
-                <p className="mt-1.5 text-[10px] leading-relaxed text-white/[0.48]">
+                <p className="mt-1.5 text-[10px] leading-relaxed text-muted-foreground">
                   {t("matchVisualMatchReadyDescription")}
                 </p>
-                <div className="mt-4 flex items-center justify-center gap-2 border-t border-white/[0.12] pt-3 text-[10px] font-medium text-white/[0.68]">
+                <div className="mt-4 flex items-center justify-center gap-2 border-t border-border pt-3 text-[10px] font-medium text-[hsl(var(--landing-panel-ink))]/[0.68]">
                   <LucideMessageCircle className="size-3.5" strokeWidth={1.6} />
                   {t("featureRealTimeChat")}
                 </div>
               </div>
-              <LucideSparkles className="landing-match-spark absolute right-3 top-1/4 size-4 text-white/30 lg:right-0" />
+              <LucideSparkles className="landing-match-spark absolute right-3 top-1/4 size-4 text-muted-foreground/60 lg:right-0" />
             </div>
 
             {/* Employee Perspective Section */}
             <div className="landing-match-device-float-right flex justify-center lg:justify-start">
               <EmployeeDevice />
             </div>
+          </div>
+        </div>
+
+        {/* Real-time Chat Section — where the match resolves to */}
+        <div
+          ref={chatStageRef}
+          className="landing-chat-stage mt-14 grid items-center gap-10 lg:mt-20 lg:grid-cols-[1fr_minmax(0,320px)] lg:gap-16"
+        >
+          <div data-gsap="fade-up">
+            <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.24em] text-muted-foreground">
+              <span aria-hidden className="h-px w-7 shrink-0 bg-primary" />
+              {t("featureRealTimeChat")}
+            </p>
+            <TypographyH2 className="mt-5 max-w-lg !border-0 text-3xl font-bold !leading-[1.05] tracking-[-0.04em] sm:text-4xl">
+              {t("matchVisualChatHeading")}
+            </TypographyH2>
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-muted-foreground">
+              {t("matchVisualChatDescription")}
+            </p>
+          </div>
+
+          <div
+            data-gsap="fade-up"
+            className="landing-chat-device flex justify-center lg:justify-end"
+          >
+            <ChatDevice />
           </div>
         </div>
       </div>

@@ -205,7 +205,11 @@ const featureIcons = [
 ];
 
 /* -------------------------------- Main Component ------------------------------- */
-export function ProductContent() {
+export function ProductContent({
+  sessionRole,
+}: {
+  sessionRole?: string | null;
+}) {
   /* ----------------------------------- Utils ----------------------------------- */
   const { language } = useLanguageStore();
   const t = content[language] ?? content.en;
@@ -213,6 +217,7 @@ export function ProductContent() {
   /* --------------------------------- Render UI --------------------------------- */
   return (
     <StaticPageShell
+      sessionRole={sessionRole}
       pageNumber="02"
       title={t.pageTitle}
       subtitle={t.subtitle}

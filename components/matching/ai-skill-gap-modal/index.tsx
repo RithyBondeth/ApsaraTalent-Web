@@ -238,7 +238,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
                 {[...Array(3)].map((_, i) => (
                   <div
                     key={i}
-                    className="space-y-2.5 rounded-none border border-l-[5px] border-border border-l-foreground bg-card px-4 py-4"
+                    className="space-y-2.5 rounded-none border border-border bg-card px-4 py-4"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <Skeleton className="h-4 w-32 rounded-none" />

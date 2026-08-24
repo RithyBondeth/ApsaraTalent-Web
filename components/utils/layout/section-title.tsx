@@ -1,54 +1,27 @@
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 
 export function SectionTitle(props: {
   icon: React.ReactNode;
   title: string;
   action?: React.ReactNode;
-  variant?: "default" | "detail";
 }) {
   /* ---------------------------------- Props --------------------------------- */
-  const { icon, title, action, variant = "default" } = props;
-  const isDetail = variant === "detail";
+  const { icon, title, action } = props;
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div
-      className={cn(
-        "mb-4 flex items-center justify-between gap-2.5 border-b border-border/60 pb-3.5",
-        isDetail && "border-border",
-      )}
-    >
+    <div className="mb-4 flex items-center justify-between gap-2.5 border-b border-border pb-3.5">
       <div className="flex min-w-0 items-center gap-2.5">
         {/* Icon Section */}
-        <div
-          className={cn(
-            "flex size-8 flex-shrink-0 items-center justify-center bg-primary/10",
-            isDetail
-              ? "border border-border bg-muted/60"
-              : "rounded-none bg-foreground text-background",
-          )}
-        >
-          <span
-            className={cn(
-              "[&>svg]:size-[18px] [&>svg]:stroke-[1.5]",
-              isDetail ? "[&>svg]:text-foreground" : "[&>svg]:text-background",
-            )}
-          >
+        <div className="flex size-8 flex-shrink-0 items-center justify-center border border-border bg-muted/60">
+          <span className="[&>svg]:size-[18px] [&>svg]:stroke-[1.5] [&>svg]:text-foreground">
             {icon}
           </span>
         </div>
 
         {/* Title Section */}
-        <h3
-          className={cn(
-            "truncate text-base font-semibold",
-            isDetail && "font-bold tracking-tight",
-          )}
-        >
-          {title}
-        </h3>
+        <h3 className="truncate text-base font-bold tracking-tight">{title}</h3>
       </div>
 
       {/* Optional Action Slot Section */}

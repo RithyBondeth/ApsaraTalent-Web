@@ -240,7 +240,11 @@ const km: ISafetyStrings = {
 const content: Record<string, ISafetyStrings> = { en, km };
 
 /* -------------------------- Main Component -------------------------- */
-export function SafetyContent() {
+export function SafetyContent({
+  sessionRole,
+}: {
+  sessionRole?: string | null;
+}) {
   /* ------------------------------ Utils ----------------------------- */
   const { language } = useLanguageStore();
   const t = content[language] ?? content.en;
@@ -248,6 +252,7 @@ export function SafetyContent() {
   /* ----------------------------- Render UI -------------------------- */
   return (
     <StaticPageShell
+      sessionRole={sessionRole}
       pageNumber="03"
       title={t.pageTitle}
       subtitle={t.subtitle}

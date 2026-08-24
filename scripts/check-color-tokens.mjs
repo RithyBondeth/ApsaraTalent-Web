@@ -110,7 +110,7 @@ function main() {
       `Raw palette colours went up: ${count} (baseline ${baseline}).\n\n` +
         `New markup should use design tokens rather than hues like bg-green-100.\n` +
         `  status:   success | warning | info | destructive  (+ -accent/-subtle/-border)\n` +
-        `  category: category-violet | -magenta | -teal | -orange | -indigo | -lime\n\n` +
+        `  category: category-purple | -magenta | -teal | -orange | -indigo | -lime\n\n` +
         `Run with --list to see every hit, or --update if you genuinely need to\n` +
         `raise the baseline. See app/design-system for the tokens rendered.`,
     );

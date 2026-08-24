@@ -23,7 +23,19 @@ const AUTH_ROUTES = [
   "/reset-password",
 ];
 
-const GUEST_LANDING_ROUTES = ["/", "/product", "/learn", "/safety", "/support"];
+/**
+ * Only the marketing home. A signed-in person landing on "/" wants the app, so
+ * it still redirects to /feed.
+ *
+ * The informational sub-pages used to be here too, which made them unreachable
+ * once you were signed in: the shared landing header links to all four from
+ * /privacy and /terms — the two pages a signed-in reader *does* arrive at, via
+ * Settings — and every one of those links bounced to /feed. /support carries the
+ * FAQ, contact details and mobile-app help, which is exactly what someone with
+ * an account needs. They are public, informational and hold no account data, so
+ * they are now treated like /privacy and /terms: no redirect either way.
+ */
+const GUEST_LANDING_ROUTES = ["/"];
 
 /**
  * Auth-prefixed routes an authenticated user still needs.
@@ -103,10 +115,6 @@ export const config = {
   // This avoids running edge logic for static assets and unrelated pages.
   matcher: [
     "/",
-    "/product/:path*",
-    "/learn/:path*",
-    "/safety/:path*",
-    "/support/:path*",
     "/feed/:path*",
     "/profile/:path*",
     "/favorite/:path*",

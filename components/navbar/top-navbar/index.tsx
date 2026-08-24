@@ -297,7 +297,7 @@ export default function TopNavbar() {
               >
                 <span
                   aria-hidden="true"
-                  className={`absolute left-1/2 top-0 h-[3px] -translate-x-1/2 bg-foreground transition-[width,opacity] duration-200 ${isMoreActive ? "w-8 opacity-100" : "w-0 opacity-0"}`}
+                  className={`absolute left-1/2 top-0 h-[3px] -translate-x-1/2 bg-primary transition-[width,opacity] duration-200 ${isMoreActive ? "w-8 opacity-100" : "w-0 opacity-0"}`}
                 />
                 <span className="flex flex-col items-center gap-1">
                   <span

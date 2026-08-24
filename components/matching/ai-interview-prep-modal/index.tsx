@@ -223,7 +223,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
               [...Array(5)].map((_, i) => (
                 <div
                   key={i}
-                  className="flex gap-3 rounded-none border border-l-[5px] border-border border-l-foreground bg-card px-4 py-4"
+                  className="flex gap-3 rounded-none border border-border bg-card px-4 py-4"
                 >
                   <Skeleton className="mt-1 h-4 w-4 shrink-0 rounded-none" />
                   <div className="flex-1 space-y-2">

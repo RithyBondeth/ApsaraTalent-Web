@@ -44,9 +44,16 @@ export function ScrollToTop() {
         // `hard-lg` is the floating step, but 8px of offset under a 40px
         // button is a fifth of its own size — subtle on a card, chunky here.
         // It rests one step down and grows into the float on hover.
-        "border border-foreground bg-foreground text-background shadow-hard",
+        //
+        // The surface is the app's floating-control language, the same one the
+        // card's like/quick-view buttons use over a cover photo: a translucent
+        // page fill behind a blur, held by a hairline and the offset shadow.
+        // It was a solid ink block, which made a utility control the loudest
+        // thing in the corner of every page.
+        "border border-border bg-background/90 text-foreground shadow-hard backdrop-blur-sm",
         "transition-all duration-300 ease-out",
         // The card hover language: lift and deepen, then press back on click.
+        "hover:bg-accent hover:text-accent-foreground",
         "hover:-translate-y-0.5 hover:shadow-hard-lg",
         "active:translate-y-0 active:shadow-hard-sm",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",

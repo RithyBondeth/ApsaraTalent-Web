@@ -30,7 +30,7 @@ export default function Tag(props: ITagInterface) {
   return (
     <div
       className={cn(
-        "flex w-fit cursor-pointer items-center rounded-none border border-border bg-muted/50 px-3 py-1.5 transition-all duration-200 ease-out hover:border-foreground/30 active:scale-95",
+        "flex w-fit cursor-pointer items-center rounded-none border border-border bg-muted/50 px-3 py-1.5 transition-all duration-200 ease-out hover:border-foreground/35 active:scale-95",
         props.icon && "gap-1",
         props.className,
       )}

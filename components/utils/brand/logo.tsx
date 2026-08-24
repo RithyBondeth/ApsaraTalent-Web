@@ -1,17 +1,30 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { logo, logoWithoutTitle } from "@/utils/constants/asset.constant";
+import {
+  logo,
+  logoDark,
+  logoWithoutTitle,
+  logoWithoutTitleDark,
+} from "@/utils/constants/asset.constant";
 import Image from "next/image";
 
 /* ---------------------------------------------------------------------------
  * The brand mark.
  *
- * This used to cross-fade two SVGs — a light-mode lockup and a dark-mode one —
- * with a blur transition on theme change. The new artwork ships as a single
- * lockup, so there is nothing to cross-fade and the pair of stacked, absolutely
- * positioned images (and their `aspect-[5/3]` wrapper, which did not match the
- * artwork's 3:2) are gone. One image, its own aspect ratio, no theme swap.
+ * The artwork pairs its dancer with a fixed dark wordmark, which sits at
+ * roughly 1.1:1 against the dark theme's near-black page — the lockup went out
+ * as a blue rule under an invisible word. So the theme swap is back, but
+ * not the way it was: this used to cross-fade two absolutely positioned SVGs
+ * with a blur transition and an `aspect-[5/3]` wrapper that matched neither
+ * artwork. Here the twin is the *same* artwork with its neutral inks lifted,
+ * both marks share one intrinsic ratio, and the swap is a pair of `dark:`
+ * visibility classes — no JS, so no hydration flash and no post-paint jump
+ * (next-themes stamps the class before first paint).
+ *
+ * Both files download, which is the cost of a CSS-only swap. It is small: the
+ * optimizer serves each at the rendered width, and nothing here renders past
+ * 64px tall.
  * ------------------------------------------------------------------------- */
 
 interface ILogoProps {
@@ -23,11 +36,11 @@ interface ILogoProps {
   priority?: boolean;
 }
 
-/* The artwork's true aspect after trimming: the source files shipped with
-   transparent padding (11% off the bottom of the lockup, 17% off the left of
-   the icon), so a height-constrained box was spending a fifth of its budget
-   on empty space. These are the ratios of the trimmed marks. */
-const RATIO = { lockup: 740 / 428, icon: 454 / 581 } as const;
+/* The artwork's true aspect after trimming. The source ships with the
+   transparency checkerboard flattened into the pixels, so these ratios come
+   from the alpha bounding box of the keyed marks, not the file dimensions.
+   Recolouring the marks did not touch alpha, so these are unchanged. */
+const RATIO = { lockup: 867 / 480, icon: 402 / 560 } as const;
 
 export default function LogoComponent({
   withoutTitle = false,
@@ -35,19 +48,31 @@ export default function LogoComponent({
   className,
   priority = false,
 }: ILogoProps) {
-  const src = withoutTitle ? logoWithoutTitle : logo;
   const ratio = withoutTitle ? RATIO.icon : RATIO.lockup;
   const width = Math.round(height * ratio);
+  /* `alt` stays out of this object and is written on each <Image> below:
+     jsx-a11y/alt-text cannot see it through a spread and warns either way. */
+  const shared = {
+    height,
+    width,
+    sizes: `${width}px`,
+    priority,
+  };
 
   return (
-    <Image
-      src={src}
-      alt="Apsara Talent"
-      height={height}
-      width={width}
-      sizes={`${width}px`}
-      className={cn("w-auto object-contain", className)}
-      priority={priority}
-    />
+    <>
+      <Image
+        {...shared}
+        alt="Apsara Talent"
+        src={withoutTitle ? logoWithoutTitle : logo}
+        className={cn("w-auto object-contain dark:hidden", className)}
+      />
+      <Image
+        {...shared}
+        alt="Apsara Talent"
+        src={withoutTitle ? logoWithoutTitleDark : logoDark}
+        className={cn("hidden w-auto object-contain dark:block", className)}
+      />
+    </>
   );
 }

@@ -55,9 +55,9 @@ export default function NotificationMatchCard(
             })
       }
       icon={<LucideHeartHandshake strokeWidth={1.5} className="size-full" />}
-      iconBgColor="bg-category-indigo-subtle"
-      iconColor="text-category-indigo-accent"
-      unreadColor="bg-category-indigo"
+      iconBgColor="bg-category-orange-subtle"
+      iconColor="text-category-orange-accent"
+      unreadColor="bg-category-orange"
       onDelete={props.onDelete}
       onClick={handleNavigate}
     >
@@ -91,7 +91,7 @@ export default function NotificationMatchCard(
           </div>
 
           {/* Match Badge Section */}
-          <div className="shrink-0 border border-category-indigo/20 bg-category-indigo-subtle px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-category-indigo-accent">
+          <div className="shrink-0 border border-category-orange/20 bg-category-orange-subtle px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-category-orange-accent">
             {t("matchBadge")}
           </div>
         </div>

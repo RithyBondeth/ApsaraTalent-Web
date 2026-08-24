@@ -2,7 +2,7 @@
 
 import {
   LucideChevronDown,
-  LucideGlobe,
+  LucideLanguages,
   LucideLogOut,
   LucideBookMarked,
   LucideBuilding,
@@ -34,6 +34,7 @@ import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { useThemeStore } from "@/stores/themes/theme-store";
+import { useThemeTransition } from "@/hooks/utils/use-theme-transition";
 import {
   clearAuthCookies,
   clearAuthCookiesServerSide,
@@ -55,7 +56,10 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
 
   /* ---------------------------------- Utils -------------------------------- */
   const { resolvedTheme, setTheme } = useTheme();
-  const { theme, toggleTheme } = useThemeStore();
+  const { theme } = useThemeStore();
+  // Shared with the landing/legal Switcher so both sides of the login animate
+  // the theme change the same way, instead of this one snapping.
+  const { toggleTheme } = useThemeTransition();
   const { language, setLanguage } = useLanguageStore();
   const router = useRouter();
   const t = useTranslations("sidebarFooter");
@@ -130,8 +134,8 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
   };
 
   // ── Handle Theme Toggle ─────────────────────────────────────────
-  const handleThemeToggle = () => {
-    toggleTheme();
+  const handleThemeToggle = (event: React.MouseEvent<HTMLDivElement>) => {
+    toggleTheme(event);
   };
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -144,10 +148,10 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
             {/* Avatar Section */}
             <Avatar
               rounded="md"
-              className="h-7 w-7 shrink-0 rounded-none border border-border transition-colors duration-200 group-hover:border-foreground/30"
+              className="h-7 w-7 shrink-0 rounded-none border border-border transition-colors duration-200 group-hover:border-foreground/35"
             >
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="bg-foreground text-[10px] font-bold text-background">
+              <AvatarFallback className="text-[10px] font-bold">
                 {getNameInitials(user.name)}
               </AvatarFallback>
             </Avatar>
@@ -169,7 +173,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
 
         {/* Dropdown Content Section */}
         <DropdownMenuContent
-          className="w-72 overflow-hidden rounded-none border border-foreground/20 p-0 shadow-hard-lg"
+          className="w-72 overflow-hidden rounded-none border border-border p-0 shadow-hard-lg"
           side="bottom"
           align="end"
           sideOffset={9}
@@ -179,10 +183,10 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
             <div className="flex items-center gap-3">
               <Avatar
                 rounded="md"
-                className="h-11 w-11 rounded-none border border-foreground/15"
+                className="h-11 w-11 rounded-none border border-border"
               >
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="bg-foreground font-bold text-background">
+                <AvatarFallback className="font-bold">
                   {getNameInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
@@ -193,7 +197,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
                 <p className="mt-0.5 truncate text-xs text-muted-foreground">
                   {user.email}
                 </p>
-                <span className="mt-2 inline-flex items-center gap-1 border border-foreground/15 bg-background px-2 py-1 text-[9px] font-bold uppercase tracking-[0.1em] text-foreground">
+                <span className="mt-2 inline-flex items-center gap-1 border border-border bg-background px-2 py-1 text-[9px] font-bold uppercase tracking-[0.1em] text-foreground">
                   {isEmployee ? (
                     <LucideUser className="size-2.5" />
                   ) : (
@@ -267,7 +271,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
                 className="flex min-h-11 items-center gap-2.5 rounded-none px-2"
               >
                 <MenuIcon>
-                  <LucideGlobe className="size-3.5 text-foreground" />
+                  <LucideLanguages className="size-3.5 text-foreground" />
                 </MenuIcon>
                 <span>
                   {t("language")}

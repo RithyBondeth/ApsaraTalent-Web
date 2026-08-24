@@ -64,7 +64,11 @@ function contrast(a, b) {
  * while `:root` was correctly holding 3:1. Add a scope here the moment you add
  * one to globals.css.
  */
-const SCOPES = ["auth", "landing"];
+// `landing` was here until the landing panels stopped opposing the page theme.
+// It no longer declares a palette of its own — it reads --landing-panel-bg/ink,
+// which are aliases of --muted/--foreground — so the base light and dark checks
+// already cover it. `auth` still overrides --auth-paper/--auth-ink and stays.
+const SCOPES = ["auth"];
 
 const declarations = (body) => {
   const out = {};
@@ -135,6 +139,11 @@ const PAIRS = [
   ["primary", "card", TEXT, "primary as link text on card"],
   ["secondary-foreground", "secondary", TEXT, "label on secondary"],
   ["accent-foreground", "accent", TEXT, "label on accent"],
+  // In light mode this is the *only* thing telling a card from the page, the
+  // background→card lightness step having gone when the page turned white. It
+  // is a hairline, not a component boundary, so it is nowhere near the 3:1 of
+  // 1.4.11 — but it must not be allowed to fade into the paper either.
+  ["border", "background", 1.3, "card edge against the page"],
   ["input", "background", UI, "input border on page"],
   ["input", "card", UI, "input border on card"],
   ["ring", "background", UI, "focus ring on page"],
@@ -163,6 +172,28 @@ for (const s of ["success", "warning", "info", "destructive"]) {
   );
 }
 
+// Muted body copy does not only sit on the page and the card — it sits on every
+// tinted surface in the app: a status callout, a category chip, a muted panel.
+// Checking it against only `background` and `card` is what let it ship at
+// 4.18-4.44 on eleven of twelve `-subtle` surfaces, which axe caught in CI and
+// this gate did not. Every tinted surface a muted string can land on is checked.
+for (const surface of [
+  "muted",
+  "accent",
+  "success-subtle",
+  "warning-subtle",
+  "info-subtle",
+  "destructive-subtle",
+  "category-brown-subtle",
+  "category-orange-subtle",
+  "category-purple-subtle",
+  "category-pink-subtle",
+  "category-gray-subtle",
+  "category-blue-subtle",
+]) {
+  PAIRS.push(["muted-foreground", surface, TEXT, `muted text on ${surface}`]);
+}
+
 // destructive is the one status token used directly as text (`text-destructive`,
 // 60+ call sites), so it has to clear AA on its own — not only as a fill.
 PAIRS.push(
@@ -172,7 +203,7 @@ PAIRS.push(
 
 // Categorical hues carry three roles rather than five: a solid for dots, an
 // accent for the label, and a subtle surface behind it.
-for (const c of ["violet", "magenta", "teal", "orange", "indigo", "lime"]) {
+for (const c of ["brown", "orange", "purple", "pink", "gray", "blue"]) {
   PAIRS.push(
     [`category-${c}-accent`, "background", TEXT, `category ${c}: text on page`],
     [`category-${c}-accent`, "card", TEXT, `category ${c}: text on card`],
@@ -185,6 +216,58 @@ for (const c of ["violet", "magenta", "teal", "orange", "indigo", "lime"]) {
   );
 }
 
+/* ------------------------------ Alpha tints -------------------------------- */
+
+/**
+ * Some surfaces are not tokens at all — they are a token at low alpha over the
+ * page (`bg-primary/5` behind an AI callout, `bg-primary/10` behind a selected
+ * card). Nothing above sees them, which is how `text-primary` shipped at 4.22:1
+ * on its own 5% tint and 3.97:1 on the 10% one; axe caught both and this gate
+ * did not. Each entry composites `token` at `alpha` over `over`, then checks
+ * the inks that actually land on it.
+ */
+const TINTS = [
+  {
+    token: "primary",
+    alpha: 0.05,
+    over: "background",
+    inks: ["accent-foreground", "foreground"],
+  },
+  {
+    token: "primary",
+    alpha: 0.1,
+    over: "background",
+    inks: ["accent-foreground", "foreground"],
+  },
+  // A faint muted wash is the most common card surface on the legal and landing
+  // pages. --primary sat at exactly 4.50 on pure white, so bg-muted/30 was
+  // enough to drop a link to 4.39 — passing on the page, failing on a card.
+  {
+    token: "muted",
+    alpha: 0.3,
+    over: "background",
+    inks: ["primary", "foreground", "muted-foreground"],
+  },
+  {
+    token: "muted",
+    alpha: 0.5,
+    over: "background",
+    inks: ["primary", "foreground", "muted-foreground"],
+  },
+];
+
+function composite(fg, bg, alpha) {
+  const a = hslToRgb(...fg);
+  const b = hslToRgb(...bg);
+  return a.map((v, i) => v * alpha + b[i] * (1 - alpha));
+}
+
+function contrastRgb(a, b) {
+  const la = relativeLuminance(a);
+  const lb = relativeLuminance(b);
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+
 /* ------------------------------ Surface ladder ----------------------------- */
 
 /**
@@ -194,11 +277,14 @@ for (const c of ["violet", "magenta", "teal", "orange", "indigo", "lime"]) {
  * inside a popover once became invisible. 1.10 is roughly the point where a
  * flat edge stops reading as an edge.
  *
- * Light mode is exempt for card/popover: both are pure white by design and
- * lean on the hard offset shadow instead.
+ * Light mode has no ladder at all any more: the page, the card and the popover
+ * are all pure white, so nothing there separates by lightness. What separates
+ * them is the --border hairline and the hard offset shadow, and the border is
+ * checked as a normal pair below (`card edge against the page`) so the light
+ * theme is not simply left ungated.
  */
 const LADDER = {
-  light: [["background", "card"]],
+  light: [],
   dark: [
     ["background", "card"],
     ["card", "popover"],
@@ -236,6 +322,24 @@ function main() {
         lines.push(
           `  ${tag}  ${ratio.toFixed(2).padStart(6)}:1  (needs ${threshold})  ${label}`,
         );
+      }
+    }
+
+    for (const { token, alpha, over, inks } of TINTS) {
+      if (!tokens[token] || !tokens[over]) continue;
+      const surface = composite(tokens[token], tokens[over], alpha);
+      for (const ink of inks) {
+        if (!tokens[ink]) continue;
+        checked++;
+        const ratio = contrastRgb(hslToRgb(...tokens[ink]), surface);
+        const ok = ratio >= TEXT;
+        const label = `${ink} on ${token}/${alpha * 100} tint`;
+        if (!ok) failures.push({ theme, label, ratio, threshold: TEXT });
+        if (!ok || VERBOSE) {
+          lines.push(
+            `  ${ok ? "ok  " : "FAIL"}  ${ratio.toFixed(2).padStart(6)}:1  (needs ${TEXT})  ${label}`,
+          );
+        }
       }
     }
 

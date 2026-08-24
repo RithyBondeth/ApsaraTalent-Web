@@ -190,10 +190,33 @@ information.
 
 Two widths, and they are not interchangeable:
 
-- **`border-*-[5px]`** — a *surface* accent: the top or left edge of a card,
-  panel, dialog or banner. Always `foreground`, with the exceptions below.
+- **`border-*-[5px]`** — a *surface* accent, and now **only ever semantic**.
+  A card, panel or dialog does not get one for being a card, panel or dialog;
+  it gets a plain `border border-border` hairline and its `shadow-hard`.
 - **`border-*-[4px]`** — an *inline* accent: a passage of content inside a
-  surface. Callouts, quote blocks, message bubbles, chat rows.
+  surface. Callouts, quote blocks, chat rows. **Semantic only, same as the
+  5px** — 12 decorative ink ones were flattened alongside the surface slabs
+  (message bubbles, the typing indicator, dashboard rows, three form callouts
+  and the chat skeletons that mirrored them).
+
+A message bubble is the clearest case of why. The sender's bubble is a solid
+`bg-primary` fill and the recipient's is `bg-card` — the fill already tells you
+whose message it is, so the ink bar on the recipient was restating it in a
+second visual language. The chat input is the counter-example and kept its 4px:
+its resting edge is now `border-border` and it turns `primary` on focus, so the
+width is there to make the focus state legible rather than to decorate.
+
+The 5px slab used to be the default dress for every surface — 67 of them,
+against 3 that meant anything. Twenty stacked down a feed page stopped reading
+as emphasis and became texture, and they drowned the handful of edges that
+carry information: the reason a page banner has one is that it is the *only*
+one on the page. All 67 are now hairlines. The survivors are listed below,
+plus three dynamic ones (skill-gap severity, the dropzone, the dev
+design-system header) whose colour is computed rather than fixed.
+
+If you are adding a surface accent, the question is not "does this look
+important" — it is "does the colour of this edge tell the reader something the
+rest of the card does not". If it doesn't, it's a hairline.
 
 Cobalt is reserved for these, and nothing else:
 
@@ -203,6 +226,7 @@ Cobalt is reserved for these, and nothing else:
 | `PageState` | blue empty vs red error; the colour *is* the state |
 | active chat row, focused message input | selected / focus state |
 | AI-suggestion callouts | paired with `bg-primary/5` — marks generated content |
+| interview / resume-upload state | success and error surfaces |
 
 `.auth-scope` and `.landing-scope` used to redefine the neutrals to a warm
 paper-cream, so their ink read as brown rather than charcoal. That split is
@@ -293,7 +317,32 @@ is the same surface on a slide-in, and shares the scrim and elevation.
 
 ### Colour
 All colour lives in CSS custom properties in `app/globals.css` and is exposed
-through `tailwind.config.ts`. **Never write a raw palette class** — `bg-green-100`,
+through `tailwind.config.ts`.
+
+The palette is a port of Notion's. Neutral-first and near-monochrome: a pure
+white page, warm-grey ink (`#37352F`), quiet surfaces (`#F7F6F3`, `#F1F1EF`),
+and colour only where something is interactive or a label differs in kind.
+`--primary` is Notion's action blue. Dark mode is their `#191919` page with the
+`#202020` / `#2F2F2F` / `#373737` surface steps, which clear the ladder below
+as they ship.
+
+Two places deviate from Notion's literal values, both because this repo gates
+contrast and Notion does not: their action blue is 3.88:1 on white (so a white
+button label sits under AA) and several of their text colours land at 4.26–4.49.
+Every such token is nudged in lightness — **hue and saturation untouched**, so
+it still reads as the Notion colour — by the smallest step that clears the
+threshold. `--primary` is `#1C78D2` rather than `#2383E2` for exactly this
+reason; don't "correct" it back.
+
+The page, cards and popovers are all `0 0% 100%` in light mode, so a card is
+delineated by its `--border` hairline and its hard offset shadow rather than by
+a lightness step. `check:contrast` gates that border pair (`card edge against
+the page`, 1.3) in place of the light-mode surface ladder, which is now empty.
+
+Shape is not part of this: the square corners, the hard offset shadow ladder
+and `--radius: 0` are the app's own and were left alone.
+
+**Never write a raw palette class** — `bg-green-100`,
 `text-amber-700`, `dark:bg-red-900/30`. They hardcode a hue, need a hand-written
 `dark:` twin, and drift between files.
 
@@ -307,11 +356,19 @@ Three groups of tokens:
   Five roles each: the bare token is the solid fill, plus `-foreground` (on that
   fill), `-accent` (text on page/card/subtle), `-subtle` (tinted surface) and
   `-border`. Example: `bg-success-subtle text-success-accent border-success-border`.
-- **Categorical** — `category-{violet,magenta,teal,orange,indigo,lime}` with
+- **Categorical** — `category-{brown,orange,purple,pink,gray,blue}` with
   `-accent` and `-subtle`, for labels that differ in *kind*: notification type,
-  company benefits (magenta) and values (lime), employee availability (teal/indigo/violet via `AvailabilityBadge`). Never borrow a status colour for
-  these — spending amber on "freelance" is what stops a real warning from
+  company benefits (pink) and values (gray), employee availability
+  (brown/orange/purple via `AvailabilityBadge`). Never borrow a status colour
+  for these — spending amber on "freelance" is what stops a real warning from
   standing out.
+
+  These are six of Notion's nine block colours, and they are named after them.
+  The other three — green, yellow and red — are spoken for by `success`,
+  `warning` and `destructive`, which is why the categorical set has no green
+  and no red: a category must never be mistakable for a state. The slots were
+  previously named violet/magenta/teal/orange/indigo/lime, hues picked to sit
+  apart on the wheel rather than to come from anywhere.
 
   **A label is neutral until its colour carries information.** Skill tags,
   career scopes, languages, availability and open-position titles all go through

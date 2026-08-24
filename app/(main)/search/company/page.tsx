@@ -415,7 +415,7 @@ export default function CompanySearchPage() {
       <div className="flex w-full items-start gap-5 tablet-xl:flex-col">
         {/* Left Side: Filters Section */}
         <div
-          className={`search-filter-panel flex w-72 shrink-0 flex-col self-start rounded-none border border-t-[5px] border-border border-t-foreground bg-card shadow-hard tablet-xl:w-full xl:w-80 ${
+          className={`search-filter-panel flex w-72 shrink-0 flex-col self-start rounded-none border border-border bg-card shadow-hard tablet-xl:w-full xl:w-80 ${
             mobileFiltersOpen ? "tablet-xl:flex" : "tablet-xl:hidden"
           }`}
         >

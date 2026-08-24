@@ -14,7 +14,7 @@ export default function ProfileCompletionCard({
   const isComplete = percentage >= 100;
 
   /* --------------------------------- Helpers --------------------------------- */
-  const barColor = isComplete ? "bg-success" : "bg-foreground";
+  const barColor = isComplete ? "bg-success" : "bg-primary";
 
   // text-emerald-500 before this: 2.3:1 on a white card, well under AA.
   const textColor = isComplete ? "text-success-accent" : "text-foreground";
@@ -24,7 +24,7 @@ export default function ProfileCompletionCard({
     <section className="profile-completion-card border border-border bg-card p-4 sm:p-5">
       <div className="flex items-center gap-4 sm:gap-5">
         {/* Completion Metric Section */}
-        <div className="grid size-16 shrink-0 place-items-center bg-foreground text-background sm:size-[72px]">
+        <div className="grid size-16 shrink-0 place-items-center border border-border bg-muted text-foreground sm:size-[72px]">
           {isComplete ? (
             <LucideCheck className="size-6" />
           ) : (

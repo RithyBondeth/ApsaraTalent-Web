@@ -540,8 +540,7 @@ export default function OpenPositionStepForm({
                       >
                         <Tag label={skill} />
                         <LucideXCircle
-                          className="cursor-pointer text-red-500"
-                          width="18px"
+                          className="size-3.5 cursor-pointer text-red-500"
                           onClick={() => removeSkill(skill, index)}
                         />
                       </div>

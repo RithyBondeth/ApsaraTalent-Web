@@ -393,7 +393,7 @@ export default function ChatInput(props: IChatInputProps) {
         />
 
         {/* Input Pill Section */}
-        <div className="flex-1 overflow-hidden rounded-none border border-l-[4px] border-border border-l-foreground bg-muted/20 shadow-hard-sm transition-colors focus-within:border-primary focus-within:border-l-primary focus-within:bg-background">
+        <div className="flex-1 overflow-hidden rounded-none border border-l-[4px] border-border bg-muted/20 shadow-hard-sm transition-colors focus-within:border-primary focus-within:border-l-primary focus-within:bg-background">
           {/* Attachment Thumbnail Strip Section (inside the pill, above the textarea) */}
           {hasAnyFiles && (
             <MessageAttachmentStrip

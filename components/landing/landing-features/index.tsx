@@ -1,6 +1,5 @@
 "use client";
 
-import { GridRunners } from "@/components/ui/grid-runners";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -23,10 +22,6 @@ export default function LandingFeatures() {
       ref={sectionRef}
       className="relative border-b border-border py-20 sm:py-28 lg:py-36"
     >
-      {/* Grid Background Section */}
-      <div className="landing-grid pointer-events-none absolute inset-0" />
-      <GridRunners className="landing-grid-runners" density="quiet" />
-
       {/* Features Section */}
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 grid gap-6 border-b border-border pb-10 sm:mb-16 md:grid-cols-[1fr_0.7fr] md:items-end">
@@ -75,7 +70,7 @@ export default function LandingFeatures() {
                 <span className="text-xs tabular-nums text-muted-foreground/70">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <div className="grid size-11 place-items-center border border-border bg-background text-foreground transition-colors group-hover:bg-foreground group-hover:text-background">
+                <div className="grid size-11 place-items-center border border-border bg-background text-foreground transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
                   <feature.icon className="size-5" strokeWidth={1.5} />
                 </div>
               </div>

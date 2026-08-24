@@ -27,9 +27,9 @@ import type { IBenefitValueChipProps, TBenefitValueKind } from "./props";
 
 const KIND: Record<TBenefitValueKind, string> = {
   benefit:
-    "border-category-magenta-accent/20 bg-category-magenta-subtle text-category-magenta-accent",
+    "border-category-pink-accent/20 bg-category-pink-subtle text-category-pink-accent",
   value:
-    "border-category-lime-accent/20 bg-category-lime-subtle text-category-lime-accent",
+    "border-category-gray-accent/20 bg-category-gray-subtle text-category-gray-accent",
 };
 
 export function BenefitValueChip({

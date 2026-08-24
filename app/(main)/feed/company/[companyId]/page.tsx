@@ -381,7 +381,6 @@ export default function CompanyDetailPage() {
               <SectionTitle
                 icon={<LucideInfo />}
                 title={tf("dialogAboutCompany", { name: companyData.name })}
-                variant="detail"
               />
               <p className="max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
                 {companyData.description}
@@ -396,9 +395,8 @@ export default function CompanyDetailPage() {
                 <SectionTitle
                   icon={<LucideBriefcaseBusiness />}
                   title={tf("openPositions")}
-                  variant="detail"
                   action={
-                    <span className="flex size-8 items-center justify-center border border-foreground bg-foreground text-xs font-bold text-background">
+                    <span className="flex size-8 items-center justify-center border border-border bg-muted/60 text-xs font-bold text-foreground">
                       {companyData.openPositions.length}
                     </span>
                   }
@@ -407,7 +405,7 @@ export default function CompanyDetailPage() {
                   {companyData.openPositions.map((item) => (
                     <div
                       key={item.id}
-                      className="profile-detail-position-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-hard sm:p-5"
+                      className="profile-detail-position-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/35 hover:shadow-hard sm:p-5"
                     >
                       {/* Position Header Section */}
                       <div className="flex items-start justify-between gap-3 tablet-md:flex-col">
@@ -516,7 +514,6 @@ export default function CompanyDetailPage() {
               <SectionTitle
                 icon={<LucideCompass />}
                 title={tf("careerScope")}
-                variant="detail"
               />
               <div className="flex flex-wrap gap-2">
                 {companyData.careerScopes.map((career, i) => (
@@ -541,7 +538,6 @@ export default function CompanyDetailPage() {
               <SectionTitle
                 icon={<LucideCamera />}
                 title={tf("lifeAt", { name: companyData.name })}
-                variant="detail"
               />
               <Carousel className="w-full">
                 <CarouselContent>
@@ -552,7 +548,7 @@ export default function CompanyDetailPage() {
                           handleClickImagePopup();
                           setCurrentCompanyImage(item.image);
                         }}
-                        className="my-1 ml-1 h-52 cursor-pointer border border-border bg-muted bg-cover bg-center transition-[border-color,filter,transform] duration-200 hover:border-foreground/30 hover:brightness-95"
+                        className="my-1 ml-1 h-52 cursor-pointer border border-border bg-muted bg-cover bg-center transition-[border-color,filter,transform] duration-200 hover:border-foreground/35 hover:brightness-95"
                         style={{ backgroundImage: `url(${item.image})` }}
                       />
                     </CarouselItem>
@@ -572,7 +568,6 @@ export default function CompanyDetailPage() {
             <SectionTitle
               icon={<LucideBuilding2 />}
               title={tf("companyInformation")}
-              variant="detail"
             />
             <div className="space-y-3.5">
               {[
@@ -637,7 +632,6 @@ export default function CompanyDetailPage() {
               <SectionTitle
                 icon={<LucideStar />}
                 title={tf("cultureAndBenefits")}
-                variant="detail"
               />
               <div className="space-y-4">
                 {companyData.benefits.length > 0 && (
@@ -679,11 +673,7 @@ export default function CompanyDetailPage() {
           {/* Social Section */}
           {companyData.socials && companyData.socials.length > 0 && (
             <DetailCard className="p-5">
-              <SectionTitle
-                icon={<LucideGlobe />}
-                title={tf("socialLinks")}
-                variant="detail"
-              />
+              <SectionTitle icon={<LucideGlobe />} title={tf("socialLinks")} />
               <div className="flex flex-wrap gap-2">
                 {companyData.socials.map((s: ISocialLink) => (
                   <Link
@@ -691,7 +681,7 @@ export default function CompanyDetailPage() {
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-semibold transition-colors hover:border-foreground/30 hover:bg-muted"
+                    className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-semibold transition-colors hover:border-foreground/35 hover:bg-muted"
                   >
                     <PlatformIcon platform={s.platform as TPlatform} />
                     {s.platform}

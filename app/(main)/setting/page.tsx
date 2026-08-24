@@ -1,12 +1,13 @@
 "use client";
 
 import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store";
+import { PageBanner } from "@/components/utils/layout/page-banner";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { useThemeStore } from "@/stores/themes/theme-store";
+import { useThemeTransition } from "@/hooks/utils/use-theme-transition";
 import { TLanguage } from "@/utils/types/app/language.type";
 import { TTheme } from "@/utils/types/app/theme.type";
-import { useTheme } from "next-themes";
 import { setCookie } from "cookies-next";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
@@ -20,7 +21,6 @@ import { ResetPasswordDialog } from "@/components/setting/reset-password-dialog"
 import { TwoFactorDialog } from "@/components/setting/two-factor-dialog";
 import { T2FADialogMode } from "@/components/setting/two-factor-dialog/props";
 import SettingLoadingSkeleton from "@/components/setting/skeleton";
-import { LucideSettings2 } from "lucide-react";
 
 export default function SettingPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -30,8 +30,8 @@ export default function SettingPage() {
   /* ----------------------------- API Integration ---------------------------- */
   // Get Current User and App Settings
   const currentUser = useGetCurrentUserStore((s) => s.user);
-  const { theme, setTheme: setStoreTheme } = useThemeStore();
-  const { setTheme: setNextTheme } = useTheme();
+  const { theme } = useThemeStore();
+  const { setThemeWithReveal } = useThemeTransition();
   const { language, setLanguage } = useLanguageStore();
 
   // Security Integration
@@ -78,10 +78,14 @@ export default function SettingPage() {
   /* --------------------------------- Methods --------------------------------- */
   // ── Theme and Language Methods ──────────────────────────────────────────
   // ── Handle Theme Change ────────────────────────────────
-  const handleThemeChange = (t: TTheme) => {
-    setStoreTheme(t);
-    setNextTheme(t);
-    setCookie("theme", t);
+  // Reveals from the pressed card, the same transition the navbar and the
+  // public-page switcher use. The hook writes the store, next-themes and the
+  // cookie itself, so this no longer does it by hand.
+  const handleThemeChange = (
+    t: TTheme,
+    event: React.MouseEvent<HTMLElement>,
+  ) => {
+    setThemeWithReveal(t, event);
   };
 
   // ── Handle Language Change ──────────────────────────────
@@ -134,25 +138,11 @@ export default function SettingPage() {
   return (
     <div className="animate-page-in mx-auto flex w-full max-w-[1200px] flex-col gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Header Section */}
-      <header className="relative overflow-hidden border border-t-[5px] border-border border-t-foreground bg-card px-5 py-7 shadow-hard sm:px-7 sm:py-9">
-        <div className="pointer-events-none absolute -right-10 -top-16 size-52 rotate-12 border-[28px] border-primary/5" />
-        <div className="relative flex items-start gap-4 sm:gap-5">
-          <div className="flex size-11 shrink-0 items-center justify-center bg-primary text-primary-foreground sm:size-12">
-            <LucideSettings2 className="size-5 sm:size-6" />
-          </div>
-          <div className="max-w-2xl">
-            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-primary">
-              Apsara Talent
-            </p>
-            <h1 className="text-3xl font-black tracking-[-0.045em] sm:text-4xl">
-              {tS("title")}
-            </h1>
-            <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
-              {tS("description")}
-            </p>
-          </div>
-        </div>
-      </header>
+      <PageBanner
+        eyebrow="Apsara Talent"
+        title={tS("title")}
+        subtitle={tS("description")}
+      />
 
       <div className="grid items-start gap-7 lg:grid-cols-2 lg:gap-8">
         {/* Appearance Section */}

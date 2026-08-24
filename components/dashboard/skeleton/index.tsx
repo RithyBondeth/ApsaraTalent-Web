@@ -21,7 +21,7 @@ export function DashboardChartSkeleton({
 /* -------------------------------- Profile Completeness Card Skeleton -------------------------------- */
 function ProfileCompletenessCardSkeleton() {
   return (
-    <div className="flex w-full items-center gap-4 border border-l-[5px] border-border border-l-foreground bg-card px-5 py-4 shadow-hard sm:gap-6 sm:px-6">
+    <div className="flex w-full items-center gap-4 border border-border bg-card px-5 py-4 shadow-hard sm:gap-6 sm:px-6">
       {/* Icon Section: Hidden on mobile */}
       <Skeleton className="hidden h-10 w-10 shrink-0 rounded-none sm:block" />
 
@@ -61,7 +61,7 @@ export function DashboardLoadingSkeleton() {
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="border border-l-[5px] border-border border-l-foreground bg-card p-4 shadow-hard sm:p-5"
+              className="border border-border bg-card p-4 shadow-hard sm:p-5"
             >
               <div className="mb-3 flex items-center justify-between">
                 <Skeleton className="h-9 w-9 rounded-none" />
@@ -79,7 +79,7 @@ export function DashboardLoadingSkeleton() {
         <DashboardSectionHeaderSkeleton titleWidth="w-32" />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {/* Bar Chart Section */}
-          <div className="border border-t-[5px] border-border border-t-foreground bg-card p-5 shadow-hard sm:col-span-2 sm:p-6 lg:col-span-2">
+          <div className="border border-border bg-card p-5 shadow-hard sm:col-span-2 sm:p-6 lg:col-span-2">
             <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
               <div>
                 <Skeleton className="mb-1.5 h-5 w-32 rounded-none" />
@@ -95,7 +95,7 @@ export function DashboardLoadingSkeleton() {
           </div>
 
           {/* Radial Chart Section */}
-          <div className="flex flex-col border border-t-[5px] border-border border-t-foreground bg-card p-5 shadow-hard sm:p-6">
+          <div className="flex flex-col border border-border bg-card p-5 shadow-hard sm:p-6">
             <Skeleton className="mb-1.5 h-5 w-24 rounded-none" />
             <Skeleton className="h-3 w-44 rounded-none" />
             <div className="flex min-h-[200px] flex-1 items-center justify-center">
@@ -108,12 +108,12 @@ export function DashboardLoadingSkeleton() {
       {/* Recent Matches Section */}
       <section className="flex w-full flex-col gap-5">
         <DashboardSectionHeaderSkeleton titleWidth="w-40" />
-        <div className="border border-t-[5px] border-border border-t-foreground bg-card p-5 shadow-hard sm:p-6">
+        <div className="border border-border bg-card p-5 shadow-hard sm:p-6">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 border border-l-[3px] border-border border-l-foreground p-3"
+                className="flex items-center gap-3 border border-border p-3"
               >
                 <Skeleton className="size-10 shrink-0 rounded-none" />
                 <div className="flex-1">

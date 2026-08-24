@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 /* -------------------- Message Loading Skeleton Component -------------------- */
 export default function MessageLoadingSkeleton() {
   return (
-    <div className="relative mx-auto flex h-full w-full max-w-[1500px] overflow-hidden border border-t-[5px] border-border border-t-foreground bg-card shadow-hard">
+    <div className="relative mx-auto flex h-full w-full max-w-[1500px] overflow-hidden border border-border bg-card shadow-hard">
       <div className="hidden h-full w-full lg:flex">
         {/* Loading Skeleton for Sidebar Section */}
         <div className="w-[26%] min-w-[260px] max-w-[420px]">
@@ -68,19 +68,19 @@ export function MessageThreadSkeleton() {
   return (
     <div className="flex-1 space-y-4 overflow-hidden bg-muted/10 px-3 py-4 md:px-5">
       <div className="flex justify-start">
-        <Skeleton className="h-16 w-[70%] rounded-none border-l-[4px] border-l-foreground" />
+        <Skeleton className="h-16 w-[70%] rounded-none" />
       </div>
       <div className="flex justify-end">
         <Skeleton className="h-16 w-[58%] rounded-none" />
       </div>
       <div className="flex justify-start">
-        <Skeleton className="h-24 w-[78%] rounded-none border-l-[4px] border-l-foreground" />
+        <Skeleton className="h-24 w-[78%] rounded-none" />
       </div>
       <div className="flex justify-end">
         <Skeleton className="h-14 w-[44%] rounded-none" />
       </div>
       <div className="flex justify-start">
-        <Skeleton className="h-20 w-[66%] rounded-none border-l-[4px] border-l-foreground" />
+        <Skeleton className="h-20 w-[66%] rounded-none" />
       </div>
     </div>
   );
@@ -111,7 +111,7 @@ export function MessagePaneSkeleton() {
 
       <div className="shrink-0 border-t border-border bg-card px-3 py-3 md:px-5">
         <div className="flex items-end gap-1.5 sm:gap-2">
-          <div className="flex flex-1 items-end gap-0.5 overflow-hidden border border-l-[4px] border-border border-l-foreground bg-muted/20 px-2.5 py-1.5 sm:gap-1 sm:px-3 sm:py-2">
+          <div className="flex flex-1 items-end gap-0.5 overflow-hidden border border-border bg-muted/20 px-2.5 py-1.5 sm:gap-1 sm:px-3 sm:py-2">
             <Skeleton className="h-[30px] flex-1 rounded-none sm:h-8" />
             <Skeleton className="size-8 shrink-0 rounded-none" />
             <Skeleton className="size-8 shrink-0 rounded-none" />

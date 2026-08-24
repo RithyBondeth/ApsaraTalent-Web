@@ -4,7 +4,7 @@ import { Skeleton } from "../../ui/skeleton";
 /* --------------------------- Company Card Skeleton ---------------------------- */
 export default function CompanyCardSkeleton() {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden rounded-none border border-t-[5px] border-border border-t-foreground bg-card">
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-none border border-border bg-card">
       {/* Cover Banner Section */}
       <div className="relative h-32 w-full shrink-0 bg-gradient-to-br from-muted via-background to-muted/40 tablet-md:h-24">
         {/* Like and Quick View Buttons Section */}
@@ -99,8 +99,7 @@ export function CompanyDetailPageLoadingSkeleton() {
       {/* Hero Card Section */}
       <SkeletonCard className="profile-detail-company-card overflow-hidden">
         {/* Brand Cover Section */}
-        <section className="profile-detail-hero profile-detail-company-cover relative flex min-h-[300px] flex-col overflow-hidden bg-foreground p-5 sm:min-h-[360px] sm:p-8">
-          <div className="profile-detail-hero-grid" aria-hidden />
+        <section className="profile-detail-hero profile-detail-company-cover relative flex min-h-[300px] flex-col overflow-hidden bg-muted p-5 sm:min-h-[360px] sm:p-8">
           <div className="relative z-[2] flex items-start justify-between gap-4">
             <Skeleton className="h-2.5 w-24 rounded-none opacity-25" />
             <Skeleton className="h-8 w-28 rounded-none opacity-25" />
@@ -133,7 +132,7 @@ export function CompanyDetailPageLoadingSkeleton() {
           </div>
         </div>
 
-        <div className="h-1 bg-foreground" aria-hidden />
+        <div className="h-1 bg-muted" aria-hidden />
       </SkeletonCard>
 
       {/* Content Grid Section */}

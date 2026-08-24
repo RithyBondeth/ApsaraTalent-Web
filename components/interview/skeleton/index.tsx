@@ -38,7 +38,7 @@ export default function InterviewLoadingSkeleton({
           {Array.from({ length: 3 }).map((_, index) => (
             <div
               key={index}
-              className="w-full overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card shadow-hard"
+              className="w-full overflow-hidden rounded-none border border-border bg-card shadow-hard"
             >
               {/* Card Body Section */}
               <div className="flex flex-col gap-4 p-4 sm:p-5">

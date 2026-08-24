@@ -29,13 +29,17 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 /* ---------------------------------------------------------------------------
  * The dialog surface.
  *
- * Everything the surface *is* lives here: square corners, the 5px cobalt top
- * edge that marks app chrome, and the hard offset shadow. Call sites had been
- * restating all three — and disagreeing while they did it. Across 20 dialogs
- * there were five that swapped the accent to `border-t-foreground`, four that
- * fell back to a soft `shadow-2xl`/`shadow-lg`, five that squared the close
- * button by hand with `[&>button]:rounded-none`, and a dozen that repeated
- * `rounded-none` the base already set.
+ * Everything the surface *is* lives here: square corners, the hairline edge,
+ * and the hard offset shadow. Call sites had been restating all three — and
+ * disagreeing while they did it. Across 20 dialogs there were five that
+ * swapped the accent to `border-t-foreground`, four that fell back to a soft
+ * `shadow-2xl`/`shadow-lg`, five that squared the close button by hand with
+ * `[&>button]:rounded-none`, and a dozen that repeated `rounded-none` the base
+ * already set.
+ *
+ * The 5px ink top edge is gone with the rest of them: a slab on every surface
+ * had stopped distinguishing anything, and the elevation here (shadow-hard-lg
+ * over a scrim) already says "this floats" far more clearly than a bar did.
  *
  * Only two shapes were ever actually needed, so they are variants rather than
  * per-site class strings:
@@ -47,7 +51,7 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
  * still goes through `className`. The surface itself does not.
  * ------------------------------------------------------------------------- */
 const dialogContentVariants = cva(
-  "fixed left-0 right-0 top-1/2 isolate z-50 mx-auto flex max-h-[90vh] w-[94vw] -translate-y-1/2 flex-col overflow-hidden rounded-none border border-t-[5px] border-border border-t-foreground bg-background shadow-hard-lg duration-200 focus-visible:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+  "fixed left-0 right-0 top-1/2 isolate z-50 mx-auto flex max-h-[90vh] w-[94vw] -translate-y-1/2 flex-col overflow-hidden rounded-none border border-border bg-background shadow-hard-lg duration-200 focus-visible:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
   {
     variants: {
       variant: {
@@ -99,7 +103,7 @@ const DialogContent = React.forwardRef<
           rounded-full with a soft `shadow-sm`, which is why five call sites
           carried a `[&>button]:rounded-none` override to undo it. */}
       {hideClose ? null : (
-        <DialogPrimitive.Close className="absolute right-4 top-4 z-[110] flex size-8 items-center justify-center rounded-none border border-border bg-background/90 text-foreground opacity-80 backdrop-blur-xl transition-all hover:bg-foreground hover:text-background hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95 disabled:pointer-events-none">
+        <DialogPrimitive.Close className="absolute right-4 top-4 z-[110] flex size-8 items-center justify-center rounded-none border border-border bg-background/90 text-foreground opacity-80 backdrop-blur-xl transition-all hover:bg-accent hover:text-accent-foreground hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95 disabled:pointer-events-none">
           <LucideX className="size-4" />
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>

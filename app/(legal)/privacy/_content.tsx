@@ -561,7 +561,11 @@ const content = {
 };
 
 /* -------------------------- Main Component -------------------------- */
-export function PrivacyContent() {
+export function PrivacyContent({
+  sessionRole,
+}: {
+  sessionRole?: string | null;
+}) {
   /* ------------------------------ Utils ----------------------------- */
   const { language } = useLanguageStore();
   const c = content[language];
@@ -569,6 +573,7 @@ export function PrivacyContent() {
   /* --------------------------- Render UI ---------------------------- */
   return (
     <StaticPageShell
+      sessionRole={sessionRole}
       pageNumber="05"
       title={c.pageTitle}
       subtitle={

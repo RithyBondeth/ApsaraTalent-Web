@@ -47,7 +47,7 @@ export default function DesktopNavItem(props: IDesktopNavItemProps) {
       <span
         aria-hidden="true"
         className={cn(
-          "absolute -bottom-[11px] left-1/2 h-[3px] -translate-x-1/2 bg-foreground transition-[width,opacity] duration-200",
+          "absolute -bottom-[11px] left-1/2 h-[3px] -translate-x-1/2 bg-primary transition-[width,opacity] duration-200",
           active ? "w-6 opacity-100" : "w-0 opacity-0",
         )}
       />

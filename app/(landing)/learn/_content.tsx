@@ -300,7 +300,7 @@ const guideIcons = [
 ];
 
 /* -------------------------------- Main Component ------------------------------- */
-export function LearnContent() {
+export function LearnContent({ sessionRole }: { sessionRole?: string | null }) {
   /* ----------------------------------- Utils ----------------------------------- */
   const { language } = useLanguageStore();
   const t = content[language] ?? content.en;
@@ -308,6 +308,7 @@ export function LearnContent() {
   /* --------------------------------- Render UI --------------------------------- */
   return (
     <StaticPageShell
+      sessionRole={sessionRole}
       pageNumber="01"
       title={t.pageTitle}
       subtitle={t.subtitle}

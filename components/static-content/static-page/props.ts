@@ -18,6 +18,11 @@ export interface IStaticPageShellProps {
    * omit rather than pass placeholders.
    */
   stats?: IPageBannerStat[];
+  /**
+   * The `auth-session-role` cookie, read on the server. Threaded to the header
+   * so a signed-in reader arriving from Settings is not offered a Login button.
+   */
+  sessionRole?: string | null;
   children: ReactNode;
 }
 

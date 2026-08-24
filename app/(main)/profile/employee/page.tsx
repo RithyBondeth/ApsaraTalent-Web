@@ -1,7 +1,6 @@
 "use client";
 
 import EmployeeEducationForm from "@/components/employee/profile/education-form";
-import { GridRunners } from "@/components/ui/grid-runners";
 import EmployeeExperienceForm from "@/components/employee/profile/experience-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -1304,15 +1303,8 @@ export default function EmployeeProfilePage() {
       {/* Header Section */}
       <section className="profile-hero profile-employee-hero overflow-hidden border border-border bg-card">
         {/* Gradient Banner Section */}
-        <div className="profile-cover relative h-40 overflow-hidden bg-foreground sm:h-52">
-          {/* Cover Background Section: the same grid the employee and
-              company detail heroes use, so the two covers match. */}
-          <div className="profile-detail-hero-grid" aria-hidden />
-          <GridRunners
-            className="profile-detail-grid-runners"
-            density="quiet"
-          />
-          <div className="absolute inset-x-5 top-5 flex items-start justify-between text-background sm:inset-x-6 sm:top-6">
+        <div className="profile-cover relative h-40 overflow-hidden border-b border-border bg-muted sm:h-52">
+          <div className="absolute inset-x-5 top-5 flex items-start justify-between text-foreground sm:inset-x-6 sm:top-6">
             <span className="text-[10px] font-bold uppercase tracking-[0.24em] opacity-80">
               {tP("employeeProfileLabel")}
             </span>
@@ -1345,7 +1337,7 @@ export default function EmployeeProfilePage() {
               {(isEdit || !employee.avatar) && (
                 <div className="absolute -bottom-1 -right-1 flex items-center gap-1">
                   <Button
-                    className="size-7 rounded-none bg-foreground p-0 text-primary-foreground shadow-none"
+                    className="size-7 rounded-none border-primary bg-primary p-0 text-primary-foreground shadow-none"
                     type="button"
                     onClick={() => {
                       if (isEdit) {
@@ -1695,7 +1687,7 @@ export default function EmployeeProfilePage() {
                   return (
                     <div className="col-span-12 flex items-center justify-between gap-4 border border-border bg-muted/25 px-4 py-3 tablet-md:col-span-1">
                       <div className="flex min-w-0 items-start gap-3">
-                        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center bg-foreground text-background">
+                        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center border border-border bg-muted/60 text-foreground">
                           {isVisible ? (
                             <LucideEye className="size-4" />
                           ) : (
@@ -2031,8 +2023,7 @@ export default function EmployeeProfilePage() {
                         </span>
                         {isEdit && (
                           <LucideXCircle
-                            className="cursor-pointer text-primary/60 hover:text-primary"
-                            width="14px"
+                            className="size-3.5 cursor-pointer text-primary/60 hover:text-primary"
                             onClick={() => {
                               const updated = (languagesValue ?? []).filter(
                                 (l) => l !== lang,
@@ -2440,10 +2431,7 @@ export default function EmployeeProfilePage() {
                         onClick={() => removeSkill(skill.name)}
                         className="inline-flex items-center justify-center"
                       >
-                        <LucideXCircle
-                          className="text-destructive"
-                          width="18px"
-                        />
+                        <LucideXCircle className="size-3.5 text-destructive" />
                       </button>
                     )}
                   </div>
@@ -2553,10 +2541,7 @@ export default function EmployeeProfilePage() {
                         onClick={() => removeCareerScope(career.name)}
                         className="inline-flex items-center justify-center"
                       >
-                        <LucideXCircle
-                          className="text-destructive"
-                          width="18px"
-                        />
+                        <LucideXCircle className="size-3.5 text-destructive" />
                       </button>
                     )}
                   </div>
@@ -2922,7 +2907,7 @@ export default function EmployeeProfilePage() {
                     </Link>
                     {isEdit && (
                       <LucideXCircle
-                        className="flex-shrink-0 cursor-pointer text-destructive transition-colors hover:text-destructive-accent"
+                        className="size-3.5 flex-shrink-0 cursor-pointer text-destructive transition-colors hover:text-destructive-accent"
                         size={18}
                         onClick={() => removeSocial(item.platform as TPlatform)}
                       />
@@ -3098,7 +3083,7 @@ export default function EmployeeProfilePage() {
                       </TypographySmall>
                     </div>
                   ) : (
-                    <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
+                    <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-accent-foreground">
                       <TypographySmall className="text-xs font-medium">
                         {tP("connect")}
                       </TypographySmall>
@@ -3120,7 +3105,7 @@ export default function EmployeeProfilePage() {
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
+                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-accent-foreground">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>
@@ -3141,7 +3126,7 @@ export default function EmployeeProfilePage() {
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-primary">
+                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-accent-foreground">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>

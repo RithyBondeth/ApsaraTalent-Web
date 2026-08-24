@@ -15,7 +15,7 @@ export function QuestionCard(props: IQuestionCardProps) {
 
   /* -------------------------- Render UI ------------------------- */
   return (
-    <div className="flex flex-col gap-3 overflow-hidden rounded-none border border-l-[5px] border-border border-l-foreground bg-card px-4 py-4 shadow-hard duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
+    <div className="flex flex-col gap-3 overflow-hidden rounded-none border border-border bg-card px-4 py-4 shadow-hard duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
       {/* Question Section */}
       <div className="flex gap-3">
         <span className="mt-0.5 w-5 shrink-0 text-right text-xs font-semibold leading-5 text-muted-foreground/50">

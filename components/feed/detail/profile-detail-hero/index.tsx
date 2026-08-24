@@ -1,7 +1,6 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { GridRunners } from "@/components/ui/grid-runners";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { cn } from "@/lib/utils";
 import { LucideUser } from "lucide-react";
@@ -34,7 +33,7 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
       onClick={avatar && onAvatarClick ? onAvatarClick : undefined}
     >
       <AvatarImage src={avatar ?? ""} alt={name} className="object-cover" />
-      <AvatarFallback className="bg-background text-xl font-bold uppercase text-foreground">
+      <AvatarFallback className="text-xl font-bold uppercase">
         {fallback ?? <LucideUser className="size-6" />}
       </AvatarFallback>
     </Avatar>
@@ -47,20 +46,13 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
         {/* Employee Hero Card Section */}
         <div className="grid md:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
           {/* Employee Identity Panel Section */}
-          <section className="profile-detail-employee-intro relative flex min-h-[300px] flex-col overflow-hidden bg-foreground p-5 text-background sm:min-h-[340px] sm:p-7 md:min-h-[410px]">
-            {/* Animated Grid Background Section */}
-            <div className="profile-detail-hero-grid" aria-hidden />
-            <GridRunners
-              className="profile-detail-grid-runners"
-              density="quiet"
-            />
-
+          <section className="profile-detail-employee-intro relative flex min-h-[300px] flex-col overflow-hidden border-r border-border bg-muted p-5 text-foreground sm:min-h-[340px] sm:p-7 md:min-h-[410px]">
             {/* Employee Panel Header Section */}
             <div className="relative z-[2] flex items-start justify-between gap-4">
               <p className="text-[10px] font-extrabold uppercase tracking-[0.24em] opacity-65">
                 {eyebrow}
               </p>
-              <span className="border border-background/20 bg-background/10 px-2.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[0.18em] opacity-75">
+              <span className="border border-border bg-card px-2.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[0.18em] opacity-75">
                 Apsara Talent
               </span>
             </div>
@@ -127,15 +119,11 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
       {/* Company Cover Section */}
       <section
         className={cn(
-          "profile-detail-hero profile-detail-company-cover relative flex min-h-[300px] flex-col overflow-hidden bg-foreground p-5 sm:min-h-[360px] sm:p-8",
+          "profile-detail-hero profile-detail-company-cover relative flex min-h-[300px] flex-col overflow-hidden bg-muted p-5 sm:min-h-[360px] sm:p-8",
           cover && "profile-detail-hero-cover",
         )}
         style={cover ? { backgroundImage: `url(${cover})` } : undefined}
       >
-        {/* Animated Grid Background Section */}
-        <div className="profile-detail-hero-grid" aria-hidden />
-        <GridRunners className="profile-detail-grid-runners" density="quiet" />
-
         {/* Company Cover Header Section */}
         <div className="relative z-[2] flex items-start justify-between gap-4">
           <p className="text-[10px] font-extrabold uppercase tracking-[0.24em] opacity-65">
@@ -180,9 +168,6 @@ export function ProfileDetailHero(props: IProfileDetailHeroProps) {
           </div>
         )}
       </div>
-
-      {/* Company Accent Line Section */}
-      <div className="h-1 bg-foreground" aria-hidden />
     </DetailCard>
   );
 }

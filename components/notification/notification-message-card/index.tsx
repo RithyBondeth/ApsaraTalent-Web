@@ -40,9 +40,9 @@ export default function NotificationMessageCard(
         </p>
       }
       icon={<LucideMail strokeWidth={1.5} className="size-full" />}
-      iconBgColor="bg-category-lime-subtle"
-      iconColor="text-category-lime-accent"
-      unreadColor="bg-category-lime"
+      iconBgColor="bg-category-gray-subtle"
+      iconColor="text-category-gray-accent"
+      unreadColor="bg-category-gray"
       onDelete={props.onDelete}
       onClick={handleReply}
     >
@@ -76,7 +76,7 @@ export default function NotificationMessageCard(
           </div>
 
           {/* Message Badge Section */}
-          <div className="shrink-0 border border-category-lime/20 bg-category-lime-subtle px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-category-lime-accent">
+          <div className="shrink-0 border border-category-gray/20 bg-category-gray-subtle px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-category-gray-accent">
             {t("messageBadge")}
           </div>
         </div>

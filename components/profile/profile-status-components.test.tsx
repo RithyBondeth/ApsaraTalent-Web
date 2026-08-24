@@ -39,9 +39,9 @@ describe("profile status components", () => {
 
   // Asserts the token family, not the hue — see ui-functions.test.ts.
   it.each([
-    ["FULL_TIME", "Full Time", "category-teal"],
-    ["PART_TIME", "Part Time", "category-indigo"],
-    ["FREELANCE", "Freelance", "category-violet"],
+    ["FULL_TIME", "Full Time", "category-brown"],
+    ["PART_TIME", "Part Time", "category-orange"],
+    ["FREELANCE", "Freelance", "category-purple"],
     ["CONTRACT", "Contract", "muted"],
   ])("renders %s availability", (availability, label, token) => {
     render(<AvailabilityBadge availability={availability} />);

@@ -21,8 +21,21 @@ import phoneNumberSvg from "@/assets/auth/phone-number.svg";
 import phoneOTPSvg from "@/assets/auth/phone-otp.svg";
 
 // ─── Utils (shared across pages) ──────────────────────────────────────────────
-import logo from "@/assets/utils/apsaratalent-logo-with-text.png";
-import logoWithoutTitle from "@/assets/utils/apsaratalent-logo.png";
+// The brand mark ships as four rasters, not two: the artwork's wordmark is a
+// fixed dark ink that all but vanishes on the dark theme's near-black page, so
+// each lockup has a twin whose inks are lifted to the light foreground.
+//
+// The source artwork is gold. These are recoloured onto the palette: the gold
+// was a metallic ramp — one hue carrying a 14%→98% lightness sweep, which is
+// what makes it read as metal — so it was rebuilt on --primary keyed by each
+// pixel's lightness rather than hue-rotated flat. Shadows land deep indigo,
+// midtones on #1C78D2, and the speculars bleach toward white. The dark twin
+// additionally lifts the ramp's shadow end, or the dancer flattens into the
+// page. Regenerate from assets/utils/logo.png if the brand colour moves.
+import logo from "@/assets/utils/logo-lockup.png";
+import logoDark from "@/assets/utils/logo-lockup-dark.png";
+import logoWithoutTitle from "@/assets/utils/logo-mark.png";
+import logoWithoutTitleDark from "@/assets/utils/logo-mark-dark.png";
 
 export {
   // Socials
@@ -40,5 +53,7 @@ export {
   phoneOTPSvg,
   // Utils
   logo,
+  logoDark,
   logoWithoutTitle,
+  logoWithoutTitleDark,
 };

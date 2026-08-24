@@ -369,7 +369,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                       <Tag label={item} />
                       {props.isEdit && (
                         <LucideXCircle
-                          className="cursor-pointer text-red-500"
+                          className="size-3.5 cursor-pointer text-red-500"
                           width={"18px"}
                           onClick={() => removeSkill(item)}
                         />

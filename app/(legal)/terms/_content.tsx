@@ -500,7 +500,7 @@ const content = {
 };
 
 /* -------------------------- Main Component -------------------------- */
-export function TermsContent() {
+export function TermsContent({ sessionRole }: { sessionRole?: string | null }) {
   /* ------------------------------ Utils ----------------------------- */
   const { language } = useLanguageStore();
   const c = content[language];
@@ -508,6 +508,7 @@ export function TermsContent() {
   /* --------------------------- Render UI ---------------------------- */
   return (
     <StaticPageShell
+      sessionRole={sessionRole}
       pageNumber="06"
       title={c.pageTitle}
       subtitle={c.intro}

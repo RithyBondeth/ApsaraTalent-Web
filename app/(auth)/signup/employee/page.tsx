@@ -440,7 +440,7 @@ export default function EmployeeSignup() {
       )}
 
       {/* Step Progress Indicator Section */}
-      <div className="auth-wizard-progress w-full overflow-x-auto border border-t-[5px] border-border border-t-foreground bg-card p-4 shadow-hard">
+      <div className="auth-wizard-progress w-full overflow-x-auto border border-border bg-card p-4 shadow-hard">
         <div className="flex w-full min-w-[280px] items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => {

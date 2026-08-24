@@ -314,7 +314,11 @@ const contactIcons = [
 ];
 
 /* -------------------------- Main Component -------------------------- */
-export function SupportContent() {
+export function SupportContent({
+  sessionRole,
+}: {
+  sessionRole?: string | null;
+}) {
   /* ------------------------------ Utils ----------------------------- */
   const { language } = useLanguageStore();
   const t = content[language] ?? content.en;
@@ -322,6 +326,7 @@ export function SupportContent() {
   /* ---------------------------- Render UI --------------------------- */
   return (
     <StaticPageShell
+      sessionRole={sessionRole}
       pageNumber="04"
       title={t.pageTitle}
       subtitle={t.subtitle}

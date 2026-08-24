@@ -7,6 +7,7 @@ import LandingFeatures from "@/components/landing/landing-features";
 import { LandingHowItWorks } from "@/components/landing/landing-how-it-works";
 import LandingCta from "@/components/landing/landing-cta";
 import LandingMatchVisual from "@/components/landing/landing-match-visual";
+import LandingFeatureTour from "@/components/landing/landing-feature-tour";
 import LandingFooter from "@/components/landing/landing-footer";
 import { ScrollProgressBar } from "@/components/utils/layout/scroll-progress-bar";
 import { useLanguageStore } from "@/stores/languages/language-store";
@@ -36,10 +37,13 @@ export default function IndexPage() {
       {/* Section 4: Features */}
       <LandingFeatures key={`features-${language}`} />
 
-      {/* Section 5: How It Works */}
+      {/* Section 5: Product Tour — scheduling and the resume builder */}
+      <LandingFeatureTour key={`tour-${language}`} />
+
+      {/* Section 6: How It Works */}
       <LandingHowItWorks key={`how-${language}`} />
 
-      {/* Section 6: Final CTA */}
+      {/* Section 7: Final CTA */}
       <LandingCta key={`cta-${language}`} />
 
       {/* Footer */}

@@ -84,7 +84,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
               <button
                 onClick={onNewChat}
                 aria-label="New conversation"
-                className="flex h-9 w-9 items-center justify-center rounded-none border border-foreground bg-foreground text-background transition-colors hover:border-primary hover:bg-primary"
+                className="flex h-9 w-9 items-center justify-center rounded-none border border-primary bg-primary text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 <LucidePlus className="h-4 w-4" />
               </button>
@@ -110,7 +110,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
             <button
               onClick={onNewChat}
               aria-label="New conversation"
-              className="flex h-9 w-9 items-center justify-center rounded-none border border-foreground bg-foreground text-background transition-colors hover:border-primary hover:bg-primary"
+              className="flex h-9 w-9 items-center justify-center rounded-none border border-primary bg-primary text-primary-foreground transition-colors hover:bg-primary/90"
             >
               <LucidePlus className="h-4 w-4" />
             </button>

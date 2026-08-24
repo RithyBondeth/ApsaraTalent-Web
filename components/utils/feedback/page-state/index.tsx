@@ -92,7 +92,7 @@ export function PageState(props: IPageStateProps) {
           compact ? "size-11" : "size-20",
           isError
             ? "border-destructive/25 bg-destructive/10 text-destructive"
-            : "border-primary/25 bg-primary/10 text-primary",
+            : "border-primary/25 bg-primary/10 text-accent-foreground",
         )}
       >
         <Glyph className={compact ? "size-5" : "size-9"} />
