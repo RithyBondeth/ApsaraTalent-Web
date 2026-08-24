@@ -77,7 +77,8 @@
     "twoFactorDisabledDesc": "Add an extra layer of security to your account",
     "enable": "Enable",
     "disable": "Disable",
-    "noBlockedUsersDescription": "People you block can't message you or appear in your feed."
+    "noBlockedUsersDescription": "People you block can't message you or appear in your feed.",
+    "bannerEyebrow": "Account Center"
   },
   "states": {
     "sessionErrorDescription": "We could not load your account. Check your connection and try again.",
@@ -625,6 +626,7 @@
   },
   "searchEmployee": {
     "bannerTitle": "Find Opportunities, Anywhere.",
+    "bannerEyebrow": "Opportunity Search",
     "bannerSubtitle1": "Search top careers and connect instantly.",
     "bannerSubtitle2": "Search careers, review company, and reach out directly — instantly.",
     "bannerMuted": "Your great opportunity is just a click away.",
@@ -676,6 +678,7 @@
   },
   "searchCompany": {
     "bannerTitle": "Hire Smarter, Anywhere.",
+    "bannerEyebrow": "Talent Search",
     "bannerSubtitle1": "Search top talent and connect instantly.",
     "bannerSubtitle2": "Search profiles, review resumes, and reach out directly — instantly.",
     "bannerMuted": "Your next great hire is just a click away.",

@@ -364,7 +364,7 @@ export default function CompanySearchPage() {
     >
       {/* Responsive Search Hero Section */}
       <SearchPageHero
-        eyebrow="Apsara Talent"
+        eyebrow={t("bannerEyebrow")}
         title={t("bannerTitle")}
         subtitle={t("bannerSubtitle1")}
         supportingText={t("bannerSubtitle2")}

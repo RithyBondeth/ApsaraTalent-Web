@@ -139,7 +139,7 @@ export default function SettingPage() {
     <div className="animate-page-in mx-auto flex w-full max-w-[1200px] flex-col gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Header Section */}
       <PageBanner
-        eyebrow="Apsara Talent"
+        eyebrow={tS("bannerEyebrow")}
         title={tS("title")}
         subtitle={tS("description")}
       />

@@ -1,5 +1,17 @@
 import type { TLoginMethod } from "@/components/utils/brand/login-method-icon";
 
+/**
+ * The script in use leads its own stack, so a line box is measured from the font
+ * actually drawing the glyphs. With Ubuntu first, Khmer fell through to Kantumruy
+ * for glyphs but kept Ubuntu's ascent and descent — no room for the marks Khmer
+ * stacks above and below, which is why headings read as having no leading.
+ * See the Khmer block in globals.css.
+ */
+export const FONT_STACK = {
+  en: "var(--font-ubuntu), var(--font-kantumruy), sans-serif",
+  km: "var(--font-kantumruy), var(--font-ubuntu), sans-serif",
+} as const;
+
 export const genderConstant: {
   id: number;
   label: string;

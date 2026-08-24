@@ -1028,6 +1028,42 @@ html.theme-fallback-transition body *::after {
   }
 }
 
+/* ═════════════════════════════ Khmer typography ═════════════════════════════ */
+/* Keyed off <html lang>, which the root layout renders from the language cookie
+   and LanguageProviderClient keeps in step after an in-page switch. */
+
+/* Kantumruy Pro leads the stack so the line box is measured from the script
+   actually being drawn. With Ubuntu first, Khmer fell through to Kantumruy for
+   glyphs but kept Ubuntu's ascent and descent, so a heading at 30px got a 36px
+   line box — no room for the marks Khmer stacks above and below its base
+   letters, which is why the banner title read as having no leading at all. */
+[lang="km"] body {
+  font-family: var(--font-kantumruy), var(--font-ubuntu), sans-serif;
+}
+
+/* Letter-spacing is a Latin device. A Khmer cluster is a base glyph plus marks
+   above, below and beside it; prising those apart does not read as airy, it
+   reads as broken. The eyebrows carried 0.12em-0.24em and the display headings
+   a negative -0.04em, which crushes the same clusters from the other side.
+   Latin fragments on a Khmer page lose their tracking too — a smaller price
+   than tearing apart the script the page is actually written in. */
+[lang="km"] * {
+  letter-spacing: normal;
+}
+
+/* text-transform is deliberately left alone. Khmer has no letter case, so
+   `uppercase` is a no-op on it — dropping the transform would only have cost the
+   Latin labels that share a Khmer page ("SECTION 01") their capitals, for no
+   gain to the script this block is here to fix. */
+
+/* Headings ship deliberately tight leading for Latin display type. Khmer needs
+   the room back; body copy already sits at a comfortable ratio. */
+[lang="km"] h1,
+[lang="km"] h2,
+[lang="km"] h3 {
+  line-height: 1.45;
+}
+
 @layer components {
 }
 @media (max-width: 420px) {
