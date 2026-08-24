@@ -57,7 +57,8 @@ export function LandingHowItWorks() {
               <div className="flex items-start justify-between">
                 <span
                   aria-hidden="true"
-                  className="text-6xl font-semibold tracking-[-0.06em] text-foreground/10 transition-colors group-hover:text-foreground/20 sm:text-7xl"
+                  data-decorative="true"
+                  className="landing-step-watermark text-6xl font-semibold tracking-[-0.06em] text-foreground/10 transition-colors group-hover:text-foreground/20 sm:text-7xl"
                 >
                   {step.number}
                 </span>

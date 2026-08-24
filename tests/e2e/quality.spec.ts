@@ -48,6 +48,14 @@ async function expectAccessible(
   await page.waitForTimeout(800);
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+    // WCAG 1.4.3 exempts text that is pure decoration, but axe measures colour
+    // on screen and cannot infer intent, so the exemption is declared here. The
+    // only member is the how-it-works step watermark: a 10%-opacity ghost
+    // numeral whose value is already carried, accessibly, by the "01 / 03"
+    // label beside it. It cannot reach 3:1 without ceasing to be a watermark.
+    // Nothing else may join this list without the same two properties — purely
+    // decorative, and duplicated by accessible text.
+    .exclude("[data-decorative='true']")
     .analyze();
   expect(
     results.violations,

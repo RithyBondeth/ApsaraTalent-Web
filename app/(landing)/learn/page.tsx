@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import { COOKIE_CONFIG } from "@/utils/constants/cookie.constant";
 import { LearnContent } from "./_content";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -13,6 +14,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function LearnPage() {
-  return <LearnContent />;
+export default async function LearnPage() {
+  // Read on the server so the header renders the right session button on
+  // first paint. /privacy and /terms are outside the middleware matcher, so
+  // a signed-in reader reaches them and must not be offered a Login button.
+  const sessionRole =
+    (await cookies()).get(COOKIE_CONFIG.SESSION_ROLE)?.value ?? null;
+
+  return <LearnContent sessionRole={sessionRole} />;
 }

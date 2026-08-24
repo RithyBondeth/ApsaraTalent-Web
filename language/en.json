@@ -576,6 +576,8 @@
     "safety": "Safety",
     "support": "Support",
     "login": "Login",
+    "openApp": "Open app",
+    "finishSetup": "Finish setup",
     "statsUsers": "Users",
     "statsCompanies": "Companies",
     "statsEmployees": "Employees",
