@@ -29,55 +29,8 @@ import NotificationLoadingSkeleton, {
   NotificationCardSkeleton,
 } from "@/components/notification/skeleton";
 import { INotification } from "@/utils/interfaces/notification/notification.interface";
+import { resolveNotificationUser } from "@/utils/functions/notification";
 import { PageState } from "@/components/utils/feedback/page-state";
-
-/* ---------------------------------- Helper --------------------------------- */
-/** Fallback name parser for old notifications that pre-date the senderName data field. */
-function parseSenderNameFromMessage(
-  type: string | null,
-  message: string,
-): string {
-  if (type === "like") {
-    const m = message.match(/^(.+?) liked your/);
-    if (m) return m[1];
-  }
-  if (type === "match") {
-    const m1 = message.match(/^(.+?) and (?:you|your company) liked/);
-    if (m1) return m1[1];
-    const m2 = message.match(/^You and (.+?) liked/);
-    if (m2) return m2[1];
-  }
-  if (type === "interview") {
-    const m = message.match(/^(.+?) wants to schedule/);
-    if (m) return m[1];
-  }
-  return "";
-}
-
-/** Derive a display-friendly user object from a notification's data fields. */
-function resolveNotificationUser(notification: INotification, role: string) {
-  const id =
-    (notification.data?.senderId as string) ??
-    (role === USER_ROLE.EMPLOYEE
-      ? (notification.data?.companyId as string)
-      : (notification.data?.employeeId as string)) ??
-    "";
-
-  const name =
-    (notification.data?.senderName as string) ||
-    parseSenderNameFromMessage(notification.type, notification.message ?? "");
-
-  return {
-    id,
-    name,
-    position: (notification.data?.position as string | null) ?? null,
-    industry: (notification.data?.industry as string | null) ?? null,
-    avatar:
-      (notification.data?.senderAvatar as string) ??
-      (notification.data?.avatar as string) ??
-      "/avatars/default.png",
-  };
-}
 
 export default function NotificationPage() {
   /* ---------------------------------- Utils --------------------------------- */
