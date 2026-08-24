@@ -34,6 +34,7 @@ import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { useThemeStore } from "@/stores/themes/theme-store";
+import { useThemeTransition } from "@/hooks/utils/use-theme-transition";
 import {
   clearAuthCookies,
   clearAuthCookiesServerSide,
@@ -55,7 +56,10 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
 
   /* ---------------------------------- Utils -------------------------------- */
   const { resolvedTheme, setTheme } = useTheme();
-  const { theme, toggleTheme } = useThemeStore();
+  const { theme } = useThemeStore();
+  // Shared with the landing/legal Switcher so both sides of the login animate
+  // the theme change the same way, instead of this one snapping.
+  const { toggleTheme } = useThemeTransition();
   const { language, setLanguage } = useLanguageStore();
   const router = useRouter();
   const t = useTranslations("sidebarFooter");
@@ -130,8 +134,8 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
   };
 
   // ── Handle Theme Toggle ─────────────────────────────────────────
-  const handleThemeToggle = () => {
-    toggleTheme();
+  const handleThemeToggle = (event: React.MouseEvent<HTMLDivElement>) => {
+    toggleTheme(event);
   };
 
   /* -------------------------------- Render UI -------------------------------- */

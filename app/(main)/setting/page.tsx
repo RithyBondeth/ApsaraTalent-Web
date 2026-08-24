@@ -5,9 +5,9 @@ import { PageBanner } from "@/components/utils/layout/page-banner";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { useThemeStore } from "@/stores/themes/theme-store";
+import { useThemeTransition } from "@/hooks/utils/use-theme-transition";
 import { TLanguage } from "@/utils/types/app/language.type";
 import { TTheme } from "@/utils/types/app/theme.type";
-import { useTheme } from "next-themes";
 import { setCookie } from "cookies-next";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
@@ -30,8 +30,8 @@ export default function SettingPage() {
   /* ----------------------------- API Integration ---------------------------- */
   // Get Current User and App Settings
   const currentUser = useGetCurrentUserStore((s) => s.user);
-  const { theme, setTheme: setStoreTheme } = useThemeStore();
-  const { setTheme: setNextTheme } = useTheme();
+  const { theme } = useThemeStore();
+  const { setThemeWithReveal } = useThemeTransition();
   const { language, setLanguage } = useLanguageStore();
 
   // Security Integration
@@ -78,10 +78,14 @@ export default function SettingPage() {
   /* --------------------------------- Methods --------------------------------- */
   // ── Theme and Language Methods ──────────────────────────────────────────
   // ── Handle Theme Change ────────────────────────────────
-  const handleThemeChange = (t: TTheme) => {
-    setStoreTheme(t);
-    setNextTheme(t);
-    setCookie("theme", t);
+  // Reveals from the pressed card, the same transition the navbar and the
+  // public-page switcher use. The hook writes the store, next-themes and the
+  // cookie itself, so this no longer does it by hand.
+  const handleThemeChange = (
+    t: TTheme,
+    event: React.MouseEvent<HTMLElement>,
+  ) => {
+    setThemeWithReveal(t, event);
   };
 
   // ── Handle Language Change ──────────────────────────────

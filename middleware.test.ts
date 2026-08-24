@@ -65,6 +65,25 @@ describe("authentication middleware", () => {
     expect(response.headers.get("x-middleware-next")).toBe("1");
   });
 
+  it("sends a signed-in visitor from the marketing home to the app", () => {
+    expect(redirectLocation("/", "employee")).toBe(
+      "https://app.example.com/feed",
+    );
+  });
+
+  it("lets a signed-in reader reach the informational pages", () => {
+    // These used to be guest-landing routes, which made every link in the
+    // shared header unusable from /privacy and /terms — the two pages a
+    // signed-in reader arrives at from Settings. /support in particular carries
+    // the FAQ and contact details, which is what an account holder needs.
+    for (const route of ["/product", "/learn", "/safety", "/support"]) {
+      const response = middleware(request(route, "employee"));
+
+      expect(response.headers.get("location")).toBeNull();
+      expect(response.headers.get("x-middleware-next")).toBe("1");
+    }
+  });
+
   it("keeps email verification reachable for a freshly registered user", () => {
     // Registration signs the person in, so they arrive here authenticated.
     // The generic /login/* bounce would send them to /feed and — now that the

@@ -43,21 +43,21 @@ export function AppearanceSection(props: IAppearanceSectionProps) {
             label={t("themeLight")}
             icon={<LucideSun />}
             active={theme === "light"}
-            onClick={() => onThemeChange("light")}
+            onClick={(event) => onThemeChange("light", event)}
           />
           <ThemeCard
             value="dark"
             label={t("themeDark")}
             icon={<LucideMoon />}
             active={theme === "dark"}
-            onClick={() => onThemeChange("dark")}
+            onClick={(event) => onThemeChange("dark", event)}
           />
           <ThemeCard
             value="system"
             label={t("themeSystem")}
             icon={<LucideMonitor />}
             active={theme === "system"}
-            onClick={() => onThemeChange("system")}
+            onClick={(event) => onThemeChange("system", event)}
           />
         </div>
         {/* Theme Description Section */}

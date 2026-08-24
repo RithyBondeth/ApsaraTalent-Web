@@ -20,14 +20,14 @@
     --popover-foreground: 45 7.8% 20%;
     /* Apsara Gold Accent Section — the deep gold of the dancer's outline,
        darkened just enough that it clears AA as link text on the ivory page. */
-    --primary: 209.8 76.7% 46.7%;
+    --primary: 209.8 76.7% 44.5%;
     --primary-foreground: 0 0% 100%;
     --secondary: 60 6.7% 94.1%;
     --secondary-foreground: 45 7.8% 20%;
     --muted: 45 20% 96.1%;
     --muted-foreground: 45 1.7% 41.7%;
     --accent: 197.6 54.8% 93.9%;
-    --accent-foreground: 201.9 53.6% 39.9%;
+    --accent-foreground: 201.9 53.6% 39.5%;
 
     /* ---------------------------------------------------------------- */
     /* Status colours                                                   */
@@ -60,7 +60,7 @@
 
     --info: 201.9 53.6% 42.9%;
     --info-foreground: 0 0% 100%;
-    --info-accent: 201.9 53.6% 39.9%;
+    --info-accent: 201.9 53.6% 39.5%;
     --info-subtle: 197.6 54.8% 93.9%;
     --info-border: 197.6 54.8% 79.9%;
 
@@ -101,7 +101,7 @@
     --category-brown-subtle: 0 21.4% 94.5%;
 
     --category-blue: 201.9 53.6% 43.1%;
-    --category-blue-accent: 201.9 53.6% 39.9%;
+    --category-blue-accent: 201.9 53.6% 39.5%;
     --category-blue-subtle: 197.6 54.8% 93.9%;
 
     --category-orange: 30 88.7% 45.1%;
@@ -118,8 +118,8 @@
        different values; don't collapse them back together. */
     --border: 60 4.3% 87.9%;
     --input: 60 4.3% 56.7%;
-    --ring: 209.8 76.7% 46.7%;
-    --chart-1: 209.8 76.7% 46.7%;
+    --ring: 209.8 76.7% 44.5%;
+    --chart-1: 209.8 76.7% 44.5%;
     --chart-2: 147.6 31.7% 36.1%;
     --chart-3: 30 88.7% 34.3%;
     --chart-4: 274.4 32.2% 52%;
@@ -165,12 +165,12 @@
 
     --sidebar-background: 45 20% 96.1%;
     --sidebar-foreground: 45 7.8% 20%;
-    --sidebar-primary: 209.8 76.7% 46.7%;
+    --sidebar-primary: 209.8 76.7% 44.5%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 197.6 54.8% 93.9%;
-    --sidebar-accent-foreground: 201.9 53.6% 39.9%;
+    --sidebar-accent-foreground: 201.9 53.6% 39.5%;
     --sidebar-border: 60 4.3% 87.9%;
-    --sidebar-ring: 209.8 76.7% 46.7%;
+    --sidebar-ring: 209.8 76.7% 44.5%;
   }
   .dark {
     /* Warm near-black with clear layered depth and a gold finish Section */

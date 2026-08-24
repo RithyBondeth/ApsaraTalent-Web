@@ -5,5 +5,6 @@ export interface IThemeCardProps {
   label: string;
   icon: React.ReactNode;
   active: boolean;
-  onClick: () => void;
+  /** Receives the event so the theme reveal can start from this card. */
+  onClick: (event: React.MouseEvent<HTMLElement>) => void;
 }

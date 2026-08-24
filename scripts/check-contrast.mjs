@@ -239,6 +239,21 @@ const TINTS = [
     over: "background",
     inks: ["accent-foreground", "foreground"],
   },
+  // A faint muted wash is the most common card surface on the legal and landing
+  // pages. --primary sat at exactly 4.50 on pure white, so bg-muted/30 was
+  // enough to drop a link to 4.39 — passing on the page, failing on a card.
+  {
+    token: "muted",
+    alpha: 0.3,
+    over: "background",
+    inks: ["primary", "foreground", "muted-foreground"],
+  },
+  {
+    token: "muted",
+    alpha: 0.5,
+    over: "background",
+    inks: ["primary", "foreground", "muted-foreground"],
+  },
 ];
 
 function composite(fg, bg, alpha) {
