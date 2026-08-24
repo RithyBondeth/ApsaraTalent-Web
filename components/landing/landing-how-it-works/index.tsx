@@ -55,7 +55,10 @@ export function LandingHowItWorks() {
               className="group relative min-h-[300px] border-b border-r border-border p-7 sm:p-9"
             >
               <div className="flex items-start justify-between">
-                <span className="text-6xl font-semibold tracking-[-0.06em] text-foreground/10 transition-colors group-hover:text-foreground/20 sm:text-7xl">
+                <span
+                  aria-hidden="true"
+                  className="text-6xl font-semibold tracking-[-0.06em] text-foreground/10 transition-colors group-hover:text-foreground/20 sm:text-7xl"
+                >
                   {step.number}
                 </span>
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">

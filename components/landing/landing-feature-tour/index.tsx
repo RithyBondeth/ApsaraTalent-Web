@@ -211,7 +211,7 @@ function ResumeBuilderScreen() {
 
           {/* AI Assist Section */}
           <div className="mt-auto border border-l-[3px] border-border border-l-primary bg-primary/5 p-2">
-            <span className="flex items-center gap-1 text-[7px] font-bold text-primary">
+            <span className="flex items-center gap-1 text-[7px] font-bold text-accent-foreground">
               <LucideSparkles className="size-[8px]" strokeWidth={2} />
               {t("tourBuilderAiTitle")}
             </span>
