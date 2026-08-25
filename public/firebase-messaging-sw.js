@@ -24,7 +24,7 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   const title = payload.notification?.title || payload.data?.title || "New notification";
   const body = payload.notification?.body || payload.data?.body || "";
-  const icon = payload.notification?.icon || payload.data?.senderAvatar || "/icon.svg";
+  const icon = payload.notification?.icon || payload.data?.senderAvatar || "/icon.png";
 
   const senderId = payload.data?.senderId;
   const tag = senderId ? `chat-${senderId}` : undefined;
@@ -33,7 +33,7 @@ messaging.onBackgroundMessage((payload) => {
   self.registration.showNotification(title, {
     body,
     icon,
-    badge: "/icon.svg",
+    badge: "/icon.png",
     data: { ...(payload.data || {}), url },
     vibrate: [200, 100, 200],
     ...(tag && { tag }),
