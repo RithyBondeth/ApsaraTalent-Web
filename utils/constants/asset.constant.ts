@@ -21,21 +21,22 @@ import phoneNumberSvg from "@/assets/auth/phone-number.svg";
 import phoneOTPSvg from "@/assets/auth/phone-otp.svg";
 
 // ─── Utils (shared across pages) ──────────────────────────────────────────────
-// The brand mark ships as four rasters, not two: the artwork's wordmark is a
-// fixed dark ink that all but vanishes on the dark theme's near-black page, so
-// each lockup has a twin whose inks are lifted to the light foreground.
+// Supplied artwork, trimmed to its alpha box and re-encoded — the files arrived
+// with transparent padding (34% of the mark's width was empty) and weighed
+// 1.8 MB between them; they are 610 KB now.
 //
-// The source artwork is gold. These are recoloured onto the palette: the gold
-// was a metallic ramp — one hue carrying a 14%→98% lightness sweep, which is
-// what makes it read as metal — so it was rebuilt on --primary keyed by each
-// pixel's lightness rather than hue-rotated flat. Shadows land deep indigo,
-// midtones on #1C78D2, and the speculars bleach toward white. The dark twin
-// additionally lifts the ramp's shadow end, or the dancer flattens into the
-// page. Regenerate from assets/utils/logo.png if the brand colour moves.
-import logo from "@/assets/utils/logo-lockup.png";
-import logoDark from "@/assets/utils/logo-lockup-dark.png";
-import logoWithoutTitle from "@/assets/utils/logo-mark.png";
-import logoWithoutTitleDark from "@/assets/utils/logo-mark-dark.png";
+// The two lockups are cropped to the SAME rectangle, the union of their two
+// alpha boxes, so they share one aspect ratio and the dancer does not shift
+// when the theme flips. Cropped to their own boxes they were 1.7483 and 1.7052,
+// and LogoComponent carries a single ratio per variant.
+//
+// Only the lockup needs a twin: its wordmark is near-black ink that all but
+// vanishes on the dark page, so the dark file letters it in white. The mark is
+// the dancer alone — blue and white throughout — and reads on either theme, so
+// it ships once.
+import logo from "@/assets/utils/logo-for-lightmode.png";
+import logoDark from "@/assets/utils/logo-for-darkmode.png";
+import logoWithoutTitle from "@/assets/utils/logo-without-text.png";
 
 export {
   // Socials
@@ -55,5 +56,4 @@ export {
   logo,
   logoDark,
   logoWithoutTitle,
-  logoWithoutTitleDark,
 };

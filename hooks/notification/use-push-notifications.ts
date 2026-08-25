@@ -141,7 +141,7 @@ export const usePushNotifications = () => {
         const icon =
           payload.notification?.icon ||
           payload.data?.senderAvatar ||
-          "/icon.svg";
+          "/icon.png";
 
         // Tag groups messages from the same sender — new message replaces old
         // instead of stacking multiple banners.
@@ -159,7 +159,7 @@ export const usePushNotifications = () => {
           reg.showNotification(title, {
             body,
             icon,
-            badge: "/icon.svg",
+            badge: "/icon.png",
             data: { ...(payload.data || {}), url },
             vibrate: [200, 100, 200],
             ...(tag && { tag }),

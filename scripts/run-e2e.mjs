@@ -170,11 +170,19 @@ try {
     );
   }
 
-  const icon = await fetch(`${baseUrl}/icon.svg`);
-  assert(icon.status === 200, `/icon.svg returned ${icon.status}`);
+  // The favicon is app/icon.png, served through Next's file convention rather
+  // than a literal public path, so this asserts the route the document actually
+  // links to instead of a filename.
+  const iconHref = (await (await fetch(`${baseUrl}/`)).text()).match(
+    /<link[^>]*rel="icon"[^>]*href="([^"]+)"/,
+  )?.[1];
+  assert(Boolean(iconHref), "document did not link a favicon");
+
+  const icon = await fetch(new URL(iconHref, baseUrl));
+  assert(icon.status === 200, `${iconHref} returned ${icon.status}`);
   assert(
-    (icon.headers.get("content-type") ?? "").includes("image/svg+xml"),
-    "/icon.svg did not return SVG content",
+    (icon.headers.get("content-type") ?? "").includes("image/png"),
+    `${iconHref} did not return PNG content`,
   );
 
   const notFound = await fetch(`${baseUrl}/this-route-must-not-exist`);
