@@ -75,7 +75,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
     (s) => s.totalCmpMatching,
   );
 
-  /* --------------------------------- Effects ---------------------------------*/
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => setMounted(true), []);
 
   const { isEmployee, currentUser } = useFetchOnce({
@@ -105,13 +105,14 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
     markCmpMatchingAsSeen,
   ]);
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Memos --------------------------------- */
   // ── Sender ID ────────────────────────────────────────────
   const senderId = useMemo(
     () => currentUser?.employee?.id ?? currentUser?.company?.id ?? "",
     [currentUser],
   );
 
+  /* --------------------------------- Methods --------------------------------- */
   // ── Chat Handler ─────────────────────────────────────────
   const handleChatNow = useCallback(
     async (senderId: string, receiverId: string) => {

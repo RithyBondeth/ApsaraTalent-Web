@@ -44,7 +44,7 @@ const MatchRateRadial = dynamic(
   },
 );
 
-/* ---------------------------------- Helper --------------------------------- */
+/* ---------------------------------- Helper ---------------------------------- */
 function SectionHeader({
   number,
   title,
@@ -106,7 +106,7 @@ export default function DashboardPage() {
   const profileUrl = `/profile/${user?.role ?? USER_ROLE.EMPLOYEE}`;
   const analyticsId = isEmployee ? user?.employee?.id : user?.company?.id;
 
-  /* -------------------------------- Methods --------------------------------- */
+  /* -------------------------------- Memos --------------------------------- */
   // ── Profile Completion Function ────────────────
   const profileCompletion = useMemo(() => {
     if (!user) return null;

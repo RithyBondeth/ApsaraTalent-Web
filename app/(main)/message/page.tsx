@@ -84,6 +84,7 @@ export default function MessagePageContent() {
     queryCurrentCompanyMatching,
   } = useGetCurrentCompanyMatchingStore();
 
+  /* --------------------------------- Memos --------------------------------- */
   const newChatCandidates: INewChatCandidate[] = useMemo(() => {
     if (isEmployee) {
       return (matchedCompanies ?? []).map((company) => ({

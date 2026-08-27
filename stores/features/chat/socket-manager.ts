@@ -2,10 +2,12 @@ import io from "socket.io-client";
 import { SocketInstance } from "./types";
 import { getApiOrigin } from "@/utils/functions/media";
 
+/* ---------------------------------- State --------------------------------- */
 // ── Module-level Socket Singleton ────────────────────────
 let _socket: SocketInstance | null = null;
 let _pendingDisconnect: ReturnType<typeof setTimeout> | null = null;
 
+/* --------------------------------- Helpers -------------------------------- */
 // ── Get Socket ───────────────────────────────────────────
 export const getSocket = () => _socket;
 

@@ -133,7 +133,7 @@ function LoginPage() {
     },
   });
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Memos --------------------------------- */
   // ── Callback URL Function ────────────────────────────────────
   const callbackUrl = useMemo(() => {
     const value = searchParams.get("callbackUrl");
@@ -149,6 +149,7 @@ function LoginPage() {
     return `/login/phone-number?callbackUrl=${encodeURIComponent(callbackUrl)}`;
   }, [callbackUrl]);
 
+  /* --------------------------------- Methods --------------------------------- */
   // ── Preload User Data Function ────────────────────────────────
   const preloadUserData = useCallback(async () => {
     await getCurrentUser();

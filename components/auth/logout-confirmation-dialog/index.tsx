@@ -30,7 +30,7 @@ export function LogoutConfirmationDialog(
   const cancelButtonRef = useRef<HTMLButtonElement | null>(null);
   const [isPending, setIsPending] = useState<boolean>(false);
 
-  /* ---------------------------- All Effects ---------------------------- */
+  /* ---------------------------- Effects ---------------------------- */
   useEffect(() => {
     if (!open) setIsPending(false);
   }, [open]);

@@ -34,7 +34,7 @@ export default async function RootLayout({
     (await cookies()).get("language")?.value === "km" ? "km" : "en";
 
   return (
-    /*---------------------------------- Main Layout ----------------------------------*/
+    /* ---------------------------------- Main Layout ---------------------------------- */
     <html lang={language} dir="ltr" suppressHydrationWarning>
       <body
         className="antialiased"

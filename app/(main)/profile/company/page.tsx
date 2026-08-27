@@ -1137,7 +1137,7 @@ export default function ProfilePage() {
     form.handleSubmit(onSubmit, () => toast.error(t("validationError")))(e);
   };
 
-  /* -------------------------------- Loading States ------------------------------- */
+  /* -------------------------------- Loading State ------------------------------- */
   // Compute All Loading States
   const updateProfileLoadingState =
     updateOneCmpStore.loading ||

@@ -162,7 +162,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
     }
   };
 
-  /* ------------------------------ Computed States ------------------------------ */
+  /* ------------------------------ Derived States ------------------------------ */
   const isBusy = generating || downloading;
   const hasQuestions = questions.length > 0;
 

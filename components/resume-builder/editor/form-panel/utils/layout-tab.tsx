@@ -31,7 +31,7 @@ function SectionItem({
   isVisible: boolean;
   onToggle: (id: TResumeContentSection) => void;
 }) {
-  /* -------------------------------- All State ------------------------------- */
+  /* -------------------------------- All States ------------------------------- */
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -99,7 +99,7 @@ export function LayoutTab() {
     { id: "careerScopes", label: t("careerInterests") },
   ];
 
-  /* ------------------------------- All State -------------------------------- */
+  /* ------------------------------- All States -------------------------------- */
   const { sectionOrder, reorderSections } = useResumeCanvasEditorStore();
 
   /* --------------------------------- Methods -------------------------------- */

@@ -111,14 +111,14 @@ export default function ResumeEditorPage() {
     stop: stopProgress,
   } = useDownloadProgress();
 
-  /* ------------------------------ React Hook Form --------------------------- */
+  /* ------------------------ React Hook Form: Resume Form ---------------------- */
   const { register, control, getValues, setValue, reset } =
     useForm<IBuildResume>({
       defaultValues: payload ?? undefined,
     });
   const watchedValues = useWatch({ control }) as IBuildResume;
 
-  /* ------------------------------ All Effects --------------------------------- */
+  /* ------------------------------ Effects --------------------------------- */
   useEffect(() => {
     if (currentUser) {
       setUserResolved(true);

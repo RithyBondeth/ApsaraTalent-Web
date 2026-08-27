@@ -6,6 +6,7 @@ import type {
   TRawChatMessage,
 } from "./types";
 
+/* --------------------------------- Schemas --------------------------------- */
 const chatProfileSchema = z
   .object({
     id: z.string(),
@@ -72,6 +73,7 @@ const chatHistoryResponseSchema = z.object({
   partnerProfile: chatProfileSchema.nullable(),
 });
 
+/* --------------------------------- Methods --------------------------------- */
 /**
  * Parse per row rather than as one array.
  *

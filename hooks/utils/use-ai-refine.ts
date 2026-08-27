@@ -41,7 +41,7 @@ export function useAIRefine() {
   const [isRefining, setIsRefining] = useState<boolean>(false);
   const requestControllerRef = useRef<AbortController | null>(null);
 
-  /* ------------------------------ All Effects ------------------------------- */
+  /* ------------------------------ Effects ------------------------------- */
   useEffect(
     () => () => {
       requestControllerRef.current?.abort();

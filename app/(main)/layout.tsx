@@ -34,7 +34,7 @@ export default function MainLayout({
     getCurrentUser,
   } = useGetCurrentUserStore();
 
-  /* --------------------------------- All Effects -------------------------------- */
+  /* --------------------------------- Effects -------------------------------- */
   usePushNotifications();
   // Keep chat socket alive on all pages for real-time badge updates
   useChatConnection();

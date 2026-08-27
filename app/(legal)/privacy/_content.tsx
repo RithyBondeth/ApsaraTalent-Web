@@ -71,8 +71,6 @@ const content = {
   en: {
     back: "Back",
     pageTitle: "Privacy Policy",
-    // Banner metadata. `readingTime` is measured from the rendered English
-    // article, not guessed — recount it when the policy text changes.
     updatedOn: "March 24, 2026",
     statUpdated: "last updated",
     statSections: "sections",

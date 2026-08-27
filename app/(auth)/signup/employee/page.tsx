@@ -403,7 +403,7 @@ export default function EmployeeSignup() {
     basicSignupData?.email,
   ]);
 
-  /* -------------------------------- Loading States -------------------------------- */
+  /* -------------------------------- Loading State -------------------------------- */
   const isSignupLoading =
     empSignup.loading ||
     uploadAvatar.loading ||

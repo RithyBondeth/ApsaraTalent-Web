@@ -61,7 +61,7 @@ export default function PhoneNumberPage() {
     resolver: zodResolver(phoneLoginSchema),
   });
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Memos --------------------------------- */
   // ── Callback URL Function ────────────────────────────────────
   const callbackUrl = useMemo(() => {
     const value = searchParams.get("callbackUrl");
@@ -79,6 +79,7 @@ export default function PhoneNumberPage() {
     )}`;
   }, [callbackUrl]);
 
+  /* --------------------------------- Methods --------------------------------- */
   // ── Phone Send OTP Function ──────────────────────────────────
   const onSubmit = async (data: TPhoneLoginForm) => {
     setIsSubmitted(true);

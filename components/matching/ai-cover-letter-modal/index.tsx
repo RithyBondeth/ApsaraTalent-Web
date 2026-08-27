@@ -78,7 +78,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
     stop: stopProgress,
   } = useDownloadProgress();
 
-  /* ---------------------- Computed State --------------------- */
+  /* ---------------------- Derived State --------------------- */
   const isBusy = generating || polishing || downloading;
 
   useEffect(

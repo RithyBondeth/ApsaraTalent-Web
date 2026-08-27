@@ -72,7 +72,7 @@ export default function NotificationPage() {
     });
   }, [notificationFilter, queryNotifications]);
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Memos --------------------------------- */
   // ── Filtered Notifications ─────────────────────────────────────────
   const filteredNotifications = useMemo(() => {
     return notifications.filter((n) => {

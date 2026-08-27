@@ -1,9 +1,11 @@
+/* ---------------------------------- Types --------------------------------- */
 /** SSE event shape emitted by the API gateway streaming endpoints. */
 export type StreamEvent =
   | { t: "chunk"; v: string }
   | { t: "done" }
   | { t: "error"; v: string; code?: number };
 
+/* --------------------------------- Methods --------------------------------- */
 export function parseStreamEvent(payload: string): StreamEvent | null {
   try {
     const parsed: unknown = JSON.parse(payload);

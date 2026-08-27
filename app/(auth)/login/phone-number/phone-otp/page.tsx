@@ -92,7 +92,7 @@ export default function PhoneOTPPage() {
     reset,
   } = useForm<{ otp: string }>();
 
-  /* -------------------------------- Methods --------------------------------- */
+  /* -------------------------------- Memos --------------------------------- */
   // ── Callback URL Function ─────────────────────────────────────
   const callbackUrl = useMemo(() => {
     const value = searchParams.get("callbackUrl");
@@ -108,6 +108,7 @@ export default function PhoneOTPPage() {
     return `/login/phone-number?callbackUrl=${encodeURIComponent(callbackUrl)}`;
   }, [callbackUrl]);
 
+  /* -------------------------------- Methods --------------------------------- */
   // ── Preload User Data Function ────────────────────────────────
   const preloadUserData = useCallback(async () => {
     try {

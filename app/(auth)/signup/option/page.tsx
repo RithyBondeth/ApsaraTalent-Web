@@ -44,7 +44,7 @@ export default function SingUpOption() {
   const { basicPhoneSignupData, setBasicPhoneSignupData } =
     useBasicPhoneSignupDataStore();
 
-  /* -------------------------------- API Integrations --------------------------------- */
+  /* -------------------------------- API Integration --------------------------------- */
   // Get User Basic Data From Socials: Google, Github, LinkedIn, Facebook
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();

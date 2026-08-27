@@ -20,11 +20,9 @@ import { LucideBookmark, LucideBuilding2, LucideUsers } from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 
-interface Props {
+export default function FavoritePageClient({ initialIsEmployee }: {
   initialIsEmployee: boolean;
-}
-
-export default function FavoritePageClient({ initialIsEmployee }: Props) {
+}) {
   /* --------------------------------- Utils ---------------------------------- */
   const t = useTranslations("toast");
   const tFav = useTranslations("favorite");
@@ -91,6 +89,7 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
     queryAllCompanyFavorites,
   ]);
 
+  /* --------------------------------- Memos --------------------------------- */
   // Filter Out Liked Users From Favorites (Safety Net For Stale Data)
   const filteredEmployeeFavorites = useMemo(() => {
     const data = getAllEmployeeFavoritesStore.companyData;
@@ -297,8 +296,8 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
 
         <div className="stagger-list flex w-full flex-col items-start gap-3">
           {isEmployee &&
-          filteredEmployeeFavorites &&
-          filteredEmployeeFavorites.length > 0 ? (
+            filteredEmployeeFavorites &&
+            filteredEmployeeFavorites.length > 0 ? (
             filteredEmployeeFavorites.map((fav) => (
               <FavoriteCompanyCard
                 key={fav.id}
@@ -348,7 +347,7 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
                       fav.employee.id,
                       fav.id,
                       fav.employee.username ??
-                        `${fav.employee.firstname} ${fav.employee.lastname}`,
+                      `${fav.employee.firstname} ${fav.employee.lastname}`,
                     );
                   }
                 }}

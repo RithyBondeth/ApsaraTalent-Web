@@ -1,6 +1,7 @@
 import { CALL_CONNECT_TIMEOUT_MS } from "./utils";
 import { CallEndReason } from "./types";
 
+/* ---------------------------------- State --------------------------------- */
 // ── WebRTC session singletons ────────────────────────────────────────────────
 let _pc: RTCPeerConnection | null = null;
 let _pendingOffer: RTCSessionDescriptionInit | null = null;
@@ -25,7 +26,7 @@ export const addPendingIceCandidate = (candidate: RTCIceCandidateInit) => {
   _pendingRemoteIceCandidates.push(candidate);
 };
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+/* --------------------------------- Helpers -------------------------------- */
 export function closePc() {
   if (_pc) {
     try {

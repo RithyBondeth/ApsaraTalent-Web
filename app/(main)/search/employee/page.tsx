@@ -149,6 +149,7 @@ export default function EmployeeSearchPage() {
   const location = watch("location");
   const jobType = watch("jobType");
 
+  /* --------------------------------- Memos --------------------------------- */
   // Active filter count for the mobile filter badge
   const allValues = watch();
   const activeFilterCount = useMemo(() => {

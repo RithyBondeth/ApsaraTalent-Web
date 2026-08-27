@@ -3,6 +3,7 @@ import { normalizeMediaUrlsDeep } from "@/utils/functions/media";
 import { API_AUTH_REFRESH_URL } from "@/utils/constants/apis/auth.api.constant";
 import { clearAuthCookies, hasWebSession } from "@/utils/auth/cookie-manager";
 
+/* --------------------------------- Config --------------------------------- */
 // Use a private instance so interceptors are never duplicated on HMR re-evaluations
 const instance = axios.create({
   withCredentials: true,
@@ -11,6 +12,7 @@ const instance = axios.create({
   timeout: 30_000,
 });
 
+/* ---------------------------------- Utils --------------------------------- */
 type RetriableConfig = InternalAxiosRequestConfig & {
   _retriedAfterRefresh?: boolean;
 };
@@ -22,6 +24,7 @@ const isOnAuthPage = (pathname: string) =>
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 
+/* --------------------------------- Methods --------------------------------- */
 /**
  * One refresh at a time.
  *
@@ -74,6 +77,7 @@ const endSession = (): void => {
   window.location.replace(`/login?callbackUrl=${callbackUrl}`);
 };
 
+/* ------------------------------ Interceptors ------------------------------ */
 instance.interceptors.response.use(
   // Normalize media URLs from API responses so data saved with localhost
   // or relative /storage paths still loads correctly in production.

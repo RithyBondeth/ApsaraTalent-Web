@@ -2,7 +2,7 @@ import { PageState } from "@/components/utils/feedback/page-state";
 import { ISearchErrorCardProps } from "./props";
 
 export function SearchErrorCard(props: ISearchErrorCardProps) {
-  /* --------------------------------- Props Section --------------------------------- */
+  /* --------------------------------- Props --------------------------------- */
   const { title, description, retryLabel, onRetry } = props;
 
   /* -------------------------------- Render UI -------------------------------- */

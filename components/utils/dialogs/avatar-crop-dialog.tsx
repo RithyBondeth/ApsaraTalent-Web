@@ -68,7 +68,7 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
     "loading",
   );
 
-  /* /* ------------------------------ All Effects ---------------------------- */
+  /* ------------------------------ Effects ---------------------------- */
   useEffect(() => {
     if (!open) return;
 

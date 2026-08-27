@@ -448,7 +448,7 @@ function MiniSection({
   );
 }
 
-/* --------------------------------- Component -------------------------------- */
+/* ------------------------------ Main Component ------------------------------- */
 /**
  * Faithful thumbnail of a resume template: renders the resolved palette,
  * typography, header, layout split, section styles, and representative content.
