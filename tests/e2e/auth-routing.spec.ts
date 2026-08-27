@@ -1,8 +1,11 @@
 import { expect, test } from "@playwright/test";
 import {
   captureRuntimeFailures,
+  loginEmployee,
+  mockApi,
   mockBackendUnavailable,
   setRole,
+  successfulEmployeeApi,
 } from "./helpers";
 
 test("anonymous users return to login with the complete callback URL", async ({
@@ -93,4 +96,49 @@ test("representative authenticated pages render without uncaught runtime errors"
   }
 
   expect(failures).toEqual([]);
+});
+
+/* ---------------------------------------------------------------------------
+ * Logging out is the API's job, not the web origin's.
+ *
+ * The API issues its auth cookies as httpOnly on its own domain, so the browser
+ * cannot clear them and neither can a Set-Cookie from this origin — only a call
+ * to the API's own /auth/logout ends the session. This asserts the click
+ * actually reaches it, because `clearAuthCookiesServerSide` swallows failures:
+ * if that request stops going out, the user still gets redirected and still
+ * looks logged out while their refresh token stays live.
+ * ------------------------------------------------------------------------- */
+test("logging out ends the session through the API", async ({ page }) => {
+  const apiLogoutCalls: string[] = [];
+  await mockApi(page, (request) => {
+    const { pathname } = new URL(request.url());
+    if (pathname.endsWith("/auth/logout")) {
+      apiLogoutCalls.push(`${request.method()} ${pathname}`);
+      return { body: { message: "Logged out", success: true } };
+    }
+    return successfulEmployeeApi(request);
+  });
+
+  await loginEmployee(page);
+  expect(
+    (await page.context().cookies()).map((cookie) => cookie.name),
+  ).toContain("auth-session-role");
+
+  await page.getByRole("button", { name: /sophea/i }).click();
+  await page.getByRole("menuitem", { name: "Log out" }).click();
+  await page.getByRole("button", { name: "Logout", exact: true }).click();
+
+  // 1. the session was revoked at the API, not merely dropped locally
+  await expect.poll(() => apiLogoutCalls).toEqual(["POST /auth/logout"]);
+
+  // 2. the web origin's own routing cookie is gone
+  await expect
+    .poll(async () =>
+      (await page.context().cookies()).map((cookie) => cookie.name),
+    )
+    .not.toContain("auth-session-role");
+
+  // 3. and the session is really over — protected routes bounce to login
+  await page.goto("/dashboard");
+  await expect(page).toHaveURL(/\/login\?callbackUrl=/);
 });

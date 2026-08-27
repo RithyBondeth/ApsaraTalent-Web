@@ -22,15 +22,15 @@ import {
 } from "@/utils/constants/config.constant";
 
 export default function ResetPasswordPage() {
-  /* ---------------------------------- Utils -------------------------------- */
+  /* ----------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const searchParams = useSearchParams();
-  const t = useTranslations("auth");
-  const tv = useTranslations("validation");
-  /* ── Auto-read token from URL: /reset-password?token=xxx ── */
   const tokenFromUrl = searchParams.get("token") ?? "";
 
-  /* -------------------------------- All States ------------------------------ */
+  const t = useTranslations("auth");
+  const tv = useTranslations("validation");
+
+  /* -------------------------------- All States ------------------------------- */
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   /* ----------------------------- API Integration ----------------------------- */
@@ -162,6 +162,7 @@ export default function ResetPasswordPage() {
             {...register("confirmPassword")}
           />
 
+          {/* Action Button Section */}
           <div className="auth-action-row">
             <AuthBackButton onClick={() => router.replace("/login")}>
               {t("back")}

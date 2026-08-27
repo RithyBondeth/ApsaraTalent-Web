@@ -34,10 +34,6 @@ function EmailVerificationForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("auth");
-
-  // The address is carried in the query rather than the path. It replaced a
-  // token segment, and unlike that token it is not a secret — the person just
-  // typed it into the signup form. The code is what stays out of the URL.
   const email = searchParams.get("email") ?? "";
 
   /* ------------------------------- All States ------------------------------ */
@@ -49,9 +45,10 @@ function EmailVerificationForm() {
     useVerifyEmailStore();
 
   /* -------------------------------- Effects -------------------------------- */
+  // ── Reset Effect ──────────────────────────────────────
   useEffect(() => reset, [reset]);
 
-  // Resend cooldown tick.
+  // ── Resend Cooldown Tick Effect ───────────────────────
   useEffect(() => {
     if (cooldown <= 0) return;
     const id = setInterval(() => setCooldown((s) => Math.max(0, s - 1)), 1000);
@@ -59,6 +56,7 @@ function EmailVerificationForm() {
   }, [cooldown]);
 
   /* --------------------------------- Methods ------------------------------- */
+  // ── Handle Verify Function ────────────────────────────
   const handleVerify = useCallback(
     async (code: string) => {
       if (code.length !== OTP_LENGTH || !email) return;
@@ -83,6 +81,7 @@ function EmailVerificationForm() {
     [email, router, t, verifyEmail],
   );
 
+  // ── Handle Resend Function ────────────────────────────
   const handleResend = useCallback(async () => {
     if (cooldown > 0 || !email) return;
     const sent = await resendOtp(email);
@@ -127,8 +126,6 @@ function EmailVerificationForm() {
             value={otp}
             onChange={(value) => {
               setOtp(value);
-              // Submit as soon as the last digit lands — nobody wants to type
-              // six digits and then hunt for a button.
               if (value.length === OTP_LENGTH) void handleVerify(value);
             }}
             disabled={loading || !email}
@@ -202,7 +199,6 @@ function EmailVerificationForm() {
 }
 
 export default function EmailVerificationPage() {
-  // useSearchParams needs a Suspense boundary to keep the route static-safe.
   return (
     <Suspense fallback={null}>
       <EmailVerificationForm />

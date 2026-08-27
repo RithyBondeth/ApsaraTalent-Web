@@ -165,9 +165,6 @@ export default function CompanySignup() {
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Build Company Payload ──────────────────────────────────────
-  // Everything the form collects that is not tied to how the account was
-  // authenticated. Shared by the email and phone paths below so a field added
-  // to the wizard cannot reach one path and silently miss the other.
   const buildCompanyPayload = (data: TCompanySignup) => ({
     name: data.basicInfo.name,
     description: data.basicInfo.description,
@@ -299,10 +296,6 @@ export default function CompanySignup() {
       toast.success(t("signupSuccessful"), {
         duration: TOAST_DURATION_MS.SHORT,
       });
-      // An email signup is not finished until the address is verified, and
-      // the mail now carries a code rather than a link — so this redirect is
-      // the only way the person reaches the page. Phone signups have nothing
-      // to verify and go straight to the feed.
       const pendingEmail = basicSignupData?.email ?? null;
       const destination = pendingEmail
         ? `/login/email-verification?email=${encodeURIComponent(pendingEmail)}`

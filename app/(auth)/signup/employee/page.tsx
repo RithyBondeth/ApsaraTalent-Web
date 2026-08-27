@@ -166,9 +166,6 @@ export default function EmployeeSignup() {
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Build Employee Payload ─────────────────────────────────────────
-  // Everything the wizard collects that is not tied to how the account was
-  // authenticated. Shared by the email and phone paths below so a field added
-  // to the wizard cannot reach one path and silently miss the other.
   const buildEmployeePayload = (data: TEmployeeSignUp) => ({
     job: data.profession.job,
     yearsOfExperience: data.profession.yearOfExperience,
@@ -201,11 +198,11 @@ export default function EmployeeSignup() {
   });
 
   // ── Navigation Helpers Function ────────────────────────────────────
-  // Check if user has no experience (to skip step 2)
+  // Check no-experience users (To skip step 2)
   const hasNoExperience = () =>
     getValues("profession.yearOfExperience") === "No Experience";
 
-  // Step navigation helper – skips step 2 for no-experience users
+  // Step Navigation Helper (Skips step 2 for no-experience users)
   const resolveNextStep = (current: number) => {
     if (current === 1 && hasNoExperience()) return 3;
     return current + 1;
@@ -362,10 +359,6 @@ export default function EmployeeSignup() {
       toast.success(t("signupSuccessful"), {
         duration: TOAST_DURATION_MS.SHORT,
       });
-      // An email signup is not finished until the address is verified, and
-      // the mail now carries a code rather than a link — so this redirect is
-      // the only way the person reaches the page. Phone signups have nothing
-      // to verify and go straight to the feed.
       const pendingEmail = basicSignupData?.email ?? null;
       const destination = pendingEmail
         ? `/login/email-verification?email=${encodeURIComponent(pendingEmail)}`

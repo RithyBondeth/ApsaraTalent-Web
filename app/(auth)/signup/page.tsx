@@ -43,7 +43,7 @@ import { formatDateForField } from "@/utils/functions/date";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default function SignupPage() {
-  /* --------------------------------------- Utils --------------------------------------- */
+  /* --------------------------------------- Utils ---------------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
   const tv = useTranslations("validation");
@@ -60,7 +60,7 @@ export default function SignupPage() {
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  // Prased Smart Resume Data
+  // Parsed Smart Resume Data
   const { data: parsedData } = useParseResumeStore();
 
   /* --------------------------------- User Role Handling --------------------------------- */
@@ -307,7 +307,7 @@ export default function SignupPage() {
     empForm,
   ]);
 
-  /* -------------------------------- Section divider helper ------------------------------- */
+  /* -------------------------------- Section Divider Helper ------------------------------- */
   const SectionLabel = ({ children }: { children: React.ReactNode }) => (
     <div className="flex items-center gap-3">
       <span className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">

@@ -4,7 +4,7 @@ import { signupSvg } from "@/utils/constants/asset.constant";
 
 export default function SignupLayout({ children }: { children: ReactNode }) {
   /* -------------------------------- Render UI -------------------------------- */
-  return (
+  return ( 
     <AuthShell
       wide
       image={signupSvg}
