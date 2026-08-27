@@ -16,7 +16,7 @@ import {
   LucideAlertCircle,
   LucideRotateCcw,
 } from "lucide-react";
-import { IAiMatchExplanationResponse } from "@/utils/interfaces/resume";
+import { IAiMatchExplanationResponse } from "@/utils/interfaces/resume/ai-resume.interface";
 import { useLocale, useTranslations } from "next-intl";
 import { IAiMatchExplanationModalProps } from "./props";
 import ScoreRing from "./score-ring";

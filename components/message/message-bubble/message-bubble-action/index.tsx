@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ReactionPicker } from "../../message-utils/reaction-picker";
+import { ReactionPicker } from "../../reaction-picker";
 import { LucidePencil, LucideReply, LucideTrash2 } from "lucide-react";
 import { IMessageBubbleActionsProps } from "./props";
 

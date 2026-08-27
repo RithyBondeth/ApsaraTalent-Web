@@ -7,15 +7,15 @@ vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }));
 
-vi.mock("./message-bubble", () => ({
+vi.mock("../message-bubble", () => ({
   default: () => null,
 }));
 
-vi.mock("./message-utils/message-time-divider", () => ({
+vi.mock("../message-time-divider", () => ({
   default: () => null,
 }));
 
-vi.mock("./message-utils/typing-indicator", () => ({
+vi.mock("../typing-indicator", () => ({
   ChatTypingIndicator: () => null,
 }));
 

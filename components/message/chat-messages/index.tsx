@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import MessageTimeDivider from "./message-utils/message-time-divider";
-import MessageBubble from "./message-bubble";
-import { ChatTypingIndicator } from "./message-utils/typing-indicator";
+import MessageTimeDivider from "../message-time-divider";
+import MessageBubble from "../message-bubble";
+import { ChatTypingIndicator } from "../typing-indicator";
 import { parseMessageDate } from "@/utils/functions/date";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { IChatMessagesProps } from "./props";

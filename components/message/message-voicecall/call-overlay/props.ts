@@ -1,7 +1,7 @@
 import type {
   TCallStatus,
   ICallParticipant,
-} from "@/stores/features/call/call.store";
+} from "@/stores/features/call/types";
 
 export interface ICallOverlayProps {
   status: TCallStatus;

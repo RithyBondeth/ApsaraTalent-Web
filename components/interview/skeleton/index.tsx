@@ -1,7 +1,7 @@
 import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
-import { TUserRole } from "@/utils/types/auth";
+import { TUserRole } from "@/utils/types/auth/role.type";
 
 /* -------------------------------- Interview Loading Skeleton -------------------------------- */
 export default function InterviewLoadingSkeleton({

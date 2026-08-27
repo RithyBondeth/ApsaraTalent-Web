@@ -1,9 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { IChatPreview } from "@/utils/interfaces/chat/chat.interface";
 import { CHAT_TYPING_INDICATOR_STYLES } from "@/utils/constants/chat.constant";
+import { IChatTypingIndicatorProps } from "./props";
 
-export function ChatTypingIndicator(props: { activeChat: IChatPreview }) {
+export function ChatTypingIndicator(props: IChatTypingIndicatorProps) {
   /* --------------------------------- Props --------------------------------- */
   const { activeChat } = props;
   const { avatar, name } = activeChat;

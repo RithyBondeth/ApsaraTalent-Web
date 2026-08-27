@@ -1,10 +1,10 @@
 import { getDateDividerLabel } from "@/utils/functions/date";
+import { IMessageTimeDividerProps } from "./props";
 
-export default function MessageTimeDivider({
-  timestamp,
-}: {
-  timestamp: Date | string;
-}) {
+export default function MessageTimeDivider(props: IMessageTimeDividerProps) {
+  /* --------------------------------- Props --------------------------------- */
+  const { timestamp } = props;
+
   /* ---------------------------------- Utils --------------------------------- */
   const label = getDateDividerLabel(timestamp);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChatMessages } from "@/components/message";
+import { ChatMessages } from "@/components/message/chat-messages";
 import ChatHeader from "@/components/message/message-header";
 import ChatInput from "@/components/message/message-input";
 import ChatSidebar from "@/components/message/message-sidebar";

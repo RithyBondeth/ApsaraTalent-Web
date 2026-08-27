@@ -6,11 +6,9 @@ import {
 } from "@/components/ui/popover";
 import { CHAT_REACTION_EMOJIS } from "@/utils/constants/chat.constant";
 import { LucideSmile } from "lucide-react";
+import { IReactionPickerProps } from "./props";
 
-export const ReactionPicker = (props: {
-  onReact: (emoji: string | null) => void;
-  currentReaction?: string;
-}) => {
+export const ReactionPicker = (props: IReactionPickerProps) => {
   /* --------------------------------- Props --------------------------------- */
   const { onReact, currentReaction } = props;
 

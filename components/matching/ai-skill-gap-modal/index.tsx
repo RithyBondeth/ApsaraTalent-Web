@@ -18,7 +18,10 @@ import {
   LucideCheckCircle2,
 } from "lucide-react";
 import { API_AI_SKILL_GAP_STREAM_URL } from "@/utils/constants/apis/matching.api.constant";
-import { ISkillGapMissing, ISkillGapSummary } from "@/utils/interfaces/resume";
+import {
+  ISkillGapMissing,
+  ISkillGapSummary,
+} from "@/utils/interfaces/resume/ai-resume.interface";
 import { streamFetch } from "@/utils/functions/network";
 import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { useLocale, useTranslations } from "next-intl";

@@ -22,7 +22,7 @@ import {
   LucideLoader2,
 } from "lucide-react";
 import { API_AI_INTERVIEW_PREP_STREAM_URL } from "@/utils/constants/apis/matching.api.constant";
-import { IAiInterviewPrepQuestion } from "@/utils/interfaces/resume";
+import { IAiInterviewPrepQuestion } from "@/utils/interfaces/resume/ai-resume.interface";
 import { streamFetch } from "@/utils/functions/network";
 import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { useTranslations } from "next-intl";

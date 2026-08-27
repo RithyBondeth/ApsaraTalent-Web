@@ -1,4 +1,4 @@
-import { IAiInterviewPrepQuestion } from "@/utils/interfaces/resume";
+import { IAiInterviewPrepQuestion } from "@/utils/interfaces/resume/ai-resume.interface";
 
 export interface IQuestionCardProps {
   item: IAiInterviewPrepQuestion;

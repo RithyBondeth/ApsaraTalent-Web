@@ -20,7 +20,7 @@ import { API_RESUME_OPTIMIZE_STREAM_URL } from "@/utils/constants/apis/resume.ap
 import {
   IOptimizeResumeResponse,
   IExperienceSuggestion,
-} from "@/utils/interfaces/resume";
+} from "@/utils/interfaces/resume/ai-resume.interface";
 import { streamFetch } from "@/utils/functions/network";
 import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { Badge } from "@/components/ui/badge";

@@ -1,4 +1,4 @@
-import { TInterviewStatus } from "@/utils/types/interview";
+import { TInterviewStatus } from "@/utils/types/interview/interview-status.type";
 
 /* --------------------------------- Method ---------------------------------- */
 /**
