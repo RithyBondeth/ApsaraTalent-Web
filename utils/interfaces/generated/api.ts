@@ -164,7 +164,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/verify-email/{emailVerificationToken}": {
+    "/auth/verify-email": {
         parameters: {
             query?: never;
             header?: never;
@@ -174,6 +174,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["AuthController_verifyEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/verify-email/resend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthController_resendEmailOtp"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1593,6 +1609,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/match/employee/{eid}/matching-seen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["JobMatchingController_markEmployeeMatchingSeen"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/company/{cid}/matching-seen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["JobMatchingController_markCompanyMatchingSeen"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/match/company/{cid}/like/{eid}": {
         parameters: {
             query?: never;
@@ -2059,6 +2107,7 @@ export interface components {
             /** @enum {string} */
             workMode?: "remote" | "on_site" | "hybrid" | "flexible";
             location?: string;
+            languagesRequired?: string[];
             openingsCount?: number;
             /** Format: date-time */
             expireDate: string;
@@ -2099,8 +2148,7 @@ export interface components {
             socials?: components["schemas"]["SocialDTO"][];
             /** Format: uri */
             websiteUrl?: string;
-            /** @enum {string} */
-            companyType?: "startup" | "sme" | "enterprise" | "ngo" | "government";
+            companyType?: string;
         };
         SkillResponseDTO: {
             id?: string;
@@ -2193,6 +2241,7 @@ export interface components {
             /** @enum {string} */
             workMode?: "remote" | "on_site" | "hybrid" | "flexible";
             location?: string;
+            languagesRequired?: string[];
             openingsCount?: number;
             type: string;
         };
@@ -2214,8 +2263,7 @@ export interface components {
             phone?: string;
             email?: string;
             websiteUrl?: string;
-            /** @enum {string} */
-            companyType?: "startup" | "sme" | "enterprise" | "ngo" | "government";
+            companyType?: string;
             images?: components["schemas"]["ImageResponseDTO"][];
             openPositions?: components["schemas"]["JobPositionResponseDTO"][];
             values?: components["schemas"]["ValuesAndBenefitsResponseDTO"][];
@@ -2250,7 +2298,13 @@ export interface components {
             refreshToken?: string | null;
             user?: components["schemas"]["UserResponseDTO"];
             requiresTwoFactor?: boolean;
-            userId?: string;
+            /**
+             * @description Short-lived signed proof that the password step just succeeded. Replaces
+             *     the bare `userId` this used to return: an id is public — it comes back in
+             *     feed, search and matching responses — so it proved nothing about who was
+             *     asking. The signature is what binds the two halves of the login.
+             */
+            twoFactorToken?: string;
             message: string;
             success?: boolean;
         };
@@ -2312,7 +2366,13 @@ export interface components {
             refreshToken?: string | null;
             user?: components["schemas"]["UserResponseDTO"];
             requiresTwoFactor?: boolean;
-            userId?: string;
+            /**
+             * @description Short-lived signed proof that the password step just succeeded. Replaces
+             *     the bare `userId` this used to return: an id is public — it comes back in
+             *     feed, search and matching responses — so it proved nothing about who was
+             *     asking. The signature is what binds the two halves of the login.
+             */
+            twoFactorToken?: string;
             message: string;
             success?: boolean;
         };
@@ -2325,7 +2385,13 @@ export interface components {
             refreshToken?: string | null;
             user?: components["schemas"]["UserResponseDTO"];
             requiresTwoFactor?: boolean;
-            userId?: string;
+            /**
+             * @description Short-lived signed proof that the password step just succeeded. Replaces
+             *     the bare `userId` this used to return: an id is public — it comes back in
+             *     feed, search and matching responses — so it proved nothing about who was
+             *     asking. The signature is what binds the two halves of the login.
+             */
+            twoFactorToken?: string;
             message: string;
             success?: boolean;
         };
@@ -2345,7 +2411,13 @@ export interface components {
             refreshToken?: string | null;
             user?: components["schemas"]["UserResponseDTO"];
             requiresTwoFactor?: boolean;
-            userId?: string;
+            /**
+             * @description Short-lived signed proof that the password step just succeeded. Replaces
+             *     the bare `userId` this used to return: an id is public — it comes back in
+             *     feed, search and matching responses — so it proved nothing about who was
+             *     asking. The signature is what binds the two halves of the login.
+             */
+            twoFactorToken?: string;
             message: string;
             success?: boolean;
         };
@@ -2370,14 +2442,30 @@ export interface components {
             refreshToken?: string | null;
             user?: components["schemas"]["UserResponseDTO"];
             requiresTwoFactor?: boolean;
-            userId?: string;
+            /**
+             * @description Short-lived signed proof that the password step just succeeded. Replaces
+             *     the bare `userId` this used to return: an id is public — it comes back in
+             *     feed, search and matching responses — so it proved nothing about who was
+             *     asking. The signature is what binds the two halves of the login.
+             */
+            twoFactorToken?: string;
             message: string;
             success?: boolean;
         };
         VerifyEmailDTO: {
-            emailVerificationToken: string;
+            /** Format: email */
+            email: string;
+            otp: string;
         };
         VerifyEmailResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        ResendEmailOtpDTO: {
+            /** Format: email */
+            email: string;
+        };
+        ResendEmailOtpResponseDTO: {
             message: string;
             success?: boolean;
         };
@@ -2396,7 +2484,7 @@ export interface components {
             success?: boolean;
         };
         TwoFactorVerifyLoginDTO: {
-            userId: string;
+            twoFactorToken: string;
             otp: string;
         };
         TwoFactorVerifyLoginResponseDTO: {
@@ -2799,8 +2887,7 @@ export interface components {
             socials?: components["schemas"]["SocialDTO"][];
             /** Format: uri */
             websiteUrl?: string | null;
-            /** @enum {string|null} */
-            companyType?: "startup" | "sme" | "enterprise" | "ngo" | "government" | null;
+            companyType?: string | null;
         };
         UpdateCompanyInfoResponseDTO: {
             message: string;
@@ -2936,6 +3023,7 @@ export interface components {
             /** @enum {string} */
             workMode?: "remote" | "on_site" | "hybrid" | "flexible";
             location?: string;
+            languagesRequired?: string[];
             openingsCount?: number;
             company: components["schemas"]["CompanyInJobResponseDTO"];
             isHide: boolean;
@@ -2957,6 +3045,7 @@ export interface components {
             /** @enum {string} */
             workMode?: "remote" | "on_site" | "hybrid" | "flexible";
             location?: string;
+            languagesRequired?: string[];
             openingsCount?: number;
             company: components["schemas"]["CompanyInJobResponseDTO"];
             isHide: boolean;
@@ -2973,15 +3062,38 @@ export interface components {
             employeeLiked: boolean;
             companyLiked: boolean;
             isMatched: boolean;
+            /** @description Skill overlap alone, 0–100. */
             skillScore: number | null;
+            /** @description Overall weighted fit, 0–100. */
+            matchScore: number | null;
             /** Format: date-time */
             createdAt: string;
             /** @description User IDs who received a notification from this action — used by api-gateway to emit socket badge increments */
             notificationTargets?: string[];
         };
         UnMatchResposneDTO: {
+            /**
+             * @description Auth user IDs of both former match participants — populated by the service,
+             *     not persisted. Socket rooms are keyed by auth user ID (chat.gateway joins
+             *     `payload.id`), NOT by employee/company profile ID, so the gateway must
+             *     broadcast to these rather than to the eid/cid it was called with.
+             */
+            notifyUserIds?: string[];
             message: string;
             success?: boolean;
+        };
+        MatchCountResponseDTO: {
+            /** @description Total confirmed matches for this profile. */
+            count: number;
+            /**
+             * @description Matches this side has not opened yet — the badge number, computed here so
+             *     the client never does arithmetic on it.
+             *
+             *     The badge used to be `count` minus a high-water mark in the browser's
+             *     localStorage. That mark only ever grew, so unmatches left it above the
+             *     total and pinned the badge to zero, and it did not travel between devices.
+             */
+            unseenCount: number;
         };
         FindCurrentLikeResponseDTO: {
             id: string;
@@ -3022,10 +3134,10 @@ export interface components {
             createdAt?: string;
             /** Format: date-time */
             updatedAt?: string;
+            /** @description Skill overlap alone, 0–100. */
             skillScore?: number | null;
-        };
-        MatchCountResponseDTO: {
-            count: number;
+            /** @description Overall weighted fit, 0–100. */
+            matchScore?: number | null;
         };
         WeeklyActivityItemDTO: {
             day: string;
@@ -3490,12 +3602,14 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                emailVerificationToken: components["schemas"]["VerifyEmailDTO"];
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyEmailDTO"];
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -3503,6 +3617,29 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["VerifyEmailResponseDTO"];
+                };
+            };
+        };
+    };
+    AuthController_resendEmailOtp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResendEmailOtpDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResendEmailOtpResponseDTO"];
                 };
             };
         };
@@ -5489,6 +5626,48 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UnMatchResposneDTO"];
+                };
+            };
+        };
+    };
+    JobMatchingController_markEmployeeMatchingSeen: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatchCountResponseDTO"];
+                };
+            };
+        };
+    };
+    JobMatchingController_markCompanyMatchingSeen: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatchCountResponseDTO"];
                 };
             };
         };
