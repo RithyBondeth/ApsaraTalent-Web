@@ -108,13 +108,27 @@ export const useNotificationStore = create<TNotificationState>((set, get) => ({
   resetUnreadCount: () => set({ unreadCount: 0 }),
 
   addNotification: (notification: INotification) => {
-    set((state) => ({
-      // Prepend so newest appears first; skip if already in the list
-      notifications: state.notifications.some((n) => n.id === notification.id)
-        ? state.notifications
-        : [notification, ...state.notifications],
-      unreadCount: state.unreadCount + 1,
-    }));
+    set((state) => {
+      const isDuplicate = state.notifications.some(
+        (n) => n.id === notification.id,
+      );
+      return {
+        // Prepend so newest appears first; skip if already in the list
+        notifications: isDuplicate
+          ? state.notifications
+          : [notification, ...state.notifications],
+        /*
+          Only a genuinely new, still-unread notification moves the badge. The
+          previous unconditional +1 double-counted whenever the socket replayed
+          an event after a reconnect — the list was deduplicated by id, but the
+          count was not, so it drifted upward with no way back down.
+        */
+        unreadCount:
+          isDuplicate || notification.isRead
+            ? state.unreadCount
+            : state.unreadCount + 1,
+      };
+    });
   },
 
   markRead: async (notificationId: string) => {
@@ -139,18 +153,36 @@ export const useNotificationStore = create<TNotificationState>((set, get) => ({
   },
 
   markAllRead: async () => {
-    const prev = get().notifications;
-    const prevCount = get().unreadCount;
+    // Remember WHICH rows we flip, not a snapshot of the whole list — see the
+    // revert below.
+    const flippedIds = new Set(
+      get()
+        .notifications.filter((n) => !n.isRead)
+        .map((n) => n.id),
+    );
     // Optimistic update
-    set({
-      notifications: prev.map((n) => ({ ...n, isRead: true })),
+    set((state) => ({
+      notifications: state.notifications.map((n) =>
+        n.isRead ? n : { ...n, isRead: true },
+      ),
       unreadCount: 0,
-    });
+    }));
     try {
       await axios.patch(API_MARK_ALL_NOTIFICATIONS_READ_URL);
     } catch {
-      // Revert on failure
-      set({ notifications: prev, unreadCount: prevCount });
+      /*
+        Revert only the rows this call actually flipped. Restoring a whole
+        snapshot taken before the request would discard anything that arrived
+        while it was in flight — including a list loaded by a concurrent fetch,
+        which is how a failed mark-all could blank the page entirely.
+      */
+      set((state) => ({
+        notifications: state.notifications.map((n) =>
+          flippedIds.has(n.id) ? { ...n, isRead: false } : n,
+        ),
+      }));
+      // The server owns the count; new arrivals may have changed it meanwhile.
+      void get().queryUnreadCount();
     }
   },
 

@@ -69,11 +69,25 @@ describe("notification API stores", () => {
 
     useNotificationStore.getState().incrementUnreadCount();
     useNotificationStore.getState().addNotification(item);
+    /*
+      Re-delivering the same notification — which happens when the socket
+      replays events after a reconnect — must not move the badge again. The
+      list was always deduplicated by id; the count is now deduplicated too.
+    */
     useNotificationStore.getState().addNotification(item);
 
     expect(useNotificationStore.getState().notifications).toEqual([item]);
-    expect(useNotificationStore.getState().unreadCount).toBe(3);
+    expect(useNotificationStore.getState().unreadCount).toBe(2);
     useNotificationStore.getState().resetUnreadCount();
+    expect(useNotificationStore.getState().unreadCount).toBe(0);
+  });
+
+  it("does not raise the badge for a notification that arrives already read", () => {
+    useNotificationStore
+      .getState()
+      .addNotification(notification("notification-2", true));
+
+    expect(useNotificationStore.getState().notifications).toHaveLength(1);
     expect(useNotificationStore.getState().unreadCount).toBe(0);
   });
 

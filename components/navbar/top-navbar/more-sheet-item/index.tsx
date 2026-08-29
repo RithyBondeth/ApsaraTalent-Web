@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import BadgePill from "../badge-pill";
 import { IMoreSheetItemProps } from "./props";
@@ -6,6 +7,10 @@ import { IMoreSheetItemProps } from "./props";
 export default function MoreSheetItem(props: IMoreSheetItemProps) {
   /* --------------------------------- Props --------------------------------- */
   const { href, icon: Icon, label, count, active, onClick } = props;
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("sidebar");
+  const badgeLabel = t("badgeUnread", { count });
 
   /* ------------------------------- Render UI -------------------------------- */
   return (
@@ -41,6 +46,11 @@ export default function MoreSheetItem(props: IMoreSheetItemProps) {
 
         {/* Badge Pill Section */}
         <BadgePill count={count} />
+        {/*
+          BadgePill renders a bare number. This sheet row has no aria-label to
+          fold it into, so the count gets its own screen-reader-only sentence.
+        */}
+        {count > 0 && <span className="sr-only">{badgeLabel}</span>}
       </span>
 
       {/* Label Section */}

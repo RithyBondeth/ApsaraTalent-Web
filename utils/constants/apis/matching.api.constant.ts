@@ -18,6 +18,16 @@ export const API_GET_CURRENT_EMPLOYEE_MATCHING_URL = (empID: string) =>
 export const API_GET_CURRENT_COMPANY_MATCHING_URL = (cmpID: string) =>
   `${API_MATCHING_BASE_URL}/current-company-matching/${cmpID}`;
 
+/*
+  Opening the matching list marks it seen server-side and returns the recomputed
+  counts, so the badge never has to be derived in the browser.
+*/
+export const API_MARK_EMPLOYEE_MATCHING_SEEN_URL = (empID: string) =>
+  `${API_MATCHING_BASE_URL}/employee/${empID}/matching-seen`;
+
+export const API_MARK_COMPANY_MATCHING_SEEN_URL = (cmpID: string) =>
+  `${API_MATCHING_BASE_URL}/company/${cmpID}/matching-seen`;
+
 export const API_COUNT_CURRENT_EMPLOYEE_MATCHING_URL = (empID: string) =>
   `${API_MATCHING_BASE_URL}/current-employee-matching-count/${empID}`;
 

@@ -11,6 +11,7 @@ import {
   resolveProfile,
   resolveMessageSnippet,
   resolvePreview,
+  sameId,
 } from "./utils";
 import {
   getSocket,
@@ -504,24 +505,31 @@ export const useChatStore = create<TChatState>((set, get) => ({
 
   // ── Mark As Read ────────────────────────────────────────────────────────
   markAsRead: (messageId, senderId) => {
-    const { socket, activeChat, me } = get();
+    const { socket, activeChat } = get();
     if (socket?.connected) {
       socket.emit("markAsRead", { messageId, senderId });
       if (activeChat) {
         set((state) => ({
           activeChats: state.activeChats.map((c) =>
-            c.id === activeChat.id ? { ...c, isRead: true, unread: 0 } : c,
+            sameId(c.id, activeChat.id) ? { ...c, isRead: true, unread: 0 } : c,
           ),
           currentMessages: state.currentMessages.map((m) =>
             !m.isMe && !m.isRead ? { ...m, isRead: true } : m,
           ),
         }));
       }
-      const updatedChats = get().activeChats;
-      const newUnread = updatedChats.reduce((sum, c) => {
-        const isUnread = c.isRead === false && c.lastMessageSenderId !== me?.id;
-        return sum + (isUnread ? (c.unread ?? 1) : 0);
-      }, 0);
+      /*
+        Sum the per-partner unread counters directly. The previous version
+        gated each row on its LATEST message (`isRead === false` and not sent
+        by me), which dropped a partner's unread messages the moment I replied
+        from another device — the newest message was then mine, so the whole
+        row stopped counting and the badge fell below the truth. `unread`
+        already tracks every unread message from that partner.
+      */
+      const newUnread = get().activeChats.reduce(
+        (sum, c) => sum + (c.unread ?? 0),
+        0,
+      );
       set({ unreadCount: newUnread });
       useNotificationStore.getState().markReadByChatMessageId(messageId);
     }

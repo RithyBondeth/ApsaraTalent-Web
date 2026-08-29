@@ -15,7 +15,8 @@
     "aiResumeBuilder": "AI Resume Builder",
     "settings": "Settings",
     "more": "More",
-    "navigationGroup": "Navigation"
+    "navigationGroup": "Navigation",
+    "badgeUnread": "{count} unread"
   },
   "sidebarFooter": {
     "myProfile": "My Profile",

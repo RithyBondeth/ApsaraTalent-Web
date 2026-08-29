@@ -20,7 +20,9 @@ import { LucideBookmark, LucideBuilding2, LucideUsers } from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 
-export default function FavoritePageClient({ initialIsEmployee }: {
+export default function FavoritePageClient({
+  initialIsEmployee,
+}: {
   initialIsEmployee: boolean;
 }) {
   /* --------------------------------- Utils ---------------------------------- */
@@ -296,8 +298,8 @@ export default function FavoritePageClient({ initialIsEmployee }: {
 
         <div className="stagger-list flex w-full flex-col items-start gap-3">
           {isEmployee &&
-            filteredEmployeeFavorites &&
-            filteredEmployeeFavorites.length > 0 ? (
+          filteredEmployeeFavorites &&
+          filteredEmployeeFavorites.length > 0 ? (
             filteredEmployeeFavorites.map((fav) => (
               <FavoriteCompanyCard
                 key={fav.id}
@@ -347,7 +349,7 @@ export default function FavoritePageClient({ initialIsEmployee }: {
                       fav.employee.id,
                       fav.id,
                       fav.employee.username ??
-                      `${fav.employee.firstname} ${fav.employee.lastname}`,
+                        `${fav.employee.firstname} ${fav.employee.lastname}`,
                     );
                   }
                 }}

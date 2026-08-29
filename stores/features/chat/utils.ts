@@ -192,3 +192,18 @@ export const resolvePreview = (
   const prefix = senderName ? `${senderName}: ` : "";
   return `${prefix}${base}`;
 };
+
+/* ------------------------------- Identity -------------------------------- */
+/**
+ * Case-insensitive ID comparison for the chat layer.
+ *
+ * Chat IDs reach the client from several sources — socket payloads, REST
+ * responses, route params — and their casing is not guaranteed to agree. Parts
+ * of the store already compared with `.toLowerCase()` while others used a raw
+ * `===`, so a casing difference could make a message look like it was neither
+ * from nor for the current user, quietly skipping the unread accounting.
+ */
+export const sameId = (
+  a: string | null | undefined,
+  b: string | null | undefined,
+): boolean => !!a && !!b && a.toLowerCase() === b.toLowerCase();
