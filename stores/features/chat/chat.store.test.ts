@@ -163,8 +163,13 @@ describe("chat store", () => {
     const socket = createMockSocket({
       getChatHistory: (_payload, callback) =>
         (callback as (value: unknown) => void)(history),
+      /*
+        The real shape. This mock previously answered { unreadCount: 5 } — a
+        field the gateway never sends — so the test passed against a store that
+        could not read the server's actual GetUnreadCountResponseDTO.
+      */
       getUnreadCount: (_empty, callback) =>
-        (callback as (value: unknown) => void)({ unreadCount: 5 }),
+        (callback as (value: unknown) => void)({ count: 5 }),
     });
     useChatStore.setState({
       socket: socket as never,
@@ -212,8 +217,9 @@ describe("chat store", () => {
             content: "Hello",
           },
         ]),
+      // Gateway's real field is `count` — see GetUnreadCountResponseDTO.
       getUnreadCount: (_empty, callback) =>
-        (callback as (value: unknown) => void)({ unreadCount: 1 }),
+        (callback as (value: unknown) => void)({ count: 1 }),
       getOnlineUsers: (_ids, callback) =>
         (callback as (value: Record<string, boolean>) => void)({
           "user-2": false,

@@ -294,13 +294,20 @@ export const useChatStore = create<TChatState>((set, get) => ({
     const { socket } = get();
     if (socket?.connected) {
       socket.emit("getUnreadCount", null, (res: unknown) => {
+        /*
+          The gateway answers with GetUnreadCountResponseDTO, whose field is
+          `count`. This guarded on `unreadCount`, so it never passed and the
+          badge was never once seeded from the server — it started at 0 on
+          every load and only ever grew from local increments. Nothing failed
+          loudly, because a silent early return looks identical to a zero.
+        */
         if (
           typeof res === "object" &&
           res !== null &&
-          "unreadCount" in res &&
-          typeof res.unreadCount === "number"
+          "count" in res &&
+          typeof (res as { count: unknown }).count === "number"
         ) {
-          set({ unreadCount: res.unreadCount });
+          set({ unreadCount: (res as { count: number }).count });
         }
       });
     }

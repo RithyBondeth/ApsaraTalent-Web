@@ -203,13 +203,19 @@ describe("MatchingPageClient", () => {
     );
     expect(mocks.markUnmatchInitiated).toHaveBeenCalledOnce();
     expect(mocks.employeeStore.removeMatch).toHaveBeenCalledWith("company-1");
-    expect(mocks.removeChat).toHaveBeenCalledWith("company-1");
+    /*
+      The conversation must survive. Unmatching deletes the match row and the
+      interviews; it never deletes messages, so removing the thread claimed
+      something the server does not do — and it keyed on the wrong ID anyway,
+      so it silently did nothing.
+    */
+    expect(mocks.removeChat).not.toHaveBeenCalled();
     expect(mocks.removeInterviews).toHaveBeenCalledWith("company-1");
     expect(mocks.toastDismiss).toHaveBeenCalledWith("toast-1");
     expect(mocks.toastSuccess).toHaveBeenCalledWith("unmatchSuccess");
   });
 
-  it("restores matches, chats, and interviews when unmatch fails", async () => {
+  it("restores matches and interviews when unmatch fails", async () => {
     mocks.unmatch.mockImplementation(async () => {
       mocks.unmatchError = "Server rejected unmatch";
     });
@@ -224,7 +230,8 @@ describe("MatchingPageClient", () => {
         mocks.employeeStore.queryCurrentEmployeeMatching,
       ).toHaveBeenCalledWith("employee-1"),
     );
-    expect(mocks.getRecentChats).toHaveBeenCalledOnce();
+    // Nothing to restore in the sidebar — the thread was never removed.
+    expect(mocks.getRecentChats).not.toHaveBeenCalled();
     expect(mocks.refetchInterviews).toHaveBeenCalledWith(
       "employee-1",
       "employee",

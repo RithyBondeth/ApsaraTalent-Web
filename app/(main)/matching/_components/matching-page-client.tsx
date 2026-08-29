@@ -11,7 +11,6 @@ import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/cou
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useRouter } from "next/navigation";
 import { useInitiateChatStore } from "@/stores/apis/chat/initiate-chat.store";
-import { useChatStore } from "@/stores/features/chat/chat.store";
 import { markUnmatchInitiated } from "@/stores/features/chat/socket-listeners";
 import { MatchingLoadingSkeleton } from "@/components/matching/skeleton";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -50,8 +49,6 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
   const getCurrentCmpStore = useGetCurrentCompanyMatchingStore();
   const { initiateChat } = useInitiateChatStore();
   const { unmatch } = useUnmatchStore();
-  const removeChatByPartnerId = useChatStore((s) => s.removeChatByPartnerId);
-  const getRecentChats = useChatStore((s) => s.getRecentChats);
   const removeInterviewsByPartnerId = useInterviewStore(
     (s) => s.removeInterviewsByPartnerId,
   );
@@ -138,11 +135,24 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
       // Show loading feedback
       const loadingToast = toast.loading(t("unmatchLoading"));
 
-      // Optimistic removal — match card + chat sidebar + interviews
+      /*
+        Optimistic removal — match card and interviews only.
+
+        The conversation deliberately stays. Unmatching deletes the match row
+        and the interviews between the two parties; it does not delete their
+        messages, and job-service has no chat repository to do so. Dropping the
+        thread from the sidebar therefore claimed something the server never
+        did, and it came back on the next refresh.
+
+        It was not even removing it: removeChatByPartnerId keys on the auth
+        user ID that activeChats are built from, while otherId here is an
+        employee/company profile ID, so the call never matched a row. Leaving
+        the thread in place is both the honest behaviour and the correct one
+        for the badge — any unread messages in it are still genuinely unread.
+      */
       if (isEmployee) getCurrentEmpStore.removeMatch(otherId);
       else getCurrentCmpStore.removeMatch(otherId);
 
-      removeChatByPartnerId(otherId);
       removeInterviewsByPartnerId(otherId);
 
       await unmatch(employeeId, companyId, isEmployee);
@@ -171,9 +181,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
             getCurrentEmpStore.queryCurrentEmployeeMatching(currentId);
           else getCurrentCmpStore.queryCurrentCompanyMatching(currentId);
 
-          // 2. Restore chat sidebar
-          getRecentChats();
-          // 3. Restore interviews
+          // 2. Restore interviews (the chat thread was never removed)
           void silentRefetchInterviews(currentId, role);
         }
 
@@ -186,9 +194,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
       unmatch,
       getCurrentEmpStore,
       getCurrentCmpStore,
-      removeChatByPartnerId,
       removeInterviewsByPartnerId,
-      getRecentChats,
       silentRefetchInterviews,
       t,
     ],
