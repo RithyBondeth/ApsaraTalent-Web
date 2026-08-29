@@ -13,6 +13,7 @@ import { useChatStore } from "@/stores/features/chat/chat.store";
 import {
   sidebarList,
   MOBILE_PRIMARY_URLS,
+  LEVEL_BADGE_URLS,
 } from "@/utils/constants/sidebar.constant";
 import { LucideFileUser, LucideMoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -47,9 +48,9 @@ export default function TopNavbar() {
   const { user, loading } = useGetCurrentUserStore();
 
   // Count Current User Matching
-  const { countCurrentEmpMatching, totalEmpMatching, seenEmpMatching } =
+  const { countCurrentEmpMatching, unseenEmpMatching } =
     useCountCurrentEmployeeMatchingStore();
-  const { countCurrentCmpMatching, totalCmpMatching, seenCmpMatching } =
+  const { countCurrentCmpMatching, unseenCmpMatching } =
     useCountCurrentCompanyMatchingStore();
 
   // Count Current User Favorites
@@ -95,20 +96,16 @@ export default function TopNavbar() {
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Matching Count ─────────────────────────────────────────────────────
+  /*
+    Taken straight from the server. This used to be `total - seen`, where `seen`
+    was a high-water mark in localStorage — a number that only grew, so every
+    unmatch left it above the true total and the badge could never rise again.
+  */
   const matchingCount = useMemo(() => {
-    if (isEmployee)
-      return Math.max(0, (totalEmpMatching ?? 0) - seenEmpMatching);
-    if (isCompany)
-      return Math.max(0, (totalCmpMatching ?? 0) - seenCmpMatching);
+    if (isEmployee) return unseenEmpMatching;
+    if (isCompany) return unseenCmpMatching;
     return 0;
-  }, [
-    isEmployee,
-    isCompany,
-    totalEmpMatching,
-    seenEmpMatching,
-    totalCmpMatching,
-    seenCmpMatching,
-  ]);
+  }, [isEmployee, isCompany, unseenEmpMatching, unseenCmpMatching]);
 
   // ── Favorite Count ─────────────────────────────────────────────────────
   const favoriteCount = useMemo(() => {
@@ -200,8 +197,18 @@ export default function TopNavbar() {
     (isEmployee && isActive("/resume-builder"));
 
   // ──── More Badge Count ────────────────────────────────────────────────
+  /*
+    Level-only badges (see LEVEL_BADGE_URLS) are deliberately excluded. The
+    favourites total is a collection size, not an event count — rolling it into
+    this sum meant the More tab showed a permanent red number that never
+    changed on its own, hiding the unread-notification and pending-interview
+    counts that genuinely need attention.
+  */
   const moreBadgeCount = moreItems.reduce(
-    (total, item) => total + getBadgeCount(item.url),
+    (total, item) =>
+      LEVEL_BADGE_URLS.includes(item.url)
+        ? total
+        : total + getBadgeCount(item.url),
     0,
   );
 

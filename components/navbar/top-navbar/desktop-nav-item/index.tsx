@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import BadgePill from "../badge-pill";
 import { IDesktopNavItemProps } from "./props";
@@ -7,13 +8,22 @@ export default function DesktopNavItem(props: IDesktopNavItemProps) {
   /* --------------------------------- Props --------------------------------- */
   const { href, icon: Icon, label, count, active } = props;
 
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("sidebar");
+  const badgeLabel = t("badgeUnread", { count });
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Link
       href={href}
       prefetch={true}
       aria-current={active ? "page" : undefined}
-      aria-label={label}
+      /*
+        The count has to live in the accessible name: aria-label overrides all
+        inner content, so BadgePill's number was invisible to screen readers —
+        the nav read as plain "Message" whether or not anything was waiting.
+      */
+      aria-label={count > 0 ? `${label}, ${badgeLabel}` : label}
       className={cn(
         "group relative flex h-11 min-w-11 items-center justify-center gap-2 border border-transparent px-2.5",
         "text-xs font-semibold transition-[background-color,border-color,color,transform] duration-200",

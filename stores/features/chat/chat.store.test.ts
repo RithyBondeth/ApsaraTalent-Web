@@ -362,6 +362,39 @@ describe("chat store", () => {
     });
   });
 
+  it("keeps counting a partner's unread messages after I reply from elsewhere", () => {
+    const socket = createMockSocket();
+    const opened = preview("user-2");
+    /*
+      user-3 sent me 4 messages, then I replied from another device — so the
+      row's NEWEST message is mine and its isRead is false (they have not read
+      it yet), while 4 of their messages are still unread by me.
+    */
+    const repliedElsewhere = {
+      ...preview("user-3"),
+      unread: 4,
+      isRead: false,
+      lastMessageSenderId: "user-1",
+    };
+    useChatStore.setState({
+      socket: socket as never,
+      me: { id: "user-1" },
+      activeChat: opened,
+      activeChats: [opened, repliedElsewhere],
+      currentMessages: [message("message-1")],
+      unreadCount: 5,
+    });
+
+    useChatStore.getState().markAsRead("message-1", "user-2");
+
+    /*
+      Opening user-2 clears its 1 unread and leaves user-3's 4. The old
+      recompute gated on each row's latest message, so user-3 — whose latest
+      message was mine — dropped out entirely and the badge fell to 0.
+    */
+    expect(useChatStore.getState().unreadCount).toBe(4);
+  });
+
   it("marks, reacts, types, deletes, edits, and removes a partner chat", () => {
     const socket = createMockSocket();
     const chat = preview("user-2");

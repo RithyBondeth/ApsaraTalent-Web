@@ -2,7 +2,7 @@ import type { StoreApi } from "zustand";
 import type { INotification } from "@/utils/interfaces/notification/notification.interface";
 import type { TChatProfile, TChatState, SocketInstance } from "./types";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
-import { parseRawChatMessage, resolveMessageSnippet } from "./utils";
+import { parseRawChatMessage, resolveMessageSnippet, sameId } from "./utils";
 import { formatSidebarTime, parseMessageDate } from "@/utils/functions/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useInterviewStore } from "@/stores/apis/matching/interview.store";
@@ -55,23 +55,23 @@ function silentRefetchMatchingList() {
   }
 }
 
-// ── Increment Matching Count ─────────────────────────────────────────────
-function incrementMatchingCount() {
+// ── Refresh Matching Count ───────────────────────────────────────────────
+/*
+  Re-read the counts from the server rather than adding or subtracting locally.
+  The badge is `unseenCount`, which only the server can work out — and because a
+  refetch is idempotent, a duplicated or replayed event cannot drift the number,
+  which is exactly what the old increment/decrement pair did.
+*/
+function refreshMatchingCount() {
   const user = useGetCurrentUserStore.getState().user;
-  if (user?.role === USER_ROLE.EMPLOYEE) {
-    useCountCurrentEmployeeMatchingStore.getState().incrementCount();
-  } else if (user?.role === USER_ROLE.COMPANY) {
-    useCountCurrentCompanyMatchingStore.getState().incrementCount();
-  }
-}
-
-// ── Decrement Matching Count ─────────────────────────────────────────────
-function decrementMatchingCount() {
-  const user = useGetCurrentUserStore.getState().user;
-  if (user?.role === USER_ROLE.EMPLOYEE) {
-    useCountCurrentEmployeeMatchingStore.getState().decrementCount();
-  } else if (user?.role === USER_ROLE.COMPANY) {
-    useCountCurrentCompanyMatchingStore.getState().decrementCount();
+  if (user?.role === USER_ROLE.EMPLOYEE && user.employee?.id) {
+    void useCountCurrentEmployeeMatchingStore
+      .getState()
+      .refreshEmpMatchingCount(user.employee.id);
+  } else if (user?.role === USER_ROLE.COMPANY && user.company?.id) {
+    void useCountCurrentCompanyMatchingStore
+      .getState()
+      .refreshCmpMatchingCount(user.company.id);
   }
 }
 
@@ -139,12 +139,12 @@ export const registerSocketListeners = (
     };
 
     // ── Resolve Message ────
-    const isFromMe = message.senderId === me?.id;
-    const isForMe = message.receiverId === me?.id;
+    const isFromMe = sameId(message.senderId, me?.id);
+    const isForMe = sameId(message.receiverId, me?.id);
     const isActiveChatOpen =
-      activeChat &&
-      (message.senderId === activeChat.id ||
-        message.receiverId === activeChat.id);
+      !!activeChat &&
+      (sameId(message.senderId, activeChat.id) ||
+        sameId(message.receiverId, activeChat.id));
 
     const partnerId = isFromMe ? message.receiverId : message.senderId;
     const preview = resolveMessageSnippet(message) || "";
@@ -155,12 +155,19 @@ export const registerSocketListeners = (
     const isNewUnread = !isFromMe && isForMe && !isActiveChatOpen;
 
     // ── Update Active Chats ────
-    set((state: TChatState) => {
-      const exists = state.activeChats.some((c) => c.id === partnerId);
-      if (exists) {
-        return {
-          activeChats: state.activeChats.map((c) => {
-            if (c.id !== partnerId) return c;
+    /*
+      Resolved BEFORE the updater: `set` updaters must stay pure, and this one
+      used to call getRecentChats() from inside itself — React may invoke an
+      updater more than once, which fired duplicate socket round-trips.
+    */
+    const isKnownPartner = get().activeChats.some((c) =>
+      sameId(c.id, partnerId),
+    );
+
+    set((state: TChatState) => ({
+      activeChats: isKnownPartner
+        ? state.activeChats.map((c) => {
+            if (!sameId(c.id, partnerId)) return c;
             return {
               ...c,
               preview: previewText || c.preview,
@@ -169,13 +176,18 @@ export const registerSocketListeners = (
               lastMessageSenderId: message.senderId,
               unread: isNewUnread ? (c.unread ?? 0) + 1 : (c.unread ?? 0),
             };
-          }),
-          unreadCount: isNewUnread ? state.unreadCount + 1 : state.unreadCount,
-        };
-      }
-      getRecentChats();
-      return {};
-    });
+          })
+        : state.activeChats,
+      /*
+        The badge moves even when the sender has no sidebar row yet. The old
+        code returned {} on that branch, so the very first message from a new
+        contact never reached the navbar until a reload. getRecentChats() below
+        rebuilds the row but never touches unreadCount, so this cannot double.
+      */
+      unreadCount: isNewUnread ? state.unreadCount + 1 : state.unreadCount,
+    }));
+
+    if (!isKnownPartner) getRecentChats();
 
     // ── Update Unread Count ────
     /* 
@@ -305,8 +317,14 @@ export const registerSocketListeners = (
   );
 
   // ── Message Read Receipt ────────────────────────────────────────────────
+  /*
+    The server emits this to the SENDER only (chat.gateway emits to `senderId`),
+    so it always means "the other party read something I sent". It is a delivery
+    signal for my own outgoing message — never a statement about messages they
+    sent me, which is why it must not clear my unread counter for that row.
+  */
   socket.on("messageRead", (data: { messageId: string; readerId?: string }) => {
-    const { currentMessages, activeChat } = get();
+    const { currentMessages, activeChat, me } = get();
     const msg = currentMessages.find((m) => m.id === data.messageId);
     if (msg) {
       set({
@@ -321,9 +339,19 @@ export const registerSocketListeners = (
     const readerId = data.readerId ?? activeChat?.id;
     if (readerId) {
       set((state: TChatState) => ({
-        activeChats: state.activeChats.map((c) =>
-          c.id === readerId ? { ...c, isRead: true, unread: 0 } : c,
-        ),
+        activeChats: state.activeChats.map((c) => {
+          if (!sameId(c.id, readerId)) return c;
+          /*
+            Only flip the row's read flag when its newest message is mine —
+            that is the double-tick this receipt is about. If they have since
+            sent me something, the row is unread again and must stay that way.
+            Previously this also set `unread: 0`, wiping my own unread count
+            for that partner every time they read one of my messages.
+          */
+          return sameId(c.lastMessageSenderId, me?.id)
+            ? { ...c, isRead: true }
+            : c;
+        }),
       }));
     }
   });
@@ -383,7 +411,7 @@ export const registerSocketListeners = (
     }
     // New mutual match → bump the matching badge + refresh the matching list
     if (isNotification(notification) && notification.type === "match") {
-      incrementMatchingCount();
+      refreshMatchingCount();
       silentRefetchMatchingList();
     }
     // New interview → refresh the interview list + badge
@@ -393,10 +421,29 @@ export const registerSocketListeners = (
   });
 
   // ── Badge Increment ───────────────────────────────────────────────────────
-  // Fired for match/like/interview notifications where only the badge count
-  // needs immediate update (full notification data is fetched lazily on open).
+  /*
+    Fired for match/like/interview notifications. This RE-FETCHES rather than
+    incrementing locally, because the same event also reaches us as a Firebase
+    push: the server creates these notifications with `sendPush: true`
+    unconditionally, so a user with the tab open receives both this socket event
+    AND the FCM message. Two local +1s for one event made the badge drift
+    upward until the next visibilitychange re-synced it.
+
+    Re-fetching makes every delivery channel idempotent — duplicates, replays
+    after a reconnect, and multi-tab all converge on the server's number.
+  */
   socket.on("badgeIncrement", () => {
-    useNotificationStore.getState().incrementUnreadCount();
+    void useNotificationStore.getState().queryUnreadCount();
+    /*
+      Also the live path for the matching badge. The 'newNotification' handler
+      above has a `type === "match"` branch, but the server only ever emits that
+      event for chat messages — so until now nothing refreshed the matching
+      count in realtime and a new match stayed invisible until a page reload.
+      Both refreshes are plain re-reads, so running them for a like too costs a
+      cheap request and cannot corrupt anything.
+    */
+    refreshMatchingCount();
+    silentRefetchMatchingList();
   });
 
   // ── Interview Update ──────────────────────────────────────────────────────
@@ -413,7 +460,7 @@ export const registerSocketListeners = (
   socket.on("unmatchUpdate", () => {
     silentRefetchMatchingList();
     silentRefetchInterviews();
-    decrementMatchingCount();
+    refreshMatchingCount();
 
     /* 
       Only notify the OTHER party — not the one who initiated the unmatch.

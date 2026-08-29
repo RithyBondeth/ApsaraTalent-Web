@@ -15,7 +15,8 @@
     "aiResumeBuilder": "បង្កើត CV ដោយ AI",
     "settings": "ការកំណត់",
     "more": "បន្ថែម",
-    "navigationGroup": "ការរុករក"
+    "navigationGroup": "ការរុករក",
+    "badgeUnread": "{count} មិនទាន់អាន"
   },
   "sidebarFooter": {
     "myProfile": "របស់ខ្ញុំ",

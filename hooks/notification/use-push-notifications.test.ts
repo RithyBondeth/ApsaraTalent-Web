@@ -11,7 +11,6 @@ const userMocks = vi.hoisted(() => ({ current: null as unknown }));
 const pushTokenMocks = vi.hoisted(() => ({ update: vi.fn() }));
 const notificationMocks = vi.hoisted(() => ({
   query: vi.fn(),
-  increment: vi.fn(),
 }));
 
 vi.mock("firebase/messaging", () => messagingMocks);
@@ -31,7 +30,6 @@ vi.mock("@/stores/apis/notification/notification.store", () => ({
   useNotificationStore: {
     getState: () => ({
       queryUnreadCount: notificationMocks.query,
-      incrementUnreadCount: notificationMocks.increment,
     }),
   },
 }));
@@ -143,10 +141,14 @@ describe("usePushNotifications", () => {
         data: expect.objectContaining({ url: "/message?user=user-2" }),
       }),
     );
-    expect(notificationMocks.increment).toHaveBeenCalledOnce();
+    /*
+      Re-fetches rather than incrementing: the same event also arrives over the
+      socket as 'badgeIncrement', so a local +1 here would double-count.
+    */
+    expect(notificationMocks.query).toHaveBeenCalledOnce();
 
     foregroundHandler?.({ data: { targetUserId: "another-user" } });
-    expect(notificationMocks.increment).toHaveBeenCalledOnce();
+    expect(notificationMocks.query).toHaveBeenCalledOnce();
   });
 
   it("refreshes unread state on visibility and service-worker messages", async () => {

@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import BadgePill from "../badge-pill";
 import { IMobileTabItemProps } from "./props";
@@ -7,6 +8,10 @@ export default function MobileTabItem(props: IMobileTabItemProps) {
   /* --------------------------------- Props --------------------------------- */
   const { href, icon: Icon, label, count, active, onClick } = props;
 
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("sidebar");
+  const badgeLabel = t("badgeUnread", { count });
+
   /* ------------------------------- Render UI ------------------------------- */
   return (
     <Link
@@ -14,7 +19,12 @@ export default function MobileTabItem(props: IMobileTabItemProps) {
       prefetch={true}
       onClick={onClick}
       aria-current={active ? "page" : undefined}
-      aria-label={label}
+      /*
+        The count has to live in the accessible name: aria-label overrides all
+        inner content, so BadgePill's number was invisible to screen readers —
+        the nav read as plain "Message" whether or not anything was waiting.
+      */
+      aria-label={count > 0 ? `${label}, ${badgeLabel}` : label}
       className={cn(
         "group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 px-1 py-2",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",

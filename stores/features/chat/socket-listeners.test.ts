@@ -8,19 +8,17 @@ import { createMockSocket } from "@/tests/helpers/mock-socket";
 
 const notificationMocks = vi.hoisted(() => ({
   add: vi.fn(),
-  increment: vi.fn(),
+  query: vi.fn(),
 }));
 const interviewMocks = vi.hoisted(() => ({ refetch: vi.fn() }));
 const currentUserMocks = vi.hoisted(() => ({ getState: vi.fn() }));
 const employeeMatchingMocks = vi.hoisted(() => ({
   refetch: vi.fn(),
-  increment: vi.fn(),
-  decrement: vi.fn(),
+  refreshCount: vi.fn(),
 }));
 const companyMatchingMocks = vi.hoisted(() => ({
   refetch: vi.fn(),
-  increment: vi.fn(),
-  decrement: vi.fn(),
+  refreshCount: vi.fn(),
 }));
 const toastMocks = vi.hoisted(() => ({ info: vi.fn() }));
 
@@ -28,7 +26,7 @@ vi.mock("@/stores/apis/notification/notification.store", () => ({
   useNotificationStore: {
     getState: () => ({
       addNotification: notificationMocks.add,
-      incrementUnreadCount: notificationMocks.increment,
+      queryUnreadCount: notificationMocks.query,
     }),
   },
 }));
@@ -53,16 +51,14 @@ vi.mock("@/stores/apis/matching/get-current-company-matching.store", () => ({
 vi.mock("@/stores/apis/matching/count-current-employee-matching.store", () => ({
   useCountCurrentEmployeeMatchingStore: {
     getState: () => ({
-      incrementCount: employeeMatchingMocks.increment,
-      decrementCount: employeeMatchingMocks.decrement,
+      refreshEmpMatchingCount: employeeMatchingMocks.refreshCount,
     }),
   },
 }));
 vi.mock("@/stores/apis/matching/count-current-company-matching.store", () => ({
   useCountCurrentCompanyMatchingStore: {
     getState: () => ({
-      incrementCount: companyMatchingMocks.increment,
-      decrementCount: companyMatchingMocks.decrement,
+      refreshCmpMatchingCount: companyMatchingMocks.refreshCount,
     }),
   },
 }));
@@ -200,6 +196,89 @@ describe("chat socket listeners", () => {
     });
   });
 
+  it("raises the badge for a first message from a partner with no sidebar row", () => {
+    const socket = createMockSocket();
+    const getRecentChats = vi.fn();
+    // No activeChats: nobody has messaged this user before.
+    const harness = createStateHarness({ activeChats: [], getRecentChats });
+    registerSocketListeners(socket as never, harness.set as never, harness.get);
+
+    socket.listeners.get("newMessage")?.({
+      id: "message-1",
+      senderId: "user-9",
+      receiverId: "user-1",
+      content: "First contact",
+      sentAt: "2026-07-23T10:00:00.000Z",
+      isRead: false,
+    });
+
+    /*
+      This branch used to return {} and leave the count untouched, so an
+      opening message from a new contact never reached the navbar badge.
+    */
+    expect(harness.get().unreadCount).toBe(1);
+    // The sidebar row itself is rebuilt from the server, exactly once.
+    expect(getRecentChats).toHaveBeenCalledOnce();
+  });
+
+  it("counts an incoming message whose IDs differ only in casing", () => {
+    const socket = createMockSocket();
+    const harness = createStateHarness({ activeChats: [preview("user-2")] });
+    registerSocketListeners(socket as never, harness.set as never, harness.get);
+
+    socket.listeners.get("newMessage")?.({
+      id: "message-1",
+      senderId: "USER-2",
+      receiverId: "USER-1",
+      content: "Shouty identifiers",
+      sentAt: "2026-07-23T10:00:00.000Z",
+      isRead: false,
+    });
+
+    /*
+      Raw === comparisons made this message look neither from nor for the
+      current user, so it silently skipped the unread accounting entirely.
+    */
+    expect(harness.get()).toMatchObject({
+      unreadCount: 1,
+      activeChats: [expect.objectContaining({ id: "user-2", unread: 1 })],
+    });
+  });
+
+  it("keeps my unread count when the partner reads a message I sent", () => {
+    const socket = createMockSocket();
+    // They read something of mine, but have since sent me three messages.
+    const chat = {
+      ...preview("user-2"),
+      unread: 3,
+      isRead: false,
+      lastMessageSenderId: "user-2",
+    };
+    const harness = createStateHarness({
+      activeChats: [chat],
+      currentMessages: [message("message-1")],
+    });
+    registerSocketListeners(socket as never, harness.set as never, harness.get);
+
+    socket.listeners.get("messageRead")?.({
+      messageId: "message-1",
+      readerId: "user-2",
+    });
+
+    /*
+      A read receipt is about MY outgoing message. It previously set
+      `unread: 0` on the row, wiping unread messages they had sent me.
+    */
+    expect(harness.get().activeChats[0]).toMatchObject({
+      unread: 3,
+      isRead: false,
+    });
+    // The message's own delivery state still advances to "seen".
+    expect(harness.get().currentMessages[0]).toMatchObject({
+      deliveryStatus: "seen",
+    });
+  });
+
   it("adds active-chat messages, resolves replies, and replaces optimistic messages", () => {
     const socket = createMockSocket();
     const parent = message("parent", {
@@ -319,7 +398,10 @@ describe("chat socket listeners", () => {
       type: "match",
     });
     expect(notificationMocks.add).toHaveBeenCalledOnce();
-    expect(employeeMatchingMocks.increment).toHaveBeenCalledOnce();
+    // Re-read rather than +1: a replayed event must not move the number.
+    expect(employeeMatchingMocks.refreshCount).toHaveBeenCalledWith(
+      "employee-1",
+    );
     expect(employeeMatchingMocks.refetch).toHaveBeenCalledWith("employee-1");
 
     socket.listeners.get("newNotification")?.({
@@ -334,8 +416,21 @@ describe("chat socket listeners", () => {
 
     socket.listeners.get("newNotification")?.({ id: 123, type: "match" });
     expect(notificationMocks.add).toHaveBeenCalledTimes(2);
+    /*
+      'badgeIncrement' re-fetches instead of incrementing locally — the same
+      event also arrives as a Firebase push, and two local +1s drifted the
+      badge upward with no way back down.
+    */
     socket.listeners.get("badgeIncrement")?.();
-    expect(notificationMocks.increment).toHaveBeenCalledOnce();
+    expect(notificationMocks.query).toHaveBeenCalledOnce();
+    /*
+      'badgeIncrement' is the only event the server actually sends for a new
+      match, so it has to drive the matching badge too — the 'newNotification'
+      match branch never fires, because that event is emitted for chat only.
+    */
+    expect(employeeMatchingMocks.refreshCount).toHaveBeenCalledWith(
+      "employee-1",
+    );
   });
 
   it("refreshes after unmatch and suppresses the initiator-only toast", () => {
@@ -345,12 +440,19 @@ describe("chat socket listeners", () => {
 
     socket.listeners.get("unmatchUpdate")?.();
     expect(toastMocks.info).toHaveBeenCalledOnce();
-    expect(employeeMatchingMocks.decrement).toHaveBeenCalledOnce();
+    /*
+      Re-read instead of -1. The old decrement also walked the localStorage
+      "seen" mark down alongside the total, which is what let the two drift
+      apart and silently zero the badge.
+    */
+    expect(employeeMatchingMocks.refreshCount).toHaveBeenCalledWith(
+      "employee-1",
+    );
 
     markUnmatchInitiated();
     socket.listeners.get("unmatchUpdate")?.();
     expect(toastMocks.info).toHaveBeenCalledTimes(1);
-    expect(employeeMatchingMocks.decrement).toHaveBeenCalledTimes(2);
+    expect(employeeMatchingMocks.refreshCount).toHaveBeenCalledTimes(2);
     expect(interviewMocks.refetch).toHaveBeenCalledTimes(2);
   });
 

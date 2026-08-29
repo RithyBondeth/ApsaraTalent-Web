@@ -171,13 +171,20 @@ export const usePushNotifications = () => {
         });
 
         // ── Real-time badge update (foreground) ──────────────────────────────
-        // Only bump the badge if this push was addressed to the current user.
-        // Skipping the check when targetUserId is absent keeps backward compat.
-        // Interview badge + page updates are handled by the interviewUpdate
-        // socket event, not here.
+        /*
+          Only refresh the badge if this push was addressed to the current user.
+          Skipping the check when targetUserId is absent keeps backward compat.
+          Interview badge + page updates are handled by the interviewUpdate
+          socket event, not here.
+
+          This RE-FETCHES rather than incrementing: match/like/interview events
+          are pushed with `sendPush: true` regardless of whether the user is
+          online, so the socket 'badgeIncrement' event usually arrives for the
+          same notification. Two local +1s for one event inflated the badge.
+        */
         const targetUserId = payload.data?.targetUserId;
         if (!targetUserId || targetUserId === userId) {
-          useNotificationStore.getState().incrementUnreadCount();
+          void useNotificationStore.getState().queryUnreadCount();
         }
       });
 

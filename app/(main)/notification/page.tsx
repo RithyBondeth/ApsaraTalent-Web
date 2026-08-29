@@ -58,10 +58,14 @@ export default function NotificationPage() {
   const role = user?.role ?? USER_ROLE.EMPLOYEE;
 
   /* --------------------------------- Effects --------------------------------- */
-  // On mount: mark all as read (optimistic badge clear + server sync)
-  useEffect(() => {
-    void markAllRead();
-  }, [markAllRead]);
+  /*
+    Deliberately NOT marking everything read on mount. Landing on this page is
+    not the same as reading it — an auto mark-all meant a user who opened the
+    page and got distracted lost every unread marker, and it made the "unread"
+    filter below permanently empty, since nothing could still be unread by the
+    time the filtered query ran. Per-notification read state is handled by each
+    card's onMarkRead, and the "Mark all read" button covers the bulk case.
+  */
 
   // Fetch notifications on mount and whenever filter changes
   useEffect(() => {

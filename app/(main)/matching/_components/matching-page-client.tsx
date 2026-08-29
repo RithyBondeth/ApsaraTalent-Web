@@ -56,23 +56,19 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
     (s) => s.removeInterviewsByPartnerId,
   );
   const silentRefetchInterviews = useInterviewStore((s) => s.silentRefetch);
+  /*
+    markAsSeen now stamps the rows server-side and returns the recomputed
+    counts, so it no longer has to wait for a locally-loaded total. The guard
+    that used to sit here existed because the old version wrote a localStorage
+    high-water mark: running it before the count arrived stored seen=0 and the
+    badge sprang back to the full total on the next load. There is nothing left
+    to race — the server decides both halves.
+  */
   const markEmpMatchingAsSeen = useCountCurrentEmployeeMatchingStore(
     (s) => s.markAsSeen,
   );
   const markCmpMatchingAsSeen = useCountCurrentCompanyMatchingStore(
     (s) => s.markAsSeen,
-  );
-  /* 
-    Subscribe to the totals so we can guard markAsSeen until they're loaded.
-    Without this guard, markAsSeen(id) runs when currentUser resolves but
-    before the count API returns — totalMatching is still null, so it writes
-    seen=0 to localStorage and the badge inflates to the full total on next load.
-  */
-  const totalEmpMatching = useCountCurrentEmployeeMatchingStore(
-    (s) => s.totalEmpMatching,
-  );
-  const totalCmpMatching = useCountCurrentCompanyMatchingStore(
-    (s) => s.totalCmpMatching,
   );
 
   /* --------------------------------- Effects --------------------------------- */
@@ -87,23 +83,9 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
   useEffect(() => {
     const id = currentUser?.employee?.id ?? currentUser?.company?.id;
     if (!id) return;
-    // Only mark as seen once the server count has been fetched.
-    // totalMatching starts as null and becomes a number after the API returns.
-    if (isEmployee) {
-      if (totalEmpMatching === null) return;
-      markEmpMatchingAsSeen(id);
-    } else {
-      if (totalCmpMatching === null) return;
-      markCmpMatchingAsSeen(id);
-    }
-  }, [
-    currentUser,
-    isEmployee,
-    totalEmpMatching,
-    totalCmpMatching,
-    markEmpMatchingAsSeen,
-    markCmpMatchingAsSeen,
-  ]);
+    if (isEmployee) void markEmpMatchingAsSeen(id);
+    else void markCmpMatchingAsSeen(id);
+  }, [currentUser, isEmployee, markEmpMatchingAsSeen, markCmpMatchingAsSeen]);
 
   /* --------------------------------- Memos --------------------------------- */
   // ── Sender ID ────────────────────────────────────────────
