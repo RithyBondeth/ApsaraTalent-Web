@@ -16,7 +16,10 @@
     "settings": "Settings",
     "more": "More",
     "navigationGroup": "Navigation",
-    "badgeUnread": "{count} unread"
+    "badgeUnread": "{count} unread",
+    "badgeNew": "{count} new",
+    "badgePending": "{count} awaiting your response",
+    "badgeSaved": "{count} saved"
   },
   "sidebarFooter": {
     "myProfile": "My Profile",

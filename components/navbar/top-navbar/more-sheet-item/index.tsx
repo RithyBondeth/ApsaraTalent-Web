@@ -1,16 +1,11 @@
 import { cn } from "@/lib/utils";
-import { useTranslations } from "next-intl";
 import Link from "next/link";
 import BadgePill from "../badge-pill";
 import { IMoreSheetItemProps } from "./props";
 
 export default function MoreSheetItem(props: IMoreSheetItemProps) {
   /* --------------------------------- Props --------------------------------- */
-  const { href, icon: Icon, label, count, active, onClick } = props;
-
-  /* ---------------------------------- Utils --------------------------------- */
-  const t = useTranslations("sidebar");
-  const badgeLabel = t("badgeUnread", { count });
+  const { href, icon: Icon, label, count, badgeLabel, active, onClick } = props;
 
   /* ------------------------------- Render UI -------------------------------- */
   return (

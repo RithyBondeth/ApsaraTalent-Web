@@ -1,16 +1,11 @@
 import { cn } from "@/lib/utils";
-import { useTranslations } from "next-intl";
 import Link from "next/link";
 import BadgePill from "../badge-pill";
 import { IDesktopNavItemProps } from "./props";
 
 export default function DesktopNavItem(props: IDesktopNavItemProps) {
   /* --------------------------------- Props --------------------------------- */
-  const { href, icon: Icon, label, count, active } = props;
-
-  /* ---------------------------------- Utils --------------------------------- */
-  const t = useTranslations("sidebar");
-  const badgeLabel = t("badgeUnread", { count });
+  const { href, icon: Icon, label, count, badgeLabel, active } = props;
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
