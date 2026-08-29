@@ -150,6 +150,23 @@ export default function TopNavbar() {
     ],
   );
 
+  // ── Get Badge Label ───────────────────────────────────────────────────
+  /*
+    The screen-reader phrasing for a badge, decided here beside the count
+    rather than in each nav item. Every badge previously announced "N unread",
+    which is only true of messages and notifications — a scheduled interview
+    awaiting your reply is not unread, and neither is a new match.
+  */
+  const getBadgeLabel = useCallback(
+    (url: string, count: number) => {
+      if (url === "/matching") return t("badgeNew", { count });
+      if (url === "/interview") return t("badgePending", { count });
+      if (url === "/favorite") return t("badgeSaved", { count });
+      return t("badgeUnread", { count });
+    },
+    [t],
+  );
+
   // ── Check Path Active ─────────────────────────────────────────────────
   const isActive = useCallback(
     (url: string) => pathname === url || pathname.startsWith(`${url}/`),
@@ -251,6 +268,7 @@ export default function TopNavbar() {
                   icon={item.icon}
                   label={getNavbarTitle(item.title)}
                   count={getBadgeCount(item.url)}
+                  badgeLabel={getBadgeLabel(item.url, getBadgeCount(item.url))}
                   active={isActive(item.url)}
                 />
               ))}
@@ -260,6 +278,7 @@ export default function TopNavbar() {
                   icon={LucideFileUser}
                   label={t("aiResumeBuilder")}
                   count={0}
+                  badgeLabel=""
                   active={isActive("/resume-builder")}
                 />
               )}
@@ -291,6 +310,7 @@ export default function TopNavbar() {
               icon={item.icon}
               label={getNavbarTitle(item.title)}
               count={getBadgeCount(item.url)}
+              badgeLabel={getBadgeLabel(item.url, getBadgeCount(item.url))}
               active={isActive(item.url)}
             />
           ))}
@@ -358,6 +378,10 @@ export default function TopNavbar() {
                     icon={item.icon}
                     label={getNavbarTitle(item.title)}
                     count={getBadgeCount(item.url)}
+                    badgeLabel={getBadgeLabel(
+                      item.url,
+                      getBadgeCount(item.url),
+                    )}
                     active={isActive(item.url)}
                     onClick={() => setMoreOpen(false)}
                   />
@@ -368,6 +392,7 @@ export default function TopNavbar() {
                     icon={LucideFileUser}
                     label={t("aiResumeBuilder")}
                     count={0}
+                    badgeLabel=""
                     active={isActive("/resume-builder")}
                     onClick={() => setMoreOpen(false)}
                   />

@@ -16,7 +16,10 @@
     "settings": "ការកំណត់",
     "more": "បន្ថែម",
     "navigationGroup": "ការរុករក",
-    "badgeUnread": "{count} មិនទាន់អាន"
+    "badgeUnread": "{count} មិនទាន់អាន",
+    "badgeNew": "{count} ថ្មី",
+    "badgePending": "{count} កំពុងរង់ចាំការឆ្លើយតប",
+    "badgeSaved": "{count} បានរក្សាទុក"
   },
   "sidebarFooter": {
     "myProfile": "របស់ខ្ញុំ",
