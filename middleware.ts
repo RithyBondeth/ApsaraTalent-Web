@@ -79,6 +79,7 @@ function buildContentSecurityPolicy(nonce: string) {
 
 /* ---------------------------------- Helper --------------------------------- */
 const PROTECTED_ROUTES = [
+  "/admin",
   "/feed",
   "/profile",
   "/favorite",
@@ -123,6 +124,17 @@ const GUEST_LANDING_ROUTES = ["/"];
  * than a link — there is no second way back to it.
  */
 const AUTH_ROUTE_EXCEPTIONS = ["/login/email-verification"];
+
+/**
+ * The admin panel. Gated here so a signed-in employee does not get a flash of
+ * the panel's chrome before the API refuses every request behind it.
+ *
+ * This is presentation only, and must never be mistaken for authorisation: the
+ * role comes from a cookie the browser owns and can trivially forge. Every
+ * admin endpoint is guarded server-side by AuthGuard + AdminGuard, and a forged
+ * cookie buys nothing but an empty page full of failed requests.
+ */
+const ADMIN_ROUTES = ["/admin"];
 
 function isRouteMatch(pathname: string, routes: string[]) {
   return routes.some(
@@ -174,6 +186,7 @@ export function middleware(request: NextRequest) {
     const role = request.cookies.get(COOKIE_CONFIG.SESSION_ROLE)?.value ?? null;
     const isAuthenticated = role !== null;
 
+    const isAdminRoute = isRouteMatch(pathname, ADMIN_ROUTES);
     const isAuthRoute = isRouteMatch(pathname, AUTH_ROUTES);
     const isAuthRouteException = isRouteMatch(pathname, AUTH_ROUTE_EXCEPTIONS);
     const isProtectedRoute = isRouteMatch(pathname, PROTECTED_ROUTES);
@@ -206,6 +219,26 @@ export function middleware(request: NextRequest) {
         );
       }
       return nextWithNonce();
+    }
+
+    // Non-admins are sent to their own home rather than shown a 404: the panel
+    // is not a secret, it is simply not theirs.
+    if (isAdminRoute && role !== "admin") {
+      return withPolicy(NextResponse.redirect(new URL("/feed", request.url)));
+    }
+
+    // An admin has no feed, profile, matches or resume — every one of those
+    // pages is built around an employee or company profile their role does
+    // not have, so the whole signed-in app outside /admin is sent to /admin.
+    // The auth routes go too, or the generic redirect below would drop them
+    // back on /feed.
+    if (
+      role === "admin" &&
+      !isAdminRoute &&
+      (isProtectedRoute || isGuestLandingRoute || isAuthRoute) &&
+      !isAuthRouteException
+    ) {
+      return withPolicy(NextResponse.redirect(new URL("/admin", request.url)));
     }
 
     // Fully authenticated users shouldn't access auth or guest landing pages
