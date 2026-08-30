@@ -52,12 +52,12 @@ export default function AvatarStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-center gap-5">
+    <div className="flex w-full flex-col items-center gap-5">
       {/* Title Section */}
       <TypographyH4>{t("empAvatarTitle")}</TypographyH4>
 
       {/* Drag Drop File Section */}
-      <div className="w-full flex justify-center">
+      <div className="flex w-full justify-center">
         {setValue && (
           <DragDropFile<TEmployeeSignUp>
             preview={preview}

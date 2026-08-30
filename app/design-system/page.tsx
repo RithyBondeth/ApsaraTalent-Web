@@ -1,0 +1,415 @@
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import { LucideBriefcase, LucideSparkles, LucideUsers } from "lucide-react";
+
+import { StatusPill } from "@/components/utils/data-display/status-pill";
+import { BenefitValueChip } from "@/components/utils/data-display/benefit-value-chip";
+import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
+import { LoginMethodIcon } from "@/components/utils/brand/login-method-icon";
+import { PlatformIcon } from "@/components/utils/brand/platform-icon";
+import { PageBanner } from "@/components/utils/layout/page-banner";
+import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { ThemeToggle } from "./theme-toggle";
+import { BenefitValueRemovableDemo } from "./benefit-value-demo";
+
+export const metadata: Metadata = { title: "Design system" };
+
+/* ---------------------------------------------------------------------------
+ * A living reference for the token layer. Dev-only: it exists so a colour
+ * decision can be seen side by side in both themes instead of being guessed at
+ * from hex values, and so a new status surface has something to copy from.
+ * ------------------------------------------------------------------------- */
+
+const STATUSES = ["success", "warning", "info", "destructive"] as const;
+
+type TStatusName = (typeof STATUSES)[number];
+
+// Spelled out rather than interpolated: Tailwind scans for literal class names,
+// so a template string like `bg-${status}-subtle` compiles to nothing.
+const CALLOUT: Record<TStatusName, string> = {
+  success: "bg-success-subtle border-success-border border-l-success",
+  warning: "bg-warning-subtle border-warning-border border-l-warning",
+  info: "bg-info-subtle border-info-border border-l-info",
+  destructive:
+    "bg-destructive-subtle border-destructive-border border-l-destructive",
+};
+
+const ACCENT_TEXT: Record<TStatusName, string> = {
+  success: "text-success-accent",
+  warning: "text-warning-accent",
+  info: "text-info-accent",
+  destructive: "text-destructive-accent",
+};
+
+const SOLID_BG: Record<TStatusName, string> = {
+  success: "bg-success",
+  warning: "bg-warning",
+  info: "bg-info",
+  destructive: "bg-destructive",
+};
+
+const ROLES = [
+  { suffix: "", role: "solid fill", use: "dots, bars, filled chips" },
+  { suffix: "-foreground", role: "on solid", use: "text/icons on that fill" },
+  { suffix: "-accent", role: "accent text", use: "text on page, card, subtle" },
+  {
+    suffix: "-subtle",
+    role: "subtle surface",
+    use: "tinted status background",
+  },
+  { suffix: "-border", role: "subtle border", use: "boundary of that surface" },
+] as const;
+
+function Section({
+  title,
+  note,
+  children,
+}: {
+  title: string;
+  note?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="space-y-4">
+      <div className="border-b border-border pb-2">
+        <h2 className="text-lg font-black uppercase tracking-tight">{title}</h2>
+        {note ? (
+          <p className="mt-1 text-sm text-muted-foreground">{note}</p>
+        ) : null}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function Swatch({ token, label }: { token: string; label: string }) {
+  return (
+    <div className="space-y-1.5">
+      <div
+        className="h-14 w-full border border-border"
+        style={{ background: `hsl(var(--${token}))` }}
+      />
+      <div className="space-y-0.5">
+        <p className="font-mono text-[11px] leading-tight">--{token}</p>
+        <p className="text-[11px] leading-tight text-muted-foreground">
+          {label}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default function DesignSystemPage() {
+  if (process.env.NODE_ENV === "production") notFound();
+
+  return (
+    <main className="min-h-screen bg-background px-6 py-10 text-foreground">
+      <div className="mx-auto max-w-5xl space-y-12">
+        <header className="flex items-start justify-between gap-6 border-b-[5px] border-primary pb-4">
+          <div>
+            <h1 className="text-3xl font-black uppercase tracking-tight">
+              Design system
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Every colour below resolves per theme on its own. Toggle the theme
+              — nothing on this page carries a <code>dark:</code> variant.
+            </p>
+          </div>
+          <ThemeToggle />
+        </header>
+
+        <Section
+          title="Page banner"
+          note="Shared by feed, dashboard, matching, favourite, interview, notification, search and resume-builder. Replaced a two-column hero whose right half held a 146–320 KB illustration that could not follow the theme. The reclaimed space now carries real counts."
+        >
+          <div className="space-y-4">
+            <PageBanner
+              eyebrow="All talent"
+              title="Find top talent from anywhere and grow your team"
+              subtitle="Build your dream team effortlessly, no matter where you are."
+              stats={[
+                { icon: LucideUsers, label: "candidates", value: "1,248" },
+                { icon: LucideSparkles, label: "new this week", value: "38" },
+                { icon: LucideBriefcase, label: "open roles", value: "6" },
+              ]}
+            />
+            <PageBanner
+              eyebrow="Activity center"
+              title="Your notifications"
+              subtitle="Stay updated with your latest matches, likes, and messages."
+              stats={[
+                { icon: LucideUsers, label: "all", value: "24" },
+                { icon: LucideSparkles, label: "unread", value: "3" },
+              ]}
+            />
+            <PageBanner
+              eyebrow="AI-powered features"
+              title="Build a standout resume in minutes"
+              subtitle="Let AI draft, refine, and format your resume so you can focus on the content."
+            />
+          </div>
+        </Section>
+
+        <Section
+          title="Page banner — loading"
+          note="The placeholder above each banner is the banner: same padding, same accent edge, same grid. Each bar sits in a row the height of the line box it stands in, so nothing moves when the copy arrives. Pass `stats` only for pages that hand the banner its counts on first paint."
+        >
+          <div className="space-y-4">
+            <PageBannerSkeleton stats={3} />
+            <PageBannerSkeleton />
+          </div>
+        </Section>
+
+        <Section
+          title="Surfaces & text"
+          note="Page, card and popover stack from darkest to lightest in light mode, and the reverse in dark."
+        >
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
+            <Swatch token="background" label="page" />
+            <Swatch token="card" label="raised surface" />
+            <Swatch token="popover" label="overlay" />
+            <Swatch token="muted" label="inset / disabled" />
+            <Swatch token="foreground" label="body text" />
+            <Swatch token="muted-foreground" label="secondary text" />
+          </div>
+        </Section>
+
+        <Section
+          title="Brand"
+          note="Cobalt carries every primary action. Accent is its tinted companion for hover and active states."
+        >
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
+            <Swatch token="primary" label="actions, links" />
+            <Swatch token="primary-foreground" label="on primary" />
+            <Swatch token="accent" label="hover surface" />
+            <Swatch token="accent-foreground" label="on accent" />
+            <Swatch token="secondary" label="secondary button" />
+            <Swatch token="ring" label="focus ring" />
+          </div>
+        </Section>
+
+        <Section
+          title="Borders"
+          note="Two values on purpose: --border is decorative, --input bounds a control and carries the 3:1 WCAG asks for."
+        >
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <div className="border border-border p-4 text-sm">
+                border-border — dividers, card edges
+              </div>
+              <div className="border border-input p-4 text-sm">
+                border-input — inputs, selects, outline buttons
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Input placeholder="Real input, real border" />
+              <Input
+                placeholder="Error state"
+                validationMessage="This field is required"
+              />
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          title="Status"
+          note="Four families, five roles each. Reach for these instead of bg-green-100 / text-amber-700 — a token cannot drift between files, and it already knows both themes."
+        >
+          <div className="space-y-8">
+            {STATUSES.map((status) => (
+              <div key={status} className="space-y-3">
+                <h3 className="font-mono text-sm font-bold">{status}</h3>
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+                  {ROLES.map(({ suffix, role, use }) => (
+                    <div key={suffix} className="space-y-1.5">
+                      <div
+                        className="h-14 w-full border border-border"
+                        style={{ background: `hsl(var(--${status}${suffix}))` }}
+                      />
+                      <div className="space-y-0.5">
+                        <p className="text-[11px] font-semibold leading-tight">
+                          {role}
+                        </p>
+                        <p className="font-mono text-[10px] leading-tight text-muted-foreground">
+                          --{status}
+                          {suffix}
+                        </p>
+                        <p className="text-[10px] leading-tight text-muted-foreground">
+                          {use}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          title="Status in use"
+          note="The same five roles composed the way components actually consume them."
+        >
+          <div className="space-y-6">
+            <div className="flex flex-wrap gap-2">
+              {STATUSES.map((status) => (
+                <StatusPill key={status} status={status}>
+                  {status}
+                </StatusPill>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {STATUSES.map((status) => (
+                <StatusPill key={status} status={status} variant="solid">
+                  {status}
+                </StatusPill>
+              ))}
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {STATUSES.map((status) => (
+                <div
+                  key={status}
+                  className={`border border-l-[4px] p-3 text-sm ${CALLOUT[status]}`}
+                >
+                  <p className={`font-semibold ${ACCENT_TEXT[status]}`}>
+                    {status} callout
+                  </p>
+                  <p className="mt-0.5 text-muted-foreground">
+                    Body copy stays on muted-foreground so the status colour
+                    carries the meaning, not the whole block.
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-2">
+              {STATUSES.map((status, i) => (
+                <div key={status} className="flex items-center gap-3">
+                  <span className="w-24 text-xs text-muted-foreground">
+                    {status}
+                  </span>
+                  <div className="h-2 flex-1 bg-muted">
+                    <div
+                      className={`h-full ${SOLID_BG[status]}`}
+                      style={{ width: `${40 + i * 18}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          title="Benefits & values"
+          note="Categorical, not status — a benefit is a kind of thing, not a severity. Benefits and values share one chip across five surfaces; availability shares one badge across six. The four hues are kept apart on purpose: benefit magenta sits opposite value lime, which it is always adjacent to, and clear of the three availability hues that can share a feed scroll."
+        >
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-2">
+              <BenefitValueChip kind="benefit" label="Unlimited PTO" />
+              <BenefitValueChip kind="benefit" label="Yearly tech stipend" />
+              <BenefitValueChip kind="value" label="Innovation" />
+              <BenefitValueChip kind="value" label="Collaboration" />
+            </div>
+
+            <BenefitValueRemovableDemo />
+
+            <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
+              {["FULL_TIME", "PART_TIME", "FREELANCE", "CONTRACT"].map((a) => (
+                <AvailabilityBadge key={a} availability={a} />
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          title="Brand marks"
+          note="Auth providers and social platforms, all in currentColor so they follow the theme. Sourced from Simple Icons, because Lucide has no Google mark and has deprecated the brand icons it does ship for removal in v1.0. LinkedIn is drawn in-house — Simple Icons dropped it after a trademark request — and Twitter renders as X, which is the mark Simple Icons carries now."
+        >
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-5">
+              {(["Google", "Facebook", "LinkedIn", "Github"] as const).map(
+                (method) => (
+                  <span
+                    key={method}
+                    className="flex items-center gap-2 text-sm text-foreground"
+                  >
+                    <LoginMethodIcon method={method} />
+                    {method}
+                  </span>
+                ),
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-5 border-t border-border pt-4">
+              {(
+                [
+                  "Facebook",
+                  "Instagram",
+                  "Telegram",
+                  "Linkedin",
+                  "Github",
+                  "Website",
+                  "Twitter",
+                ] as const
+              ).map((platform) => (
+                <span
+                  key={platform}
+                  className="flex items-center gap-2 text-sm text-muted-foreground"
+                >
+                  <PlatformIcon platform={platform} />
+                  {platform}
+                </span>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section title="Controls">
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-3">
+              <Button>Primary</Button>
+              <Button variant="secondary">Secondary</Button>
+              <Button variant="outline">Outline</Button>
+              <Button variant="ghost">Ghost</Button>
+              <Button variant="destructive">Destructive</Button>
+              <Button variant="link">Link</Button>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button disabled>Disabled</Button>
+              <Button size="sm">Small</Button>
+              <Button size="lg">Large</Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Badge>Default</Badge>
+              <Badge variant="secondary">Secondary</Badge>
+              <Badge variant="destructive">Destructive</Badge>
+              <Badge variant="outline">Outline</Badge>
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          title="Elevation"
+          note="Hard offset shadows, no blur — the same square language as the rest of the UI."
+        >
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Card className="p-4 text-sm">Card — 4px offset</Card>
+            <div className="border border-border bg-card p-4 text-sm shadow-hard-lg">
+              Dialog — 6px offset
+            </div>
+            <div className="border border-border bg-popover p-4 text-sm shadow-hard">
+              Popover — 4px offset
+            </div>
+          </div>
+        </Section>
+      </div>
+    </main>
+  );
+}

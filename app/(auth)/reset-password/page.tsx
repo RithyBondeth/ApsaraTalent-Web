@@ -14,7 +14,7 @@ import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { makeResetPasswordSchema, TResetPasswordForm } from "./validate";
+import { makeResetPasswordSchema, TResetPasswordForm } from "./validation";
 import { resetPasswordSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
@@ -22,15 +22,15 @@ import {
 } from "@/utils/constants/config.constant";
 
 export default function ResetPasswordPage() {
-  /* ---------------------------------- Utils -------------------------------- */
+  /* ----------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const searchParams = useSearchParams();
-  const t = useTranslations("auth");
-  const tv = useTranslations("validation");
-  /* ── Auto-read token from URL: /reset-password?token=xxx ── */
   const tokenFromUrl = searchParams.get("token") ?? "";
 
-  /* -------------------------------- All States ------------------------------ */
+  const t = useTranslations("auth");
+  const tv = useTranslations("validation");
+
+  /* -------------------------------- All States ------------------------------- */
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   /* ----------------------------- API Integration ----------------------------- */
@@ -109,7 +109,7 @@ export default function ResetPasswordPage() {
       <div className="auth-stagger flex w-full flex-col gap-7">
         {/* Icon Badge and Title Section */}
         <div style={{ "--d": "0ms" } as React.CSSProperties}>
-          <div className="mb-5 grid size-12 place-items-center rounded-none bg-foreground text-background shadow-[3px_3px_0_hsl(var(--foreground)/0.12)]">
+          <div className="mb-5 grid size-12 place-items-center rounded-none border border-border bg-muted/60 text-foreground shadow-hard-sm">
             <LucideKeyRound className="size-5" strokeWidth={1.6} />
           </div>
           <TypographyH2 className="phone-xl:text-2xl">
@@ -124,7 +124,7 @@ export default function ResetPasswordPage() {
 
         {/* Form Section */}
         <form
-          className="w-full flex flex-col gap-4"
+          className="flex w-full flex-col gap-4"
           onSubmit={handleSubmit(onSubmit)}
           style={{ "--d": "90ms" } as React.CSSProperties}
         >
@@ -162,6 +162,7 @@ export default function ResetPasswordPage() {
             {...register("confirmPassword")}
           />
 
+          {/* Action Button Section */}
           <div className="auth-action-row">
             <AuthBackButton onClick={() => router.replace("/login")}>
               {t("back")}

@@ -14,7 +14,7 @@ export default function LabelInput(props: ILabelInput) {
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <div className={cn("w-full flex flex-col items-start gap-2", className)}>
+    <div className={cn("flex w-full flex-col items-start gap-2", className)}>
       <TypographyMuted className="text-xs">{label}</TypographyMuted>
       {input}
     </div>

@@ -18,102 +18,188 @@ const maxWidthVariants = {
 } as const;
 
 export default {
-    darkMode: ["class"],
-    content: [
+  darkMode: ["class"],
+  content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./utils/**/*.{js,ts,jsx,tsx}",
   ],
-  safelist: [
-    {
-      pattern: /bg-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-100/,
-    },
-    {
-      pattern: /text-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-800/,
-    },
-    {
-      pattern: /bg-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-500\/15/,
-      variants: ["dark"],
-    },
-    {
-      pattern: /text-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-300/,
-      variants: ["dark"],
-    },
-  ],
+  // No safelist. It previously force-generated a 48-class matrix of raw palette
+  // shades for the tag chips; those chips now use categorical tokens that
+  // appear as literal strings in utils/constants/ui.constant.ts, which the
+  // content globs above already scan.
   theme: {
-	  	extend: {
-  		keyframes: {
-  			'caret-blink': {
-  				'0%,70%,100%': {
-  					opacity: '1'
-  				},
-  				'20%,50%': {
-  					opacity: '0'
-  				}
-  			}
-  		},
-  		animation: {
-  			'caret-blink': 'caret-blink 1.25s ease-out infinite'
-  		},
-  		colors: {
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
-  			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
-  			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
-  			},
-  			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
-  			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
-  			},
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
-  			chart: {
-  				'1': 'hsl(var(--chart-1))',
-  				'2': 'hsl(var(--chart-2))',
-  				'3': 'hsl(var(--chart-3))',
-  				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
-  			},
-  			sidebar: {
-  				DEFAULT: 'hsl(var(--sidebar-background))',
-  				foreground: 'hsl(var(--sidebar-foreground))',
-  				primary: 'hsl(var(--sidebar-primary))',
-  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-  				accent: 'hsl(var(--sidebar-accent))',
-  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-  				border: 'hsl(var(--sidebar-border))',
-  				ring: 'hsl(var(--sidebar-ring))'
-  			}
-  		},
-  		borderRadius: {
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
-  		}
-  	}
+    extend: {
+      keyframes: {
+        "caret-blink": {
+          "0%,70%,100%": {
+            opacity: "1",
+          },
+          "20%,50%": {
+            opacity: "0",
+          },
+        },
+        // Incoming-call ring: a square expands and fades outward from the
+        // caller avatar. Square rather than round to match the avatar and the
+        // rest of the surface.
+        "call-ring": {
+          "0%": { transform: "scale(1)", opacity: "0.7" },
+          "100%": { transform: "scale(1.9)", opacity: "0" },
+        },
+        // Gentle breathing on the avatar and the accept button, so the dialog
+        // reads as an active call rather than a still image.
+        "call-pulse": {
+          "0%,100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.06)" },
+        },
+        "call-dot": {
+          "0%,80%,100%": { opacity: "0.25" },
+          "40%": { opacity: "1" },
+        },
+      },
+      animation: {
+        "caret-blink": "caret-blink 1.25s ease-out infinite",
+        "call-ring": "call-ring 1.8s cubic-bezier(0.2, 0.6, 0.35, 1) infinite",
+        "call-pulse": "call-pulse 1.8s ease-in-out infinite",
+        "call-dot": "call-dot 1.2s ease-in-out infinite",
+      },
+      colors: {
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        // Status families. Each mirrors the five roles declared in
+        // globals.css and resolves per theme on its own, so `bg-success-subtle`
+        // is correct in both modes with no `dark:` variant alongside it.
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+          accent: "hsl(var(--success-accent))",
+          subtle: "hsl(var(--success-subtle))",
+          border: "hsl(var(--success-border))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+          accent: "hsl(var(--warning-accent))",
+          subtle: "hsl(var(--warning-subtle))",
+          border: "hsl(var(--warning-border))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+          accent: "hsl(var(--info-accent))",
+          subtle: "hsl(var(--info-subtle))",
+          border: "hsl(var(--info-border))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+          accent: "hsl(var(--destructive-accent))",
+          subtle: "hsl(var(--destructive-subtle))",
+          border: "hsl(var(--destructive-border))",
+        },
+        // Categorical — for labels that differ in kind, not severity.
+        // Never borrow a status token for these; see globals.css.
+        category: {
+          purple: {
+            DEFAULT: "hsl(var(--category-purple))",
+            accent: "hsl(var(--category-purple-accent))",
+            subtle: "hsl(var(--category-purple-subtle))",
+          },
+          pink: {
+            DEFAULT: "hsl(var(--category-pink))",
+            accent: "hsl(var(--category-pink-accent))",
+            subtle: "hsl(var(--category-pink-subtle))",
+          },
+          brown: {
+            DEFAULT: "hsl(var(--category-brown))",
+            accent: "hsl(var(--category-brown-accent))",
+            subtle: "hsl(var(--category-brown-subtle))",
+          },
+          blue: {
+            DEFAULT: "hsl(var(--category-blue))",
+            accent: "hsl(var(--category-blue-accent))",
+            subtle: "hsl(var(--category-blue-subtle))",
+          },
+          orange: {
+            DEFAULT: "hsl(var(--category-orange))",
+            accent: "hsl(var(--category-orange-accent))",
+            subtle: "hsl(var(--category-orange-subtle))",
+          },
+          gray: {
+            DEFAULT: "hsl(var(--category-gray))",
+            accent: "hsl(var(--category-gray-accent))",
+            subtle: "hsl(var(--category-gray-subtle))",
+          },
+        },
+        scrim: "hsl(var(--scrim))",
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        chart: {
+          "1": "hsl(var(--chart-1))",
+          "2": "hsl(var(--chart-2))",
+          "3": "hsl(var(--chart-3))",
+          "4": "hsl(var(--chart-4))",
+          "5": "hsl(var(--chart-5))",
+        },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
+        },
+      },
+      // Elevation. The square UI casts a hard offset block with no blur;
+      // these four steps are the whole ladder. Defined as CSS variables in
+      // globals.css so dark mode can raise the alpha — a near-white shadow
+      // at the light-mode 5.5% is invisible on a 6%-lightness page.
+      boxShadow: {
+        "hard-xs": "var(--elevation-xs)",
+        "hard-sm": "var(--elevation-sm)",
+        hard: "var(--elevation-md)",
+        "hard-lg": "var(--elevation-lg)",
+        "hard-primary-xs": "var(--elevation-primary-xs)",
+        "hard-primary": "var(--elevation-primary)",
+      },
+      // --radius is 0 (the UI is square), so the shadcn ladder would otherwise
+      // compute negative values. max() floors them instead of leaning on
+      // browsers to clamp. The only consumer left is the Avatar `rounded`
+      // prop; everything else is rounded-none or rounded-full outright.
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "max(0px, calc(var(--radius) - 2px))",
+        sm: "max(0px, calc(var(--radius) - 4px))",
+      },
+    },
   },
   plugins: [
     tailwindcssAnimate,

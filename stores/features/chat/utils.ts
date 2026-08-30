@@ -6,6 +6,7 @@ import type {
   TRawChatMessage,
 } from "./types";
 
+/* --------------------------------- Schemas --------------------------------- */
 const chatProfileSchema = z
   .object({
     id: z.string(),
@@ -50,12 +51,19 @@ const rawChatMessageSchema = z
     isDeleted: z.boolean().optional(),
     isEdited: z.boolean().optional(),
     attachment: z.string().nullable().optional(),
-    attachmentType: z.enum(["image", "document", "audio"]).optional(),
-    attachmentFilename: z.string().optional(),
-    attachmentDuration: z.number().optional(),
-    attachmentAmplitude: z.array(z.number()).optional(),
+    // These map to nullable columns, so the API sends `null` — not an absent
+    // key — for every text message. `.optional()` alone rejects null, and the
+    // array parse below is all-or-nothing, so a single text message was enough
+    // to blank the entire conversation list.
+    attachmentType: z
+      .enum(["image", "document", "audio"])
+      .nullable()
+      .optional(),
+    attachmentFilename: z.string().nullable().optional(),
+    attachmentDuration: z.number().nullable().optional(),
+    attachmentAmplitude: z.array(z.number()).nullable().optional(),
     replyToId: z.string().nullable().optional(),
-    isMe: z.boolean().optional(),
+    isMe: z.boolean().nullable().optional(),
   })
   .passthrough();
 
@@ -65,9 +73,35 @@ const chatHistoryResponseSchema = z.object({
   partnerProfile: chatProfileSchema.nullable(),
 });
 
+/* --------------------------------- Methods --------------------------------- */
+/**
+ * Parse per row rather than as one array.
+ *
+ * `z.array(...)` is all-or-nothing: one unexpected field anywhere discarded the
+ * whole conversation list, silently, and the caller then fell through to an
+ * empty "No conversations yet". A single unforeseen null on one old message
+ * should cost that message, not every conversation the user has.
+ */
 export const parseRawChatMessages = (value: unknown): TRawChatMessage[] => {
-  const result = z.array(rawChatMessageSchema).safeParse(value);
-  return result.success ? result.data : [];
+  if (!Array.isArray(value)) return [];
+
+  const parsed: TRawChatMessage[] = [];
+  let dropped = 0;
+
+  for (const entry of value) {
+    const result = rawChatMessageSchema.safeParse(entry);
+    if (result.success) parsed.push(result.data);
+    else dropped += 1;
+  }
+
+  if (dropped > 0) {
+    // Loud, because the previous silence is what made this hard to find.
+    console.warn(
+      `[Chat] dropped ${dropped} of ${value.length} messages that did not match the expected shape`,
+    );
+  }
+
+  return parsed;
 };
 
 export const parseRawChatMessage = (value: unknown): TRawChatMessage | null => {
@@ -78,10 +112,21 @@ export const parseRawChatMessage = (value: unknown): TRawChatMessage | null => {
 export const parseChatHistory = (
   value: unknown,
 ): TChatHistoryResponse | TRawChatMessage[] | null => {
-  const list = z.array(rawChatMessageSchema).safeParse(value);
-  if (list.success) return list.data;
-  const response = chatHistoryResponseSchema.safeParse(value);
-  return response.success ? response.data : null;
+  // Per-row for the same reason as parseRawChatMessages: one odd message in a
+  // long history should not blank the whole thread.
+  if (Array.isArray(value)) return parseRawChatMessages(value);
+
+  const response = chatHistoryResponseSchema
+    .omit({ messages: true })
+    .safeParse(value);
+  if (!response.success) return null;
+
+  return {
+    ...response.data,
+    messages: parseRawChatMessages(
+      (value as { messages?: unknown } | null)?.messages,
+    ),
+  };
 };
 
 // ── Resolve Profile ──────────────────────────────────────────────────────────
@@ -147,3 +192,18 @@ export const resolvePreview = (
   const prefix = senderName ? `${senderName}: ` : "";
   return `${prefix}${base}`;
 };
+
+/* ------------------------------- Identity -------------------------------- */
+/**
+ * Case-insensitive ID comparison for the chat layer.
+ *
+ * Chat IDs reach the client from several sources — socket payloads, REST
+ * responses, route params — and their casing is not guaranteed to agree. Parts
+ * of the store already compared with `.toLowerCase()` while others used a raw
+ * `===`, so a casing difference could make a message look like it was neither
+ * from nor for the current user, quietly skipping the unread accounting.
+ */
+export const sameId = (
+  a: string | null | undefined,
+  b: string | null | undefined,
+): boolean => !!a && !!b && a.toLowerCase() === b.toLowerCase();

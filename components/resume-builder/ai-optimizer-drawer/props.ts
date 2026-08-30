@@ -1,4 +1,4 @@
-import { IBuildResume } from "@/utils/interfaces/resume";
+import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 
 export interface IAiOptimizerDrawerProps {
   getCurrentValues: () => IBuildResume;

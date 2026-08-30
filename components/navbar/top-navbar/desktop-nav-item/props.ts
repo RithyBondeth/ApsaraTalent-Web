@@ -5,5 +5,7 @@ export interface IDesktopNavItemProps {
   icon: LucideIcon;
   label: string;
   count: number;
+  /** Screen-reader phrasing for the badge — see getBadgeLabel in TopNavbar. */
+  badgeLabel: string;
   active: boolean;
 }

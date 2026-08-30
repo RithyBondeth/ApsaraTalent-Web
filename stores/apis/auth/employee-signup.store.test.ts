@@ -76,6 +76,30 @@ describe("employee-signup store", () => {
     expect(useEmployeeSignupStore.getState().isAuthenticated).toBe(true);
   });
 
+  // The wizard collected these but the request omitted them, so a candidate's
+  // work mode, notice period and languages were lost at signup. Asserted by
+  // name because `objectContaining` cannot catch an omission.
+  it("forwards work mode, notice period, and languages", async () => {
+    post.mockResolvedValueOnce({
+      data: {
+        message: "Created",
+        user: { role: "employee", employee: { id: "employee-1" } },
+      },
+    });
+
+    await useEmployeeSignupStore.getState().signup({
+      ...body,
+      workMode: "remote",
+      noticePeriod: "2_weeks",
+      languages: ["Khmer", "English"],
+    } as SignupBody);
+
+    const [, payload] = post.mock.calls[0];
+    expect(payload.workMode).toBe("remote");
+    expect(payload.noticePeriod).toBe("2_weeks");
+    expect(payload.languages).toEqual(["Khmer", "English"]);
+  });
+
   it("does not authenticate when signup fails", async () => {
     post.mockRejectedValueOnce(new Error("Email already exists"));
 

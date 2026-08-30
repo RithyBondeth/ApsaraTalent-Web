@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -39,6 +38,7 @@ import {
   LucideCalendarDays,
   LucideCircleDollarSign,
   LucideGraduationCap,
+  LucideSearchX,
   LucideSlidersHorizontal,
   LucideUsers,
   LucideX,
@@ -48,7 +48,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
-import { employeeSearchBannerSvg } from "@/utils/constants/asset.constant";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { SearchCompanyCardSkeleton } from "@/components/search/skeleton";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
@@ -150,6 +149,7 @@ export default function EmployeeSearchPage() {
   const location = watch("location");
   const jobType = watch("jobType");
 
+  /* --------------------------------- Memos --------------------------------- */
   // Active filter count for the mobile filter badge
   const allValues = watch();
   const activeFilterCount = useMemo(() => {
@@ -412,19 +412,20 @@ export default function EmployeeSearchPage() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <form
-      className="search-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-6 px-3 animate-page-in sm:px-4 lg:px-5"
+      className="search-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-6 px-3 sm:px-4 lg:px-5"
       onSubmit={handleSubmit((data) => runSearch(data))}
     >
       {/* Responsive Search Hero Section */}
       <SearchPageHero
-        eyebrow="Apsara Talent"
+        eyebrow={t("bannerEyebrow")}
         title={t("bannerTitle")}
         subtitle={t("bannerSubtitle1")}
         supportingText={t("bannerSubtitle2")}
-        mutedText={t("bannerMuted")}
-        image={employeeSearchBannerSvg}
-        imageAlt="employee-search"
-        visualIcon={<LucideBuilding2 />}
+        stats={
+          loading
+            ? undefined
+            : [{ icon: LucideBuilding2, label: t("statJobs"), value: total }]
+        }
       >
         <SearchBar
           isEmployee={true}
@@ -465,7 +466,7 @@ export default function EmployeeSearchPage() {
       <div className="flex w-full items-start gap-5 tablet-xl:flex-col">
         {/* Left Side: Filter Section */}
         <div
-          className={`search-filter-panel flex w-72 shrink-0 flex-col self-start rounded-none border border-border border-t-[5px] border-t-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] xl:w-80 tablet-xl:w-full ${
+          className={`search-filter-panel flex w-72 shrink-0 flex-col self-start rounded-none border border-border bg-card shadow-hard tablet-xl:w-full xl:w-80 ${
             mobileFiltersOpen ? "tablet-xl:flex" : "tablet-xl:hidden"
           }`}
         >
@@ -489,7 +490,7 @@ export default function EmployeeSearchPage() {
           <div className="flex flex-col gap-5 p-4 sm:p-5">
             {/* Filter Panel Skeleton Section */}
             {jobs === null ? (
-              <div className="w-full flex flex-col gap-6">
+              <div className="flex w-full flex-col gap-6">
                 {Array.from({ length: 4 }).map((_, i) => (
                   <div key={i} className="flex flex-col gap-3">
                     <Skeleton className="h-4 w-32 rounded-none" />
@@ -503,7 +504,7 @@ export default function EmployeeSearchPage() {
               <>
                 {/* Date Posted Section */}
                 <div className="flex flex-col items-start gap-3">
-                  <TypographyP className="text-sm font-medium flex items-center gap-1">
+                  <TypographyP className="flex items-center gap-1 text-sm font-medium">
                     <LucideCalendarDays strokeWidth={"1.5px"} />
                     {t("datePosted")}
                   </TypographyP>
@@ -718,7 +719,7 @@ export default function EmployeeSearchPage() {
 
                 {/* Education Level Section */}
                 <div className="flex flex-col items-start gap-3">
-                  <TypographyP className="text-sm font-medium flex items-center gap-1">
+                  <TypographyP className="flex items-center gap-1 text-sm font-medium">
                     <LucideGraduationCap strokeWidth={"1.5px"} />
                     {t("educationLevel")}
                   </TypographyP>
@@ -776,7 +777,7 @@ export default function EmployeeSearchPage() {
 
                 {/* Experience Level Section */}
                 <div className="flex flex-col items-start gap-3">
-                  <TypographyP className="text-sm font-medium flex items-center gap-1">
+                  <TypographyP className="flex items-center gap-1 text-sm font-medium">
                     <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
                     {t("experienceLevel")}
                   </TypographyP>
@@ -825,7 +826,7 @@ export default function EmployeeSearchPage() {
         <div className="flex min-w-0 flex-1 flex-col items-start gap-4 tablet-xl:w-full">
           {/* Results Header Section */}
           <div className="flex w-full flex-col gap-3 border-y border-border py-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-fit shrink-0 flex flex-col gap-1">
+            <div className="flex min-w-fit shrink-0 flex-col gap-1">
               <TypographyH4 className="whitespace-nowrap text-lg">
                 {loading || filteredJobs === null ? (
                   <Skeleton className="h-6 w-40 rounded-none bg-muted" />
@@ -876,7 +877,7 @@ export default function EmployeeSearchPage() {
                         >
                           <SelectValue placeholder={t("sortBy")} />
                         </SelectTrigger>
-                        <SelectContent className="rounded-none border-border shadow-[5px_5px_0_hsl(var(--foreground)/0.08)] [&_[role=option]]:rounded-none">
+                        <SelectContent className="rounded-none border-border shadow-hard [&_[role=option]]:rounded-none">
                           <SelectItem value="createdAt-desc">
                             {t("newestFirst")}
                           </SelectItem>
@@ -901,7 +902,7 @@ export default function EmployeeSearchPage() {
           {/* Results List Section */}
           <div className="flex w-full flex-col items-start gap-3">
             {error && !loading ? (
-              <div className="w-full mb-3">
+              <div className="mb-3 w-full">
                 <SearchErrorCard
                   title={error}
                   description={t("errorDescription")}
@@ -911,7 +912,7 @@ export default function EmployeeSearchPage() {
               </div>
             ) : loading || filteredJobs === null ? (
               /* Loading Skeleton Section */
-              <div className="w-full flex flex-col gap-3 mb-3">
+              <div className="mb-3 flex w-full flex-col gap-3">
                 {Array(3)
                   .fill(0)
                   .map((_, index) => (
@@ -929,6 +930,9 @@ export default function EmployeeSearchPage() {
                     description={item.description}
                     type={item.type}
                     salary={item.salary}
+                    salaryMin={item.salaryMin}
+                    salaryMax={item.salaryMax}
+                    salaryCurrency={item.salaryCurrency}
                     experience={item.experience}
                     education={item.education}
                     skills={item.skills}
@@ -937,7 +941,7 @@ export default function EmployeeSearchPage() {
                   />
                 ))}
                 {jobs && jobs.length < total && (
-                  <div className="w-full flex justify-center pt-2">
+                  <div className="flex w-full justify-center pt-2">
                     <Button
                       type="button"
                       variant="outline"
@@ -974,8 +978,7 @@ export default function EmployeeSearchPage() {
                           experienceLevel: getValues("experienceLevel"),
                           sortBy: getValues("sortBy"),
                           sortOrder: getValues("orderBy")?.toUpperCase() as
-                            | "ASC"
-                            | "DESC",
+                            "ASC" | "DESC",
                           excludeCompanyIds: buildExcludeCompanyIds(),
                         });
                         syncPageToUrl(storePage + 1);
@@ -992,7 +995,8 @@ export default function EmployeeSearchPage() {
               <PageState
                 variant="empty"
                 title={t("emptyList")}
-                image={emptySvg}
+                description={t("emptyListDescription")}
+                icon={LucideSearchX}
                 compact
                 action={
                   activeFilterCount > 0

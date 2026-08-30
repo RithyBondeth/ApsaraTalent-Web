@@ -2,7 +2,7 @@ import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { UseFormSetValue } from "react-hook-form";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { X } from "lucide-react";
+import { LucideX } from "lucide-react";
 import { Editable } from "./editable";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
 import { useResumeTemplateTheme } from "@/hooks/resume/use-resume-template-theme";
@@ -84,11 +84,11 @@ export function SkillChips(props: {
           onDelete();
         }}
         onMouseDown={(e) => e.stopPropagation()}
-        className="opacity-0 group-hover/chip:opacity-70 hover:!opacity-100 transition-opacity ml-1"
+        className="ml-1 opacity-0 transition-opacity hover:!opacity-100 group-hover/chip:opacity-70"
         style={{ color: RESUME_COLOR.DANGER, lineHeight: 1 }}
         title={t("removeSkill")}
       >
-        <X size={9} />
+        <LucideX size={9} />
       </button>
     </span>
   );

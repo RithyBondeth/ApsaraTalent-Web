@@ -45,9 +45,9 @@ describe("two-factor store", () => {
   it("returns false and records an invalid-code failure", async () => {
     post.mockRejectedValueOnce(new Error("Invalid authenticator code"));
 
-    await expect(
-      useTwoFactorStore.getState().enable("000000"),
-    ).resolves.toBe(false);
+    await expect(useTwoFactorStore.getState().enable("000000")).resolves.toBe(
+      false,
+    );
     expect(useTwoFactorStore.getState()).toMatchObject({
       loading: false,
       error: "Invalid authenticator code",
@@ -60,10 +60,14 @@ describe("two-factor store", () => {
     });
 
     await expect(
-      useTwoFactorStore.getState().verifyLogin("user-1", "123456", true),
+      useTwoFactorStore
+        .getState()
+        .verifyLogin("challenge-token", "123456", true),
     ).resolves.toBe(true);
+    // The signed challenge goes to the server, never a raw user id — an id is
+    // public, so sending one proved nothing about who was asking.
     expect(post).toHaveBeenCalledWith(expect.any(String), {
-      userId: "user-1",
+      twoFactorToken: "challenge-token",
       otp: "123456",
     });
     expect(setSessionRole).toHaveBeenCalledWith("company", true);

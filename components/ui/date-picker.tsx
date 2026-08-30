@@ -10,7 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { enUS, km } from "date-fns/locale";
 import { format, isValid } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { LucideCalendar } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
@@ -72,9 +72,9 @@ export function DatePicker({
           type="button"
           variant="outline"
           className={cn(
-            "w-full justify-between border rounded-none px-4 py-6 text-left text-muted-foreground bg-primary-foreground",
+            "w-full justify-between rounded-none border bg-primary-foreground px-4 py-6 text-left text-muted-foreground",
             !isValidDate && "text-muted-foreground",
-            disabled && "opacity-50 cursor-not-allowed",
+            disabled && "cursor-not-allowed opacity-50",
             className,
           )}
           disabled={disabled}
@@ -85,12 +85,12 @@ export function DatePicker({
           ) : (
             <span>{resolvedPlaceholder}</span>
           )}
-          <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
+          <LucideCalendar className="ml-auto h-5 w-5 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
         className={cn(
-          "auth-calendar-popover w-[var(--radix-popover-trigger-width)] max-w-[calc(100vw-1.5rem)] min-w-[17.5rem] overflow-hidden p-0",
+          "auth-calendar-popover w-[var(--radix-popover-trigger-width)] min-w-[17.5rem] max-w-[calc(100vw-1.5rem)] overflow-hidden p-0",
           popoverClassName,
         )}
         align="start"

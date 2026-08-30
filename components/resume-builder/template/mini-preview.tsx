@@ -4,7 +4,7 @@ import { CSSProperties } from "react";
 import {
   resolveResumeLayoutBlueprint,
   resolveResumeTemplateTheme,
-} from "@/utils/functions/resume/resume-theme";
+} from "@/utils/functions/resume";
 import { IResumeTemplateTheme } from "@/utils/interfaces/resume/resume-theme.interface";
 import { RESUME_EDITOR_DEFAULT_SECTION_ORDER } from "@/utils/constants/resume.constant";
 import {
@@ -52,7 +52,7 @@ function resolvePreviewFont(font: string): string {
 
   return usesSpecialtyFont
     ? font
-    : "var(--font-ubuntu), var(--font-preahvihear), sans-serif";
+    : "var(--font-ubuntu), var(--font-kantumruy), sans-serif";
 }
 
 /* Small readable text used inside the miniature resume. */
@@ -448,7 +448,7 @@ function MiniSection({
   );
 }
 
-/* --------------------------------- Component -------------------------------- */
+/* ------------------------------ Main Component ------------------------------- */
 /**
  * Faithful thumbnail of a resume template: renders the resolved palette,
  * typography, header, layout split, section styles, and representative content.
@@ -543,7 +543,7 @@ export function TemplateMiniPreview({
     <div
       aria-hidden
       data-resume-template-preview={templateKey}
-      className={cn("relative overflow-hidden select-none", className)}
+      className={cn("relative select-none overflow-hidden", className)}
       style={{
         background: theme.background,
         fontFamily: resolvePreviewFont(theme.font),

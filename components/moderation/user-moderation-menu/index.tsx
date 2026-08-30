@@ -21,13 +21,18 @@ import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import { Textarea } from "@/components/ui/textarea";
 import { useModerationStore } from "@/stores/apis/moderation/moderation.store";
 import { TReportReason } from "@/utils/types/moderation/report.type";
-import { Ban, Flag, MoreVertical, ShieldOff } from "lucide-react";
+import {
+  LucideBan,
+  LucideFlag,
+  LucideMoreVertical,
+  LucideShieldOff,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { IUserModerationMenuProps } from "./props";
-import { REPORT_REASONS } from "@/utils/constants/moderation";
+import { REPORT_REASONS } from "@/utils/constants/moderation.constant";
 import { cn } from "@/lib/utils";
 
 export default function UserModerationMenu(props: IUserModerationMenuProps) {
@@ -125,7 +130,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
             className={cn(isEditorial && "rounded-none", triggerClassName)}
             aria-label={t("moreOptions")}
           >
-            <MoreVertical className="h-5 w-5" />
+            <LucideMoreVertical className="h-5 w-5" />
           </Button>
         </DropdownMenuTrigger>
 
@@ -135,7 +140,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
           className={cn(
             "w-44",
             isEditorial &&
-              "rounded-none border-border bg-popover p-0 shadow-[6px_6px_0_hsl(var(--foreground)/0.09)]",
+              "rounded-none border-border bg-popover p-0 shadow-hard-lg",
           )}
         >
           <DropdownMenuItem
@@ -149,12 +154,12 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
           >
             {blockedByMe ? (
               <>
-                <ShieldOff className="h-4 w-4" />
+                <LucideShieldOff className="h-4 w-4" />
                 {t("unblock")}
               </>
             ) : (
               <>
-                <Ban className="h-4 w-4" />
+                <LucideBan className="h-4 w-4" />
                 {t("block")}
               </>
             )}
@@ -172,7 +177,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
                 "min-h-11 rounded-none px-3 py-2.5 font-medium focus:bg-destructive/10",
             )}
           >
-            <Flag className="h-4 w-4" />
+            <LucideFlag className="h-4 w-4" />
             {t("report")}
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -191,7 +196,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
           {/* Report Dialog Header Section */}
           <DialogHeader
             className={cn(
-              isEditorial && "border-b border-border px-5 pb-4 pt-5 pr-14",
+              isEditorial && "border-b border-border px-5 pb-4 pr-14 pt-5",
             )}
           >
             <DialogTitle>

@@ -84,7 +84,7 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
 
         /*
          Jobs (O2M upsert)
-         backend expects: jobs: [{ id?, title, description, type, experienceRequired, educationRequired, expireDate, skillsRequired, salaryMin, salaryMax, salaryCurrency, workMode, location, openingsCount }]
+         backend expects: jobs: [{ id?, title, description, type, experienceRequired, educationRequired, expireDate, skillsRequired, salaryMin, salaryMax, salaryCurrency, workMode, location, languagesRequired, openingsCount }]
         */
         if (body.openPositions) {
           requestBody.jobs = body.openPositions.map((job) => ({
@@ -99,6 +99,7 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
             salaryCurrency: job.salaryCurrency ?? "USD",
             workMode: job.workMode ?? null,
             location: job.location ?? null,
+            languagesRequired: job.languagesRequired ?? [],
             openingsCount: job.openingsCount ?? null,
             expireDate: job.deadlineDate ?? null,
             skillsRequired: Array.isArray(job.skills)

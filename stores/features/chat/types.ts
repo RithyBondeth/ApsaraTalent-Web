@@ -38,12 +38,14 @@ export type TRawChatMessage = {
   isDeleted?: boolean;
   isEdited?: boolean;
   attachment?: string | null;
-  attachmentType?: IMessage["attachmentType"];
-  attachmentFilename?: string;
-  attachmentDuration?: number;
-  attachmentAmplitude?: number[];
+  // Nullable columns on the chat table, so the API sends explicit nulls on
+  // every plain text message rather than omitting the keys.
+  attachmentType?: IMessage["attachmentType"] | null;
+  attachmentFilename?: string | null;
+  attachmentDuration?: number | null;
+  attachmentAmplitude?: number[] | null;
   replyToId?: string | null;
-  isMe?: boolean;
+  isMe?: boolean | null;
 };
 
 export type TChatHistoryResponse = {

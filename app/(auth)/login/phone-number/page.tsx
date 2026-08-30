@@ -61,7 +61,7 @@ export default function PhoneNumberPage() {
     resolver: zodResolver(phoneLoginSchema),
   });
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Memos --------------------------------- */
   // ── Callback URL Function ────────────────────────────────────
   const callbackUrl = useMemo(() => {
     const value = searchParams.get("callbackUrl");
@@ -79,6 +79,7 @@ export default function PhoneNumberPage() {
     )}`;
   }, [callbackUrl]);
 
+  /* --------------------------------- Methods --------------------------------- */
   // ── Phone Send OTP Function ──────────────────────────────────
   const onSubmit = async (data: TPhoneLoginForm) => {
     setIsSubmitted(true);
@@ -157,7 +158,7 @@ export default function PhoneNumberPage() {
             error={errors.phone?.message}
             {...register("phone")}
           />
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex cursor-pointer items-center gap-2">
             <Controller
               name="rememberMe"
               control={control}

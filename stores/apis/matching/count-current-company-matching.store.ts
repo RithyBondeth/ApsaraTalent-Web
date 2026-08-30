@@ -1,78 +1,83 @@
-import { API_COUNT_CURRENT_COMPANY_MATCHING_URL } from "@/utils/constants/apis/matching.api.constant";
+import {
+  API_COUNT_CURRENT_COMPANY_MATCHING_URL,
+  API_MARK_COMPANY_MATCHING_SEEN_URL,
+} from "@/utils/constants/apis/matching.api.constant";
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { create } from "zustand";
-
-const STORAGE_KEY = (id: string) => `matching-seen:cmp:${id}`;
-
-const readSeen = (companyId: string): number => {
-  if (typeof window === "undefined") return 0;
-  return parseInt(localStorage.getItem(STORAGE_KEY(companyId)) ?? "0", 10);
-};
 
 /* ---------------------------------- States --------------------------------- */
 // ── Count Current Company Matching API Response ─────────────────
 type TCountCurrentCompanyMatchingResponse = {
   count: number;
+  unseenCount: number;
 };
 
 // ── Count Current Company Matching State ────────────────────────
 type TCountCurrentCompanyMatchingState = {
   totalCmpMatching: number | null;
-  seenCmpMatching: number;
+  /**
+   * Matches this company has not opened yet — the badge number, as reported by
+   * the server.
+   *
+   * This replaced a `matching-seen:cmp:<id>` high-water mark in localStorage
+   * that the badge was derived from by subtraction. That mark only ever grew,
+   * so every unmatch left it above the real total and pinned the badge to zero
+   * for good, and it never followed the user to another device.
+   */
+  unseenCmpMatching: number;
   loading: boolean;
   error: string | null;
   countCurrentCmpMatching: (companyID: string) => Promise<void>;
-  markAsSeen: (companyId: string) => void;
-  /** Bump total by 1 when a new match arrives via socket. */
-  incrementCount: () => void;
-  /** Reduce total by 1 when an unmatch is confirmed. */
-  decrementCount: () => void;
+  /** Re-read the counts after a realtime signal. Safe to call repeatedly. */
+  refreshCmpMatchingCount: (companyID: string) => Promise<void>;
+  /** Stamp every match seen server-side; the response carries the new counts. */
+  markAsSeen: (companyId: string) => Promise<void>;
 };
 
 /* ---------------------------------- Store --------------------------------- */
 export const useCountCurrentCompanyMatchingStore =
-  create<TCountCurrentCompanyMatchingState>((set, get) => ({
+  create<TCountCurrentCompanyMatchingState>((set) => ({
     totalCmpMatching: null,
-    seenCmpMatching: 0,
+    unseenCmpMatching: 0,
     loading: false,
     error: null,
 
-    incrementCount: () => {
-      set((s) => ({ totalCmpMatching: (s.totalCmpMatching ?? 0) + 1 }));
-    },
-
-    decrementCount: () => {
-      set((s) => {
-        const newTotal = Math.max(0, (s.totalCmpMatching ?? 0) - 1);
-        const newSeen = Math.max(0, s.seenCmpMatching - 1);
-        /* 
-          Keep localStorage in sync so the badge survives a page refresh.
-          Without this, stale localStorage "seen" ends up higher than the
-          actual total after unmatches, causing the badge to show 0 incorrectly.
+    markAsSeen: async (companyId: string) => {
+      try {
+        const response = await axios.post<TCountCurrentCompanyMatchingResponse>(
+          API_MARK_COMPANY_MATCHING_SEEN_URL(companyId),
+        );
+        set({
+          totalCmpMatching: response.data.count,
+          unseenCmpMatching: response.data.unseenCount,
+        });
+      } catch {
+        /*
+          Left deliberately quiet. Failing to record "seen" means the badge
+          stays up, which is the safe direction to fail in — it will clear on
+          the next visit. Surfacing an error here would put a toast in front of
+          someone who only navigated to a page.
         */
-        if (typeof window !== "undefined") {
-          const cmpId = useGetCurrentUserStore.getState().user?.company?.id;
-          if (cmpId) {
-            localStorage.setItem(STORAGE_KEY(cmpId), String(newSeen));
-          }
-        }
-        return { totalCmpMatching: newTotal, seenCmpMatching: newSeen };
-      });
+      }
     },
 
-    markAsSeen: (companyId: string) => {
-      const count = get().totalCmpMatching ?? 0;
-      if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEY(companyId), String(count));
+    refreshCmpMatchingCount: async (companyID: string) => {
+      try {
+        const response = await axios.get<TCountCurrentCompanyMatchingResponse>(
+          API_COUNT_CURRENT_COMPANY_MATCHING_URL(companyID),
+        );
+        set({
+          totalCmpMatching: response.data.count,
+          unseenCmpMatching: response.data.unseenCount,
+        });
+      } catch {
+        // A background refresh must never clobber a good number with an error.
       }
-      set({ seenCmpMatching: count });
     },
 
     countCurrentCmpMatching: async (companyID: string) => {
-      const seen = readSeen(companyID);
-      set({ seenCmpMatching: seen, loading: true, error: null });
+      set({ loading: true, error: null });
 
       try {
         const response = await axios.get<TCountCurrentCompanyMatchingResponse>(
@@ -81,6 +86,7 @@ export const useCountCurrentCompanyMatchingStore =
 
         set({
           totalCmpMatching: response.data.count,
+          unseenCmpMatching: response.data.unseenCount,
           loading: false,
           error: null,
         });
@@ -92,6 +98,7 @@ export const useCountCurrentCompanyMatchingStore =
           ),
           loading: false,
           totalCmpMatching: null,
+          unseenCmpMatching: 0,
         });
       }
     },

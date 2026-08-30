@@ -1,9 +1,9 @@
 import { TAnalyticsResponse } from "@/stores/apis/matching/analytics.store";
 import {
-  Bookmark,
-  Handshake,
-  Heart,
-  HeartHandshake,
+  LucideBookmark,
+  LucideHandshake,
+  LucideHeart,
+  LucideHeartHandshake,
   LucideIcon,
 } from "lucide-react";
 
@@ -21,33 +21,36 @@ type TStatisticCardConfig = {
 };
 
 /* -------------------------------- Constants ------------------------------- */
+// Four metrics, four categorical hues. Previously rose and pink sat side by
+// side — near-identical for two different metrics — and text-amber-500 on its
+// own tint came to ~2:1, so the icon was barely visible.
 export const statisticCardConstants: TStatisticCardConfig[] = [
   {
     key: "totalLikesGiven",
     translationKey: "likesGiven",
-    icon: Heart,
-    color: "text-rose-500",
-    bgColor: "bg-rose-500/10",
+    icon: LucideHeart,
+    color: "text-category-pink-accent",
+    bgColor: "bg-category-pink-subtle",
   },
   {
     key: "totalLikesReceived",
     translationKey: "likesReceived",
-    icon: HeartHandshake,
-    color: "text-pink-500",
-    bgColor: "bg-pink-500/10",
+    icon: LucideHeartHandshake,
+    color: "text-category-purple-accent",
+    bgColor: "bg-category-purple-subtle",
   },
   {
     key: "totalMatches",
     translationKey: "totalMatches",
-    icon: Handshake,
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
+    icon: LucideHandshake,
+    color: "text-category-brown-accent",
+    bgColor: "bg-category-brown-subtle",
   },
   {
     key: "totalFavorites",
     translationKey: "savedFavorites",
-    icon: Bookmark,
-    color: "text-amber-500",
-    bgColor: "bg-amber-500/10",
+    icon: LucideBookmark,
+    color: "text-category-blue-accent",
+    bgColor: "bg-category-blue-subtle",
   },
 ];

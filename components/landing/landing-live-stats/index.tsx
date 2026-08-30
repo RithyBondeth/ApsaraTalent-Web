@@ -41,7 +41,7 @@ export default function LandingLiveStats() {
     getLandingStats();
   }, [getLandingStats]);
 
-  /* -------------------------------- Computed States ------------------------------- */
+  /* -------------------------------- Derived States ------------------------------- */
   const loaded = initialized && !loading;
   const users = stats?.users ?? null;
   const companies = stats?.companies ?? null;

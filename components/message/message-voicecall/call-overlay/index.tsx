@@ -5,7 +5,7 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { formatDurationClock } from "@/utils/functions/date";
 import { getNameInitials } from "@/utils/functions/text";
-import { Mic, MicOff, PhoneOff } from "lucide-react";
+import { LucideMic, LucideMicOff, LucidePhoneOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ICallOverlayProps } from "./props";
 import { useTranslations } from "next-intl";
@@ -80,23 +80,23 @@ export function CallOverlay(props: ICallOverlayProps) {
       <audio ref={remoteAudioRef} autoPlay playsInline className="hidden" />
 
       {/* Call Overlay Section */}
-      <div className="fixed bottom-6 right-6 z-50 w-72 bg-card border border-border border-t-[5px] border-t-foreground rounded-none shadow-[6px_6px_0_hsl(var(--foreground)/0.12)] p-4 animate-in slide-in-from-bottom-4 duration-200">
-        <div className="flex items-center gap-3 mb-4">
+      <div className="fixed bottom-6 right-6 z-50 w-72 rounded-none border border-border bg-card p-4 shadow-hard-lg duration-200 animate-in slide-in-from-bottom-4">
+        <div className="mb-4 flex items-center gap-3">
           {/* Partner Avatar Section */}
           <Avatar className="h-10 w-10 shrink-0 rounded-none border border-border">
             <AvatarImage src={partner.avatar} alt={partner.name} />
-            <AvatarFallback className="text-sm font-medium rounded-none">
+            <AvatarFallback className="rounded-none text-sm font-medium">
               {partnerInitials}
             </AvatarFallback>
           </Avatar>
 
           {/* Partner Name and Status Label Section */}
           <div className="min-w-0">
-            <TypographyP className="[&:not(:first-child)]:mt-0 font-semibold text-sm text-foreground truncate leading-tight">
+            <TypographyP className="truncate text-sm font-semibold leading-tight text-foreground [&:not(:first-child)]:mt-0">
               {partner.name}
             </TypographyP>
             <TypographyMuted
-              className={`text-xs leading-tight tabular-nums ${
+              className={`text-xs tabular-nums leading-tight ${
                 status === "connected"
                   ? "text-green-500"
                   : status === "ended"
@@ -117,7 +117,7 @@ export function CallOverlay(props: ICallOverlayProps) {
               type="button"
               onClick={handleMuteToggle}
               disabled={status === "ended"}
-              className={`h-11 w-11 rounded-full flex items-center justify-center transition-colors disabled:opacity-40 disabled:pointer-events-none ${
+              className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors disabled:pointer-events-none disabled:opacity-40 ${
                 isMuted
                   ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
                   : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
@@ -125,9 +125,9 @@ export function CallOverlay(props: ICallOverlayProps) {
               aria-label={muteLabel}
             >
               {isMuted ? (
-                <MicOff className="h-5 w-5" />
+                <LucideMicOff className="h-5 w-5" />
               ) : (
-                <Mic className="h-5 w-5" />
+                <LucideMic className="h-5 w-5" />
               )}
             </button>
             <span className="text-[10px] text-muted-foreground">
@@ -140,10 +140,10 @@ export function CallOverlay(props: ICallOverlayProps) {
             <button
               type="button"
               onClick={handleEndCall}
-              className="h-11 w-11 rounded-full bg-red-500 hover:bg-red-600 active:bg-red-700 flex items-center justify-center transition-colors shadow-md"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-red-500 shadow-md transition-colors hover:bg-red-600 active:bg-red-700"
               aria-label="End call"
             >
-              <PhoneOff className="h-5 w-5 text-white" />
+              <LucidePhoneOff className="h-5 w-5 text-white" />
             </button>
             <span className="text-[10px] text-muted-foreground">
               {t("endCall")}

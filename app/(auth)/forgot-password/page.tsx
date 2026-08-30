@@ -7,7 +7,7 @@ import { AuthBackButton } from "@/components/auth/auth-back-button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store";
-import { isNumberPhoneInput } from "@/utils/functions/validation/check-phone-input";
+import { isNumberPhoneInput } from "@/utils/functions/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucideKeyRound, LucideMail, LucidePhone } from "lucide-react";
 import { toast } from "sonner";
@@ -15,7 +15,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { makeForgotPasswordSchema, TForgotPasswordForm } from "./validate";
+import { makeForgotPasswordSchema, TForgotPasswordForm } from "./validation";
 import { forgotPasswordSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
@@ -105,7 +105,7 @@ export default function ForgotPasswordPage() {
       <div className="auth-stagger flex w-full flex-col gap-7">
         {/* Icon Badge and Title Section */}
         <div style={{ "--d": "0ms" } as React.CSSProperties}>
-          <div className="mb-5 grid size-12 place-items-center rounded-none bg-foreground text-background shadow-[3px_3px_0_hsl(var(--foreground)/0.12)]">
+          <div className="mb-5 grid size-12 place-items-center rounded-none border border-border bg-muted/60 text-foreground shadow-hard-sm">
             <LucideKeyRound className="size-5" strokeWidth={1.6} />
           </div>
           <TypographyH2 className="tablet-sm:text-2xl">
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
 
         {/* Form Section */}
         <form
-          className="w-full flex flex-col gap-4"
+          className="flex w-full flex-col gap-4"
           onSubmit={handleSubmit(onSubmit)}
           style={{ "--d": "90ms" } as React.CSSProperties}
         >

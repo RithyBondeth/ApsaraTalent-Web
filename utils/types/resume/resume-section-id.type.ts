@@ -1,7 +1,2 @@
 export type TResumeSectionID =
-  | "header"
-  | "summary"
-  | "experience"
-  | "skills"
-  | "education"
-  | "careerScopes";
+  "header" | "summary" | "experience" | "skills" | "education" | "careerScopes";

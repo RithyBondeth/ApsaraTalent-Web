@@ -92,7 +92,11 @@ describe("employee profile state hooks", () => {
   });
 
   it("initializes and updates social links", () => {
-    const social = { id: "social-1", platform: "linkedin", url: "https://linkedin.com/in/sokha" };
+    const social = {
+      id: "social-1",
+      platform: "linkedin",
+      url: "https://linkedin.com/in/sokha",
+    };
     const { result } = renderHook(() => useSocialsState([social] as never));
 
     act(() => {

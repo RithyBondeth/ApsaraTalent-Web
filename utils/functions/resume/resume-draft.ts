@@ -7,8 +7,9 @@ import {
 } from "@/utils/constants/resume.constant";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { RESUME_TEMPLATE_KEYS } from "@/utils/types/resume/resume.type";
-import { CUSTOM_ACCENT_PATTERN } from "@/utils/functions/resume/resume-color";
+import { CUSTOM_ACCENT_PATTERN } from "@/utils/functions/resume";
 
+/* --------------------------------- Schemas --------------------------------- */
 const templateSchema = z.enum(RESUME_TEMPLATE_KEYS);
 
 const sectionSchema = z.enum([
@@ -127,6 +128,7 @@ const draftEnvelopeSchema = z.object({
   data: resumeDraftSchema,
 });
 
+/* --------------------------------- Methods --------------------------------- */
 export function normalizeResumePayload(data: IBuildResume): IBuildResume {
   return {
     ...data,

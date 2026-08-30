@@ -8,7 +8,7 @@ export default function CompanyCardSkeleton() {
       {/* Cover Banner Section */}
       <div className="relative h-32 w-full shrink-0 bg-gradient-to-br from-muted via-background to-muted/40 tablet-md:h-24">
         {/* Like and Quick View Buttons Section */}
-        <div className="absolute top-2 right-2 flex justify-center items-center gap-1">
+        <div className="absolute right-2 top-2 flex items-center justify-center gap-1">
           <Skeleton className="size-8 rounded-none" />
           <Skeleton className="size-8 rounded-none" />
         </div>
@@ -55,7 +55,7 @@ export default function CompanyCardSkeleton() {
       </div>
 
       {/* Footer Section */}
-      <div className="flex items-center justify-end gap-2 px-4 pb-3 border-t border-border/50 pt-3">
+      <div className="flex items-center justify-end gap-2 border-t border-border/50 px-4 pb-3 pt-3">
         <Skeleton className="h-8 w-16 rounded-none" />
         <Skeleton className="h-8 w-16 rounded-none" />
       </div>
@@ -73,7 +73,7 @@ function SkeletonCard({
 }) {
   return (
     <div
-      className={`border border-border bg-card shadow-[4px_4px_0_hsl(var(--foreground)/0.035)] [&_.animate-shimmer]:rounded-none ${className ?? ""}`}
+      className={`border border-border bg-card shadow-hard [&_.animate-shimmer]:rounded-none ${className ?? ""}`}
     >
       {children}
     </div>
@@ -83,10 +83,10 @@ function SkeletonCard({
 /* ------------------- Company Detail Page Skeleton ------------------- */
 export function CompanyDetailPageLoadingSkeleton() {
   return (
-    <div className="profile-detail-page mx-auto flex w-full max-w-7xl flex-col gap-4 sm:gap-5 tablet-sm:pb-28">
+    <div className="profile-detail-page mx-auto flex w-full max-w-7xl flex-col gap-4 tablet-sm:pb-28 sm:gap-5">
       {/* Back Navigation Header Section */}
       <header className="sticky top-0 z-30 -mx-3 border-b border-border bg-background/95 px-3 backdrop-blur-xl sm:-mx-4 sm:px-4 lg:-mx-5 lg:px-5">
-        <div className="mx-auto flex h-16 max-w-7xl min-w-0 items-center gap-3">
+        <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center gap-3">
           <Skeleton className="h-10 w-10 shrink-0 rounded-none sm:w-24" />
           <div className="min-w-0 flex-1 space-y-1.5 border-l border-border pl-3">
             <Skeleton className="h-2.5 w-20 rounded-none" />
@@ -99,8 +99,7 @@ export function CompanyDetailPageLoadingSkeleton() {
       {/* Hero Card Section */}
       <SkeletonCard className="profile-detail-company-card overflow-hidden">
         {/* Brand Cover Section */}
-        <section className="profile-detail-hero profile-detail-company-cover relative flex min-h-[300px] flex-col overflow-hidden bg-foreground p-5 sm:min-h-[360px] sm:p-8">
-          <div className="profile-detail-hero-grid" aria-hidden />
+        <section className="profile-detail-hero profile-detail-company-cover relative flex min-h-[300px] flex-col overflow-hidden bg-muted p-5 sm:min-h-[360px] sm:p-8">
           <div className="relative z-[2] flex items-start justify-between gap-4">
             <Skeleton className="h-2.5 w-24 rounded-none opacity-25" />
             <Skeleton className="h-8 w-28 rounded-none opacity-25" />
@@ -117,7 +116,7 @@ export function CompanyDetailPageLoadingSkeleton() {
 
         {/* Identity and Metadata Rail Section */}
         <div className="relative grid gap-5 px-4 pb-5 sm:px-6 sm:pb-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-end">
-          <Skeleton className="size-24 -mt-12 rounded-none border-[3px] border-card sm:size-28 sm:-mt-14" />
+          <Skeleton className="-mt-12 size-24 rounded-none border-[3px] border-card sm:-mt-14 sm:size-28" />
 
           <div className="grid min-w-0 grid-cols-2 gap-px border border-border bg-border sm:grid-cols-4 md:mb-1">
             {[...Array(4)].map((_, i) => (
@@ -133,7 +132,7 @@ export function CompanyDetailPageLoadingSkeleton() {
           </div>
         </div>
 
-        <div className="h-1 bg-foreground" aria-hidden />
+        <div className="h-1 bg-muted" aria-hidden />
       </SkeletonCard>
 
       {/* Content Grid Section */}
@@ -195,7 +194,7 @@ export function CompanyDetailPageLoadingSkeleton() {
           </SkeletonCard>
 
           {/* Career Scope Section */}
-          <SkeletonCard className="profile-detail-company-scope p-5 sm:p-6">
+          <SkeletonCard className="p-5 sm:p-6">
             <SectionTitleSkeleton />
             <div className="flex flex-wrap gap-2">
               {[...Array(6)].map((_, i) => (
@@ -227,7 +226,7 @@ export function CompanyDetailPageLoadingSkeleton() {
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="flex items-start gap-2.5">
                   <Skeleton className="mt-0.5 size-4 flex-shrink-0 rounded-none" />
-                  <div className="space-y-1 flex-1">
+                  <div className="flex-1 space-y-1">
                     <Skeleton className="h-3 w-16" />
                     <Skeleton className="h-4 w-36" />
                   </div>
@@ -241,7 +240,7 @@ export function CompanyDetailPageLoadingSkeleton() {
             <SectionTitleSkeleton />
             <div className="space-y-4">
               <div>
-                <Skeleton className="h-3 w-14 mb-2" />
+                <Skeleton className="mb-2 h-3 w-14" />
                 <div className="flex flex-col gap-1.5">
                   {[...Array(3)].map((_, i) => (
                     <Skeleton key={i} className="h-9 w-full rounded-none" />
@@ -249,7 +248,7 @@ export function CompanyDetailPageLoadingSkeleton() {
                 </div>
               </div>
               <div>
-                <Skeleton className="h-3 w-16 mb-2" />
+                <Skeleton className="mb-2 h-3 w-16" />
                 <div className="flex flex-col gap-1.5">
                   {[...Array(3)].map((_, i) => (
                     <Skeleton key={i} className="h-9 w-full rounded-none" />

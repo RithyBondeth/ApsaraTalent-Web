@@ -19,7 +19,7 @@ export default function ResumeBuilderLoadingSkeleton() {
     <div className="resume-builder-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-6 px-3 pb-8 sm:px-4 lg:px-5">
       {/* Banner Section */}
       <div className="flex min-h-[300px] w-full flex-row overflow-hidden border border-border bg-card">
-        <div className="flex w-3/5 min-w-0 flex-none flex-col justify-between gap-6 px-6 py-7 sm:px-8 sm:py-9 tablet-md:gap-4 tablet-md:px-4 tablet-md:py-5">
+        <div className="flex w-3/5 min-w-0 flex-none flex-col justify-between gap-6 px-6 py-7 tablet-md:gap-4 tablet-md:px-4 tablet-md:py-5 sm:px-8 sm:py-9">
           <div className="flex items-center gap-2">
             <Skeleton className="h-px w-7 rounded-none" />
             <Skeleton className="h-2.5 w-28 rounded-none" />
@@ -34,12 +34,12 @@ export default function ResumeBuilderLoadingSkeleton() {
             <Skeleton className="h-3 w-3/5 rounded-none" />
           </div>
         </div>
-        <div className="relative flex min-h-[300px] w-2/5 min-w-0 shrink-0 items-center justify-center overflow-hidden bg-foreground p-7 tablet-md:p-3">
+        <div className="relative flex min-h-[300px] w-2/5 min-w-0 shrink-0 items-center justify-center overflow-hidden border border-border bg-muted p-7 tablet-md:p-3">
           <div className="absolute left-4 top-4 flex items-center gap-2 tablet-md:left-2 tablet-md:top-2">
             <Skeleton className="size-7 rounded-none opacity-20" />
             <Skeleton className="h-3 w-28 rounded-none opacity-20 tablet-md:hidden" />
           </div>
-          <div className="relative mt-5 h-[206px] w-[84%] max-w-[330px] border border-background/15 p-3 tablet-md:h-[124px] tablet-md:w-[78%] tablet-md:p-1.5">
+          <div className="relative mt-5 h-[206px] w-[84%] max-w-[330px] border border-border p-3 tablet-md:h-[124px] tablet-md:w-[78%] tablet-md:p-1.5">
             <div className="absolute -bottom-2 -right-2 h-full w-full border border-background/10" />
             <Skeleton className="relative h-full w-full rounded-none opacity-20" />
           </div>
@@ -63,7 +63,7 @@ export default function ResumeBuilderLoadingSkeleton() {
           <StepHeaderSkeleton />
 
           {/* Source Input Skeleton Section */}
-          <div className="flex w-full flex-col gap-5 border border-border border-t-[5px] border-t-foreground bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+          <div className="flex w-full flex-col gap-5 border border-border bg-card p-5 shadow-hard">
             <div className="flex items-start gap-3">
               <Skeleton className="size-9 shrink-0 rounded-none" />
               <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -81,7 +81,7 @@ export default function ResumeBuilderLoadingSkeleton() {
           </div>
 
           {/* Generate Action Skeleton Section */}
-          <div className="w-full border border-border bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+          <div className="w-full border border-border bg-card shadow-hard">
             <div className="flex items-center gap-3 border-b border-border p-4">
               <Skeleton className="size-10 shrink-0 rounded-none" />
               <div className="flex min-w-0 flex-1 flex-col gap-1.5">
@@ -105,7 +105,7 @@ export default function ResumeBuilderLoadingSkeleton() {
 /* ------------------------------------- Template Card Skeleton ------------------------------------ */
 export function TemplateCardSkeleton() {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden border border-border bg-card shadow-[4px_4px_0_hsl(var(--foreground)/0.045)]">
+    <div className="flex h-full w-full flex-col overflow-hidden border border-border bg-card shadow-hard">
       {/* Preview Area Section: Mirrors the live TemplateMiniPreview structure */}
       <div className="relative flex h-52 w-full flex-col border-b border-border bg-muted/30">
         {/* Mini Header Band Section */}
@@ -117,7 +117,7 @@ export function TemplateCardSkeleton() {
           </div>
         </div>
         {/* Mini Body Section */}
-        <div className="flex-1 grid grid-cols-[1fr_38%] gap-3 px-4 py-3">
+        <div className="grid flex-1 grid-cols-[1fr_38%] gap-3 px-4 py-3">
           <div className="flex flex-col gap-2">
             <Skeleton className="h-1.5 w-12 rounded-none" />
             <Skeleton className="h-1 w-full rounded-none" />
@@ -155,7 +155,7 @@ export function ResumeEditorLoadingSkeleton() {
   return (
     <div className="resume-editor-shell flex h-[calc(100dvh-4rem)] flex-col overflow-hidden">
       {/* Top Action Bar Section */}
-      <div className="resume-editor-controls flex flex-col gap-2 border-b border-t-[5px] border-border border-t-foreground bg-card px-3 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-5">
+      <div className="resume-editor-controls flex flex-col gap-2 border-b border-border bg-card px-3 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-5">
         <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
           {/* Back Button */}
           <Skeleton className="h-8 w-20 shrink-0 rounded-none" />
@@ -208,7 +208,10 @@ export function ResumeEditorLoadingSkeleton() {
             </div>
             <div className="mt-3 flex flex-col gap-2">
               {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="flex items-center gap-3 border border-border bg-muted/25 px-3 py-3">
+                <div
+                  key={index}
+                  className="flex items-center gap-3 border border-border bg-muted/25 px-3 py-3"
+                >
                   <Skeleton className="size-8 shrink-0 rounded-none" />
                   <div className="min-w-0 flex-1 space-y-1.5">
                     <Skeleton className="h-3 w-24 rounded-none" />
@@ -239,10 +242,10 @@ export function ResumeEditorLoadingSkeleton() {
 
           {/* Resume Canvas Skeleton Section */}
           <div className="resume-canvas-workspace flex h-full w-full justify-center overflow-hidden p-6">
-            <div className="h-full w-full max-w-[720px] space-y-4 overflow-hidden border border-border bg-white p-6 shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] dark:bg-card">
+            <div className="h-full w-full max-w-[720px] space-y-4 overflow-hidden border border-border bg-white p-6 shadow-hard-lg dark:bg-card">
               <Skeleton className="h-6 w-2/5 rounded-none" />
               <Skeleton className="h-4 w-3/5 rounded-none" />
-              <div className="border-t border-border/40 pt-4 space-y-4">
+              <div className="space-y-4 border-t border-border/40 pt-4">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <div key={i} className="space-y-2">
                     <Skeleton className="h-4 w-1/4 rounded-none" />

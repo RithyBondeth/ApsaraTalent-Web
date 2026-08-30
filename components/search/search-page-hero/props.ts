@@ -1,14 +1,12 @@
-import type { StaticImageData } from "next/image";
 import type React from "react";
+import type { IPageBannerStat } from "@/components/utils/layout/page-banner/props";
 
 export interface ISearchPageHeroProps {
   eyebrow: string;
   title: string;
   subtitle: string;
   supportingText: string;
-  mutedText: string;
-  image: StaticImageData;
-  imageAlt: string;
-  visualIcon: React.ReactNode;
+  /** Result counts, once a search has run. Omit while loading. */
+  stats?: IPageBannerStat[];
   children: React.ReactNode;
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { GridRunners } from "@/components/ui/grid-runners";
 import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import Link from "next/link";
@@ -13,16 +12,10 @@ export default function LandingFooter() {
   /* -------------------------------- Render UI ------------------------------- */
   return (
     <footer className="relative border-t border-border bg-background">
-      {/* Grid Background Section */}
-      <div className="landing-grid pointer-events-none absolute inset-0" />
-      <GridRunners
-        className="landing-grid-runners opacity-35"
-        density="quiet"
-      />
       <div className="relative mx-auto max-w-7xl border-x border-border px-6 py-12 sm:px-10 sm:py-16 lg:px-14">
         <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
           {/* Brand Section */}
-          <div className="flex flex-col gap-3 max-w-xs">
+          <div className="flex max-w-xs flex-col gap-3">
             <LogoComponent className="!h-12 w-auto self-start" />
             <TypographyMuted className="!text-xs !leading-relaxed">
               {t("matchVisualDescription")}
@@ -37,12 +30,12 @@ export default function LandingFooter() {
                 {t("footerPlatform")}
               </span>
               <Link href="/login">
-                <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
+                <TypographyMuted className="cursor-pointer !text-xs transition-colors hover:text-foreground">
                   {t("login")}
                 </TypographyMuted>
               </Link>
               <Link href="/signup/option">
-                <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
+                <TypographyMuted className="cursor-pointer !text-xs transition-colors hover:text-foreground">
                   {t("getStarted")}
                 </TypographyMuted>
               </Link>
@@ -52,22 +45,22 @@ export default function LandingFooter() {
             <div className="flex flex-col gap-3">
               <span className="text-sm font-semibold">{t("products")}</span>
               <Link href="/product">
-                <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
+                <TypographyMuted className="cursor-pointer !text-xs transition-colors hover:text-foreground">
                   {t("products")}
                 </TypographyMuted>
               </Link>
               <Link href="/learn">
-                <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
+                <TypographyMuted className="cursor-pointer !text-xs transition-colors hover:text-foreground">
                   {t("learn")}
                 </TypographyMuted>
               </Link>
               <Link href="/safety">
-                <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
+                <TypographyMuted className="cursor-pointer !text-xs transition-colors hover:text-foreground">
                   {t("safety")}
                 </TypographyMuted>
               </Link>
               <Link href="/support">
-                <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
+                <TypographyMuted className="cursor-pointer !text-xs transition-colors hover:text-foreground">
                   {t("support")}
                 </TypographyMuted>
               </Link>
@@ -77,12 +70,12 @@ export default function LandingFooter() {
             <div className="flex flex-col gap-3">
               <span className="text-sm font-semibold">{t("footerLegal")}</span>
               <Link href="/privacy">
-                <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
+                <TypographyMuted className="cursor-pointer !text-xs transition-colors hover:text-foreground">
                   {t("footerPrivacy")}
                 </TypographyMuted>
               </Link>
               <Link href="/terms">
-                <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
+                <TypographyMuted className="cursor-pointer !text-xs transition-colors hover:text-foreground">
                   {t("footerTerms")}
                 </TypographyMuted>
               </Link>

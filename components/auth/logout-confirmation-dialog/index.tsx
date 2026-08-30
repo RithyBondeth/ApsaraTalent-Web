@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { LoaderCircle, LogOut } from "lucide-react";
+import { LucideLoaderCircle, LucideLogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ILogoutConfirmationDialogProps } from "./props";
 
@@ -30,7 +30,7 @@ export function LogoutConfirmationDialog(
   const cancelButtonRef = useRef<HTMLButtonElement | null>(null);
   const [isPending, setIsPending] = useState<boolean>(false);
 
-  /* ---------------------------- All Effects ---------------------------- */
+  /* ---------------------------- Effects ---------------------------- */
   useEffect(() => {
     if (!open) setIsPending(false);
   }, [open]);
@@ -57,18 +57,19 @@ export function LogoutConfirmationDialog(
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="logout-dialog w-[calc(100%-1.5rem)] max-w-md rounded-none border border-foreground/20 bg-card p-0 shadow-[9px_9px_0_hsl(var(--foreground)/0.12),0_24px_70px_hsl(var(--foreground)/0.18)] sm:rounded-none"
+        variant="flush"
+        size="md"
+        className="logout-dialog w-[calc(100%-1.5rem)] bg-card"
         onOpenAutoFocus={(event) => {
           event.preventDefault();
           cancelButtonRef.current?.focus();
         }}
       >
         {/* Dialog Header Section */}
-        <header className="logout-dialog-header relative overflow-hidden border-b border-foreground bg-foreground p-5 text-background sm:p-6">
-          <div className="profile-detail-hero-grid" aria-hidden />
+        <header className="logout-dialog-header relative overflow-hidden border-b border-border bg-muted p-5 text-foreground sm:p-6">
           <div className="relative z-[2] flex items-start gap-4 pr-10">
-            <div className="flex size-12 shrink-0 items-center justify-center border border-background/25 bg-background/10 sm:size-14">
-              <LogOut className="size-5 sm:size-6" strokeWidth={1.6} />
+            <div className="flex size-12 shrink-0 items-center justify-center border border-border bg-card sm:size-14">
+              <LucideLogOut className="size-5 sm:size-6" strokeWidth={1.6} />
             </div>
             <div className="min-w-0 pt-0.5">
               <p className="mb-2 text-[9px] font-extrabold uppercase tracking-[0.22em] opacity-60">
@@ -110,9 +111,9 @@ export function LogoutConfirmationDialog(
               className="h-11 w-full rounded-none"
             >
               {isPending ? (
-                <LoaderCircle className="size-4 animate-spin" />
+                <LucideLoaderCircle className="size-4 animate-spin" />
               ) : (
-                <LogOut className="size-4" />
+                <LucideLogOut className="size-4" />
               )}
               {confirmLabel}
             </Button>

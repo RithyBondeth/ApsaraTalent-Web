@@ -10,18 +10,7 @@ import {
   IIceCandidatePayload,
   TCallState,
   CallEndReason,
-  TCallStatus, // Add this
 } from "./types";
-
-export type {
-  TCallStatus,
-  ICallParticipant,
-  ICallOfferPayload,
-  ICallAnswerPayload,
-  IIceCandidatePayload,
-  TCallState,
-  CallEndReason,
-};
 import {
   fetchIceServers,
   normalizeParticipantAvatar,

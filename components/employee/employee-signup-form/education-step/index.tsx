@@ -47,7 +47,7 @@ function IsStudyingWatcher({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col gap-3">
+    <div className="flex w-full flex-col gap-3">
       {/* Degree Section */}
       <LabelInput
         label={t("empEducationDegree")}
@@ -67,8 +67,8 @@ function IsStudyingWatcher({
       />
 
       {/* Graduation Year Section */}
-      <div className="w-full flex flex-col items-start gap-2">
-        <div className="w-full flex flex-col items-start gap-2">
+      <div className="flex w-full flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
           <TypographyMuted className="text-xs">
             {isStudying
               ? t("empEducationExpectedGraduationYear")
@@ -125,19 +125,19 @@ export default function EducationStepForm({
 
   /* ------------------------------- Render UI ------------------------------- */
   return (
-    <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
+    <div className="flex max-h-[500px] w-full flex-col gap-5 overflow-y-auto">
       {/* Title Section */}
       <TypographyH4>{t("empEducationTitle")}</TypographyH4>
 
       {/* Education Form Section */}
       {fields.map((field, index) => (
         <div
-          className="relative flex flex-col items-start gap-3 w-full border border-border border-l-[5px] border-l-foreground rounded-none bg-muted p-5"
+          className="relative flex w-full flex-col items-start gap-3 rounded-none border border-border bg-muted p-5"
           key={field.id}
         >
           {/* Header Without Remove Button Section */}
           {fields.length === 1 && (
-            <div className="w-full mb-3">
+            <div className="mb-3 w-full">
               <TypographyMuted className="text-md">
                 {t("empEducationLabel")} {index + 1}
               </TypographyMuted>
@@ -146,7 +146,7 @@ export default function EducationStepForm({
 
           {/* Header With Remove Button Section */}
           {fields.length > 1 && (
-            <div className="w-full flex items-center justify-between mb-3">
+            <div className="mb-3 flex w-full items-center justify-between">
               <TypographyMuted className="text-md">
                 {t("empEducationLabel")} {index + 1}
               </TypographyMuted>
@@ -162,7 +162,7 @@ export default function EducationStepForm({
           )}
 
           {/* School Section */}
-          <div className="w-full flex flex-col items-start gap-2">
+          <div className="flex w-full flex-col items-start gap-2">
             <LabelInput
               label={t("empEducationSchool")}
               input={
@@ -179,7 +179,7 @@ export default function EducationStepForm({
             />
 
             {/* isStudying Checkbox Section */}
-            <div className="flex items-center space-x-2 mt-1">
+            <div className="mt-1 flex items-center space-x-2">
               <Controller
                 control={control}
                 name={`educations.${index}.isStudying`}
@@ -193,7 +193,7 @@ export default function EducationStepForm({
               />
               <label
                 htmlFor={`isStudying-${index}`}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
+                className="text-sm font-medium leading-none text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 {t("empEducationCurrentlyStudying")}
               </label>
@@ -211,7 +211,7 @@ export default function EducationStepForm({
       ))}
 
       {/* Add More Button Section */}
-      <div className="w-full flex justify-end">
+      <div className="flex w-full justify-end">
         <Button
           variant="secondary"
           type="button"

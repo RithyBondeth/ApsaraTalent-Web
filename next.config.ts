@@ -35,9 +35,7 @@ const connectSources = [
   "'self'",
   "https://*.sentry.io",
   "https://*.ingest.sentry.io",
-  ...(apiOrigin
-    ? [apiOrigin, apiOrigin.replace(/^http/, "ws")]
-    : []),
+  ...(apiOrigin ? [apiOrigin, apiOrigin.replace(/^http/, "ws")] : []),
   ...(process.env.NODE_ENV === "production" ? [] : ["ws:", "wss:"]),
 ];
 

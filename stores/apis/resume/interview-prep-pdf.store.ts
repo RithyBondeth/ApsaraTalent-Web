@@ -1,8 +1,8 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_RESUME_INTERVIEW_PREP_PDF_URL } from "@/utils/constants/apis/resume.api.constant";
-import { IGenerateCoverLetterPdfResponse } from "@/utils/interfaces/resume";
-import { IAiInterviewPrepQuestion } from "@/utils/interfaces/resume";
+import { IGenerateCoverLetterPdfResponse } from "@/utils/interfaces/resume/ai-resume.interface";
+import { IAiInterviewPrepQuestion } from "@/utils/interfaces/resume/ai-resume.interface";
 import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */

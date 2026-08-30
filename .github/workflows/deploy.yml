@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # NEXT_PUBLIC_* is public by definition — it ships in the client bundle.
       # The two SENTRY_* names are the server-side twins of NEXT_PUBLIC_ values
@@ -62,10 +62,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -78,7 +78,7 @@ jobs:
 
       - name: Upload dependency audit
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: web-dependency-audit
           path: dependency-audit.json
@@ -90,10 +90,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -104,11 +104,32 @@ jobs:
       - name: Validate repository environments
         run: npm run check:env -- production
 
+      - name: Check formatting
+        run: npm run format:check
+
       - name: Run lint
         run: npm run lint
 
       - name: Run TypeScript checks
         run: npm run typecheck
+
+      # knip.jsonc has existed since before this step, with real configuration —
+      # but knip itself was never a dependency and no script or workflow ever
+      # invoked it. Configuration for a tool that cannot run reports nothing.
+      #
+      # `--exclude types` is deliberate. Everything knip checks is clean today
+      # except 10 unused exported types, so gating on the rest costs nothing and
+      # starts catching dead files, unused dependencies, unlisted dependencies
+      # and unresolved imports immediately. Drop the flag once those 10 are
+      # cleared; `npm run knip` reports them meanwhile.
+      - name: Check for dead code and unused dependencies
+        run: npm run knip:check
+
+      # Asserts every design token still clears WCAG AA against the surface it
+      # sits on, and that raw palette classes (bg-green-100 and friends) have
+      # not crept back past their baseline.
+      - name: Check design tokens
+        run: npm run check:design
 
   test:
     name: Unit tests
@@ -116,10 +137,10 @@ jobs:
     timeout-minutes: 20
     needs: [security, dependencies, lint]
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -136,10 +157,10 @@ jobs:
     timeout-minutes: 35
     needs: [security, dependencies, lint, test]
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -166,7 +187,7 @@ jobs:
 
       - name: Upload browser test report
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: playwright-report
           path: playwright-report
@@ -175,7 +196,7 @@ jobs:
 
       - name: Upload browser failure artifacts
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: playwright-failures
           path: test-results
@@ -194,7 +215,7 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       PRODUCTION_WEB_URL: ${{ vars.PRODUCTION_WEB_URL }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Require deployment credentials
         shell: bash
@@ -210,7 +231,7 @@ jobs:
           done
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
           cache: npm

@@ -26,7 +26,7 @@ export function AboutSection() {
         value={
           <Badge
             variant="secondary"
-            className="rounded-none text-[10px] font-mono"
+            className="rounded-none font-mono text-[10px]"
           >
             v1.0.0
           </Badge>

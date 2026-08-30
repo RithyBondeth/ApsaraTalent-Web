@@ -6,7 +6,7 @@ const mocks = vi.hoisted(() => ({
   streamFetch: vi.fn(),
 }));
 
-vi.mock("@/utils/functions/stream-fetch", () => ({
+vi.mock("@/utils/functions/network/stream-fetch", () => ({
   streamFetch: mocks.streamFetch,
 }));
 vi.mock("@/components/utils/feedback/ai-quota-badge", () => ({

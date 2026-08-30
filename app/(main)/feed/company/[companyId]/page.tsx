@@ -16,10 +16,16 @@ import {
 } from "@/components/ui/hover-card";
 import ImagePopup from "@/components/utils/data-display/image-popup";
 import Tag from "@/components/utils/data-display/tag";
+import { BenefitValueChip } from "@/components/utils/data-display/benefit-value-chip";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
-import { translateLocation, getNameInitials } from "@/utils/functions/text";
+import { PlatformIcon } from "@/components/utils/brand/platform-icon";
+import {
+  formatAvailabilityWords,
+  translateLocation,
+  getNameInitials,
+} from "@/utils/functions/text";
+import { useSalaryText } from "@/hooks/utils/use-salary-text";
 import { formatDisplayDate } from "@/utils/functions/date";
 import { IBenefits } from "@/utils/interfaces/user/company.interface";
 import { IImage } from "@/utils/interfaces/user/company.interface";
@@ -34,7 +40,6 @@ import {
   LucideBuilding2,
   LucideCalendarDays,
   LucideCamera,
-  LucideCircleCheck,
   LucideCompass,
   LucideGlobe,
   LucideHeartHandshake,
@@ -43,9 +48,9 @@ import {
   LucideMapPinned,
   LucidePhone,
   LucideStar,
+  LucideLanguages,
   LucideUser,
   LucideUsers,
-  User,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -78,6 +83,7 @@ export default function CompanyDetailPage() {
   const t = useTranslations("toast");
   const tf = useTranslations("feed");
   const tl = useTranslations("locations");
+  const salaryText = useSalaryText();
 
   /* -------------------------------- All States ------------------------------- */
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -264,6 +270,8 @@ export default function CompanyDetailPage() {
         <PageState
           variant="empty"
           title={tf("companyNotFound")}
+          description={tf("companyNotFoundDescription")}
+          icon={LucideBuilding2}
           action={{ label: tf("backToFeed"), href: "/feed" }}
         />
       </div>
@@ -271,11 +279,11 @@ export default function CompanyDetailPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="profile-detail-page mx-auto flex w-full max-w-7xl flex-col gap-4 animate-page-in sm:gap-5 tablet-sm:pb-28">
+    <div className="profile-detail-page animate-page-in mx-auto flex w-full max-w-7xl flex-col gap-4 tablet-sm:pb-28 sm:gap-5">
       {effectPortal}
       {/* Back Navigation Header Section */}
       <header className="sticky top-0 z-30 -mx-3 border-b border-border bg-background/95 px-3 backdrop-blur-xl sm:-mx-4 sm:px-4 lg:-mx-5 lg:px-5">
-        <div className="mx-auto flex h-16 max-w-7xl min-w-0 items-center gap-3">
+        <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center gap-3">
           <button
             type="button"
             onClick={() => router.back()}
@@ -310,7 +318,7 @@ export default function CompanyDetailPage() {
         avatar={companyData.avatar}
         cover={companyData.cover}
         fallback={
-          companyData.name ? getNameInitials(companyData.name) : <User />
+          companyData.name ? getNameInitials(companyData.name) : <LucideUser />
         }
         onAvatarClick={() => setOpenProfilePopup(true)}
         meta={
@@ -373,7 +381,6 @@ export default function CompanyDetailPage() {
               <SectionTitle
                 icon={<LucideInfo />}
                 title={tf("dialogAboutCompany", { name: companyData.name })}
-                variant="detail"
               />
               <p className="max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
                 {companyData.description}
@@ -388,9 +395,8 @@ export default function CompanyDetailPage() {
                 <SectionTitle
                   icon={<LucideBriefcaseBusiness />}
                   title={tf("openPositions")}
-                  variant="detail"
                   action={
-                    <span className="flex size-8 items-center justify-center border border-foreground bg-foreground text-xs font-bold text-background">
+                    <span className="flex size-8 items-center justify-center border border-border bg-muted/60 text-xs font-bold text-foreground">
                       {companyData.openPositions.length}
                     </span>
                   }
@@ -399,7 +405,7 @@ export default function CompanyDetailPage() {
                   {companyData.openPositions.map((item) => (
                     <div
                       key={item.id}
-                      className="profile-detail-position-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/30 hover:shadow-[4px_4px_0_hsl(var(--foreground)/0.06)] sm:p-5"
+                      className="profile-detail-position-card border border-border p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-foreground/35 hover:shadow-hard sm:p-5"
                     >
                       {/* Position Header Section */}
                       <div className="flex items-start justify-between gap-3 tablet-md:flex-col">
@@ -411,22 +417,24 @@ export default function CompanyDetailPage() {
                             {item.type && (
                               <Tag
                                 icon={<LucideAlarmClock />}
-                                label={item.type}
-                                neutral
-                                className="!rounded-none border border-border"
+                                label={formatAvailabilityWords(item.type)}
                               />
                             )}
                             {item.experience && (
                               <Tag
                                 icon={<LucideUser />}
                                 label={item.experience}
-                                neutral
-                                className="!rounded-none border border-border"
+                              />
+                            )}
+                            {!!item.languagesRequired?.length && (
+                              <Tag
+                                icon={<LucideLanguages />}
+                                label={item.languagesRequired.join(", ")}
                               />
                             )}
                           </div>
                         </div>
-                        <div className="flex flex-col gap-1 text-xs text-muted-foreground tablet-md:flex-row tablet-md:gap-3 flex-shrink-0">
+                        <div className="flex flex-shrink-0 flex-col gap-1 text-xs text-muted-foreground tablet-md:flex-row tablet-md:gap-3">
                           <span className="flex items-center gap-1">
                             <LucideCalendarDays className="size-3" />
                             {tf("posted")}{" "}
@@ -448,11 +456,13 @@ export default function CompanyDetailPage() {
                       {(item.description ||
                         item.education ||
                         item.skills ||
-                        item.salary) && (
-                        <div className="mt-4 pt-4 border-t border-border/60 space-y-3">
+                        item.salary ||
+                        item.salaryMin != null ||
+                        item.salaryMax != null) && (
+                        <div className="mt-4 space-y-3 border-t border-border/60 pt-4">
                           {item.description && (
                             <div>
-                              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                                 {tf("description")}
                               </p>
                               <TypographyMuted className="text-sm leading-relaxed">
@@ -462,7 +472,7 @@ export default function CompanyDetailPage() {
                           )}
                           {item.education && (
                             <div>
-                              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                                 {tf("dialogEducation")}
                               </p>
                               <TypographyMuted className="text-sm">
@@ -472,31 +482,24 @@ export default function CompanyDetailPage() {
                           )}
                           {item.skills && (
                             <div>
-                              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                              <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                                 {tf("dialogSkills")}
                               </p>
                               <div className="flex flex-wrap gap-1.5">
                                 {item.skills.map((s) => (
-                                  <Tag
-                                    key={s}
-                                    label={s}
-                                    neutral
-                                    className="!rounded-none border border-border"
-                                  />
+                                  <Tag key={s} label={s} />
                                 ))}
                               </div>
                             </div>
                           )}
-                          {item.salary && (
-                            <div>
-                              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                                {tf("salaryRange")}
-                              </p>
-                              <span className="text-sm font-semibold text-primary">
-                                {item.salary}
-                              </span>
-                            </div>
-                          )}
+                          <div>
+                            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                              {tf("salaryRange")}
+                            </p>
+                            <span className="text-sm font-semibold text-primary">
+                              {salaryText(item)}
+                            </span>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -507,21 +510,16 @@ export default function CompanyDetailPage() {
 
           {/* Career Scope Section */}
           {companyData.careerScopes && companyData.careerScopes.length > 0 && (
-            <DetailCard className="profile-detail-company-scope p-5 sm:p-6">
+            <DetailCard className="p-5 sm:p-6">
               <SectionTitle
                 icon={<LucideCompass />}
                 title={tf("careerScope")}
-                variant="detail"
               />
               <div className="flex flex-wrap gap-2">
                 {companyData.careerScopes.map((career, i) => (
                   <HoverCard key={i}>
                     <HoverCardTrigger>
-                      <Tag
-                        label={career.name}
-                        neutral
-                        className="!rounded-none border border-border"
-                      />
+                      <Tag label={career.name} />
                     </HoverCardTrigger>
                     <HoverCardContent>
                       <TypographySmall>
@@ -540,7 +538,6 @@ export default function CompanyDetailPage() {
               <SectionTitle
                 icon={<LucideCamera />}
                 title={tf("lifeAt", { name: companyData.name })}
-                variant="detail"
               />
               <Carousel className="w-full">
                 <CarouselContent>
@@ -551,7 +548,7 @@ export default function CompanyDetailPage() {
                           handleClickImagePopup();
                           setCurrentCompanyImage(item.image);
                         }}
-                        className="my-1 ml-1 h-52 cursor-pointer border border-border bg-muted bg-cover bg-center transition-[border-color,filter,transform] duration-200 hover:border-foreground/30 hover:brightness-95"
+                        className="my-1 ml-1 h-52 cursor-pointer border border-border bg-muted bg-cover bg-center transition-[border-color,filter,transform] duration-200 hover:border-foreground/35 hover:brightness-95"
                         style={{ backgroundImage: `url(${item.image})` }}
                       />
                     </CarouselItem>
@@ -571,7 +568,6 @@ export default function CompanyDetailPage() {
             <SectionTitle
               icon={<LucideBuilding2 />}
               title={tf("companyInformation")}
-              variant="detail"
             />
             <div className="space-y-3.5">
               {[
@@ -615,14 +611,14 @@ export default function CompanyDetailPage() {
                 .filter((r) => r.val)
                 .map((row) => (
                   <div key={row.label} className="flex items-start gap-2.5">
-                    <span className="text-muted-foreground mt-0.5 flex-shrink-0 [&>svg]:size-4 [&>svg]:stroke-[1.5]">
+                    <span className="mt-0.5 flex-shrink-0 text-muted-foreground [&>svg]:size-4 [&>svg]:stroke-[1.5]">
                       {row.icon}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                         {row.label}
                       </p>
-                      <p className="text-sm mt-0.5 break-words">{row.val}</p>
+                      <p className="mt-0.5 break-words text-sm">{row.val}</p>
                     </div>
                   </div>
                 ))}
@@ -636,41 +632,36 @@ export default function CompanyDetailPage() {
               <SectionTitle
                 icon={<LucideStar />}
                 title={tf("cultureAndBenefits")}
-                variant="detail"
               />
               <div className="space-y-4">
-                {companyData.values.length > 0 && (
+                {companyData.benefits.length > 0 && (
                   <div>
-                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                      {tf("dialogValues")}
+                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      {tf("dialogBenefits")}
                     </p>
-                    <div className="flex flex-col gap-1.5">
-                      {companyData.values.map((v) => (
-                        <div
-                          key={v.id}
-                          className="flex items-center gap-2 border border-green-700/15 bg-green-50 px-3 py-2 text-sm text-green-700 dark:bg-green-950/40 dark:text-green-300"
-                        >
-                          <LucideCircleCheck className="size-4 flex-shrink-0" />
-                          {v.label}
-                        </div>
+                    <div className="flex flex-wrap gap-2">
+                      {companyData.benefits.map((b: IBenefits) => (
+                        <BenefitValueChip
+                          key={b.id}
+                          kind="benefit"
+                          label={b.label}
+                        />
                       ))}
                     </div>
                   </div>
                 )}
-                {companyData.benefits.length > 0 && (
+                {companyData.values.length > 0 && (
                   <div>
-                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                      {tf("dialogBenefits")}
+                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      {tf("dialogValues")}
                     </p>
-                    <div className="flex flex-col gap-1.5">
-                      {companyData.benefits.map((b: IBenefits) => (
-                        <div
-                          key={b.id}
-                          className="flex items-center gap-2 border border-blue-700/15 bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
-                        >
-                          <LucideCircleCheck className="size-4 flex-shrink-0" />
-                          {b.label}
-                        </div>
+                    <div className="flex flex-wrap gap-2">
+                      {companyData.values.map((v) => (
+                        <BenefitValueChip
+                          key={v.id}
+                          kind="value"
+                          label={v.label}
+                        />
                       ))}
                     </div>
                   </div>
@@ -682,11 +673,7 @@ export default function CompanyDetailPage() {
           {/* Social Section */}
           {companyData.socials && companyData.socials.length > 0 && (
             <DetailCard className="p-5">
-              <SectionTitle
-                icon={<LucideGlobe />}
-                title={tf("socialLinks")}
-                variant="detail"
-              />
+              <SectionTitle icon={<LucideGlobe />} title={tf("socialLinks")} />
               <div className="flex flex-wrap gap-2">
                 {companyData.socials.map((s: ISocialLink) => (
                   <Link
@@ -694,9 +681,9 @@ export default function CompanyDetailPage() {
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-semibold transition-colors hover:border-foreground/30 hover:bg-muted"
+                    className="flex items-center gap-1.5 border border-border bg-muted/50 px-3 py-2 text-xs font-semibold transition-colors hover:border-foreground/35 hover:bg-muted"
                   >
-                    {getSocialPlatformTypeIcon(s.platform as TPlatform)}
+                    <PlatformIcon platform={s.platform as TPlatform} />
                     {s.platform}
                   </Link>
                 ))}
@@ -707,7 +694,7 @@ export default function CompanyDetailPage() {
       </div>
 
       {/* Mobile Sticky Action Bar Section */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 hidden gap-2 border-t border-border bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-xl [&>button]:flex-1 [&>button]:rounded-none tablet-md:flex">
+      <div className="fixed bottom-0 left-0 right-0 z-30 hidden gap-2 border-t border-border bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-xl tablet-md:flex [&>button]:flex-1 [&>button]:rounded-none">
         {!isFav && (
           <Button
             variant="outline"

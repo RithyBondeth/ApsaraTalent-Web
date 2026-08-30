@@ -1,9 +1,9 @@
 "use client";
 
 import {
-  ChevronDown,
-  Globe,
-  LogOut,
+  LucideChevronDown,
+  LucideLanguages,
+  LucideLogOut,
   LucideBookMarked,
   LucideBuilding,
   LucideInfo,
@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogoutConfirmationDialog } from "@/components/auth/logout-confirmation-dialog";
+import { ReportProblemDialog } from "@/components/support/report-problem-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +34,7 @@ import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { useThemeStore } from "@/stores/themes/theme-store";
+import { useThemeTransition } from "@/hooks/utils/use-theme-transition";
 import {
   clearAuthCookies,
   clearAuthCookiesServerSide,
@@ -54,13 +56,17 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
 
   /* ---------------------------------- Utils -------------------------------- */
   const { resolvedTheme, setTheme } = useTheme();
-  const { theme, toggleTheme } = useThemeStore();
+  const { theme } = useThemeStore();
+  // Shared with the landing/legal Switcher so both sides of the login animate
+  // the theme change the same way, instead of this one snapping.
+  const { toggleTheme } = useThemeTransition();
   const { language, setLanguage } = useLanguageStore();
   const router = useRouter();
   const t = useTranslations("sidebarFooter");
 
   /* -------------------------------- All States ----------------------------- */
   const [openLogoutDialog, setOpenLogoutDialog] = useState<boolean>(false);
+  const [openReportDialog, setOpenReportDialog] = useState<boolean>(false);
 
   /* ----------------------------- API Integration --------------------------- */
   // Current User
@@ -128,8 +134,8 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
   };
 
   // ── Handle Theme Toggle ─────────────────────────────────────────
-  const handleThemeToggle = () => {
-    toggleTheme();
+  const handleThemeToggle = (event: React.MouseEvent<HTMLDivElement>) => {
+    toggleTheme(event);
   };
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -138,20 +144,20 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
       <DropdownMenu>
         {/* User Menu Trigger Section */}
         <DropdownMenuTrigger asChild>
-          <button className="group flex h-11 items-center gap-2 border border-border bg-card/80 px-2 transition-[background-color,border-color,box-shadow,transform] duration-200 hover:border-foreground/35 hover:bg-muted/60 hover:shadow-[3px_3px_0_hsl(var(--foreground)/0.08)] active:translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+          <button className="group flex h-11 items-center gap-2 border border-border bg-card/80 px-2 transition-[background-color,border-color,box-shadow,transform] duration-200 hover:border-foreground/35 hover:bg-muted/60 hover:shadow-hard-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px">
             {/* Avatar Section */}
             <Avatar
               rounded="md"
-              className="h-7 w-7 shrink-0 rounded-none border border-border transition-colors duration-200 group-hover:border-foreground/30"
+              className="h-7 w-7 shrink-0 rounded-none border border-border transition-colors duration-200 group-hover:border-foreground/35"
             >
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="bg-foreground text-[10px] font-bold text-background">
+              <AvatarFallback className="text-[10px] font-bold">
                 {getNameInitials(user.name)}
               </AvatarFallback>
             </Avatar>
 
             {/* Name and Role Section */}
-            <div className="hidden min-w-0 flex-col gap-0.5 sm:flex">
+            <div className="hidden min-w-0 flex-col items-start gap-0.5 sm:flex">
               <span className="max-w-[86px] truncate text-xs font-semibold leading-none lg:max-w-[104px]">
                 {user.name}
               </span>
@@ -161,13 +167,13 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
             </div>
 
             {/* Chevron Icon Section */}
-            <ChevronDown className="hidden size-3.5 shrink-0 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180 sm:block" />
+            <LucideChevronDown className="hidden size-3.5 shrink-0 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180 sm:block" />
           </button>
         </DropdownMenuTrigger>
 
         {/* Dropdown Content Section */}
         <DropdownMenuContent
-          className="w-72 overflow-hidden rounded-none border border-foreground/20 p-0 shadow-[7px_7px_0_hsl(var(--foreground)/0.1),0_18px_45px_hsl(var(--foreground)/0.12)]"
+          className="w-72 overflow-hidden rounded-none border border-border p-0 shadow-hard-lg"
           side="bottom"
           align="end"
           sideOffset={9}
@@ -177,10 +183,10 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
             <div className="flex items-center gap-3">
               <Avatar
                 rounded="md"
-                className="h-11 w-11 rounded-none border border-foreground/15"
+                className="h-11 w-11 rounded-none border border-border"
               >
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="bg-foreground font-bold text-background">
+                <AvatarFallback className="font-bold">
                   {getNameInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
@@ -191,7 +197,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
                 <p className="mt-0.5 truncate text-xs text-muted-foreground">
                   {user.email}
                 </p>
-                <span className="mt-2 inline-flex items-center gap-1 border border-foreground/15 bg-background px-2 py-1 text-[9px] font-bold uppercase tracking-[0.1em] text-foreground">
+                <span className="mt-2 inline-flex items-center gap-1 border border-border bg-background px-2 py-1 text-[9px] font-bold uppercase tracking-[0.1em] text-foreground">
                   {isEmployee ? (
                     <LucideUser className="size-2.5" />
                   ) : (
@@ -265,7 +271,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
                 className="flex min-h-11 items-center gap-2.5 rounded-none px-2"
               >
                 <MenuIcon>
-                  <Globe className="size-3.5 text-foreground" />
+                  <LucideLanguages className="size-3.5 text-foreground" />
                 </MenuIcon>
                 <span>
                   {t("language")}
@@ -290,7 +296,10 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
               </DropdownMenuItem>
 
               {/* Report Problem Section */}
-              <DropdownMenuItem className="flex min-h-11 items-center gap-2.5 rounded-none px-2">
+              <DropdownMenuItem
+                onClick={() => setOpenReportDialog(true)}
+                className="flex min-h-11 items-center gap-2.5 rounded-none px-2"
+              >
                 <MenuIcon>
                   <LucideInfo className="size-3.5 text-foreground" />
                 </MenuIcon>
@@ -306,7 +315,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
               className="flex min-h-11 items-center gap-2.5 rounded-none px-2 text-destructive focus:bg-destructive/10 focus:text-destructive"
             >
               <MenuIcon className="border-destructive/20 bg-destructive/10">
-                <LogOut className="size-3.5 text-destructive" />
+                <LucideLogOut className="size-3.5 text-destructive" />
               </MenuIcon>
               {t("logOut")}
             </DropdownMenuItem>
@@ -315,6 +324,11 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
       </DropdownMenu>
 
       {/* Logout Dialog Section */}
+      <ReportProblemDialog
+        open={openReportDialog}
+        onOpenChange={setOpenReportDialog}
+      />
+
       <LogoutConfirmationDialog
         open={openLogoutDialog}
         onOpenChange={setOpenLogoutDialog}

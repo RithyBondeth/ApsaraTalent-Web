@@ -11,7 +11,7 @@ import {
   ICreateInterviewPayload,
   IInterview,
 } from "@/utils/interfaces/interview/interview.interface";
-import { TInterviewStatus } from "@/utils/types/interview";
+import { TInterviewStatus } from "@/utils/types/interview/interview-status.type";
 import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */

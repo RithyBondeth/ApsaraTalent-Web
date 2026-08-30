@@ -1,7 +1,7 @@
-import { FeedBannerSkeleton } from "@/components/feed/skeleton";
+import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
-import { TUserRole } from "@/utils/types/auth";
+import { TUserRole } from "@/utils/types/auth/role.type";
 
 /* -------------------------------- Interview Loading Skeleton -------------------------------- */
 export default function InterviewLoadingSkeleton({
@@ -14,7 +14,7 @@ export default function InterviewLoadingSkeleton({
   return (
     <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
-      <FeedBannerSkeleton />
+      <PageBannerSkeleton />
 
       {/* Interview Schedule Section */}
       <section className="flex w-full flex-col gap-5">
@@ -28,9 +28,7 @@ export default function InterviewLoadingSkeleton({
           </div>
           <Skeleton
             className={
-              isCompany
-                ? "h-9 w-44 rounded-none"
-                : "size-9 rounded-none"
+              isCompany ? "h-9 w-44 rounded-none" : "size-9 rounded-none"
             }
           />
         </div>
@@ -40,7 +38,7 @@ export default function InterviewLoadingSkeleton({
           {Array.from({ length: 3 }).map((_, index) => (
             <div
               key={index}
-              className="w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]"
+              className="w-full overflow-hidden rounded-none border border-border bg-card shadow-hard"
             >
               {/* Card Body Section */}
               <div className="flex flex-col gap-4 p-4 sm:p-5">

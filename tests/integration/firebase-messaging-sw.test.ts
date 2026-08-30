@@ -106,7 +106,10 @@ describe("Firebase messaging service worker", () => {
     ]);
     let firstCompletion: Promise<unknown> | undefined;
     clickHandler({
-      notification: { close: vi.fn(), data: { fcmOptions: { link: "/matching" } } },
+      notification: {
+        close: vi.fn(),
+        data: { fcmOptions: { link: "/matching" } },
+      },
       waitUntil: (promise) => {
         firstCompletion = promise;
       },

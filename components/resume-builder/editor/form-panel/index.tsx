@@ -8,13 +8,13 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import {
-  Briefcase,
-  ChevronDown,
-  GraduationCap,
-  LayoutPanelLeft,
-  ListTree,
-  Palette,
-  User,
+  LucideBriefcase,
+  LucideChevronDown,
+  LucideGraduationCap,
+  LucideLayoutPanelLeft,
+  LucideListTree,
+  LucidePalette,
+  LucideUser,
 } from "lucide-react";
 import { IFormPanelProps } from "./props";
 import { PersonalInfoTab } from "./utils/personal-info-tab";
@@ -60,7 +60,7 @@ function ContentEditorSection({
             {description}
           </span>
         </span>
-        <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+        <LucideChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
       </CollapsibleTrigger>
 
       {/* Collapsible Content Section */}
@@ -90,19 +90,19 @@ export default function ResumeEditorFormPanel(
           value="content"
           className="h-full gap-1.5 rounded-none border-r border-border px-2 text-xs shadow-none"
         >
-          <ListTree size={13} /> {t("tabContent")}
+          <LucideListTree size={13} /> {t("tabContent")}
         </TabsTrigger>
         <TabsTrigger
           value="layout"
           className="h-full gap-1.5 rounded-none border-r border-border px-2 text-xs shadow-none"
         >
-          <LayoutPanelLeft size={13} /> {t("tabLayout")}
+          <LucideLayoutPanelLeft size={13} /> {t("tabLayout")}
         </TabsTrigger>
         <TabsTrigger
           value="design"
           className="h-full gap-1.5 rounded-none px-2 text-xs shadow-none"
         >
-          <Palette size={13} /> {t("tabStyle")}
+          <LucidePalette size={13} /> {t("tabStyle")}
         </TabsTrigger>
       </TabsList>
 
@@ -121,7 +121,7 @@ export default function ResumeEditorFormPanel(
           <ContentEditorSection
             title={t("tabPersonal")}
             description={t("contentPersonalDescription")}
-            icon={<User size={14} />}
+            icon={<LucideUser size={14} />}
             defaultOpen
           >
             <PersonalInfoTab
@@ -134,7 +134,7 @@ export default function ResumeEditorFormPanel(
           <ContentEditorSection
             title={t("tabExperience")}
             description={t("contentExperienceDescription")}
-            icon={<Briefcase size={14} />}
+            icon={<LucideBriefcase size={14} />}
           >
             <ExperienceTab
               register={props.register}
@@ -146,7 +146,7 @@ export default function ResumeEditorFormPanel(
           <ContentEditorSection
             title={t("tabSkills")}
             description={t("contentSkillsDescription")}
-            icon={<GraduationCap size={14} />}
+            icon={<LucideGraduationCap size={14} />}
           >
             <SkillsEducationTab
               register={props.register}

@@ -20,8 +20,8 @@ import { API_RESUME_OPTIMIZE_STREAM_URL } from "@/utils/constants/apis/resume.ap
 import {
   IOptimizeResumeResponse,
   IExperienceSuggestion,
-} from "@/utils/interfaces/resume";
-import { streamFetch } from "@/utils/functions/stream-fetch";
+} from "@/utils/interfaces/resume/ai-resume.interface";
+import { streamFetch } from "@/utils/functions/network";
 import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { Badge } from "@/components/ui/badge";
 import { IAiOptimizerDrawerProps } from "./props";
@@ -237,15 +237,15 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
       >
         <SheetContent
           side="right"
-          className="w-full sm:max-w-md flex flex-col gap-0 p-0 border-l-[5px] border-l-foreground"
+          className="flex w-full flex-col gap-0 p-0 sm:max-w-md"
         >
           {/* Header Section */}
-          <SheetHeader className="px-5 py-4 border-b">
+          <SheetHeader className="border-b px-5 py-4">
             <SheetTitle className="flex items-center gap-2">
               <LucideSparkles className="size-4 text-primary" />
               {t("aiOptimizerTitle")}
               {generating && (
-                <LucideLoader2 className="size-3.5 animate-spin text-primary ml-1" />
+                <LucideLoader2 className="ml-1 size-3.5 animate-spin text-primary" />
               )}
             </SheetTitle>
             {/* AI Quota Badge Section */}
@@ -255,14 +255,14 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
           </SheetHeader>
 
           {/* Content Section */}
-          <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-6">
+          <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-5 py-4">
             {/* Full Skeleton Section (Generating With No Data Yet) */}
             {generating && !data?.overallFeedback && (
               <div className="flex flex-col gap-3 pt-2">
                 <Skeleton className="h-4 w-full rounded-none" />
                 <Skeleton className="h-4 w-5/6 rounded-none" />
                 <Skeleton className="h-4 w-4/6 rounded-none" />
-                <div className="h-px bg-border my-2" />
+                <div className="my-2 h-px bg-border" />
                 <Skeleton className="h-4 w-full rounded-none" />
                 <Skeleton className="h-4 w-3/4 rounded-none" />
                 <Skeleton className="h-4 w-full rounded-none" />
@@ -280,11 +280,11 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
               <>
                 {/* Overall Feedback Section */}
                 {data.overallFeedback && (
-                  <div className="rounded-none bg-muted/50 border border-border border-l-[5px] border-l-foreground p-4 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
+                  <div className="rounded-none border border-border bg-muted/50 p-4 duration-200 animate-in fade-in-0 slide-in-from-bottom-1">
+                    <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                       {t("overallFeedback")}
                     </p>
-                    <p className="text-sm text-foreground leading-relaxed">
+                    <p className="text-sm leading-relaxed text-foreground">
                       {data.overallFeedback}
                     </p>
                   </div>
@@ -292,13 +292,13 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
 
                 {/* Summary Suggestion Section */}
                 {data.suggestedSummary && (
-                  <div className="flex flex-col gap-2 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
+                  <div className="flex flex-col gap-2 duration-200 animate-in fade-in-0 slide-in-from-bottom-1">
                     <div className="flex items-center justify-between">
                       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                         {t("improvedSummary")}
                       </p>
                       {appliedSummary ? (
-                        <span className="text-xs text-green-600 flex items-center gap-1">
+                        <span className="flex items-center gap-1 text-xs text-green-600">
                           <LucideCheckCircle2 className="size-3" />{" "}
                           {t("applied")}
                         </span>
@@ -306,7 +306,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-6 text-[11px] px-2 rounded-none"
+                          className="h-6 rounded-none px-2 text-[11px]"
                           onClick={handleApplySummary}
                           disabled={generating}
                         >
@@ -314,7 +314,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                         </Button>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed bg-muted/30 rounded-none p-3 border border-border border-l-[4px] border-l-primary">
+                    <p className="rounded-none border border-l-[4px] border-border border-l-primary bg-primary/5 p-3 text-sm leading-relaxed text-muted-foreground">
                       {data.suggestedSummary}
                     </p>
                   </div>
@@ -322,13 +322,13 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
 
                 {/* Skills Suggestions Section */}
                 {data.suggestedSkills.length > 0 && (
-                  <div className="flex flex-col gap-2 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
+                  <div className="flex flex-col gap-2 duration-200 animate-in fade-in-0 slide-in-from-bottom-1">
                     <div className="flex items-center justify-between">
                       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                         {t("suggestedSkills")}
                       </p>
                       {appliedSkills ? (
-                        <span className="text-xs text-green-600 flex items-center gap-1">
+                        <span className="flex items-center gap-1 text-xs text-green-600">
                           <LucideCheckCircle2 className="size-3" />{" "}
                           {t("applied")}
                         </span>
@@ -336,7 +336,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-6 text-[11px] px-2"
+                          className="h-6 px-2 text-[11px]"
                           onClick={handleApplySkills}
                           disabled={generating}
                         >
@@ -349,7 +349,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                         <Badge
                           key={skill}
                           variant="secondary"
-                          className="text-xs gap-1 animate-in zoom-in-75 duration-150"
+                          className="gap-1 text-xs duration-150 animate-in zoom-in-75"
                         >
                           <LucidePlus className="size-2.5" />
                           {skill}
@@ -372,14 +372,14 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                     {data.experienceSuggestions.map((s) => (
                       <div
                         key={s.index}
-                        className="flex flex-col gap-2 rounded-none border border-border border-l-[5px] border-l-foreground p-3 bg-muted/20 animate-in fade-in-0 slide-in-from-bottom-1 duration-200"
+                        className="flex flex-col gap-2 rounded-none border border-border bg-muted/20 p-3 duration-200 animate-in fade-in-0 slide-in-from-bottom-1"
                       >
                         <div className="flex items-center justify-between">
                           <p className="text-xs font-medium text-foreground">
                             {t("positionNumber", { number: s.index + 1 })}
                           </p>
                           {appliedExp.has(s.index) ? (
-                            <span className="text-xs text-green-600 flex items-center gap-1">
+                            <span className="flex items-center gap-1 text-xs text-green-600">
                               <LucideCheckCircle2 className="size-3" />{" "}
                               {t("applied")}
                             </span>
@@ -387,7 +387,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="h-6 text-[11px] px-2"
+                              className="h-6 px-2 text-[11px]"
                               onClick={() => handleApplyExperience(s.index)}
                               disabled={generating}
                             >
@@ -395,17 +395,17 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                             </Button>
                           )}
                         </div>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
+                        <p className="text-xs leading-relaxed text-muted-foreground">
                           {s.improvedDescription}
                         </p>
                         {s.improvedAchievements.length > 0 && (
-                          <ul className="flex flex-col gap-1 mt-1">
+                          <ul className="mt-1 flex flex-col gap-1">
                             {s.improvedAchievements.map((a, i) => (
                               <li
                                 key={i}
                                 className="flex items-start gap-1.5 text-xs text-muted-foreground"
                               >
-                                <LucideCheckCircle2 className="size-3 mt-0.5 shrink-0 text-primary/60" />
+                                <LucideCheckCircle2 className="mt-0.5 size-3 shrink-0 text-primary/60" />
                                 {a}
                               </li>
                             ))}
@@ -416,7 +416,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
 
                     {/* Skeleton For Next EXP Block While Still Streaming Section */}
                     {generating && (
-                      <div className="flex flex-col gap-2 rounded-none border border-border border-l-[5px] border-l-foreground p-3 bg-muted/20">
+                      <div className="flex flex-col gap-2 rounded-none border border-border bg-muted/20 p-3">
                         <Skeleton className="h-3 w-24 rounded-none" />
                         <Skeleton className="h-3 w-full rounded-none" />
                         <Skeleton className="h-3 w-5/6 rounded-none" />
@@ -430,11 +430,11 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
 
           {/* Re-analyze Button Section */}
           {data && !generating && (
-            <div className="px-5 py-3 border-t bg-background">
+            <div className="border-t bg-background px-5 py-3">
               <Button
                 size="sm"
                 variant="outline"
-                className="w-full text-xs gap-1.5"
+                className="w-full gap-1.5 text-xs"
                 onClick={handleReanalyze}
               >
                 <LucideSparkles className="size-3.5" />

@@ -14,16 +14,17 @@ export default function ProfileCompletionCard({
   const isComplete = percentage >= 100;
 
   /* --------------------------------- Helpers --------------------------------- */
-  const barColor = isComplete ? "bg-emerald-500" : "bg-foreground";
+  const barColor = isComplete ? "bg-success" : "bg-primary";
 
-  const textColor = isComplete ? "text-emerald-500" : "text-foreground";
+  // text-emerald-500 before this: 2.3:1 on a white card, well under AA.
+  const textColor = isComplete ? "text-success-accent" : "text-foreground";
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <section className="profile-completion-card border border-border bg-card p-4 sm:p-5">
       <div className="flex items-center gap-4 sm:gap-5">
         {/* Completion Metric Section */}
-        <div className="grid size-16 shrink-0 place-items-center bg-foreground text-background sm:size-[72px]">
+        <div className="grid size-16 shrink-0 place-items-center border border-border bg-muted text-foreground sm:size-[72px]">
           {isComplete ? (
             <LucideCheck className="size-6" />
           ) : (
@@ -34,7 +35,7 @@ export default function ProfileCompletionCard({
         </div>
 
         {/* Info Section */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="mb-2 flex items-center justify-between gap-2">
             <span className="text-xs font-black uppercase tracking-[0.14em]">
               {t("completion")}
@@ -66,7 +67,7 @@ export default function ProfileCompletionCard({
                 </span>
               ))}
               {missingFields.length > 4 && (
-                <span className="text-[11px] text-muted-foreground px-1 py-0.5">
+                <span className="px-1 py-0.5 text-[11px] text-muted-foreground">
                   +{missingFields.length - 4} {t("missingInformation")}
                 </span>
               )}

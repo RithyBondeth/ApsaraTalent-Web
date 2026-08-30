@@ -2,6 +2,7 @@ import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { API_AUTH_LOGOUT_URL } from "../constants/apis/auth.api.constant";
 import { COOKIE_CONFIG } from "../constants/cookie.constant";
 
+/* --------------------------------- Methods --------------------------------- */
 /** Store only non-sensitive routing state on the web origin. */
 export const setSessionRole = (
   role: string | null | undefined,

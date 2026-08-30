@@ -7,7 +7,12 @@ import ErrorMessage from "@/components/utils/feedback/error-message";
 import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { LucidePlus, LucideTrash2, Sparkles, Loader2 } from "lucide-react";
+import {
+  LucidePlus,
+  LucideTrash2,
+  LucideSparkles,
+  LucideLoader2,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { Controller, useFieldArray, useWatch } from "react-hook-form";
@@ -79,7 +84,7 @@ export default function ExperienceStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto pr-1">
+    <div className="flex max-h-[500px] w-full flex-col gap-5 overflow-y-auto pr-1">
       {/* Title Section */}
       <TypographyH4>{t("empExperienceTitle")}</TypographyH4>
 
@@ -87,11 +92,11 @@ export default function ExperienceStepForm({
       {fields.map((field, index) => (
         <div
           key={field.id}
-          className="relative flex flex-col items-start gap-3 w-full border border-border border-l-[5px] border-l-foreground rounded-none bg-muted p-5"
+          className="relative flex w-full flex-col items-start gap-3 rounded-none border border-border bg-muted p-5"
         >
           {/* Header Without Remove Button Section */}
           {fields.length === 1 && (
-            <div className="w-full mb-3">
+            <div className="mb-3 w-full">
               <TypographyMuted className="text-md font-bold text-foreground">
                 {t("empExperienceLabel")} {index + 1}
               </TypographyMuted>
@@ -100,7 +105,7 @@ export default function ExperienceStepForm({
 
           {/* Header With Remove Button Section */}
           {fields.length > 1 && (
-            <div className="w-full flex items-center justify-between mb-3">
+            <div className="mb-3 flex w-full items-center justify-between">
               <TypographyMuted className="text-md font-bold text-foreground">
                 {t("empExperienceLabel")} {index + 1}
               </TypographyMuted>
@@ -142,7 +147,7 @@ export default function ExperienceStepForm({
           />
 
           {/* Description Section */}
-          <div className="w-full flex flex-col gap-1">
+          <div className="flex w-full flex-col gap-1">
             <div className="flex items-center justify-between">
               <TypographyMuted className="text-xs">
                 {t("empExperienceDescription")}
@@ -154,12 +159,12 @@ export default function ExperienceStepForm({
                   size="sm"
                   onClick={() => handleRefine(index)}
                   disabled={isRefining}
-                  className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                  className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                 >
                   {isRefining ? (
-                    <Loader2 size={10} className="animate-spin" />
+                    <LucideLoader2 size={10} className="animate-spin" />
                   ) : (
-                    <Sparkles size={10} />
+                    <LucideSparkles size={10} />
                   )}
                   {tr("aiRefine")}
                 </Button>
@@ -177,9 +182,9 @@ export default function ExperienceStepForm({
           </div>
 
           {/* StartDate and EndDate Section */}
-          <div className="w-full flex items-center gap-4">
+          <div className="flex w-full items-center gap-4">
             {/* StartDate Section */}
-            <div className="w-full flex flex-col gap-1">
+            <div className="flex w-full flex-col gap-1">
               <TypographyMuted className="text-xs">
                 {t("empExperienceStartDate")}
               </TypographyMuted>
@@ -202,7 +207,7 @@ export default function ExperienceStepForm({
             </div>
 
             {/* EndDate Section */}
-            <div className="w-full flex flex-col gap-1">
+            <div className="flex w-full flex-col gap-1">
               <TypographyMuted className="text-xs">
                 {t("empExperienceEndDate")}
               </TypographyMuted>

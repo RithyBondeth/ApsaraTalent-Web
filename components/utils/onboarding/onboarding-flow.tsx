@@ -106,7 +106,9 @@ export function OnboardingFlow() {
       {/* Backdrop Section */}
       <div
         className={cn(
-          "fixed inset-0 z-50 bg-foreground/30 backdrop-blur-[2px] transition-opacity duration-300",
+          // bg-scrim, not bg-foreground: --foreground inverts per theme, so
+          // this backdrop was washing the dark theme in 30% near-white.
+          "fixed inset-0 z-50 bg-scrim/30 backdrop-blur-[2px] transition-opacity duration-300",
           closing ? "opacity-0" : "opacity-100",
         )}
         onClick={dismiss}
@@ -121,12 +123,12 @@ export function OnboardingFlow() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Card Container Section */}
-        <div className="relative flex flex-col gap-4 rounded-none border border-border border-t-[5px] border-t-foreground bg-card p-5 shadow-[6px_6px_0_hsl(var(--foreground)/0.12)]">
+        <div className="relative flex flex-col gap-4 rounded-none border border-border bg-card p-5 shadow-hard-lg">
           {/* Close Button Section */}
           <button
             onClick={dismiss}
             aria-label="Close onboarding"
-            className="absolute right-3 top-3 flex size-6 items-center justify-center rounded-none text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            className="absolute right-3 top-3 flex size-6 items-center justify-center rounded-none text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <LucideX className="size-3.5" />
           </button>
@@ -142,10 +144,10 @@ export function OnboardingFlow() {
               {currentStep.icon}
             </div>
             <div className="flex flex-col gap-1 pr-4">
-              <p className="font-semibold text-sm leading-snug">
+              <p className="text-sm font-semibold leading-snug">
                 {t(currentStep.titleKey)}
               </p>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-xs leading-relaxed text-muted-foreground">
                 {t(currentStep.descKey)}
               </p>
             </div>
@@ -164,8 +166,8 @@ export function OnboardingFlow() {
                   className={cn(
                     "rounded-none transition-all duration-200",
                     i === step
-                      ? "w-5 h-2 bg-foreground"
-                      : "w-2 h-2 bg-border hover:bg-muted-foreground/50",
+                      ? "h-2 w-5 bg-primary"
+                      : "h-2 w-2 bg-border hover:bg-muted-foreground/50",
                   )}
                 />
               ))}
@@ -175,7 +177,7 @@ export function OnboardingFlow() {
             <Button
               size="sm"
               onClick={next}
-              className="h-8 px-4 rounded-none text-xs gap-1.5"
+              className="h-8 gap-1.5 rounded-none px-4 text-xs"
             >
               {step < STEPS.length - 1 ? (
                 <>

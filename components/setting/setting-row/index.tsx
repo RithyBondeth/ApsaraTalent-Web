@@ -12,11 +12,11 @@ export function SettingRow(props: ISettingRowProps) {
       {/* Setting Row Section */}
       <div className="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
         {/* Setting Row Left Section */}
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="flex min-w-0 items-center gap-3">
           <span className="flex size-8 shrink-0 items-center justify-center bg-muted text-foreground [&>svg]:size-4">
             {icon}
           </span>
-          <span className="text-sm font-medium truncate">{label}</span>
+          <span className="truncate text-sm font-medium">{label}</span>
         </div>
 
         {/* Setting Row Right Section */}

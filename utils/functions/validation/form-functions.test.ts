@@ -32,10 +32,14 @@ describe("shared form validations", () => {
 
   it("validates optional Khmer phone numbers and dates", () => {
     expect(khmerPhoneNumberValidation().safeParse("").success).toBe(true);
-    expect(khmerPhoneNumberValidation().safeParse(" 012345678 ").success).toBe(true);
+    expect(khmerPhoneNumberValidation().safeParse(" 012345678 ").success).toBe(
+      true,
+    );
     expect(khmerPhoneNumberValidation().safeParse("123").success).toBe(false);
     expect(dateValidation("Birthday").safeParse("").success).toBe(false);
-    expect(dateValidation("Birthday").safeParse("2024-01-02").success).toBe(true);
+    expect(dateValidation("Birthday").safeParse("2024-01-02").success).toBe(
+      true,
+    );
     expect(dateValidation().safeParse(new Date()).success).toBe(true);
   });
 
@@ -43,12 +47,24 @@ describe("shared form validations", () => {
     const pdf = new File(["ok"], "resume.pdf", { type: "application/pdf" });
     const text = new File(["no"], "resume.txt", { type: "text/plain" });
     const image = new File(["ok"], "avatar.png", { type: "image/png" });
-    expect(optionalFileValidation("Resume").safeParse(undefined).success).toBe(true);
+    expect(optionalFileValidation("Resume").safeParse(undefined).success).toBe(
+      true,
+    );
     expect(optionalFileValidation("Resume").safeParse(pdf).success).toBe(true);
-    expect(optionalFileValidation("Resume").safeParse(text).success).toBe(false);
-    expect(optionalFileValidation("Resume").safeParse("file").success).toBe(false);
-    expect(optionalImageValidation("Avatar").safeParse(image).success).toBe(true);
-    expect(optionalImageValidation("Avatar").safeParse("existing-url").success).toBe(true);
-    expect(optionalImageValidation("Avatar").safeParse(text).success).toBe(false);
+    expect(optionalFileValidation("Resume").safeParse(text).success).toBe(
+      false,
+    );
+    expect(optionalFileValidation("Resume").safeParse("file").success).toBe(
+      false,
+    );
+    expect(optionalImageValidation("Avatar").safeParse(image).success).toBe(
+      true,
+    );
+    expect(
+      optionalImageValidation("Avatar").safeParse("existing-url").success,
+    ).toBe(true);
+    expect(optionalImageValidation("Avatar").safeParse(text).success).toBe(
+      false,
+    );
   });
 });

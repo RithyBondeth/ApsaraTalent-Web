@@ -6,7 +6,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { LucideCheckCircle2, LucideLoader2 } from "lucide-react";
 import ApsaraLoadingSpinner from "@/components/utils/feedback/apsara-loading-spinner";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TLoadingStep } from "@/utils/interfaces/ui/loading.interface";
@@ -30,18 +30,20 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
   return (
     <Dialog open={loading}>
       <DialogContent
-        className="max-w-sm overflow-hidden rounded-none border-border/60 bg-background/95 shadow-2xl backdrop-blur-sm sm:rounded-none [&>button]:hidden"
+        size="sm"
+        hideClose
+        className="bg-background/95 backdrop-blur-sm"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         {/* Background Orbs Section */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="loading-dialog-orb absolute -top-16 -right-10 h-32 w-32 rounded-full bg-primary/15 blur-2xl" />
+        <div className="pointer-events-none absolute inset-0">
+          <div className="loading-dialog-orb absolute -right-10 -top-16 h-32 w-32 rounded-full bg-primary/15 blur-2xl" />
           <div className="loading-dialog-orb absolute -bottom-16 -left-10 h-32 w-32 rounded-full bg-primary/15 blur-2xl" />
         </div>
 
         {/* Main Content Section */}
-        <div className="relative z-10 w-full flex flex-col items-center justify-center gap-4 py-2">
+        <div className="relative z-10 flex w-full flex-col items-center justify-center gap-4 py-2">
           {/* Loading Spinner Section */}
           <div className="loading-dialog-spinner-wrap">
             <ApsaraLoadingSpinner size={64} loop />
@@ -52,7 +54,7 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
 
           {/* Progress Section */}
           {hasProgress ? (
-            <div className="w-full flex flex-col gap-3">
+            <div className="flex w-full flex-col gap-3">
               {/* Progress Bar Section */}
               <div className="h-1.5 w-full overflow-hidden bg-muted">
                 <div
@@ -62,12 +64,12 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
               </div>
 
               {/* Percentage Label Section */}
-              <TypographyMuted className="text-xs text-muted-foreground text-center tabular-nums">
+              <TypographyMuted className="text-center text-xs tabular-nums text-muted-foreground">
                 {Math.round(progress)}%
               </TypographyMuted>
 
               {/* Step List Section */}
-              <ul className="w-full flex flex-col gap-2 mt-1">
+              <ul className="mt-1 flex w-full flex-col gap-2">
                 {steps.map((step, i) => {
                   const done = progress >= step.completeAt;
                   const active =
@@ -83,17 +85,17 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
                         done
                           ? "text-primary"
                           : active
-                            ? "text-foreground font-medium"
+                            ? "font-medium text-foreground"
                             : "text-muted-foreground"
                       }`}
                     >
                       {done ? (
-                        <CheckCircle2
+                        <LucideCheckCircle2
                           size={14}
                           className="shrink-0 text-primary"
                         />
                       ) : active ? (
-                        <Loader2
+                        <LucideLoader2
                           size={14}
                           className="shrink-0 animate-spin text-primary"
                         />
