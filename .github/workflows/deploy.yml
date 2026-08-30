@@ -113,6 +113,18 @@ jobs:
       - name: Run TypeScript checks
         run: npm run typecheck
 
+      # knip.jsonc has existed since before this step, with real configuration —
+      # but knip itself was never a dependency and no script or workflow ever
+      # invoked it. Configuration for a tool that cannot run reports nothing.
+      #
+      # `--exclude types` is deliberate. Everything knip checks is clean today
+      # except 10 unused exported types, so gating on the rest costs nothing and
+      # starts catching dead files, unused dependencies, unlisted dependencies
+      # and unresolved imports immediately. Drop the flag once those 10 are
+      # cleared; `npm run knip` reports them meanwhile.
+      - name: Check for dead code and unused dependencies
+        run: npm run knip:check
+
       # Asserts every design token still clears WCAG AA against the surface it
       # sits on, and that raw palette classes (bg-green-100 and friends) have
       # not crept back past their baseline.
