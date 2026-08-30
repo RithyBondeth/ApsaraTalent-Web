@@ -10,22 +10,23 @@ vi.mock("@/components/matching/lazy-ai-actions", () => ({
   LazyAiSkillGapAction: () => <button>Skill gap</button>,
 }));
 vi.mock("next-intl", () => ({
-  useTranslations: (namespace: string) => (key: string, values?: Record<string, unknown>) => {
-    if (namespace === "locations") return key;
-    const labels: Record<string, string> = {
-      unmatch: "Unmatch",
-      unmatchConfirmTitle: `Unmatch ${values?.name ?? "user"}?`,
-      unmatchConfirmDesc: "This removes the connection.",
-      cancel: "Cancel",
-      unmatchConfirm: "Yes, unmatch",
-      schedule: "Schedule",
-      chatNow: "Chat now",
-      founded: `Founded ${values?.year ?? ""}`,
-      memberCount: `${values?.count ?? 0} members`,
-      positionCount: `${values?.count ?? 0} positions`,
-    };
-    return labels[key] ?? key;
-  },
+  useTranslations:
+    (namespace: string) => (key: string, values?: Record<string, unknown>) => {
+      if (namespace === "locations") return key;
+      const labels: Record<string, string> = {
+        unmatch: "Unmatch",
+        unmatchConfirmTitle: `Unmatch ${values?.name ?? "user"}?`,
+        unmatchConfirmDesc: "This removes the connection.",
+        cancel: "Cancel",
+        unmatchConfirm: "Yes, unmatch",
+        schedule: "Schedule",
+        chatNow: "Chat now",
+        founded: `Founded ${values?.year ?? ""}`,
+        memberCount: `${values?.count ?? 0} members`,
+        positionCount: `${values?.count ?? 0} positions`,
+      };
+      return labels[key] ?? key;
+    },
 }));
 
 const position = {
@@ -75,7 +76,9 @@ describe("matching cards", () => {
     expect(onChat).toHaveBeenCalledOnce();
 
     await user.click(screen.getByRole("button", { name: "Unmatch" }));
-    expect(screen.getByRole("dialog", { name: "Unmatch Apsara Labs?" })).toBeVisible();
+    expect(
+      screen.getByRole("dialog", { name: "Unmatch Apsara Labs?" }),
+    ).toBeVisible();
     await user.click(screen.getByRole("button", { name: "Cancel" }));
     expect(onUnmatch).not.toHaveBeenCalled();
 

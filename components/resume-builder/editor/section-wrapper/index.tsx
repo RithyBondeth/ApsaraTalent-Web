@@ -1,6 +1,6 @@
 "use client";
 
-import { GripVertical } from "lucide-react";
+import { LucideGripVertical } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
@@ -41,7 +41,7 @@ export function SectionWrapper(props: ISectionWrapperProps) {
         setSelectedSection(sectionId);
       }}
       className={[
-        "relative group/section rounded-none transition-all duration-150",
+        "group/section relative rounded-none transition-all duration-150",
         isSelected
           ? "ring-2 ring-blue-500 ring-offset-2"
           : "ring-0 hover:ring-1 hover:ring-blue-300/60 hover:ring-offset-1",
@@ -55,11 +55,11 @@ export function SectionWrapper(props: ISectionWrapperProps) {
           title={t("dragToReorderSection")}
           className={[
             "absolute -left-6 top-2 cursor-grab active:cursor-grabbing",
-            "opacity-0 group-hover/section:opacity-50 transition-opacity duration-150",
+            "opacity-0 transition-opacity duration-150 group-hover/section:opacity-50",
             isSelected ? "!opacity-80" : "",
           ].join(" ")}
         >
-          <GripVertical size={14} className="text-blue-500" />
+          <LucideGripVertical size={14} className="text-blue-500" />
         </div>
       )}
 

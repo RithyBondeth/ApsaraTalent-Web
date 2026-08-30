@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { GridRunners } from "@/components/ui/grid-runners";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { useGsapScrollAnimation } from "@/hooks/utils/use-gsap-animation";
 import { LucideArrowRight } from "lucide-react";
@@ -20,19 +19,15 @@ export default function LandingCta() {
         data-gsap="scale-up"
         className="landing-dark-panel relative mx-auto max-w-7xl overflow-hidden px-6 py-16 sm:px-10 sm:py-20 lg:px-16 lg:py-24"
       >
-        {/* Grid Background Section */}
-        <div className="landing-dark-grid pointer-events-none absolute inset-0" />
-        <GridRunners className="landing-dark-grid-runners" density="quiet" />
-        
         {/* CTA Heading Section */}
         <div className="relative z-10 grid gap-12 lg:grid-cols-[1fr_0.72fr] lg:items-end">
           <div>
-            <p className="mb-6 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/45">
+            <p className="mb-6 text-[11px] font-semibold uppercase tracking-[0.24em] text-[hsl(var(--landing-panel-ink)/0.45)]">
               {t("badge")}
             </p>
             <TypographyH2
               data-gsap="split-chars"
-              className="max-w-3xl text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl lg:text-6xl !leading-[1.05] [perspective:800px]"
+              className="max-w-3xl text-3xl font-semibold !leading-[1.05] tracking-[-0.04em] text-[hsl(var(--landing-panel-ink))] [perspective:800px] sm:text-4xl lg:text-6xl"
             >
               {t("ctaHeading")} {t("ctaHeadingHighlight")}?
             </TypographyH2>
@@ -42,11 +37,11 @@ export default function LandingCta() {
           <div className="lg:justify-self-end">
             <p
               data-gsap="blur-reveal"
-              className="mb-7 max-w-lg text-sm leading-relaxed text-white/55 sm:text-base"
+              className="mb-7 max-w-lg text-sm leading-relaxed text-[hsl(var(--landing-panel-ink)/0.55)] sm:text-base"
             >
               {t("ctaDescription")}
             </p>
-           
+
             {/* CTA Button Section */}
             <div
               data-gsap="fade-up"
@@ -55,7 +50,7 @@ export default function LandingCta() {
               <Link href="/signup/option" data-magnetic>
                 <Button
                   size="lg"
-                  className="h-12 w-full rounded-none bg-white px-7 text-black shadow-none hover:bg-white/90 sm:w-auto"
+                  className="h-12 w-full rounded-none px-7 shadow-none sm:w-auto"
                 >
                   {t("getStartedFree")}
                   <LucideArrowRight className="size-4" />
@@ -65,7 +60,7 @@ export default function LandingCta() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="h-12 w-full rounded-none border-white/25 bg-transparent px-7 text-white shadow-none hover:bg-white/10 hover:text-white sm:w-auto"
+                  className="h-12 w-full rounded-none px-7 shadow-none sm:w-auto"
                 >
                   {t("signIn")}
                 </Button>

@@ -5,19 +5,27 @@ test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
 });
 
-test("login validates fields and supports password visibility", async ({ page }) => {
+test("login validates fields and supports password visibility", async ({
+  page,
+}) => {
   await page.goto("/login");
   const email = page.getByLabel("Email");
   const password = page.getByRole("textbox", { name: "Password" });
 
   await page.getByRole("button", { name: "Login", exact: true }).click();
-  await expect(page.getByRole("alert").filter({ hasText: "Email is required" })).toBeVisible();
-  await expect(page.getByRole("alert").filter({ hasText: "Password is required" })).toBeVisible();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Email is required" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Password is required" }),
+  ).toBeVisible();
 
   await email.fill("not-an-email");
   await password.fill("weak");
   await page.getByRole("button", { name: "Login", exact: true }).click();
-  await expect(page.getByRole("alert").filter({ hasText: "Invalid email" })).toBeVisible();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Invalid email" }),
+  ).toBeVisible();
 
   await expect(password).toHaveAttribute("type", "password");
   await page.getByRole("button", { name: "Show password" }).click();
@@ -26,9 +34,12 @@ test("login validates fields and supports password visibility", async ({ page })
   await expect(password).toHaveAttribute("type", "password");
 });
 
-test("login submits the expected credentials and surfaces an API rejection", async ({ page }) => {
+test("login submits the expected credentials and surfaces an API rejection", async ({
+  page,
+}) => {
   await page.route("http://127.0.0.1:13000/**/auth/login", async (route) => {
-    const origin = route.request().headers()["origin"] ?? "http://127.0.0.1:14001";
+    const origin =
+      route.request().headers()["origin"] ?? "http://127.0.0.1:14001";
     await route.fulfill({
       status: 401,
       contentType: "application/json",
@@ -41,7 +52,9 @@ test("login submits the expected credentials and surfaces an API rejection", asy
   });
   await page.goto("/login");
   await page.getByLabel("Email").fill("candidate@example.com");
-  await page.getByRole("textbox", { name: "Password", exact: true }).fill("StrongPass1!");
+  await page
+    .getByRole("textbox", { name: "Password", exact: true })
+    .fill("StrongPass1!");
   const requestPromise = page.waitForRequest(/\/auth\/login$/);
   await page.getByRole("button", { name: "Login", exact: true }).click();
   const request = await requestPromise;
@@ -54,7 +67,9 @@ test("login submits the expected credentials and surfaces an API rejection", asy
   await expect(page.getByText("Login failed", { exact: true })).toBeVisible();
 });
 
-test("successful email login preserves the protected callback destination", async ({ page }) => {
+test("successful email login preserves the protected callback destination", async ({
+  page,
+}) => {
   await mockApi(page, successfulEmployeeApi);
   await page.goto("/login?callbackUrl=%2Fdashboard");
   await page.getByLabel("Email").fill("candidate@example.com");
@@ -75,10 +90,14 @@ test("phone login validates malformed Cambodian numbers", async ({ page }) => {
   await page.goto("/login/phone-number");
   await page.getByLabel("Phone Number *").fill("123");
   await page.getByRole("button", { name: "Login", exact: true }).click();
-  await expect(page.getByText("Invalid Khmer phone number", { exact: false })).toBeVisible();
+  await expect(
+    page.getByText("Invalid Khmer phone number", { exact: false }),
+  ).toBeVisible();
 });
 
-test("phone login sends and verifies an OTP before entering the app", async ({ page }) => {
+test("phone login sends and verifies an OTP before entering the app", async ({
+  page,
+}) => {
   await mockApi(page, (request) => {
     const pathname = new URL(request.url()).pathname;
     if (pathname.endsWith("/auth/login-otp")) {
@@ -105,7 +124,9 @@ test("phone login sends and verifies an OTP before entering the app", async ({ p
   await expect(page).toHaveURL(/\/feed$/, { timeout: 10_000 });
 });
 
-test("forgot-password validates empty and malformed identifiers", async ({ page }) => {
+test("forgot-password validates empty and malformed identifiers", async ({
+  page,
+}) => {
   await page.goto("/forgot-password");
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(
@@ -119,7 +140,9 @@ test("forgot-password validates empty and malformed identifiers", async ({ page 
   ).toBeVisible();
 });
 
-test("forgot and reset password submit successful recovery requests", async ({ page }) => {
+test("forgot and reset password submit successful recovery requests", async ({
+  page,
+}) => {
   await mockApi(page, (request) => {
     const pathname = new URL(request.url()).pathname;
     if (pathname.endsWith("/auth/forgot-password")) {
@@ -141,8 +164,12 @@ test("forgot and reset password submit successful recovery requests", async ({ p
 
   await page.goto("/reset-password?token=e2e-reset-token");
   await page.getByRole("textbox", { name: "New Password" }).fill("NewStrong1!");
-  await page.getByRole("textbox", { name: "Confirm Password" }).fill("NewStrong1!");
-  const resetRequest = page.waitForRequest(/\/auth\/reset-password\/e2e-reset-token$/);
+  await page
+    .getByRole("textbox", { name: "Confirm Password" })
+    .fill("NewStrong1!");
+  const resetRequest = page.waitForRequest(
+    /\/auth\/reset-password\/e2e-reset-token$/,
+  );
   await page.getByRole("button", { name: "Reset Password" }).click();
   expect((await resetRequest).postDataJSON()).toEqual({
     newPassword: "NewStrong1!",
@@ -151,7 +178,9 @@ test("forgot and reset password submit successful recovery requests", async ({ p
   await expect(page).toHaveURL(/\/login$/, { timeout: 8_000 });
 });
 
-test("forgot-password recovers after a temporary server error", async ({ page }) => {
+test("forgot-password recovers after a temporary server error", async ({
+  page,
+}) => {
   let attempts = 0;
   await mockApi(page, (request) => {
     if (new URL(request.url()).pathname.endsWith("/auth/forgot-password")) {
@@ -166,7 +195,9 @@ test("forgot-password recovers after a temporary server error", async ({ page })
   const identifier = page.getByLabel("Email or Mobile");
   await identifier.fill("candidate@example.com");
   await page.getByRole("button", { name: "Continue" }).click();
-  await expect(page.getByText("An error occurred", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("An error occurred", { exact: true }),
+  ).toBeVisible();
   await expect(identifier).toBeEnabled();
 
   await page.getByRole("button", { name: "Continue" }).click();
@@ -174,7 +205,9 @@ test("forgot-password recovers after a temporary server error", async ({ page })
   expect(attempts).toBe(2);
 });
 
-test("reset-password validates strength and matching confirmation", async ({ page }) => {
+test("reset-password validates strength and matching confirmation", async ({
+  page,
+}) => {
   await page.goto("/reset-password?token=e2e-reset-token");
   const password = page.getByRole("textbox", { name: "New Password" });
   const confirmation = page.getByRole("textbox", { name: "Confirm Password" });
@@ -184,13 +217,19 @@ test("reset-password validates strength and matching confirmation", async ({ pag
   await expect(
     page.getByText("Password must be at least 8 characters", { exact: true }),
   ).toBeVisible();
-  await expect(page.getByText("Passwords do not match", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("Passwords do not match", { exact: true }),
+  ).toBeVisible();
 });
 
-test("role onboarding validates selection and continues company signup", async ({ page }) => {
+test("role onboarding validates selection and continues company signup", async ({
+  page,
+}) => {
   await page.goto("/signup/option");
   await page.getByRole("button", { name: "Next" }).click();
-  await expect(page.getByText("Please select your role.", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("Please select your role.", { exact: true }),
+  ).toBeVisible();
 
   await page.getByRole("combobox", { name: "Who do you wanna be?" }).click();
   await page.getByRole("option", { name: "Company or (Employer)" }).click();
@@ -199,10 +238,14 @@ test("role onboarding validates selection and continues company signup", async (
   ).toContainText("Company");
   await page.getByRole("button", { name: "Next" }).click();
   await expect(page).toHaveURL(/\/signup$/);
-  await expect(page.getByRole("heading", { name: "Welcome to Apsara Talent" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Welcome to Apsara Talent" }),
+  ).toBeVisible();
 });
 
-test("company signup carries validated account data into company onboarding", async ({ page }) => {
+test("company signup carries validated account data into company onboarding", async ({
+  page,
+}) => {
   await page.goto("/signup/option");
   await page.getByRole("combobox", { name: "Who do you wanna be?" }).click();
   await page.getByRole("option", { name: "Company or (Employer)" }).click();
@@ -211,15 +254,23 @@ test("company signup carries validated account data into company onboarding", as
 
   await page.getByLabel("Mobile").fill("012345678");
   await page.getByLabel("Email").fill("company@example.com");
-  await page.getByRole("textbox", { name: "Password", exact: true }).fill("StrongPass1!");
-  await page.getByRole("textbox", { name: "Confirm Password" }).fill("StrongPass1!");
+  await page
+    .getByRole("textbox", { name: "Password", exact: true })
+    .fill("StrongPass1!");
+  await page
+    .getByRole("textbox", { name: "Confirm Password" })
+    .fill("StrongPass1!");
   await page.getByRole("button", { name: "Next" }).click();
 
   await expect(page).toHaveURL(/\/signup\/company$/);
-  await expect(page.getByRole("heading", { name: "Add Basic information" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Add Basic information" }),
+  ).toBeVisible();
 });
 
-test("employee signup carries personal data into employee onboarding", async ({ page }) => {
+test("employee signup carries personal data into employee onboarding", async ({
+  page,
+}) => {
   await page.goto("/signup/option");
   await page.getByRole("combobox", { name: "Who do you wanna be?" }).click();
   await page.getByRole("option", { name: "Employee or (Freelancer)" }).click();
@@ -239,8 +290,12 @@ test("employee signup carries personal data into employee onboarding", async ({ 
   await page.getByRole("option", { name: "Female" }).click();
   await page.getByLabel("Mobile").fill("012345678");
   await page.getByLabel("Email").fill("candidate@example.com");
-  await page.getByRole("textbox", { name: "Password", exact: true }).fill("StrongPass1!");
-  await page.getByRole("textbox", { name: "Confirm Password" }).fill("StrongPass1!");
+  await page
+    .getByRole("textbox", { name: "Password", exact: true })
+    .fill("StrongPass1!");
+  await page
+    .getByRole("textbox", { name: "Confirm Password" })
+    .fill("StrongPass1!");
   await page.getByRole("button", { name: "Next" }).click();
 
   await expect(page).toHaveURL(/\/signup\/employee$/);

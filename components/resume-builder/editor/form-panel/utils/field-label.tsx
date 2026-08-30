@@ -9,7 +9,7 @@ export function FieldLabel({
 }) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <TypographyMuted className={`text-xs font-medium mb-1 ${className ?? ""}`}>
+    <TypographyMuted className={`mb-1 text-xs font-medium ${className ?? ""}`}>
       {children}
     </TypographyMuted>
   );

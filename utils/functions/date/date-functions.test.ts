@@ -20,13 +20,17 @@ describe("date functions", () => {
     expect(formatDateForField(localDate)).toBe("2024-02-03");
     expect(formatDisplayDate("03/02/2024")).toBe("February 3rd, 2024");
     expect(formatDisplayDate("11/02/2024")).toBe("February 11th, 2024");
-    expect(formatDisplayDate("2024-02-22T00:00:00")).toBe("February 22nd, 2024");
+    expect(formatDisplayDate("2024-02-22T00:00:00")).toBe(
+      "February 22nd, 2024",
+    );
     expect(formatShortDate("2024-02-03T12:00:00")).toContain("Feb");
   });
 
   it("handles missing and invalid display dates", () => {
     expect(formatDisplayDate(" ")).toBe("Not specified");
-    expect(() => formatDisplayDate("99/99/2024")).toThrow("Invalid date format");
+    expect(() => formatDisplayDate("99/99/2024")).toThrow(
+      "Invalid date format",
+    );
     expect(() => formatDisplayDate("1/2")).toThrow("Invalid date format");
     expect(() => formatDisplayDate("not-a-date")).toThrow("Invalid date");
   });
@@ -82,8 +86,8 @@ describe("date functions", () => {
     expect(timeAgo(ago(7 * 24 * 60 * 60_000))).toBe("1 week ago");
     expect(timeAgo(ago(31 * 24 * 60 * 60_000))).toBe("1 month ago");
     expect(timeAgo(ago(366 * 24 * 60 * 60_000))).toBe("1 year ago");
-    expect(timeAgo(ago(2 * 60_000), (key, values) => `${key}:${values?.count}`)).toBe(
-      "timeAgoMinutes:2",
-    );
+    expect(
+      timeAgo(ago(2 * 60_000), (key, values) => `${key}:${values?.count}`),
+    ).toBe("timeAgoMinutes:2");
   });
 });

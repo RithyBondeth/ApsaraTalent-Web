@@ -24,35 +24,20 @@ export default defineConfig({
     clearMocks: true,
     coverage: {
       provider: "v8",
+      // Whole directories, not a hand-maintained allowlist.
+      //
+      // This used to name ~25 individual component files. The thresholds below
+      // looked strict, but they were computed over only the files someone had
+      // remembered to add — 23 of 239 in components/, 2 of 101 in app/. A new
+      // untested component could not lower coverage, because it was never in
+      // the denominator. The gate could not fail for the reason gates exist.
+      //
+      // Measuring everything makes the number lower and true. Treat the
+      // thresholds as a ratchet: raise them as coverage improves, never lower
+      // them to make a build pass.
       include: [
-        "app/**/validation.ts",
-        "app/**/validate.ts",
-        "app/**/route.ts",
-        "app/**/favorite-page-client.tsx",
-        "app/**/matching-page-client.tsx",
-        "components/auth/auth-back-button/index.tsx",
-        "components/auth/logout-confirmation-dialog/index.tsx",
-        "components/message/message-input/attachment-strip/index.tsx",
-        "components/message/message-input/reply-preview/index.tsx",
-        "components/favorite/company-favorite-card/index.tsx",
-        "components/favorite/employee-favorite-card/index.tsx",
-        "components/matching/ai-cover-letter-modal/index.tsx",
-        "components/matching/ai-interview-prep-modal/index.tsx",
-        "components/matching/ai-match-explanation-modal/index.tsx",
-        "components/matching/ai-skill-gap-modal/index.tsx",
-        "components/matching/matching-company-card/index.tsx",
-        "components/matching/matching-employee-card/index.tsx",
-        "components/moderation/user-moderation-menu/index.tsx",
-        "components/profile/profile-completion-card/index.tsx",
-        "components/search/search-bar/index.tsx",
-        "components/search/search-error-card/index.tsx",
-        "components/setting/appearance-section/theme-card/index.tsx",
-        "components/employee/employee-signup-form/smart-resume-upload/index.tsx",
-        "components/utils/onboarding/onboarding-flow.tsx",
-        "components/ui/button.tsx",
-        "components/ui/input.tsx",
-        "components/utils/data-display/availability-badge.tsx",
-        "components/utils/dialogs/remove-alert-dialog.tsx",
+        "app/**/*.{ts,tsx}",
+        "components/**/*.{ts,tsx}",
         "hooks/**/*.ts",
         "lib/**/*.ts",
         "middleware.ts",
@@ -68,11 +53,26 @@ export default defineConfig({
       ],
       reporter: ["text", "html", "lcov"],
       reportsDirectory: "coverage",
+      // A RATCHET, not a target. These are the real numbers measured across the
+      // whole app on 2026-08-30, rounded down.
+      //
+      // They look like a collapse from the previous 82/60/85/84. Nothing got
+      // worse and no test was deleted — those figures were computed over ~25
+      // hand-listed files, so they described a curated sample rather than the
+      // application. Measured over everything, coverage is what is written here.
+      //
+      //   statements 37.52%  (4449/11857)
+      //   branches   26.56%  (2519/9483)
+      //   functions  34.86%  (1155/3313)
+      //   lines      38.40%  (4171/10861)
+      //
+      // Raise these as coverage improves. Never lower one to make a build pass:
+      // that is precisely how the old numbers stopped meaning anything.
       thresholds: {
-        statements: 82,
-        branches: 60,
-        functions: 85,
-        lines: 84,
+        statements: 37,
+        branches: 26,
+        functions: 34,
+        lines: 38,
       },
     },
   },

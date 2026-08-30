@@ -67,7 +67,7 @@ export function BlockedUsersSection() {
             title={error}
             description={tS("blockedUsersLoadErrorDescription")}
             compact
-            className="min-h-0 border-x-0 border-b-0 py-7 shadow-none"
+            className="min-h-0 border-0 py-7 shadow-none"
             action={{
               label: tS("retry"),
               onClick: () => void getBlockedUsers(),
@@ -77,22 +77,24 @@ export function BlockedUsersSection() {
           <PageState
             variant="empty"
             title={tS("noBlockedUsers")}
+            description={tS("noBlockedUsersDescription")}
+            icon={LucideShieldBan}
             compact
-            className="min-h-0 border-x-0 border-b-0 py-7 shadow-none"
+            className="min-h-0 border-0 py-7 shadow-none"
           />
         ) : (
           /* ── Blocked Users List Section ────────────────────── */
           blockedUsers.map((u, index) => (
             <div key={u.id}>
               <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-5">
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex min-w-0 items-center gap-3">
                   <Avatar className="h-9 w-9 shrink-0 rounded-none border border-border">
                     <AvatarImage src={u.avatar ?? ""} alt={u.name} />
                     <AvatarFallback className="rounded-none text-xs font-bold">
                       {getNameInitials(u.name)}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium truncate">{u.name}</span>
+                  <span className="truncate text-sm font-medium">{u.name}</span>
                 </div>
                 {/* Unblock Button Section */}
                 <Button

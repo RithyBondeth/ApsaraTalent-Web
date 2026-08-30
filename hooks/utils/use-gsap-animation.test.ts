@@ -10,7 +10,10 @@ const gsapMocks = vi.hoisted(() => {
     kill: vi.fn(),
   };
   const timeline = { fromTo: vi.fn(), to: vi.fn() };
-  const mediaContexts: Array<{ add: ReturnType<typeof vi.fn>; revert: ReturnType<typeof vi.fn> }> = [];
+  const mediaContexts: Array<{
+    add: ReturnType<typeof vi.fn>;
+    revert: ReturnType<typeof vi.fn>;
+  }> = [];
   const matchMedia = vi.fn(() => {
     const context = {
       add: vi.fn((_query: string, callback: () => unknown) => callback()),
@@ -33,7 +36,9 @@ const gsapMocks = vi.hoisted(() => {
     utils: {
       toArray: (values: ArrayLike<Element>) => Array.from(values),
       random: vi.fn((min: number) => min),
-      clamp: vi.fn((min: number, max: number, value: number) => Math.min(max, Math.max(min, value))),
+      clamp: vi.fn((min: number, max: number, value: number) =>
+        Math.min(max, Math.max(min, value)),
+      ),
     },
     scrollCreate: vi.fn(() => ({ kill: vi.fn(), getVelocity: () => 100 })),
   };
@@ -61,7 +66,6 @@ import {
   useGsapHeroAnimation,
   useGsapMarquee,
   useGsapScrollAnimation,
-  useGsapScrollProgress,
 } from "./use-gsap-animation";
 
 function ScrollHarness() {
@@ -93,11 +97,6 @@ function MarqueeHarness() {
   return createElement("div", { ref }, "Companies");
 }
 
-function ProgressHarness() {
-  const ref = useGsapScrollProgress<HTMLDivElement>();
-  return createElement("div", { ref });
-}
-
 describe("GSAP animation hooks", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -110,29 +109,26 @@ describe("GSAP animation hooks", () => {
     expect(gsapMocks.matchMedia).toHaveBeenCalled();
     expect(gsapMocks.fromTo).toHaveBeenCalled();
     expect(gsapMocks.quickTo).toHaveBeenCalled();
-    expect(view.container.querySelectorAll(".gsap-unit").length).toBeGreaterThan(0);
+    expect(
+      view.container.querySelectorAll(".gsap-unit").length,
+    ).toBeGreaterThan(0);
 
     const contexts = [...gsapMocks.mediaContexts];
     view.unmount();
-    expect(contexts.every((context) => context.revert.mock.calls.length === 1)).toBe(true);
+    expect(
+      contexts.every((context) => context.revert.mock.calls.length === 1),
+    ).toBe(true);
   });
 
-  it("initializes hero, marquee, and scroll-progress animations", () => {
+  it("initializes hero and marquee animations", () => {
     const hero = render(createElement(HeroHarness));
     const marquee = render(createElement(MarqueeHarness));
-    const progress = render(createElement(ProgressHarness));
 
     expect(gsapMocks.timeline).toHaveBeenCalled();
     expect(gsapMocks.tween.totalTime).toHaveBeenCalled();
     expect(gsapMocks.scrollCreate).toHaveBeenCalled();
-    expect(gsapMocks.fromTo).toHaveBeenCalledWith(
-      expect.any(HTMLDivElement),
-      { scaleX: 0 },
-      expect.objectContaining({ scaleX: 1 }),
-    );
 
     hero.unmount();
     marquee.unmount();
-    progress.unmount();
   });
 });

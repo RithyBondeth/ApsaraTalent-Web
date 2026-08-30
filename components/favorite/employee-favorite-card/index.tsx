@@ -1,24 +1,21 @@
 import MetaChip from "@/components/utils/data-display/meta-chip";
-import {
-  formatAvailabilityWords,
-  getNameInitials,
-} from "@/utils/functions/text";
+import { cn } from "@/lib/utils";
+import { getNameInitials, translateLocation } from "@/utils/functions/text";
 import {
   LucideBookmarkX,
   LucideBriefcaseBusiness,
   LucideClock,
   LucideMapPin,
-  MoveUpRight,
+  LucideMoveUpRight,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import { IFavoriteEmployeeCardProps } from "./props";
-import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
+import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
-import { translateLocation } from "@/utils/functions/text";
 
 export default function FavoriteEmployeeCard(
   props: IFavoriteEmployeeCardProps,
@@ -27,14 +24,16 @@ export default function FavoriteEmployeeCard(
   const router = useRouter();
   const t = useTranslations("favorite");
   const tl = useTranslations("locations");
-  const availLabel = formatAvailabilityWords(props.availability);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <article
-      className={`group w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
+      className={cn(
+        "group w-full overflow-hidden rounded-none border border-border bg-card shadow-hard transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-hard-lg",
+        props.isRemoving && "animate-card-pop-shrink",
+      )}
     >
-      <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
+      <div className="flex gap-4 p-4 sm:gap-5 sm:p-5">
         {/* Avatar Section */}
         <Avatar
           rounded="md"
@@ -47,27 +46,26 @@ export default function FavoriteEmployeeCard(
         </Avatar>
 
         {/* Content Section */}
-        <div className="flex-1 min-w-0 flex flex-col gap-3">
+        <div className="flex min-w-0 flex-1 flex-col gap-3">
           {/* Header Section */}
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
                 {props.name}
               </h3>
-              <TypographyMuted className="text-sm text-muted-foreground mt-0.5">
+              <TypographyMuted className="mt-0.5 text-sm text-muted-foreground">
                 @{props.username}
               </TypographyMuted>
             </div>
-            <span
-              className={`flex-shrink-0 whitespace-nowrap rounded-none border border-current/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
-            >
-              {availLabel}
-            </span>
+            <AvailabilityBadge
+              availability={props.availability}
+              className="flex-shrink-0 whitespace-nowrap"
+            />
           </div>
 
           {/* Description Section */}
           {props.description && (
-            <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            <TypographyMuted className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
               {props.description}
             </TypographyMuted>
           )}
@@ -76,7 +74,7 @@ export default function FavoriteEmployeeCard(
           {props.skills.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {props.skills.slice(0, 6).map((skill, index) => (
-                <Tag label={skill} key={index} neutral className="!rounded-none border border-border hover:shadow-none" />
+                <Tag label={skill} key={index} />
               ))}
             </div>
           )}
@@ -119,7 +117,7 @@ export default function FavoriteEmployeeCard(
           onClick={() => router.replace(`/feed/employee/${props.id}`)}
         >
           {t("viewDetail")}
-          <MoveUpRight className="size-3.5" />
+          <LucideMoveUpRight className="size-3.5" />
         </Button>
       </div>
     </article>

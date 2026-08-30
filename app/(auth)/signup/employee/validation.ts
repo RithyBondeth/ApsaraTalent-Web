@@ -1,9 +1,10 @@
 import {
   optionalFileValidation,
   optionalImageValidation,
-} from "@/utils/functions/validation/form-schemas";
+} from "@/utils/functions/validation";
 import * as z from "zod";
 
+// ─── Helper Validation ──────────────────────────────────────────
 const makeDateRequired = (requiredError: string) =>
   z.preprocess(
     (arg) => {
@@ -42,12 +43,11 @@ const makeProfessionStepSchema = (m: {
         .string()
         .min(1, m.fieldRequired("Description"))
         .max(1000, m.fieldTooLong("Description", 1000)),
+      // Closed sets on both sides of the platform: these are the values a
+      // company's open position is matched and filtered against.
       workMode: z.enum(["remote", "on_site", "hybrid", "flexible"]).optional(),
       noticePeriod: z.enum(["immediate", "2_weeks", "1_month"]).optional(),
       languages: z.array(z.string()).optional().default([]),
-      expectedSalaryCurrency: z.string().optional().default("USD"),
-      expectedSalaryMin: z.number().positive().optional(),
-      expectedSalaryMax: z.number().positive().optional(),
     }),
   });
 

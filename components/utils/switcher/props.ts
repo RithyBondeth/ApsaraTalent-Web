@@ -4,8 +4,6 @@ export interface ISwitcherProps {
   inline?: boolean;
 }
 
-export type TAnimationKind = "language" | "theme" | null;
-
 interface IThemeViewTransition {
   ready: Promise<void>;
   finished: Promise<void>;

@@ -10,7 +10,11 @@ vi.mock("@/lib/axios", () => ({ default: axiosMocks }));
 describe("user directory API stores", () => {
   beforeEach(() => {
     axiosMocks.get.mockReset();
-    useGetAllCareerScopesStore.setState({ careerScopes: null, loading: false, error: null });
+    useGetAllCareerScopesStore.setState({
+      careerScopes: null,
+      loading: false,
+      error: null,
+    });
     useGetLandingStatsStore.setState({
       stats: null,
       loading: false,

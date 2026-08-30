@@ -73,7 +73,10 @@ describe("recommendation API stores", () => {
 
   it("does not retry client errors other than 404", async () => {
     axiosMocks.get.mockRejectedValueOnce({
-      response: { status: 400, data: { message: "Invalid recommendation request" } },
+      response: {
+        status: 400,
+        data: { message: "Invalid recommendation request" },
+      },
     });
 
     await useGetEmployeeRecommendationsStore
@@ -112,7 +115,9 @@ describe("recommendation API stores", () => {
 
   it("reports the last error after company recommendation retries are exhausted", async () => {
     vi.useFakeTimers();
-    axiosMocks.get.mockRejectedValue(new Error("recommendation service offline"));
+    axiosMocks.get.mockRejectedValue(
+      new Error("recommendation service offline"),
+    );
 
     const request = useGetCompanyRecommendationsStore
       .getState()

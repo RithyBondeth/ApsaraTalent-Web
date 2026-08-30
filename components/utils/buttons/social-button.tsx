@@ -26,7 +26,7 @@ export default function SocialButton(props: ISocialButtonProps) {
     <Button
       type="button"
       variant={props.variant}
-      className={cn(props.className, "py-5 rounded-none")}
+      className={cn(props.className, "rounded-none py-5")}
       onClick={props.onClick}
     >
       <span className="grid w-full max-w-36 grid-cols-[2rem_minmax(0,1fr)] items-center gap-3 text-left">

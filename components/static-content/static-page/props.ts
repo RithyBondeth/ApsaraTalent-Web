@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { IPageBannerStat } from "@/components/utils/layout/page-banner/props";
 
 interface IStaticPageTocItem {
   id: string;
@@ -7,14 +8,21 @@ interface IStaticPageTocItem {
 
 export interface IStaticPageShellProps {
   pageNumber: string;
-  pageTotal?: string;
   title: string;
   subtitle: ReactNode;
   tocHeading: string;
   toc: IStaticPageTocItem[];
-  icon: ReactNode;
-  meta?: ReactNode;
-  heroVisual?: ReactNode;
+  /**
+   * Up to three facts about the document itself — when it was last revised, how
+   * many sections, how long it takes to read. Same contract as PageBanner's:
+   * omit rather than pass placeholders.
+   */
+  stats?: IPageBannerStat[];
+  /**
+   * The `auth-session-role` cookie, read on the server. Threaded to the header
+   * so a signed-in reader arriving from Settings is not offered a Login button.
+   */
+  sessionRole?: string | null;
   children: ReactNode;
 }
 
@@ -46,9 +54,4 @@ export interface IStaticStepProps {
 export interface IStaticNoteProps {
   icon: ReactNode;
   children: ReactNode;
-}
-
-export interface IStaticPageArtworkSlotProps {
-  icon: ReactNode;
-  label: string;
 }

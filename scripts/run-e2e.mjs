@@ -153,7 +153,7 @@ try {
     "/login",
     "/login/phone-number",
     "/login/phone-number/phone-otp",
-    "/login/email-verification/smoke-test-id",
+    "/login/email-verification?email=smoke%40example.com",
     "/forgot-password",
     "/reset-password",
     "/signup",
@@ -170,11 +170,19 @@ try {
     );
   }
 
-  const icon = await fetch(`${baseUrl}/icon.svg`);
-  assert(icon.status === 200, `/icon.svg returned ${icon.status}`);
+  // The favicon is app/icon.png, served through Next's file convention rather
+  // than a literal public path, so this asserts the route the document actually
+  // links to instead of a filename.
+  const iconHref = (await (await fetch(`${baseUrl}/`)).text()).match(
+    /<link[^>]*rel="icon"[^>]*href="([^"]+)"/,
+  )?.[1];
+  assert(Boolean(iconHref), "document did not link a favicon");
+
+  const icon = await fetch(new URL(iconHref, baseUrl));
+  assert(icon.status === 200, `${iconHref} returned ${icon.status}`);
   assert(
-    (icon.headers.get("content-type") ?? "").includes("image/svg+xml"),
-    "/icon.svg did not return SVG content",
+    (icon.headers.get("content-type") ?? "").includes("image/png"),
+    `${iconHref} did not return PNG content`,
   );
 
   const notFound = await fetch(`${baseUrl}/this-route-must-not-exist`);
@@ -203,7 +211,10 @@ try {
       `${route} returned ${response.status} instead of redirecting`,
     );
     const location = response.headers.get("location") ?? "";
-    assert(location.includes("/login?callbackUrl="), `${route} did not redirect to login`);
+    assert(
+      location.includes("/login?callbackUrl="),
+      `${route} did not redirect to login`,
+    );
     assert(
       decodeURIComponent(location).includes(`callbackUrl=${route}`),
       `${route} did not preserve its callback URL`,
@@ -266,28 +277,13 @@ try {
     `Unassigned-role onboarding returned ${onboarding.status}`,
   );
 
-  const logout = await fetch(`${baseUrl}/api/auth/logout`, { method: "POST" });
-  assert(logout.status === 200, `Logout returned ${logout.status}`);
-  const logoutCookies = logout.headers.get("set-cookie") ?? "";
-  assert(
-    logoutCookies.includes("auth-token="),
-    "Logout did not clear auth token",
-  );
-  assert(
-    logoutCookies.toLowerCase().includes("httponly"),
-    "Auth cookie is not HTTP-only",
-  );
-  assert(
-    logoutCookies.includes("refresh-token="),
-    "Logout did not clear refresh token",
-  );
-  assert(
-    logoutCookies.toLowerCase().includes("samesite=strict"),
-    "Logout auth cookies are missing SameSite=strict",
-  );
+  // Logout is not asserted here. The API owns the session cookies on its own
+  // origin, so ending a session is a browser-side call to the API's
+  // /auth/logout — there is nothing for this fetch-only harness to drive. The
+  // real flow is covered in tests/e2e/auth-routing.spec.ts.
 
   process.stdout.write(
-    `Web e2e passed: health, ${publicRoutes.length + 1} public pages, ${protectedRoutes.length} protected redirects, ${protectedRoutes.length} authenticated pages, auth/onboarding redirects, security headers, static assets, 404, logout cookies, standalone runtime\n`,
+    `Web e2e passed: health, ${publicRoutes.length + 1} public pages, ${protectedRoutes.length} protected redirects, ${protectedRoutes.length} authenticated pages, auth/onboarding redirects, security headers, static assets, 404, standalone runtime\n`,
   );
 } catch (error) {
   exitCode = 1;

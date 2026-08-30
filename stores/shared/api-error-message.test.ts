@@ -3,13 +3,9 @@ import { describe, expect, it } from "vitest";
 import { extractApiErrorMessage } from "./api-error-message";
 
 function axiosError(data?: unknown, message = "Request failed") {
-  return new AxiosError(
-    message,
-    "ERR_BAD_RESPONSE",
-    undefined,
-    undefined,
-    { data } as AxiosResponse,
-  );
+  return new AxiosError(message, "ERR_BAD_RESPONSE", undefined, undefined, {
+    data,
+  } as AxiosResponse);
 }
 
 describe("extractApiErrorMessage", () => {

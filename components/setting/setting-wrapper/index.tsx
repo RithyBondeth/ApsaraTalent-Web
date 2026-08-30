@@ -13,7 +13,7 @@ export function SettingWrapper(props: ISettingWrapperProps) {
       {/* Setting Wrapper Header Section */}
       <div className="flex items-start gap-3">
         {/* Setting Wrapper Icon Section */}
-        <div className="flex size-9 shrink-0 items-center justify-center bg-foreground text-background">
+        <div className="flex size-8 shrink-0 items-center justify-center border border-border bg-muted/60 text-foreground">
           <span className="[&>svg]:size-4">{icon}</span>
         </div>
 
@@ -29,7 +29,7 @@ export function SettingWrapper(props: ISettingWrapperProps) {
       </div>
 
       {/* Setting Wrapper Content Section */}
-      <div className="overflow-hidden border border-border border-t-[4px] border-t-primary bg-card shadow-[4px_4px_0_hsl(var(--foreground)/0.05)]">
+      <div className="overflow-hidden border border-border bg-card shadow-hard">
         {children}
       </div>
     </section>

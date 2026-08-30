@@ -17,10 +17,22 @@ describe("job search store", () => {
     const nextPage = [{ id: "job-2", title: "Backend Engineer" }];
     axiosMocks.get
       .mockResolvedValueOnce({
-        data: { data: firstPage, total: 2, page: 1, pageSize: 20, isUsingFallback: false },
+        data: {
+          data: firstPage,
+          total: 2,
+          page: 1,
+          pageSize: 20,
+          isUsingFallback: false,
+        },
       })
       .mockResolvedValueOnce({
-        data: { data: nextPage, total: 2, page: 2, pageSize: 20, isUsingFallback: false },
+        data: {
+          data: nextPage,
+          total: 2,
+          page: 2,
+          pageSize: 20,
+          isUsingFallback: false,
+        },
       });
 
     await useSearchJobStore.getState().querySearchJobs({
@@ -42,7 +54,11 @@ describe("job search store", () => {
     });
 
     useSearchJobStore.getState().resetSearch();
-    expect(useSearchJobStore.getState()).toMatchObject({ jobs: null, total: 0, page: 1 });
+    expect(useSearchJobStore.getState()).toMatchObject({
+      jobs: null,
+      total: 0,
+      page: 1,
+    });
   });
 
   it("records a job-search failure without stale results", async () => {

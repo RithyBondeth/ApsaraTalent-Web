@@ -20,7 +20,7 @@ export default function MetaChip(props: IMetaChipProps) {
       )}
     >
       {/* Icon Section */}
-      <span className="[&>svg]:size-3.5 flex-shrink-0">{icon}</span>
+      <span className="flex-shrink-0 [&>svg]:size-3.5">{icon}</span>
 
       {/* Text Section */}
       <span className="truncate">{text}</span>

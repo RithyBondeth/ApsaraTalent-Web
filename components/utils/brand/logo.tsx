@@ -3,68 +3,82 @@
 import { cn } from "@/lib/utils";
 import {
   logo,
-  logoBlack,
+  logoDark,
   logoWithoutTitle,
 } from "@/utils/constants/asset.constant";
 import Image from "next/image";
 
-/* ----------------------------------- Helper ---------------------------------- */
+/* ---------------------------------------------------------------------------
+ * The brand mark.
+ *
+ * The lockup pairs the dancer with a near-black wordmark that all but vanishes
+ * on the dark theme's page, so it ships as a twin lettered in white. The swap is
+ * a pair of `dark:` visibility classes — no JS, so no hydration flash and no
+ * post-paint jump (next-themes stamps the class before first paint). Both files
+ * download, which is the cost of a CSS-only swap; the optimizer serves each at
+ * the rendered width and nothing here renders past 64px tall.
+ *
+ * The icon-only mark needs no twin. It is the dancer alone, blue and white
+ * throughout with no wordmark to lose, so it reads on either theme and renders
+ * as a single image — one request instead of two.
+ * ------------------------------------------------------------------------- */
+
 interface ILogoProps {
+  /** Icon-only mark — the dancer without the wordmark. */
   withoutTitle?: boolean;
-  width?: number;
+  /** Rendered height in px. Width follows the artwork's own ratio. */
   height?: number;
   className?: string;
   priority?: boolean;
 }
 
+/* The files are already trimmed to their alpha box (see asset.constant), so
+   these are simply their pixel dimensions. Both lockups share a rectangle on
+   purpose, so one ratio serves the pair. */
+const RATIO = { lockup: 1542 / 884, icon: 843 / 1206 } as const;
+
 export default function LogoComponent({
   withoutTitle = false,
-  height = 100,
-  width = 200,
+  height = 56,
   className,
   priority = false,
 }: ILogoProps) {
+  const ratio = withoutTitle ? RATIO.icon : RATIO.lockup;
+  const width = Math.round(height * ratio);
+  /* `alt` stays out of this object and is written on each <Image> below:
+     jsx-a11y/alt-text cannot see it through a spread and warns either way. */
+  const shared = {
+    height,
+    width,
+    sizes: `${width}px`,
+    priority,
+  };
+
   if (withoutTitle) {
     return (
       <Image
+        {...shared}
+        alt="Apsara Talent"
         src={logoWithoutTitle}
-        alt="Apsara Talent logo"
-        height={height}
-        width={width}
-        className={cn("h-auto w-auto", className)}
-        priority={priority}
+        className={cn("w-auto object-contain", className)}
       />
     );
   }
 
   return (
-    <span
-      role="img"
-      aria-label="Apsara Talent"
-      className={cn(
-        "relative inline-grid aspect-[5/3] overflow-visible",
-        className,
-      )}
-      style={className ? undefined : { width, height }}
-    >
+    <>
       <Image
+        {...shared}
+        alt="Apsara Talent"
         src={logo}
-        alt=""
-        fill
-        sizes={`${width}px`}
-        aria-hidden
-        className="pointer-events-none object-contain opacity-100 blur-0 transition-[opacity,transform,filter] duration-500 ease-out dark:scale-[0.98] dark:opacity-0 dark:blur-[2px]"
-        priority={priority}
+        className={cn("w-auto object-contain dark:hidden", className)}
       />
       <Image
-        src={logoBlack}
-        alt=""
-        fill
-        sizes={`${width}px`}
-        aria-hidden
-        className="pointer-events-none scale-[1.08] object-contain opacity-0 blur-[2px] transition-[opacity,transform,filter] duration-500 ease-out dark:scale-[1.11] dark:opacity-100 dark:blur-0"
-        priority={priority}
+        {...shared}
+        alt="Apsara Talent"
+        src={logoDark}
+        className={cn("hidden w-auto object-contain dark:block", className)}
       />
-    </span>
+    </>
   );
 }

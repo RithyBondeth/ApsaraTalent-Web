@@ -13,8 +13,9 @@ import { useChatStore } from "@/stores/features/chat/chat.store";
 import {
   sidebarList,
   MOBILE_PRIMARY_URLS,
+  LEVEL_BADGE_URLS,
 } from "@/utils/constants/sidebar.constant";
-import { LucideFileUser, MoreHorizontal } from "lucide-react";
+import { LucideFileUser, LucideMoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -47,9 +48,9 @@ export default function TopNavbar() {
   const { user, loading } = useGetCurrentUserStore();
 
   // Count Current User Matching
-  const { countCurrentEmpMatching, totalEmpMatching, seenEmpMatching } =
+  const { countCurrentEmpMatching, unseenEmpMatching } =
     useCountCurrentEmployeeMatchingStore();
-  const { countCurrentCmpMatching, totalCmpMatching, seenCmpMatching } =
+  const { countCurrentCmpMatching, unseenCmpMatching } =
     useCountCurrentCompanyMatchingStore();
 
   // Count Current User Favorites
@@ -95,20 +96,16 @@ export default function TopNavbar() {
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Matching Count ─────────────────────────────────────────────────────
+  /*
+    Taken straight from the server. This used to be `total - seen`, where `seen`
+    was a high-water mark in localStorage — a number that only grew, so every
+    unmatch left it above the true total and the badge could never rise again.
+  */
   const matchingCount = useMemo(() => {
-    if (isEmployee)
-      return Math.max(0, (totalEmpMatching ?? 0) - seenEmpMatching);
-    if (isCompany)
-      return Math.max(0, (totalCmpMatching ?? 0) - seenCmpMatching);
+    if (isEmployee) return unseenEmpMatching;
+    if (isCompany) return unseenCmpMatching;
     return 0;
-  }, [
-    isEmployee,
-    isCompany,
-    totalEmpMatching,
-    seenEmpMatching,
-    totalCmpMatching,
-    seenCmpMatching,
-  ]);
+  }, [isEmployee, isCompany, unseenEmpMatching, unseenCmpMatching]);
 
   // ── Favorite Count ─────────────────────────────────────────────────────
   const favoriteCount = useMemo(() => {
@@ -151,6 +148,23 @@ export default function TopNavbar() {
       unreadNotifications,
       pendingInterviewCount,
     ],
+  );
+
+  // ── Get Badge Label ───────────────────────────────────────────────────
+  /*
+    The screen-reader phrasing for a badge, decided here beside the count
+    rather than in each nav item. Every badge previously announced "N unread",
+    which is only true of messages and notifications — a scheduled interview
+    awaiting your reply is not unread, and neither is a new match.
+  */
+  const getBadgeLabel = useCallback(
+    (url: string, count: number) => {
+      if (url === "/matching") return t("badgeNew", { count });
+      if (url === "/interview") return t("badgePending", { count });
+      if (url === "/favorite") return t("badgeSaved", { count });
+      return t("badgeUnread", { count });
+    },
+    [t],
   );
 
   // ── Check Path Active ─────────────────────────────────────────────────
@@ -200,8 +214,18 @@ export default function TopNavbar() {
     (isEmployee && isActive("/resume-builder"));
 
   // ──── More Badge Count ────────────────────────────────────────────────
+  /*
+    Level-only badges (see LEVEL_BADGE_URLS) are deliberately excluded. The
+    favourites total is a collection size, not an event count — rolling it into
+    this sum meant the More tab showed a permanent red number that never
+    changed on its own, hiding the unread-notification and pending-interview
+    counts that genuinely need attention.
+  */
   const moreBadgeCount = moreItems.reduce(
-    (total, item) => total + getBadgeCount(item.url),
+    (total, item) =>
+      LEVEL_BADGE_URLS.includes(item.url)
+        ? total
+        : total + getBadgeCount(item.url),
     0,
   );
 
@@ -213,7 +237,7 @@ export default function TopNavbar() {
         aria-label={`${t("navigationGroup")} — Apsara Talent`}
         className="sticky top-0 z-50 w-full"
       >
-        <div className="app-top-navbar relative border-b border-border bg-background/92 backdrop-blur-xl">
+        <div className="app-top-navbar bg-background/92 relative border-b border-border backdrop-blur-xl">
           <div
             className="relative mx-auto flex h-[60px] max-w-screen-2xl items-center justify-between px-3 sm:px-4 lg:h-16 lg:px-5"
             style={{ paddingTop: "env(safe-area-inset-top)" }}
@@ -225,11 +249,13 @@ export default function TopNavbar() {
               aria-label="Apsara Talent"
               className="group flex h-full shrink-0 items-center border-x border-transparent px-1 transition-colors hover:border-border hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-2 lg:min-w-[96px] lg:justify-center"
             >
+              {/* Height-driven; the width follows the mark's own ratio, so
+                  the box can never stretch it. Now that the artwork's
+                  transparent padding is trimmed, this height is all mark. */}
               <LogoComponent
                 priority
-                height={48}
-                width={80}
-                className="h-12 w-20 transition-transform duration-300 group-hover:-translate-y-0.5"
+                height={56}
+                className="h-11 transition-transform duration-300 group-hover:-translate-y-0.5 lg:h-14"
               />
             </Link>
 
@@ -242,6 +268,7 @@ export default function TopNavbar() {
                   icon={item.icon}
                   label={getNavbarTitle(item.title)}
                   count={getBadgeCount(item.url)}
+                  badgeLabel={getBadgeLabel(item.url, getBadgeCount(item.url))}
                   active={isActive(item.url)}
                 />
               ))}
@@ -251,6 +278,7 @@ export default function TopNavbar() {
                   icon={LucideFileUser}
                   label={t("aiResumeBuilder")}
                   count={0}
+                  badgeLabel=""
                   active={isActive("/resume-builder")}
                 />
               )}
@@ -271,7 +299,7 @@ export default function TopNavbar() {
       {/* Mobile Bottom Tab Bar Section */}
       <nav
         aria-label={t("navigationGroup")}
-        className="app-mobile-navbar fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/94 backdrop-blur-xl lg:hidden"
+        className="app-mobile-navbar bg-background/94 fixed bottom-0 left-0 right-0 z-50 border-t border-border backdrop-blur-xl lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="mx-auto flex h-[68px] max-w-xl items-stretch justify-around">
@@ -282,6 +310,7 @@ export default function TopNavbar() {
               icon={item.icon}
               label={getNavbarTitle(item.title)}
               count={getBadgeCount(item.url)}
+              badgeLabel={getBadgeLabel(item.url, getBadgeCount(item.url))}
               active={isActive(item.url)}
             />
           ))}
@@ -295,23 +324,23 @@ export default function TopNavbar() {
               >
                 <span
                   aria-hidden="true"
-                  className={`absolute left-1/2 top-0 h-[3px] -translate-x-1/2 bg-foreground transition-[width,opacity] duration-200 ${isMoreActive ? "w-8 opacity-100" : "w-0 opacity-0"}`}
+                  className={`absolute left-1/2 top-0 h-[3px] -translate-x-1/2 bg-primary transition-[width,opacity] duration-200 ${isMoreActive ? "w-8 opacity-100" : "w-0 opacity-0"}`}
                 />
                 <span className="flex flex-col items-center gap-1">
                   <span
                     className={`relative flex h-8 w-9 items-center justify-center border transition-[background-color,border-color,color,transform] duration-200 ${
                       isMoreActive
-                        ? "border-primary bg-primary text-primary-foreground shadow-[2px_2px_0_hsl(var(--primary)/0.22)]"
+                        ? "border-primary bg-primary text-primary-foreground shadow-hard-primary-xs"
                         : "border-transparent group-hover:border-border group-hover:bg-muted/60 group-active:translate-y-px"
                     }`}
                   >
-                    <MoreHorizontal
+                    <LucideMoreHorizontal
                       className="size-[18px]"
                       strokeWidth={isMoreActive ? 2.3 : 1.7}
                     />
                     <span className="sr-only">{t("more")}</span>
                     {moreBadgeCount > 0 && (
-                      <span className="absolute -right-2 -top-2 flex h-[17px] min-w-[17px] items-center justify-center border border-background bg-destructive px-1 text-[9px] font-extrabold leading-none text-destructive-foreground shadow-[1px_1px_0_hsl(var(--foreground)/0.18)]">
+                      <span className="absolute -right-2 -top-2 flex h-[17px] min-w-[17px] items-center justify-center border border-background bg-destructive px-1 text-[9px] font-extrabold leading-none text-destructive-foreground shadow-hard-xs">
                         {moreBadgeCount > 99 ? "99+" : moreBadgeCount}
                       </span>
                     )}
@@ -349,6 +378,10 @@ export default function TopNavbar() {
                     icon={item.icon}
                     label={getNavbarTitle(item.title)}
                     count={getBadgeCount(item.url)}
+                    badgeLabel={getBadgeLabel(
+                      item.url,
+                      getBadgeCount(item.url),
+                    )}
                     active={isActive(item.url)}
                     onClick={() => setMoreOpen(false)}
                   />
@@ -359,6 +392,7 @@ export default function TopNavbar() {
                     icon={LucideFileUser}
                     label={t("aiResumeBuilder")}
                     count={0}
+                    badgeLabel=""
                     active={isActive("/resume-builder")}
                     onClick={() => setMoreOpen(false)}
                   />

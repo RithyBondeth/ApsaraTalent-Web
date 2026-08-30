@@ -31,10 +31,7 @@ const REQUIRED = [
 
 // Recommended: absence degrades gracefully, so warn rather than fail.
 // DSNs turn runtime reporting on; the build values enable source-map upload.
-const SENTRY_RUNTIME_RECOMMENDED = [
-  "NEXT_PUBLIC_SENTRY_DSN",
-  "SENTRY_DSN",
-];
+const SENTRY_RUNTIME_RECOMMENDED = ["NEXT_PUBLIC_SENTRY_DSN", "SENTRY_DSN"];
 const SENTRY_BUILD_RECOMMENDED = [
   "SENTRY_ORG",
   "SENTRY_PROJECT",
@@ -115,9 +112,7 @@ for (const mode of modes) {
       `  → ${mode}: ${missingRequired.length} required var(s) missing`,
     );
   } else {
-    const sentry = merged.NEXT_PUBLIC_SENTRY_DSN
-      ? "Sentry ON"
-      : "Sentry off";
+    const sentry = merged.NEXT_PUBLIC_SENTRY_DSN ? "Sentry ON" : "Sentry off";
     console.log(
       `  → ${mode}: OK${missingRecommended.length ? ` (${missingRecommended.length} recommended unset)` : ""}  [${sentry}]`,
     );

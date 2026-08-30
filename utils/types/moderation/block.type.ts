@@ -1,4 +1,4 @@
-import { TUserRole } from "../auth";
+import { TUserRole } from "@/utils/types/auth/role.type";
 
 export type TBlockStatus = {
   isBlocked: boolean;

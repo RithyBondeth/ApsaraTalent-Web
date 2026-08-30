@@ -10,7 +10,7 @@ export interface ICompanyCardProps extends ICompany {
   onProfileImageClick: (e: React.MouseEvent) => void;
   hideSaveButton?: boolean;
   /** "grid" applies the square feed-card treatment. */
-  variant?: "default" | "grid";
+
   /** If provided, the View button renders as a prefetching <Link> instead of a <button> */
   viewHref?: string;
 }

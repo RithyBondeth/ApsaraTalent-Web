@@ -153,7 +153,7 @@ export const DragDropFile = <T extends FieldValues>({
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`w-full h-60 flex flex-col items-center justify-center border-2 border-dashed border-l-[5px] rounded-none p-5 text-center cursor-pointer relative ${
+      className={`relative flex h-60 w-full cursor-pointer flex-col items-center justify-center rounded-none border-2 border-l-[5px] border-dashed p-5 text-center ${
         isDragging ? "border-blue-500 bg-blue-50" : "border-muted-foreground"
       } ${className} h-64`}
       onDragEnter={handleDragEnter}
@@ -174,10 +174,10 @@ export const DragDropFile = <T extends FieldValues>({
 
       {/* File Preview Section */}
       {filePreview ? (
-        <div className="absolute top-0 right-0 left-0 bottom-0">
+        <div className="absolute bottom-0 left-0 right-0 top-0">
           <LucideCircleX
             strokeWidth="1.5px"
-            className="absolute top-2 left-2 text-primary"
+            className="absolute left-2 top-2 text-primary"
             onClick={(e) => {
               e.stopPropagation();
               removeFile();
@@ -188,7 +188,7 @@ export const DragDropFile = <T extends FieldValues>({
             alt={selectedFileName || "Preview"}
             width={0}
             height={0}
-            className="w-full h-full object-contain"
+            className="h-full w-full object-contain"
           />
         </div>
       ) : (

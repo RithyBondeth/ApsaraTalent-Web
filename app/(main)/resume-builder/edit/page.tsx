@@ -24,17 +24,17 @@ import { useGenerateResumeStore } from "@/stores/apis/resume/generate-resume.sto
 import { useResumeEditStore } from "@/stores/apis/resume/resume-edit.store";
 import { useIsMobile } from "@/hooks/utils/use-mobile";
 import {
-  ArrowLeft,
-  Download,
-  Eye,
-  FileText,
-  LoaderCircle,
-  MoreHorizontal,
-  PencilLine,
-  PanelLeftOpen,
-  PanelLeftClose,
-  RotateCcw,
-  SaveAll,
+  LucideArrowLeft,
+  LucideDownload,
+  LucideEye,
+  LucideFileText,
+  LucideLoaderCircle,
+  LucideMoreHorizontal,
+  LucidePencilLine,
+  LucidePanelLeftOpen,
+  LucidePanelLeftClose,
+  LucideRotateCcw,
+  LucideSaveAll,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -56,15 +56,13 @@ import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-e
 import { ResumeEditorLoadingSkeleton } from "@/components/resume-builder/skeleton";
 import {
   loadResumeDraft,
+  matchesResumeOwnerName,
   normalizeResumePayload,
+  prepareResumeAvatar,
   removeLegacyResumeDraft,
   resumeSchema,
   saveResumeDraft,
-} from "@/utils/functions/resume/resume-draft";
-import {
-  matchesResumeOwnerName,
-  prepareResumeAvatar,
-} from "@/utils/functions/resume/prepare-resume-avatar";
+} from "@/utils/functions/resume";
 
 export default function ResumeEditorPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -113,14 +111,14 @@ export default function ResumeEditorPage() {
     stop: stopProgress,
   } = useDownloadProgress();
 
-  /* ------------------------------ React Hook Form --------------------------- */
+  /* ------------------------ React Hook Form: Resume Form ---------------------- */
   const { register, control, getValues, setValue, reset } =
     useForm<IBuildResume>({
       defaultValues: payload ?? undefined,
     });
   const watchedValues = useWatch({ control }) as IBuildResume;
 
-  /* ------------------------------ All Effects --------------------------------- */
+  /* ------------------------------ Effects --------------------------------- */
   useEffect(() => {
     if (currentUser) {
       setUserResolved(true);
@@ -356,9 +354,9 @@ export default function ResumeEditorPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="resume-editor-shell flex h-[calc(100dvh-4rem)] animate-page-in flex-col overflow-hidden text-foreground">
+    <div className="resume-editor-shell animate-page-in flex h-[calc(100dvh-4rem)] flex-col overflow-hidden text-foreground">
       {/* Primary Action Bar Section */}
-      <div className="resume-editor-controls flex flex-col gap-2 border-b border-t-[5px] border-border border-t-foreground bg-card px-3 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-5">
+      <div className="resume-editor-controls flex flex-col gap-2 border-b border-border bg-card px-3 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-5">
         {/* Editor Identity and Template Section */}
         <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
           <Button
@@ -367,7 +365,7 @@ export default function ResumeEditorPage() {
             onClick={handleBack}
             className="h-8 gap-1.5 rounded-none text-xs"
           >
-            <ArrowLeft size={14} />
+            <LucideArrowLeft size={14} />
             {tRb("back")}
           </Button>
 
@@ -379,19 +377,19 @@ export default function ResumeEditorPage() {
               className="hidden h-8 gap-1.5 rounded-none text-xs md:flex"
               title={tRb("showFields")}
             >
-              <PanelLeftOpen size={14} />
+              <LucidePanelLeftOpen size={14} />
               {tRb("showFields")}
             </Button>
           )}
 
           {/* Resume Editor Label Section */}
           <div className="hidden items-center gap-2 border-l-2 border-foreground pl-3 sm:flex">
-            <FileText size={16} className="shrink-0 text-foreground" />
+            <LucideFileText size={16} className="shrink-0 text-foreground" />
             <div className="flex flex-col">
               <TypographyLead className="text-[13px] font-bold leading-none">
                 {tRb("resumeEditor")}
               </TypographyLead>
-              <TypographySmall className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-tight font-medium">
+              <TypographySmall className="mt-0.5 text-[10px] font-medium uppercase tracking-tight text-muted-foreground">
                 {tRb("templateLabel")}
               </TypographySmall>
             </div>
@@ -411,9 +409,9 @@ export default function ResumeEditorPage() {
         <div className="flex w-full items-center justify-end gap-2 md:w-auto">
           <div className="mr-auto hidden items-center gap-1.5 text-[10px] font-medium text-muted-foreground sm:flex md:mr-1">
             {previewUpdating ? (
-              <LoaderCircle className="size-3 animate-spin" />
+              <LucideLoaderCircle className="size-3 animate-spin" />
             ) : (
-              <SaveAll className="size-3.5" />
+              <LucideSaveAll className="size-3.5" />
             )}
             {previewUpdating ? tRb("savingChanges") : tRb("savedAutomatically")}
           </div>
@@ -426,7 +424,7 @@ export default function ResumeEditorPage() {
                 className="size-8 rounded-none"
                 title={tRb("moreActions")}
               >
-                <MoreHorizontal size={15} />
+                <LucideMoreHorizontal size={15} />
                 <span className="sr-only">{tRb("moreActions")}</span>
               </Button>
             </DropdownMenuTrigger>
@@ -438,7 +436,7 @@ export default function ResumeEditorPage() {
                 onSelect={() => setResetDialogOpen(true)}
                 className="rounded-none text-xs"
               >
-                <RotateCcw size={14} />
+                <LucideRotateCcw size={14} />
                 {tRb("reset")}
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -450,7 +448,7 @@ export default function ResumeEditorPage() {
             size="sm"
             className="h-8 flex-1 shrink-0 justify-center gap-2 rounded-none px-4 text-xs sm:w-auto sm:flex-none"
           >
-            <Download size={15} />
+            <LucideDownload size={15} />
             {tRb("downloadPdf")}
           </Button>
         </div>
@@ -464,11 +462,11 @@ export default function ResumeEditorPage() {
           onClick={() => setMobileWorkspace("edit")}
           className={`flex h-9 items-center justify-center gap-2 border text-xs font-bold transition-colors ${
             mobileWorkspace === "edit"
-              ? "border-foreground bg-foreground text-background"
+              ? "border-primary bg-primary text-primary-foreground"
               : "border-border bg-background text-muted-foreground"
           }`}
         >
-          <PencilLine size={14} />
+          <LucidePencilLine size={14} />
           {tRb("mobileEdit")}
         </button>
         <button
@@ -477,11 +475,11 @@ export default function ResumeEditorPage() {
           onClick={() => setMobileWorkspace("preview")}
           className={`flex h-9 items-center justify-center gap-2 border border-l-0 text-xs font-bold transition-colors ${
             mobileWorkspace === "preview"
-              ? "border-foreground bg-foreground text-background"
+              ? "border-primary bg-primary text-primary-foreground"
               : "border-border bg-background text-muted-foreground"
           }`}
         >
-          <Eye size={14} />
+          <LucideEye size={14} />
           {tRb("preview")}
         </button>
       </div>
@@ -516,7 +514,7 @@ export default function ResumeEditorPage() {
                   className="hidden size-8 rounded-none md:inline-flex"
                   title={tRb("hideFields")}
                 >
-                  <PanelLeftClose size={14} />
+                  <LucidePanelLeftClose size={14} />
                   <span className="sr-only">{tRb("hideFields")}</span>
                 </Button>
               </div>
@@ -566,12 +564,15 @@ export default function ResumeEditorPage() {
 
       {/* Reset Confirmation Dialog Section */}
       <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
-        <DialogContent className="w-[calc(100%-1.5rem)] max-w-md rounded-none border border-foreground/20 bg-card p-0 shadow-[9px_9px_0_hsl(var(--foreground)/0.12),0_24px_70px_hsl(var(--foreground)/0.18)] sm:rounded-none">
-          <header className="relative overflow-hidden border-b border-foreground bg-foreground p-5 text-background">
-            <div className="profile-detail-hero-grid" aria-hidden />
+        <DialogContent
+          variant="flush"
+          size="md"
+          className="w-[calc(100%-1.5rem)] bg-card"
+        >
+          <header className="relative overflow-hidden border-b border-border bg-muted p-5 text-foreground">
             <div className="relative z-[2] flex items-center gap-3 pr-8">
-              <span className="flex size-11 shrink-0 items-center justify-center border border-background/25 bg-background/10">
-                <RotateCcw size={18} />
+              <span className="flex size-11 shrink-0 items-center justify-center border border-border bg-card">
+                <LucideRotateCcw size={18} />
               </span>
               <DialogTitle className="text-xl font-bold tracking-tight sm:text-2xl">
                 {tRb("resetDialogTitle")}
@@ -598,7 +599,7 @@ export default function ResumeEditorPage() {
                 onClick={handleReset}
                 className="h-10 w-full rounded-none"
               >
-                <RotateCcw size={14} />
+                <LucideRotateCcw size={14} />
                 {tRb("reset")}
               </Button>
             </DialogFooter>

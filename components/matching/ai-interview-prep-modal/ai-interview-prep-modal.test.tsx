@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
   stopProgress: vi.fn(),
 }));
 
-vi.mock("@/utils/functions/stream-fetch", () => ({
+vi.mock("@/utils/functions/network/stream-fetch", () => ({
   streamFetch: mocks.streamFetch,
 }));
 vi.mock("@/stores/apis/resume/interview-prep-pdf.store", () => ({
@@ -127,9 +127,7 @@ describe("AiInterviewPrepModal", () => {
     expect(screen.queryByText("Missing tip")).not.toBeInTheDocument();
     expect(screen.getByText("2 questions")).toBeVisible();
     expect(mocks.streamFetch).toHaveBeenCalledWith(
-      expect.stringContaining(
-        "interviewTitle=Senior%20Frontend%20Interview",
-      ),
+      expect.stringContaining("interviewTitle=Senior%20Frontend%20Interview"),
       { method: "GET" },
       expect.any(Function),
     );

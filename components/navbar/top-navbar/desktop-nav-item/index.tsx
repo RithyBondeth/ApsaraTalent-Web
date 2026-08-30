@@ -5,7 +5,7 @@ import { IDesktopNavItemProps } from "./props";
 
 export default function DesktopNavItem(props: IDesktopNavItemProps) {
   /* --------------------------------- Props --------------------------------- */
-  const { href, icon: Icon, label, count, active } = props;
+  const { href, icon: Icon, label, count, badgeLabel, active } = props;
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -13,13 +13,18 @@ export default function DesktopNavItem(props: IDesktopNavItemProps) {
       href={href}
       prefetch={true}
       aria-current={active ? "page" : undefined}
-      aria-label={label}
+      /*
+        The count has to live in the accessible name: aria-label overrides all
+        inner content, so BadgePill's number was invisible to screen readers —
+        the nav read as plain "Message" whether or not anything was waiting.
+      */
+      aria-label={count > 0 ? `${label}, ${badgeLabel}` : label}
       className={cn(
         "group relative flex h-11 min-w-11 items-center justify-center gap-2 border border-transparent px-2.5",
         "text-xs font-semibold transition-[background-color,border-color,color,transform] duration-200",
         "focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         active
-          ? "animate-navbar-active-in border-primary bg-primary text-primary-foreground shadow-[3px_3px_0_hsl(var(--primary)/0.22)]"
+          ? "animate-navbar-active-in border-primary bg-primary text-primary-foreground shadow-hard-primary"
           : "text-muted-foreground hover:border-border hover:bg-muted/60 hover:text-foreground active:translate-y-px",
       )}
     >
@@ -39,7 +44,7 @@ export default function DesktopNavItem(props: IDesktopNavItemProps) {
       <span className="hidden whitespace-nowrap 2xl:inline">{label}</span>
 
       {/* Compact-Mode Tooltip Section */}
-      <span className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 translate-y-1 whitespace-nowrap border border-foreground bg-foreground px-2.5 py-1.5 text-[10px] font-semibold tracking-wide text-background opacity-0 shadow-[3px_3px_0_hsl(var(--foreground)/0.12)] transition-all duration-150 group-hover:translate-y-0 group-hover:opacity-100 2xl:hidden">
+      <span className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 translate-y-1 whitespace-nowrap border border-foreground bg-foreground px-2.5 py-1.5 text-[10px] font-semibold tracking-wide text-background opacity-0 shadow-hard-sm transition-all duration-150 group-hover:translate-y-0 group-hover:opacity-100 2xl:hidden">
         {label}
       </span>
 
@@ -47,7 +52,7 @@ export default function DesktopNavItem(props: IDesktopNavItemProps) {
       <span
         aria-hidden="true"
         className={cn(
-          "absolute -bottom-[11px] left-1/2 h-[3px] -translate-x-1/2 bg-foreground transition-[width,opacity] duration-200",
+          "absolute -bottom-[11px] left-1/2 h-[3px] -translate-x-1/2 bg-primary transition-[width,opacity] duration-200",
           active ? "w-6 opacity-100" : "w-0 opacity-0",
         )}
       />

@@ -37,6 +37,7 @@ export interface IEmployee {
   careerScopes: ICareerScope[];
   createdAt?: string;
   skillScore?: number | null;
+  matchScore?: number | null;
 }
 
 export interface ISkill {

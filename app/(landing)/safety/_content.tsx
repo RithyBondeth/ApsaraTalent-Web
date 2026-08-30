@@ -13,7 +13,6 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   StaticBullet,
   StaticNote,
-  StaticPageArtworkSlot,
   StaticPageShell,
   StaticSection,
 } from "@/components/static-content/static-page";
@@ -241,7 +240,11 @@ const km: ISafetyStrings = {
 const content: Record<string, ISafetyStrings> = { en, km };
 
 /* -------------------------- Main Component -------------------------- */
-export function SafetyContent() {
+export function SafetyContent({
+  sessionRole,
+}: {
+  sessionRole?: string | null;
+}) {
   /* ------------------------------ Utils ----------------------------- */
   const { language } = useLanguageStore();
   const t = content[language] ?? content.en;
@@ -249,111 +252,103 @@ export function SafetyContent() {
   /* ----------------------------- Render UI -------------------------- */
   return (
     <StaticPageShell
+      sessionRole={sessionRole}
       pageNumber="03"
       title={t.pageTitle}
       subtitle={t.subtitle}
       tocHeading={t.tocHeading}
       toc={t.toc}
-      icon={<LucideShieldCheck />}
-      heroVisual={
-        <StaticPageArtworkSlot
-          icon={<LucideShieldCheck />}
-          label={t.pageTitle}
-        />
-      }
     >
-          {/* Our Commitment Section */}
-          <StaticSection
-            id="commitment"
-            number="01"
-            icon={<LucideShieldCheck />}
-            title={t.commitmentTitle}
-          >
-            <TypographyP>{t.commitmentIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.commitmentBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-          </StaticSection>
+      {/* Our Commitment Section */}
+      <StaticSection
+        id="commitment"
+        number="01"
+        icon={<LucideShieldCheck />}
+        title={t.commitmentTitle}
+      >
+        <TypographyP>{t.commitmentIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.commitmentBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+      </StaticSection>
 
-          {/* Data Protection Section */}
-          <StaticSection
-            id="data-protection"
-            number="02"
-            icon={<LucideServer />}
-            title={t.dataTitle}
-          >
-            <TypographyP>{t.dataIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.dataBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-          </StaticSection>
+      {/* Data Protection Section */}
+      <StaticSection
+        id="data-protection"
+        number="02"
+        icon={<LucideServer />}
+        title={t.dataTitle}
+      >
+        <TypographyP>{t.dataIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.dataBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+      </StaticSection>
 
-          {/* Privacy Controls Section */}
-          <StaticSection
-            id="privacy"
-            number="03"
-            icon={<LucideEye />}
-            title={t.privacyTitle}
-          >
-            <TypographyP>{t.privacyIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.privacyBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-          </StaticSection>
+      {/* Privacy Controls Section */}
+      <StaticSection
+        id="privacy"
+        number="03"
+        icon={<LucideEye />}
+        title={t.privacyTitle}
+      >
+        <TypographyP>{t.privacyIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.privacyBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+      </StaticSection>
 
-          {/* Identity Verification Section */}
-          <StaticSection
-            id="identity"
-            number="04"
-            icon={<LucideUserCheck />}
-            title={t.identityTitle}
-          >
-            <TypographyP>{t.identityIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.identityBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-          </StaticSection>
+      {/* Identity Verification Section */}
+      <StaticSection
+        id="identity"
+        number="04"
+        icon={<LucideUserCheck />}
+        title={t.identityTitle}
+      >
+        <TypographyP>{t.identityIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.identityBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+      </StaticSection>
 
-          {/* Reporting & Moderation Section */}
-          <StaticSection
-            id="reporting"
-            number="05"
-            icon={<LucideAlertTriangle />}
-            title={t.reportingTitle}
-          >
-            <TypographyP>{t.reportingIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.reportingBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-          </StaticSection>
+      {/* Reporting & Moderation Section */}
+      <StaticSection
+        id="reporting"
+        number="05"
+        icon={<LucideAlertTriangle />}
+        title={t.reportingTitle}
+      >
+        <TypographyP>{t.reportingIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.reportingBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+      </StaticSection>
 
-          {/* AI Safety Section */}
-          <StaticSection
-            id="ai-safety"
-            number="06"
-            icon={<LucideLock />}
-            title={t.aiSafetyTitle}
-          >
-            <TypographyP>{t.aiSafetyIntro}</TypographyP>
-            <ul className="flex flex-col gap-2 mt-1">
-              {t.aiSafetyBullets.map((b, i) => (
-                <StaticBullet key={i}>{b}</StaticBullet>
-              ))}
-            </ul>
-            <StaticNote icon={<LucideCheckCircle />}>
-              {t.aiSafetyNote}
-            </StaticNote>
-          </StaticSection>
+      {/* AI Safety Section */}
+      <StaticSection
+        id="ai-safety"
+        number="06"
+        icon={<LucideLock />}
+        title={t.aiSafetyTitle}
+      >
+        <TypographyP>{t.aiSafetyIntro}</TypographyP>
+        <ul className="mt-1 flex flex-col gap-2">
+          {t.aiSafetyBullets.map((b, i) => (
+            <StaticBullet key={i}>{b}</StaticBullet>
+          ))}
+        </ul>
+        <StaticNote icon={<LucideCheckCircle />}>{t.aiSafetyNote}</StaticNote>
+      </StaticSection>
     </StaticPageShell>
   );
 }

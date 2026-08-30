@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { IChatPreview, IMessage } from "@/utils/interfaces/chat/chat.interface";
+import type {
+  IChatPreview,
+  IMessage,
+} from "@/utils/interfaces/chat/chat.interface";
 import { createMockSocket } from "@/tests/helpers/mock-socket";
 
 const socketManagerMocks = vi.hoisted(() => ({
@@ -11,7 +14,9 @@ const socketManagerMocks = vi.hoisted(() => ({
 }));
 const listenerMocks = vi.hoisted(() => ({ registerSocketListeners: vi.fn() }));
 const recentChatMocks = vi.hoisted(() => ({ fetchRecentChats: vi.fn() }));
-const notificationMocks = vi.hoisted(() => ({ markReadByChatMessageId: vi.fn() }));
+const notificationMocks = vi.hoisted(() => ({
+  markReadByChatMessageId: vi.fn(),
+}));
 const callMocks = vi.hoisted(() => ({ initCallSignaling: vi.fn() }));
 
 vi.mock("./socket-manager", () => socketManagerMocks);
@@ -23,11 +28,15 @@ vi.mock("@/stores/apis/chat/get-recent-chats.store", () => ({
 }));
 vi.mock("@/stores/apis/notification/notification.store", () => ({
   useNotificationStore: {
-    getState: () => ({ markReadByChatMessageId: notificationMocks.markReadByChatMessageId }),
+    getState: () => ({
+      markReadByChatMessageId: notificationMocks.markReadByChatMessageId,
+    }),
   },
 }));
 vi.mock("../call/call.store", () => ({
-  useCallStore: { getState: () => ({ initCallSignaling: callMocks.initCallSignaling }) },
+  useCallStore: {
+    getState: () => ({ initCallSignaling: callMocks.initCallSignaling }),
+  },
 }));
 vi.mock("@/utils/functions/media", () => ({
   normalizeMediaUrl: (value: string | null | undefined) => value ?? null,
@@ -62,7 +71,9 @@ describe("chat store", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     socketManagerMocks.getSocket.mockReturnValue(null);
-    socketManagerMocks.scheduleDisconnect.mockImplementation((callback: () => void) => callback());
+    socketManagerMocks.scheduleDisconnect.mockImplementation(
+      (callback: () => void) => callback(),
+    );
     recentChatMocks.fetchRecentChats.mockResolvedValue([]);
     useChatStore.setState({
       socket: null,
@@ -99,9 +110,12 @@ describe("chat store", () => {
       },
     ];
     const socket = createMockSocket({
-      getRecentChats: (callback) => (callback as (error: null, value: unknown) => void)(null, rawChats),
+      getRecentChats: (callback) =>
+        (callback as (error: null, value: unknown) => void)(null, rawChats),
       getOnlineUsers: (_ids, callback) =>
-        (callback as (value: Record<string, boolean>) => void)({ "user-2": true }),
+        (callback as (value: Record<string, boolean>) => void)({
+          "user-2": true,
+        }),
     });
     useChatStore.setState({
       socket: socket as never,
@@ -147,9 +161,15 @@ describe("chat store", () => {
       },
     ];
     const socket = createMockSocket({
-      getChatHistory: (_payload, callback) => (callback as (value: unknown) => void)(history),
+      getChatHistory: (_payload, callback) =>
+        (callback as (value: unknown) => void)(history),
+      /*
+        The real shape. This mock previously answered { unreadCount: 5 } — a
+        field the gateway never sends — so the test passed against a store that
+        could not read the server's actual GetUnreadCountResponseDTO.
+      */
       getUnreadCount: (_empty, callback) =>
-        (callback as (value: unknown) => void)({ unreadCount: 5 }),
+        (callback as (value: unknown) => void)({ count: 5 }),
     });
     useChatStore.setState({
       socket: socket as never,
@@ -169,11 +189,18 @@ describe("chat store", () => {
       isHistoryLoading: false,
       unreadCount: 5,
       currentMessages: [
-        expect.objectContaining({ id: "message-parent", isMe: true, deliveryStatus: "seen" }),
+        expect.objectContaining({
+          id: "message-parent",
+          isMe: true,
+          deliveryStatus: "seen",
+        }),
         expect.objectContaining({
           id: "message-reply",
           isMe: false,
-          replyTo: expect.objectContaining({ id: "message-parent", content: "Parent" }),
+          replyTo: expect.objectContaining({
+            id: "message-parent",
+            content: "Parent",
+          }),
         }),
       ],
     });
@@ -190,10 +217,13 @@ describe("chat store", () => {
             content: "Hello",
           },
         ]),
+      // Gateway's real field is `count` — see GetUnreadCountResponseDTO.
       getUnreadCount: (_empty, callback) =>
-        (callback as (value: unknown) => void)({ unreadCount: 1 }),
+        (callback as (value: unknown) => void)({ count: 1 }),
       getOnlineUsers: (_ids, callback) =>
-        (callback as (value: Record<string, boolean>) => void)({ "user-2": false }),
+        (callback as (value: Record<string, boolean>) => void)({
+          "user-2": false,
+        }),
     });
     socket.connected = false;
     socket.disconnected = true;
@@ -232,8 +262,12 @@ describe("chat store", () => {
   });
 
   it("marks the connection offline after socket errors and disconnects", () => {
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const errorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const warnSpy = vi
+      .spyOn(console, "warn")
+      .mockImplementation(() => undefined);
     const socket = createMockSocket({}, false);
     socketManagerMocks.createSocket.mockReturnValue(socket);
 
@@ -263,7 +297,9 @@ describe("chat store", () => {
   it("sends an optimistic message and replaces its temporary id after acknowledgement", () => {
     const socket = createMockSocket({
       sendMessage: (_payload, callback) =>
-        (callback as (value: unknown) => void)({ message: { id: "message-real" } }),
+        (callback as (value: unknown) => void)({
+          message: { id: "message-real" },
+        }),
     });
     useChatStore.setState({
       socket: socket as never,
@@ -304,9 +340,12 @@ describe("chat store", () => {
   it("selects and clears active chats while refreshing online and history state", () => {
     const chat = preview("user-2");
     const socket = createMockSocket({
-      getChatHistory: (_payload, callback) => (callback as (value: unknown) => void)([]),
+      getChatHistory: (_payload, callback) =>
+        (callback as (value: unknown) => void)([]),
       getOnlineUsers: (_ids, callback) =>
-        (callback as (value: Record<string, boolean>) => void)({ "user-2": true }),
+        (callback as (value: Record<string, boolean>) => void)({
+          "user-2": true,
+        }),
     });
     useChatStore.setState({
       socket: socket as never,
@@ -316,7 +355,10 @@ describe("chat store", () => {
 
     useChatStore.getState().setActiveChat(chat);
 
-    expect(useChatStore.getState().activeChat).toMatchObject({ id: "user-2", isOnline: true });
+    expect(useChatStore.getState().activeChat).toMatchObject({
+      id: "user-2",
+      isOnline: true,
+    });
     expect(useChatStore.getState().isHistoryLoading).toBe(false);
     useChatStore.getState().setActiveChat(null);
     expect(useChatStore.getState()).toMatchObject({
@@ -324,6 +366,39 @@ describe("chat store", () => {
       currentMessages: [],
       isHistoryLoading: false,
     });
+  });
+
+  it("keeps counting a partner's unread messages after I reply from elsewhere", () => {
+    const socket = createMockSocket();
+    const opened = preview("user-2");
+    /*
+      user-3 sent me 4 messages, then I replied from another device — so the
+      row's NEWEST message is mine and its isRead is false (they have not read
+      it yet), while 4 of their messages are still unread by me.
+    */
+    const repliedElsewhere = {
+      ...preview("user-3"),
+      unread: 4,
+      isRead: false,
+      lastMessageSenderId: "user-1",
+    };
+    useChatStore.setState({
+      socket: socket as never,
+      me: { id: "user-1" },
+      activeChat: opened,
+      activeChats: [opened, repliedElsewhere],
+      currentMessages: [message("message-1")],
+      unreadCount: 5,
+    });
+
+    useChatStore.getState().markAsRead("message-1", "user-2");
+
+    /*
+      Opening user-2 clears its 1 unread and leaves user-3's 4. The old
+      recompute gated on each row's latest message, so user-3 — whose latest
+      message was mine — dropped out entirely and the badge fell to 0.
+    */
+    expect(useChatStore.getState().unreadCount).toBe(4);
   });
 
   it("marks, reacts, types, deletes, edits, and removes a partner chat", () => {
@@ -339,9 +414,13 @@ describe("chat store", () => {
     });
 
     useChatStore.getState().markAsRead("message-1", "user-2");
-    expect(useChatStore.getState().currentMessages[0]).toMatchObject({ isRead: true });
+    expect(useChatStore.getState().currentMessages[0]).toMatchObject({
+      isRead: true,
+    });
     expect(useChatStore.getState().unreadCount).toBe(1);
-    expect(notificationMocks.markReadByChatMessageId).toHaveBeenCalledWith("message-1");
+    expect(notificationMocks.markReadByChatMessageId).toHaveBeenCalledWith(
+      "message-1",
+    );
 
     useChatStore.getState().reactToMessage("message-1", "user-2", "👍");
     useChatStore.getState().setTyping("user-2", true);
@@ -357,7 +436,10 @@ describe("chat store", () => {
       receiverId: "user-2",
       emoji: "👍",
     });
-    expect(socket.emit).toHaveBeenCalledWith("typing", { receiverId: "user-2", isTyping: true });
+    expect(socket.emit).toHaveBeenCalledWith("typing", {
+      receiverId: "user-2",
+      isTyping: true,
+    });
 
     useChatStore.getState().removeChatByPartnerId("USER-2");
     expect(useChatStore.getState()).toMatchObject({

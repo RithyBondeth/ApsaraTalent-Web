@@ -1,11 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Loader2, LucideLayoutTemplate, LucideRocket } from "lucide-react";
+import {
+  LucideLoader2,
+  LucideLayoutTemplate,
+  LucideRocket,
+} from "lucide-react";
 import { IResumeBuilderGenerateProps } from "./props";
 import { useTranslations } from "next-intl";
 import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
-import { resolveResumeTemplateTheme } from "@/utils/functions/resume/resume-theme";
+import { resolveResumeTemplateTheme } from "@/utils/functions/resume";
 
 export default function ResumeBuilderGenerate({
   onGenerateClick,
@@ -22,7 +26,7 @@ export default function ResumeBuilderGenerate({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <section className="w-full border border-border bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]">
+    <section className="w-full border border-border bg-card shadow-hard">
       {/* Selection Summary Section */}
       <div className="flex min-w-0 items-center gap-3 border-b border-border p-4">
         {theme ? (
@@ -70,7 +74,11 @@ export default function ResumeBuilderGenerate({
             <span>
               {loading ? t("preparingResume") : t("generateMyResume")}
             </span>
-            {loading ? <Loader2 className="animate-spin" /> : <LucideRocket />}
+            {loading ? (
+              <LucideLoader2 className="animate-spin" />
+            ) : (
+              <LucideRocket />
+            )}
           </Button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronsUpDown } from "lucide-react";
+import { LucideCheck, LucideChevronsUpDown } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,12 @@ interface CreatableComboboxProps {
   triggerClassName?: string;
   triggerId?: string;
   ariaLabel?: string;
+  /**
+   * Whether typing a value not in `options` offers to use it. Set false for a
+   * closed list that still needs the search box — a long one such as founding
+   * year, where a plain Select would mean scrolling a hundred-odd items.
+   */
+  allowCreate?: boolean;
 }
 
 export function CreatableCombobox({
@@ -48,6 +54,7 @@ export function CreatableCombobox({
   triggerClassName,
   triggerId,
   ariaLabel,
+  allowCreate = true,
 }: CreatableComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
@@ -71,7 +78,7 @@ export function CreatableCombobox({
           aria-required={required}
           disabled={disabled}
           className={cn(
-            "h-12 w-full justify-between overflow-hidden text-muted-foreground font-normal",
+            "h-12 w-full justify-between overflow-hidden font-normal text-muted-foreground",
             triggerClassName,
           )}
         >
@@ -85,7 +92,7 @@ export function CreatableCombobox({
               {selectedOption ? selectedOption.label : value || placeholder}
             </span>
           </span>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <LucideChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
 
@@ -109,7 +116,7 @@ export function CreatableCombobox({
                 <TypographyMuted className="text-sm text-muted-foreground">
                   {emptyText}
                 </TypographyMuted>
-                {inputValue && (
+                {allowCreate && inputValue && (
                   <Button
                     type="button"
                     variant="secondary"
@@ -137,13 +144,16 @@ export function CreatableCombobox({
                       (opt) =>
                         opt.label.toLowerCase() === currentValue.toLowerCase(),
                     );
+                    // With creation off, an unmatched label would otherwise
+                    // slip a raw search string into a closed list.
+                    if (!matchedOption && !allowCreate) return;
                     onChange(
                       matchedOption ? matchedOption.value : currentValue,
                     );
                     setOpen(false);
                   }}
                 >
-                  <Check
+                  <LucideCheck
                     className={cn(
                       "mr-2 h-4 w-4",
                       value === option.value ? "opacity-100" : "opacity-0",
@@ -152,7 +162,8 @@ export function CreatableCombobox({
                   {option.label}
                 </CommandItem>
               ))}
-              {inputValue &&
+              {allowCreate &&
+                inputValue &&
                 !options.some(
                   (opt) => opt.label.toLowerCase() === inputValue.toLowerCase(),
                 ) && (
@@ -163,7 +174,7 @@ export function CreatableCombobox({
                       setOpen(false);
                     }}
                   >
-                    <Check
+                    <LucideCheck
                       className={cn(
                         "mr-2 h-4 w-4",
                         value === inputValue ? "opacity-100" : "opacity-0",

@@ -1,14 +1,15 @@
 "use client";
 
-import Header from "@/components/header";
+import Header from "@/components/landing/landing-header";
 import LandingHero from "@/components/landing/landing-hero";
 import LandingMarquee from "@/components/landing/landing-marquee";
 import LandingFeatures from "@/components/landing/landing-features";
 import { LandingHowItWorks } from "@/components/landing/landing-how-it-works";
 import LandingCta from "@/components/landing/landing-cta";
 import LandingMatchVisual from "@/components/landing/landing-match-visual";
+import LandingFeatureTour from "@/components/landing/landing-feature-tour";
 import LandingFooter from "@/components/landing/landing-footer";
-import { ScrollProgress } from "@/components/utils/animations/scroll-progress";
+import { ScrollProgressBar } from "@/components/utils/layout/scroll-progress-bar";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
 export default function IndexPage() {
@@ -19,7 +20,7 @@ export default function IndexPage() {
   return (
     <div className="landing-scope relative min-h-screen bg-background text-foreground">
       {/* Scroll Progress Bar */}
-      <ScrollProgress />
+      <ScrollProgressBar />
 
       {/* Header Section */}
       <Header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl" />
@@ -36,10 +37,13 @@ export default function IndexPage() {
       {/* Section 4: Features */}
       <LandingFeatures key={`features-${language}`} />
 
-      {/* Section 5: How It Works */}
+      {/* Section 5: Product Tour — scheduling and the resume builder */}
+      <LandingFeatureTour key={`tour-${language}`} />
+
+      {/* Section 6: How It Works */}
       <LandingHowItWorks key={`how-${language}`} />
 
-      {/* Section 6: Final CTA */}
+      {/* Section 7: Final CTA */}
       <LandingCta key={`cta-${language}`} />
 
       {/* Footer */}

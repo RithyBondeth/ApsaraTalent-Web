@@ -1,12 +1,12 @@
 "use client";
 
 import {
-  CircleCheck,
-  Info,
-  LoaderCircle,
-  OctagonX,
-  TriangleAlert,
-  X,
+  LucideCircleCheck,
+  LucideInfo,
+  LucideLoaderCircle,
+  LucideOctagonX,
+  LucideTriangleAlert,
+  LucideX,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import type { ComponentProps } from "react";
@@ -21,9 +21,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       {...props}
-      theme={
-        (props.theme ?? resolvedTheme ?? theme) as ToasterProps["theme"]
-      }
+      theme={(props.theme ?? resolvedTheme ?? theme) as ToasterProps["theme"]}
       position={props.position ?? "bottom-right"}
       expand={props.expand ?? true}
       visibleToasts={props.visibleToasts ?? 4}
@@ -36,30 +34,27 @@ const Toaster = ({ ...props }: ToasterProps) => {
       mobileOffset={props.mobileOffset ?? 12}
       swipeDirections={props.swipeDirections ?? ["right", "bottom"]}
       containerAriaLabel={props.containerAriaLabel ?? "Notifications"}
-      className={["apsara-toaster", props.className]
-        .filter(Boolean)
-        .join(" ")}
+      className={["apsara-toaster", props.className].filter(Boolean).join(" ")}
       icons={{
         success: (
-          <CircleCheck aria-hidden className={statusIconClassName} />
+          <LucideCircleCheck aria-hidden className={statusIconClassName} />
         ),
-        info: <Info aria-hidden className={statusIconClassName} />,
+        info: <LucideInfo aria-hidden className={statusIconClassName} />,
         warning: (
-          <TriangleAlert aria-hidden className={statusIconClassName} />
+          <LucideTriangleAlert aria-hidden className={statusIconClassName} />
         ),
-        error: <OctagonX aria-hidden className={statusIconClassName} />,
+        error: <LucideOctagonX aria-hidden className={statusIconClassName} />,
         loading: (
-          <LoaderCircle
+          <LucideLoaderCircle
             aria-hidden
             className={`${statusIconClassName} apsara-toast-spinner`}
           />
         ),
-        close: <X aria-hidden className="apsara-toast-close-icon" />,
+        close: <LucideX aria-hidden className="apsara-toast-close-icon" />,
         ...props.icons,
       }}
       style={{
-        fontFamily:
-          "var(--font-ubuntu), var(--font-preahvihear), sans-serif",
+        fontFamily: "var(--font-ubuntu), var(--font-kantumruy), sans-serif",
         ...props.style,
       }}
       toastOptions={{

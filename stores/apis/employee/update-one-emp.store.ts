@@ -78,10 +78,6 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
           requestBody.linkedinUrl = body.linkedinUrl;
         if (body.languages !== undefined)
           requestBody.languages = body.languages;
-        if (body.expectedSalaryMin !== undefined)
-          requestBody.expectedSalaryMin = body.expectedSalaryMin;
-        if (body.expectedSalaryMax !== undefined)
-          requestBody.expectedSalaryMax = body.expectedSalaryMax;
         if (body.isHide !== undefined) requestBody.isHide = body.isHide;
 
         // If you store these in IEmployee

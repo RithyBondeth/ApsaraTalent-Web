@@ -10,8 +10,8 @@ import {
   LucideBriefcaseBusiness,
   LucideBuilding2,
   LucideTrash2,
-  Sparkles,
-  Loader2,
+  LucideSparkles,
+  LucideLoader2,
 } from "lucide-react";
 import { Controller, useWatch } from "react-hook-form";
 import { IEmployeeExperienceFormProps } from "./props";
@@ -53,9 +53,9 @@ export default function EmployeeExperienceForm(
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-3">
+    <div className="flex w-full flex-col items-start gap-3">
       {/* Header Section */}
-      <div className="w-full flex items-center justify-between">
+      <div className="flex w-full items-center justify-between">
         <TypographyMuted className="font-bold text-foreground">
           {t("experienceIndex", { index: props.index + 1 })}
         </TypographyMuted>
@@ -99,7 +99,7 @@ export default function EmployeeExperienceForm(
         />
         {/* Description Section */}
         <div className="col-span-12 flex w-full flex-col items-start gap-1 tablet-md:col-span-1">
-          <div className="w-full flex items-center justify-between">
+          <div className="flex w-full items-center justify-between">
             <TypographyMuted className="text-xs">
               {t("expDescription")}
             </TypographyMuted>
@@ -110,12 +110,12 @@ export default function EmployeeExperienceForm(
                 size="sm"
                 onClick={handleRefine}
                 disabled={isRefining}
-                className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
               >
                 {isRefining ? (
-                  <Loader2 size={10} className="animate-spin" />
+                  <LucideLoader2 size={10} className="animate-spin" />
                 ) : (
-                  <Sparkles size={10} />
+                  <LucideSparkles size={10} />
                 )}
                 {tr("aiRefine")}
               </Button>
@@ -136,7 +136,7 @@ export default function EmployeeExperienceForm(
         {/* StartDate and EndDate Section */}
         <div className="col-span-12 flex w-full items-center justify-between gap-4 tablet-md:col-span-1 tablet-md:flex-col tablet-md:[&>div]:!w-full">
           {/* StartDate Section */}
-          <div className="w-1/2 flex flex-col items-start gap-1">
+          <div className="flex w-1/2 flex-col items-start gap-1">
             <TypographyMuted className="text-xs">
               {t("expStartDate")}
             </TypographyMuted>
@@ -154,7 +154,7 @@ export default function EmployeeExperienceForm(
                     calendarClassName="profile-calendar"
                   />
                   {fieldState.error && (
-                    <TypographyP className="[&:not(:first-child)]:mt-0 text-red-500 text-xs mt-1">
+                    <TypographyP className="mt-1 text-xs text-red-500 [&:not(:first-child)]:mt-0">
                       {fieldState.error.message}
                     </TypographyP>
                   )}
@@ -164,7 +164,7 @@ export default function EmployeeExperienceForm(
           </div>
 
           {/* EndDate Section */}
-          <div className="w-1/2 flex flex-col items-start gap-1">
+          <div className="flex w-1/2 flex-col items-start gap-1">
             <TypographyMuted className="text-xs">
               {t("expEndDate")}
             </TypographyMuted>

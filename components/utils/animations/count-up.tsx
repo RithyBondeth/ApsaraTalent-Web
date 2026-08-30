@@ -14,7 +14,7 @@ export function CountUp({
   /** Format the value with locale thousands separators (e.g. 1,234) */
   format?: boolean;
 }) {
-  /* ------------------------------- All State -------------------------------- */
+  /* ------------------------------- All States -------------------------------- */
   const [value, setValue] = useState<number>(0);
   const rafRef = useRef<number | null>(null);
   const startRef = useRef<number | null>(null);

@@ -1,5 +1,6 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { LucideX } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -17,7 +18,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "auth-dialog-overlay fixed inset-0 z-50 bg-black/80 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-scrim/80 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className,
     )}
     {...props}
@@ -25,25 +26,88 @@ const DialogOverlay = React.forwardRef<
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
+/* ---------------------------------------------------------------------------
+ * The dialog surface.
+ *
+ * Everything the surface *is* lives here: square corners, the hairline edge,
+ * and the hard offset shadow. Call sites had been restating all three — and
+ * disagreeing while they did it. Across 20 dialogs there were five that
+ * swapped the accent to `border-t-foreground`, four that fell back to a soft
+ * `shadow-2xl`/`shadow-lg`, five that squared the close button by hand with
+ * `[&>button]:rounded-none`, and a dozen that repeated `rounded-none` the base
+ * already set.
+ *
+ * The 5px ink top edge is gone with the rest of them: a slab on every surface
+ * had stopped distinguishing anything, and the elevation here (shadow-hard-lg
+ * over a scrim) already says "this floats" far more clearly than a bar did.
+ *
+ * Only two shapes were ever actually needed, so they are variants rather than
+ * per-site class strings:
+ *
+ *   default  padded body — a title, some copy, a footer
+ *   flush    the dialog draws its own header/body/footer bands edge to edge
+ *
+ * Anything else a call site needs (a width, a height, a scroll container)
+ * still goes through `className`. The surface itself does not.
+ * ------------------------------------------------------------------------- */
+const dialogContentVariants = cva(
+  "fixed left-0 right-0 top-1/2 isolate z-50 mx-auto flex max-h-[90vh] w-[94vw] -translate-y-1/2 flex-col overflow-hidden rounded-none border border-border bg-background shadow-hard-lg duration-200 focus-visible:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+  {
+    variants: {
+      variant: {
+        // 24px all round, and a real gap between header, body and footer.
+        // This was `gap-0 px-3 py-4`: 12px of horizontal padding put content
+        // almost against the edge, and with no gap every call site had to
+        // invent its own spacing — which is why no two dialogs lined up.
+        default: "gap-5 p-6",
+        // The dialog draws its own bands, so it owns its padding too.
+        flush: "gap-0 p-0",
+      },
+      size: {
+        sm: "max-w-sm",
+        md: "max-w-md",
+        lg: "max-w-lg",
+        xl: "max-w-2xl",
+        full: "max-w-5xl",
+      },
+    },
+    defaultVariants: { variant: "default", size: "lg" },
+  },
+);
+
+interface IDialogContentProps
+  extends
+    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
+    VariantProps<typeof dialogContentVariants> {
+  /** Hide the built-in close button for dialogs that must not be dismissed. */
+  hideClose?: boolean;
+}
+
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+  IDialogContentProps
+>(({ className, children, variant, size, hideClose, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "auth-dialog-surface fixed left-0 right-0 top-1/2 z-50 mx-auto flex w-[94vw] max-w-lg -translate-y-1/2 flex-col gap-0 overflow-hidden rounded-none border border-t-[5px] border-t-primary bg-background py-4 px-3 shadow-[6px_6px_0_hsl(var(--foreground)/0.1)] duration-200 focus-visible:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] max-h-[90vh] sm:rounded-none isolate",
+        "auth-dialog-surface",
+        dialogContentVariants({ variant, size }),
         className,
       )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-3 top-3 z-[110] flex size-8 items-center justify-center rounded-full bg-background/90 backdrop-blur-xl border border-border shadow-sm opacity-80 transition-all hover:opacity-100 hover:scale-105 active:scale-95 focus:outline-none disabled:pointer-events-none">
-        <X className="h-4.5 w-4.5 text-foreground" />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
+      {/* Square, like every other control in the app. This used to be
+          rounded-full with a soft `shadow-sm`, which is why five call sites
+          carried a `[&>button]:rounded-none` override to undo it. */}
+      {hideClose ? null : (
+        <DialogPrimitive.Close className="absolute right-4 top-4 z-[110] flex size-8 items-center justify-center rounded-none border border-border bg-background/90 text-foreground opacity-80 backdrop-blur-xl transition-all hover:bg-accent hover:text-accent-foreground hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95 disabled:pointer-events-none">
+          <LucideX className="size-4" />
+          <span className="sr-only">Close</span>
+        </DialogPrimitive.Close>
+      )}
     </DialogPrimitive.Content>
   </DialogPortal>
 ));
@@ -56,7 +120,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col space-y-1.5 text-center sm:text-left",
+      "flex flex-col space-y-1.5 pr-8 text-center sm:text-left",
       className,
     )}
     {...props}
@@ -70,7 +134,7 @@ const DialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "auth-dialog-footer flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      "auth-dialog-footer flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end",
       className,
     )}
     {...props}
@@ -107,9 +171,6 @@ DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 export {
   Dialog,
-  
-  
-  
   DialogTrigger,
   DialogContent,
   DialogHeader,

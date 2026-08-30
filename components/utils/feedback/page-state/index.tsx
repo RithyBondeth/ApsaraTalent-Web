@@ -2,8 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { LucideInbox, LucideTriangleAlert } from "lucide-react";
-import Image, { type StaticImageData } from "next/image";
+import {
+  LucideInbox,
+  LucideTriangleAlert,
+  type LucideIcon,
+} from "lucide-react";
 import Link from "next/link";
 
 interface IPageStateAction {
@@ -16,8 +19,14 @@ interface IPageStateProps {
   variant: "empty" | "error";
   title: string;
   description?: string;
-  image?: StaticImageData | string;
-  imageAlt?: string;
+  /**
+   * The glyph for this particular state. Without it every empty state in the
+   * app shows the same inbox, so "no messages", "no interviews" and "no search
+   * results" are indistinguishable at a glance — which is exactly the state
+   * this app was in while most of them shared one illustration. Every call site
+   * is expected to pass one. Error states always use the warning triangle.
+   */
+  icon?: LucideIcon;
   action?: IPageStateAction;
   compact?: boolean;
   className?: string;
@@ -29,8 +38,7 @@ export function PageState(props: IPageStateProps) {
     variant,
     title,
     description,
-    image,
-    imageAlt = "",
+    icon: Icon,
     action,
     compact = false,
     className,
@@ -38,6 +46,7 @@ export function PageState(props: IPageStateProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   const isError = variant === "error";
+  const Glyph = isError ? LucideTriangleAlert : (Icon ?? LucideInbox);
   const actionClassName = cn(
     "min-w-32 px-5 text-xs",
     isError &&
@@ -60,7 +69,8 @@ export function PageState(props: IPageStateProps) {
       aria-label={title}
       aria-live={isError ? "assertive" : "polite"}
       className={cn(
-        "flex w-full flex-col items-center justify-center gap-4 border border-border border-t-[5px] bg-card px-4 text-center shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]",
+        "flex w-full flex-col items-center justify-center border border-t-[5px] border-border bg-card px-4 text-center shadow-hard",
+        compact ? "gap-3" : "gap-4",
         isError
           ? "border-t-destructive bg-destructive/[0.025]"
           : "border-t-primary",
@@ -68,46 +78,57 @@ export function PageState(props: IPageStateProps) {
         className,
       )}
     >
-      {/* State Visual Section */}
-      {image ? (
-        <Image
-          src={image}
-          alt={imageAlt}
-          aria-hidden={imageAlt === ""}
-          height={200}
-          width={200}
-          className="h-28 w-28 animate-float object-contain grayscale motion-reduce:animate-none sm:h-40 sm:w-40"
-        />
-      ) : (
-        <span
-          aria-hidden
-          className={cn(
-            "grid size-14 place-items-center border",
-            isError
-              ? "border-destructive/25 bg-destructive/10 text-destructive"
-              : "border-primary/25 bg-primary/10 text-primary",
-          )}
-        >
-          {isError ? (
-            <LucideTriangleAlert className="size-6" />
-          ) : (
-            <LucideInbox className="size-6" />
-          )}
-        </span>
-      )}
+      {/* State Visual Section
+       *
+       * The non-compact frame is larger than the glyph it replaced. This state
+       * fills `min-h-[55vh]`, which a 160px illustration used to hold down; a
+       * `size-14` box with a `size-6` glyph left the region reading as broken
+       * rather than empty. The compact frame was already proportioned for the
+       * cards it sits in and is unchanged. */}
+      <span
+        aria-hidden
+        className={cn(
+          "grid place-items-center border",
+          compact ? "size-11" : "size-20",
+          isError
+            ? "border-destructive/25 bg-destructive/10 text-destructive"
+            : "border-primary/25 bg-primary/10 text-accent-foreground",
+        )}
+      >
+        <Glyph className={compact ? "size-5" : "size-9"} />
+      </span>
 
-      {/* State Copy Section */}
-      <div className="flex max-w-lg flex-col gap-2">
+      {/* State Copy Section
+       *
+       * The title used to be `text-lg font-black sm:text-xl` in both modes —
+       * the weight reserved for the page `h1`, at a size above every section
+       * heading in the app. A compact state sitting inside a settings card was
+       * typeset larger than the card's own title, and identically to one
+       * filling the viewport. It now takes its scale from where it lives:
+       * subordinate inside a section, prominent when it *is* the page. */}
+      <div
+        className={cn(
+          "flex flex-col",
+          compact ? "max-w-md gap-1" : "max-w-lg gap-2",
+        )}
+      >
         <h2
           className={cn(
-            "text-lg font-black tracking-[-0.025em] sm:text-xl",
+            compact
+              ? "text-base font-bold tracking-[-0.015em]"
+              : "text-lg font-black tracking-[-0.025em] sm:text-xl",
             isError ? "text-destructive" : "text-foreground",
           )}
         >
           {title}
         </h2>
         {description && (
-          <p className="text-sm leading-6 text-muted-foreground">
+          <p
+            className={cn(
+              "text-muted-foreground",
+              compact ? "text-xs leading-5" : "text-sm leading-6",
+            )}
+          >
             {description}
           </p>
         )}

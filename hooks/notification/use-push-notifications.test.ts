@@ -9,22 +9,27 @@ const messagingMocks = vi.hoisted(() => ({
 }));
 const userMocks = vi.hoisted(() => ({ current: null as unknown }));
 const pushTokenMocks = vi.hoisted(() => ({ update: vi.fn() }));
-const notificationMocks = vi.hoisted(() => ({ query: vi.fn(), increment: vi.fn() }));
+const notificationMocks = vi.hoisted(() => ({
+  query: vi.fn(),
+}));
 
 vi.mock("firebase/messaging", () => messagingMocks);
-vi.mock("@/lib/firebase", () => ({ getFirebaseApp: () => ({ id: "firebase-app" }) }));
+vi.mock("@/lib/firebase", () => ({
+  getFirebaseApp: () => ({ id: "firebase-app" }),
+}));
 vi.mock("@/stores/apis/users/get-current-user.store", () => ({
   useGetCurrentUserStore: (selector: (state: { user: unknown }) => unknown) =>
     selector({ user: userMocks.current }),
 }));
 vi.mock("@/stores/apis/notification/update-push-token.store", () => ({
-  useUpdatePushTokenStore: { getState: () => ({ updatePushToken: pushTokenMocks.update }) },
+  useUpdatePushTokenStore: {
+    getState: () => ({ updatePushToken: pushTokenMocks.update }),
+  },
 }));
 vi.mock("@/stores/apis/notification/notification.store", () => ({
   useNotificationStore: {
     getState: () => ({
       queryUnreadCount: notificationMocks.query,
-      incrementUnreadCount: notificationMocks.increment,
     }),
   },
 }));
@@ -40,7 +45,8 @@ describe("usePushNotifications", () => {
   const addServiceWorkerListener = vi.fn();
   const removeServiceWorkerListener = vi.fn();
   const registration = { update, showNotification };
-  let foregroundHandler: ((payload: Record<string, unknown>) => void) | undefined;
+  let foregroundHandler:
+    ((payload: Record<string, unknown>) => void) | undefined;
   let serviceWorkerMessageHandler: ((event: MessageEvent) => void) | undefined;
 
   beforeEach(() => {
@@ -85,9 +91,13 @@ describe("usePushNotifications", () => {
   it("registers push messaging and saves a changed token", async () => {
     renderHook(() => usePushNotifications());
 
-    await waitFor(() => expect(pushTokenMocks.update).toHaveBeenCalledWith("push-token-1"));
+    await waitFor(() =>
+      expect(pushTokenMocks.update).toHaveBeenCalledWith("push-token-1"),
+    );
 
-    expect(register).toHaveBeenCalledWith("/firebase-messaging-sw.js", { scope: "/" });
+    expect(register).toHaveBeenCalledWith("/firebase-messaging-sw.js", {
+      scope: "/",
+    });
     expect(update).toHaveBeenCalled();
     expect(messagingMocks.getToken).toHaveBeenCalledWith(
       { id: "messaging" },
@@ -109,8 +119,16 @@ describe("usePushNotifications", () => {
     await waitFor(() => expect(messagingMocks.onMessage).toHaveBeenCalled());
 
     foregroundHandler?.({
-      notification: { title: "New message", body: "Hello", icon: "/sender.png" },
-      data: { senderId: "user-2", targetUserId: "user-1", url: "/message?user=user-2" },
+      notification: {
+        title: "New message",
+        body: "Hello",
+        icon: "/sender.png",
+      },
+      data: {
+        senderId: "user-2",
+        targetUserId: "user-1",
+        url: "/message?user=user-2",
+      },
     });
     await Promise.resolve();
 
@@ -123,16 +141,23 @@ describe("usePushNotifications", () => {
         data: expect.objectContaining({ url: "/message?user=user-2" }),
       }),
     );
-    expect(notificationMocks.increment).toHaveBeenCalledOnce();
+    /*
+      Re-fetches rather than incrementing: the same event also arrives over the
+      socket as 'badgeIncrement', so a local +1 here would double-count.
+    */
+    expect(notificationMocks.query).toHaveBeenCalledOnce();
 
     foregroundHandler?.({ data: { targetUserId: "another-user" } });
-    expect(notificationMocks.increment).toHaveBeenCalledOnce();
+    expect(notificationMocks.query).toHaveBeenCalledOnce();
   });
 
   it("refreshes unread state on visibility and service-worker messages", async () => {
     renderHook(() => usePushNotifications());
     await waitFor(() => expect(addServiceWorkerListener).toHaveBeenCalled());
-    Object.defineProperty(document, "visibilityState", { configurable: true, value: "visible" });
+    Object.defineProperty(document, "visibilityState", {
+      configurable: true,
+      value: "visible",
+    });
 
     document.dispatchEvent(new Event("visibilitychange"));
     serviceWorkerMessageHandler?.(
@@ -152,6 +177,9 @@ describe("usePushNotifications", () => {
     const active = renderHook(() => usePushNotifications());
     await waitFor(() => expect(addServiceWorkerListener).toHaveBeenCalled());
     active.unmount();
-    expect(removeServiceWorkerListener).toHaveBeenCalledWith("message", expect.any(Function));
+    expect(removeServiceWorkerListener).toHaveBeenCalledWith(
+      "message",
+      expect.any(Function),
+    );
   });
 });

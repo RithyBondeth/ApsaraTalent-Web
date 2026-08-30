@@ -14,7 +14,7 @@ import {
   verticalListSortingStrategy,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { X } from "lucide-react";
+import { LucideX } from "lucide-react";
 import { SectionWrapper } from "../section-wrapper";
 import { TResumeContentSection } from "@/utils/interfaces/resume/resume.interface";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
@@ -28,15 +28,15 @@ import { SkillChips } from "./utils/skill-chip";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
 import { ResumeTemplateThemeContext } from "@/hooks/resume/use-resume-template-theme";
 import {
+  getYearsExperienceSuffix,
   resolveResumeLayoutBlueprint,
   resolveResumeTemplateTheme,
-} from "@/utils/functions/resume/resume-theme";
+} from "@/utils/functions/resume";
 import { useTranslations } from "next-intl";
 import {
   formatSocialPlatformLabel,
   normalizeSocialLinkUrl,
-} from "@/utils/functions/url/social-link";
-import { getYearsExperienceSuffix } from "@/utils/functions/resume/format-resume-meta";
+} from "@/utils/functions/url";
 
 /* ---------------------------------- Helper --------------------------------- */
 /**
@@ -323,10 +323,10 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
                 setEducationLines(educationLines.filter((_, idx) => idx !== i));
               }}
               title={t("removeEducation")}
-              className="absolute -right-5 top-0 opacity-0 group-hover/edu:opacity-60 hover:!opacity-100 transition-opacity"
+              className="absolute -right-5 top-0 opacity-0 transition-opacity hover:!opacity-100 group-hover/edu:opacity-60"
               style={{ color: RESUME_COLOR.DANGER }}
             >
-              <X size={12} />
+              <LucideX size={12} />
             </button>
           </div>
         ))}

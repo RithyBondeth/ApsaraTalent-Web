@@ -26,19 +26,23 @@ describe("matching and interview API stores", () => {
   beforeEach(() => {
     Object.values(axiosMocks).forEach((mock) => mock.mockReset());
     localStorage.clear();
-    useAiMatchExplanationStore.setState({ loading: false, error: null, data: null });
+    useAiMatchExplanationStore.setState({
+      loading: false,
+      error: null,
+      data: null,
+    });
     useAnalyticsStore.setState({ loading: false, error: null, data: null });
     useCompanyLikeStore.setState({ loading: false, error: null, data: null });
     useEmployeeLikeStore.setState({ loading: false, error: null, data: null });
     useCountCurrentCompanyMatchingStore.setState({
       totalCmpMatching: null,
-      seenCmpMatching: 0,
+      unseenCmpMatching: 0,
       loading: false,
       error: null,
     });
     useCountCurrentEmployeeMatchingStore.setState({
       totalEmpMatching: null,
-      seenEmpMatching: 0,
+      unseenEmpMatching: 0,
       loading: false,
       error: null,
     });
@@ -121,51 +125,102 @@ describe("matching and interview API stores", () => {
       .mockResolvedValueOnce({ data: match });
 
     await useCompanyLikeStore.getState().companyLike("company-1", "employee-1");
-    await useEmployeeLikeStore.getState().employeeLike("employee-1", "company-1");
+    await useEmployeeLikeStore
+      .getState()
+      .employeeLike("employee-1", "company-1");
 
     expect(axiosMocks.post).toHaveBeenCalledTimes(2);
     expect(useCompanyLikeStore.getState().data).toBe(match);
     expect(useEmployeeLikeStore.getState().data).toBe(match);
   });
 
-  it("loads, persists, increments, and decrements company match counts", async () => {
-    localStorage.setItem("matching-seen:cmp:company-1", "2");
-    axiosMocks.get.mockResolvedValueOnce({ data: { count: 5 } });
+  /*
+    The badge is whatever the server says is unseen. It is no longer derived
+    from a localStorage high-water mark, so none of these tests touch storage.
+  */
+  it("takes company match counts from the server response", async () => {
+    axiosMocks.get.mockResolvedValueOnce({
+      data: { count: 5, unseenCount: 2 },
+    });
 
     await useCountCurrentCompanyMatchingStore
       .getState()
       .countCurrentCmpMatching("company-1");
     expect(useCountCurrentCompanyMatchingStore.getState()).toMatchObject({
       totalCmpMatching: 5,
-      seenCmpMatching: 2,
-    });
-
-    useCountCurrentCompanyMatchingStore.getState().markAsSeen("company-1");
-    useCountCurrentCompanyMatchingStore.getState().incrementCount();
-    useCountCurrentCompanyMatchingStore.getState().decrementCount();
-    expect(localStorage.getItem("matching-seen:cmp:company-1")).toBe("5");
-    expect(useCountCurrentCompanyMatchingStore.getState()).toMatchObject({
-      totalCmpMatching: 5,
-      seenCmpMatching: 4,
+      unseenCmpMatching: 2,
     });
   });
 
-  it("loads, persists, increments, and decrements employee match counts", async () => {
-    localStorage.setItem("matching-seen:emp:employee-1", "1");
-    axiosMocks.get.mockResolvedValueOnce({ data: { count: 3 } });
+  it("clears the company badge from the mark-seen response, not by inference", async () => {
+    useCountCurrentCompanyMatchingStore.setState({
+      totalCmpMatching: 5,
+      unseenCmpMatching: 2,
+    });
+    axiosMocks.post.mockResolvedValueOnce({
+      data: { count: 5, unseenCount: 0 },
+    });
+
+    await useCountCurrentCompanyMatchingStore
+      .getState()
+      .markAsSeen("company-1");
+
+    expect(axiosMocks.post).toHaveBeenCalledWith(
+      expect.stringContaining("/company/company-1/matching-seen"),
+    );
+    expect(useCountCurrentCompanyMatchingStore.getState()).toMatchObject({
+      totalCmpMatching: 5,
+      unseenCmpMatching: 0,
+    });
+  });
+
+  it("takes employee match counts from the server response", async () => {
+    axiosMocks.get.mockResolvedValueOnce({
+      data: { count: 3, unseenCount: 3 },
+    });
 
     await useCountCurrentEmployeeMatchingStore
       .getState()
       .countCurrentEmpMatching("employee-1");
-    useCountCurrentEmployeeMatchingStore.getState().markAsSeen("employee-1");
-    useCountCurrentEmployeeMatchingStore.getState().incrementCount();
-    useCountCurrentEmployeeMatchingStore.getState().decrementCount();
-
-    expect(localStorage.getItem("matching-seen:emp:employee-1")).toBe("3");
     expect(useCountCurrentEmployeeMatchingStore.getState()).toMatchObject({
       totalEmpMatching: 3,
-      seenEmpMatching: 2,
+      unseenEmpMatching: 3,
     });
+  });
+
+  it("refreshes employee counts in the background without clearing them on failure", async () => {
+    useCountCurrentEmployeeMatchingStore.setState({
+      totalEmpMatching: 3,
+      unseenEmpMatching: 1,
+    });
+    axiosMocks.get.mockRejectedValueOnce(new Error("network"));
+
+    await useCountCurrentEmployeeMatchingStore
+      .getState()
+      .refreshEmpMatchingCount("employee-1");
+
+    // A failed realtime refresh must never blank a good number.
+    expect(useCountCurrentEmployeeMatchingStore.getState()).toMatchObject({
+      totalEmpMatching: 3,
+      unseenEmpMatching: 1,
+    });
+  });
+
+  it("leaves the badge up when marking seen fails", async () => {
+    useCountCurrentEmployeeMatchingStore.setState({
+      totalEmpMatching: 4,
+      unseenEmpMatching: 2,
+    });
+    axiosMocks.post.mockRejectedValueOnce(new Error("network"));
+
+    await useCountCurrentEmployeeMatchingStore
+      .getState()
+      .markAsSeen("employee-1");
+
+    // Failing "seen" in the direction of still-showing is the safe one.
+    expect(
+      useCountCurrentEmployeeMatchingStore.getState().unseenEmpMatching,
+    ).toBe(2);
   });
 
   it("loads and optimistically extends both liked lists without duplicates", async () => {
@@ -175,13 +230,25 @@ describe("matching and interview API stores", () => {
       .mockResolvedValueOnce({ data: [employee] })
       .mockResolvedValueOnce({ data: [company] });
 
-    await useGetCurrentCompanyLikedStore.getState().queryCurrentCompanyLiked("company-1");
-    await useGetCurrentEmployeeLikedStore.getState().queryCurrentEmployeeLiked("employee-1");
-    useGetCurrentCompanyLikedStore.getState().optimisticAddLiked(employee as never);
-    useGetCurrentEmployeeLikedStore.getState().optimisticAddLiked(company as never);
+    await useGetCurrentCompanyLikedStore
+      .getState()
+      .queryCurrentCompanyLiked("company-1");
+    await useGetCurrentEmployeeLikedStore
+      .getState()
+      .queryCurrentEmployeeLiked("employee-1");
+    useGetCurrentCompanyLikedStore
+      .getState()
+      .optimisticAddLiked(employee as never);
+    useGetCurrentEmployeeLikedStore
+      .getState()
+      .optimisticAddLiked(company as never);
 
-    expect(useGetCurrentCompanyLikedStore.getState().currentCompanyLiked).toEqual([employee]);
-    expect(useGetCurrentEmployeeLikedStore.getState().currentEmployeeLiked).toEqual([company]);
+    expect(
+      useGetCurrentCompanyLikedStore.getState().currentCompanyLiked,
+    ).toEqual([employee]);
+    expect(
+      useGetCurrentEmployeeLikedStore.getState().currentEmployeeLiked,
+    ).toEqual([company]);
   });
 
   it("loads, silently refreshes, and removes matches for both roles", async () => {
@@ -195,11 +262,19 @@ describe("matching and interview API stores", () => {
       .mockResolvedValueOnce({ data: [company1, company2] })
       .mockResolvedValueOnce({ data: [company2] });
 
-    await useGetCurrentCompanyMatchingStore.getState().queryCurrentCompanyMatching("company-1");
-    await useGetCurrentCompanyMatchingStore.getState().silentRefetch("company-1");
+    await useGetCurrentCompanyMatchingStore
+      .getState()
+      .queryCurrentCompanyMatching("company-1");
+    await useGetCurrentCompanyMatchingStore
+      .getState()
+      .silentRefetch("company-1");
     useGetCurrentCompanyMatchingStore.getState().removeMatch("employee-2");
-    await useGetCurrentEmployeeMatchingStore.getState().queryCurrentEmployeeMatching("employee-1");
-    await useGetCurrentEmployeeMatchingStore.getState().silentRefetch("employee-1");
+    await useGetCurrentEmployeeMatchingStore
+      .getState()
+      .queryCurrentEmployeeMatching("employee-1");
+    await useGetCurrentEmployeeMatchingStore
+      .getState()
+      .silentRefetch("employee-1");
     useGetCurrentEmployeeMatchingStore.getState().removeMatch("company-2");
 
     expect(useGetCurrentCompanyMatchingStore.getState()).toMatchObject({
@@ -228,9 +303,13 @@ describe("matching and interview API stores", () => {
       .mockResolvedValueOnce({ data: [interview] })
       .mockResolvedValueOnce({ data: [interview, secondInterview] });
     axiosMocks.post.mockResolvedValueOnce({ data: secondInterview });
-    axiosMocks.patch.mockResolvedValueOnce({ data: { ...interview, status: "accepted" } });
+    axiosMocks.patch.mockResolvedValueOnce({
+      data: { ...interview, status: "accepted" },
+    });
 
-    await useInterviewStore.getState().queryInterviews("employee-1", "employee");
+    await useInterviewStore
+      .getState()
+      .queryInterviews("employee-1", "employee");
     await useInterviewStore.getState().createInterview({
       employeeId: "employee-2",
       companyId: "company-1",
@@ -238,7 +317,11 @@ describe("matching and interview API stores", () => {
       scheduledAt: "2026-08-01T10:00:00.000Z",
       createdBy: "company-1",
     });
-    expect(await useInterviewStore.getState().updateStatus("interview-1", "accepted")).toBe(true);
+    expect(
+      await useInterviewStore
+        .getState()
+        .updateStatus("interview-1", "accepted"),
+    ).toBe(true);
     await useInterviewStore.getState().silentRefetch("company-1", "company");
     useInterviewStore.getState().removeInterviewsByPartnerId("employee-2");
 

@@ -26,8 +26,6 @@ const completeEmployee = {
   portfolioUrl: "https://example.com",
   linkedinUrl: "https://linkedin.com/in/sokha",
   languages: ["Khmer", "English"],
-  expectedSalaryMin: 1000,
-  expectedSalaryMax: 2000,
   skills: [{ name: "TypeScript" }],
   experiences: [
     {
@@ -70,7 +68,9 @@ const completeCompany = {
   benefits: [{ label: "Insurance" }],
   values: [{ label: "Integrity" }],
   careerScopes: [{ name: "Software Engineering" }],
-  socials: [{ platform: "linkedin", url: "https://linkedin.com/company/example" }],
+  socials: [
+    { platform: "linkedin", url: "https://linkedin.com/company/example" },
+  ],
   images: [{ image: "/office.jpg" }],
 } as ICompany;
 
@@ -80,25 +80,42 @@ describe("profile completion", () => {
 
     expect(result.percentage).toBe(100);
     expect(result.missingFields).toEqual([]);
-    expect(result.completedFields).toHaveLength(27);
+    expect(result.completedFields).toHaveLength(25);
   });
 
-  it("treats blank strings, empty arrays, and non-positive salaries as missing", () => {
+  it("treats blank strings and empty arrays as missing", () => {
     const result = getEmployeeProfileCompletion({
       ...completeEmployee,
       firstname: "   ",
       skills: [],
-      expectedSalaryMin: 0,
-      expectedSalaryMax: -1,
     });
 
     expect(result.percentage).toBe(87);
-    expect(result.missingFields).toEqual([
-      "firstName",
-      "minimumSalary",
-      "maximumSalary",
-      "skills",
-    ]);
+    expect(result.missingFields).toEqual(["firstName", "skills"]);
+  });
+
+  // Expected salary is no longer scored. A record that still carries the
+  // persisted columns must not be pushed over 100%.
+  it("ignores expected salary left on an existing employee record", () => {
+    const result = getEmployeeProfileCompletion({
+      ...completeEmployee,
+      expectedSalaryMin: 1000,
+      expectedSalaryMax: 2000,
+    } as IEmployee);
+
+    expect(result.percentage).toBe(100);
+    expect(result.completedFields).not.toContain("minimumSalary");
+    expect(result.completedFields).not.toContain("maximumSalary");
+  });
+
+  it("treats non-positive company numbers as missing", () => {
+    const result = getCompanyProfileCompletion({
+      ...completeCompany,
+      companySize: 0,
+      foundedYear: -1,
+    });
+
+    expect(result.missingFields).toEqual(["companySize", "foundedYear"]);
   });
 
   it("returns 100% with every company field completed", () => {

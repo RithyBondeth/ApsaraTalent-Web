@@ -1,7 +1,7 @@
 import {
   selectedValidation,
   textValidation,
-} from "@/utils/functions/validation/form-schemas";
+} from "@/utils/functions/validation";
 import * as z from "zod";
 
 export const companySearchSchema = z.object({

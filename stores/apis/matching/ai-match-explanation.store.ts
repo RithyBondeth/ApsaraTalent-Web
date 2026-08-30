@@ -1,7 +1,7 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_AI_MATCH_EXPLANATION_URL } from "@/utils/constants/apis/matching.api.constant";
-import { IAiMatchExplanationResponse } from "@/utils/interfaces/resume";
+import { IAiMatchExplanationResponse } from "@/utils/interfaces/resume/ai-resume.interface";
 import { create } from "zustand";
 
 /* ---------------------------------- State --------------------------------- */

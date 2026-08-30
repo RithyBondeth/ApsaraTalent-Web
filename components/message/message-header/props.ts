@@ -10,6 +10,4 @@ export interface IChatHeaderProps {
   onOpenMobileSidebar?: () => void;
   /** Called when the user clicks the voice-call button. */
   onStartVoiceCall?: () => void;
-  /** Called when the user clicks the video-call button (future). */
-  onStartVideoCall?: () => void;
 }

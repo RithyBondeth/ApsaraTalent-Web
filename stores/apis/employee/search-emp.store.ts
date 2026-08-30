@@ -150,8 +150,9 @@ export const useSearchEmployeeStore = create<TSearchEmployeeState>(
             signal: controller.signal,
           },
         );
-        const { data, total, isUsingFallback } =
-          parseSearchEmployeeResponse(response.data);
+        const { data, total, isUsingFallback } = parseSearchEmployeeResponse(
+          response.data,
+        );
         set({
           employees: data,
           total,

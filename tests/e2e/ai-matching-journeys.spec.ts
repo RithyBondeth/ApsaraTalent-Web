@@ -134,10 +134,7 @@ function aiJourneyApi(state: AiJourneyState) {
       return { body: validExplanation };
     }
 
-    if (
-      method === "POST" &&
-      pathname.endsWith("/resume/cover-letter/stream")
-    ) {
+    if (method === "POST" && pathname.endsWith("/resume/cover-letter/stream")) {
       state.coverCalls = (state.coverCalls ?? 0) + 1;
       const mode = state.coverModes?.shift() ?? "success";
       if (mode === "delayed") {
@@ -172,10 +169,7 @@ function aiJourneyApi(state: AiJourneyState) {
       );
     }
 
-    if (
-      method === "POST" &&
-      pathname.endsWith("/resume/cover-letter-pdf")
-    ) {
+    if (method === "POST" && pathname.endsWith("/resume/cover-letter-pdf")) {
       state.pdfRequests = (state.pdfRequests ?? 0) + 1;
       if (state.pdfFailure) {
         return { status: 503, body: { message: "PDF service unavailable" } };
@@ -191,9 +185,7 @@ function aiJourneyApi(state: AiJourneyState) {
 
     if (
       method === "GET" &&
-      pathname.endsWith(
-        "/match/ai-skill-gap/employee-1/company-1/stream",
-      )
+      pathname.endsWith("/match/ai-skill-gap/employee-1/company-1/stream")
     ) {
       state.skillCalls = (state.skillCalls ?? 0) + 1;
       const mode = state.skillModes?.shift() ?? "success";
@@ -225,10 +217,7 @@ function aiJourneyApi(state: AiJourneyState) {
           topPriority: "Learn TypeScript",
         }),
       ].join("\n");
-      return streamResponse(
-        { t: "chunk", v: `${records}\n` },
-        { t: "done" },
-      );
+      return streamResponse({ t: "chunk", v: `${records}\n` }, { t: "done" });
     }
 
     return successfulEmployeeApi(request);
@@ -236,7 +225,9 @@ function aiJourneyApi(state: AiJourneyState) {
 }
 
 test.describe("AI matching journeys", () => {
-  test("loads, caches, and re-analyzes a match explanation", async ({ page }) => {
+  test("loads, caches, and re-analyzes a match explanation", async ({
+    page,
+  }) => {
     const state: AiJourneyState = {};
     await mockApi(page, aiJourneyApi(state));
     await loginEmployee(page, "/matching");
@@ -315,7 +306,9 @@ test.describe("AI matching journeys", () => {
     expect(state.pdfRequests).toBe(1);
   });
 
-  test("surfaces cover-letter quota exhaustion and retries", async ({ page }) => {
+  test("surfaces cover-letter quota exhaustion and retries", async ({
+    page,
+  }) => {
     const state: AiJourneyState = { coverModes: ["quota", "success"] };
     await mockApi(page, aiJourneyApi(state));
     await loginEmployee(page, "/matching");

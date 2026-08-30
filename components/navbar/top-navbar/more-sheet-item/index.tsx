@@ -5,7 +5,7 @@ import { IMoreSheetItemProps } from "./props";
 
 export default function MoreSheetItem(props: IMoreSheetItemProps) {
   /* --------------------------------- Props --------------------------------- */
-  const { href, icon: Icon, label, count, active, onClick } = props;
+  const { href, icon: Icon, label, count, badgeLabel, active, onClick } = props;
 
   /* ------------------------------- Render UI -------------------------------- */
   return (
@@ -18,7 +18,7 @@ export default function MoreSheetItem(props: IMoreSheetItemProps) {
         "group relative flex min-h-20 items-center gap-3 border p-3 transition-[background-color,border-color,color,transform]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
         active
-          ? "border-primary bg-primary text-primary-foreground shadow-[3px_3px_0_hsl(var(--primary)/0.22)]"
+          ? "border-primary bg-primary text-primary-foreground shadow-hard-primary"
           : "border-border bg-background hover:border-foreground/35 hover:bg-muted/60 active:translate-y-px",
       )}
     >
@@ -41,6 +41,11 @@ export default function MoreSheetItem(props: IMoreSheetItemProps) {
 
         {/* Badge Pill Section */}
         <BadgePill count={count} />
+        {/*
+          BadgePill renders a bare number. This sheet row has no aria-label to
+          fold it into, so the count gets its own screen-reader-only sentence.
+        */}
+        {count > 0 && <span className="sr-only">{badgeLabel}</span>}
       </span>
 
       {/* Label Section */}
@@ -52,7 +57,7 @@ export default function MoreSheetItem(props: IMoreSheetItemProps) {
       >
         {label}
       </span>
-      
+
       <span
         aria-hidden="true"
         className={cn(

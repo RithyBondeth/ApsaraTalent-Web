@@ -58,6 +58,7 @@ export function useFetchOnce(
   const onEmployeeFetchRef = useRef(onEmployeeFetch);
   const onCompanyFetchRef = useRef(onCompanyFetch);
 
+  /* --------------------------------- Memos ---------------------------------- */
   const userData = useMemo(() => {
     const employee =
       currentUser?.role === USER_ROLE.EMPLOYEE ? currentUser.employee : null;

@@ -5,7 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarDays } from "lucide-react";
+import { LucideCalendarDays } from "lucide-react";
 import dynamic from "next/dynamic";
 import { Editable } from "./editable";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
@@ -56,10 +56,10 @@ export function InlineDateField(props: {
             onClick={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
             title={t("pickDate")}
-            className="opacity-0 group-hover/date:opacity-50 hover:!opacity-100 transition-opacity ml-0.5"
+            className="ml-0.5 opacity-0 transition-opacity hover:!opacity-100 group-hover/date:opacity-50"
             style={{ color: RESUME_COLOR.TEXT_SUBTLE, lineHeight: 1 }}
           >
-            <CalendarDays size={10} />
+            <LucideCalendarDays size={10} />
           </button>
         </PopoverTrigger>
 
