@@ -12,7 +12,8 @@ export interface ISearchCompanyCardProps {
   salaryCurrency?: string | null;
   experience: string;
   education: string;
-  skills: string[];
+  /** Absent on some payloads — the card falls back to an empty list. */
+  skills?: string[];
   deadlineDate?: string;
   postedDate: string;
   company: {

@@ -33,6 +33,12 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
   const tl = useTranslations("locations");
   const salaryText = useSalaryText();
 
+  // A cached job search used to answer without `skills` — it is an @Expose()
+  // getter server-side and did not survive Redis. The API rebuilds the DTO on
+  // a hit now, but this card renders whatever the caller passes, so it must
+  // not depend on the field being there.
+  const skills = props.skills ?? [];
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <article className="group w-full overflow-hidden rounded-none border border-border bg-card shadow-hard transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-hard-lg">
@@ -103,14 +109,14 @@ const SearchCompanyCard = memo(function SearchCompanyCard(
         )}
 
         {/* Skills Tags Section */}
-        {props.skills.length > 0 && (
+        {skills.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
-            {props.skills.slice(0, 6).map((item, index) => (
+            {skills.slice(0, 6).map((item, index) => (
               <Tag label={item} key={index} />
             ))}
-            {props.skills.length > 6 && (
+            {skills.length > 6 && (
               <span className="self-center text-[11px] font-semibold text-muted-foreground">
-                +{props.skills.length - 6}
+                +{skills.length - 6}
               </span>
             )}
           </div>
