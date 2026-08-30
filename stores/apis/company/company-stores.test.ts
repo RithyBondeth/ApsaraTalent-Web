@@ -26,16 +26,57 @@ vi.mock("@/lib/axios", () => ({ default: axiosMocks }));
 describe("company API stores", () => {
   beforeEach(() => {
     Object.values(axiosMocks).forEach((mock) => mock.mockReset());
-    useGetAllCompanyStore.setState({ companyData: null, loading: false, error: null });
-    useGetOneCompanyStore.setState({ companyData: null, loading: false, error: null });
-    useRemoveCmpAvatarStore.setState({ message: null, loading: false, error: null });
-    useRemoveCmpCoverStore.setState({ message: null, loading: false, error: null });
-    useRemoveOneCmpImageStore.setState({ message: null, loading: false, error: null });
-    useRemoveOneOpenPositionStore.setState({ message: null, loading: false, error: null });
-    useUpdateOneCompanyStore.setState({ message: null, company: null, loading: false, error: null });
-    useUploadCompanyAvatarStore.setState({ message: null, loading: false, error: null });
-    useUploadCompanyCoverStore.setState({ message: null, loading: false, error: null });
-    useUploadCompanyImagesStore.setState({ message: null, loading: false, error: null });
+    useGetAllCompanyStore.setState({
+      companyData: null,
+      loading: false,
+      error: null,
+    });
+    useGetOneCompanyStore.setState({
+      companyData: null,
+      loading: false,
+      error: null,
+    });
+    useRemoveCmpAvatarStore.setState({
+      message: null,
+      loading: false,
+      error: null,
+    });
+    useRemoveCmpCoverStore.setState({
+      message: null,
+      loading: false,
+      error: null,
+    });
+    useRemoveOneCmpImageStore.setState({
+      message: null,
+      loading: false,
+      error: null,
+    });
+    useRemoveOneOpenPositionStore.setState({
+      message: null,
+      loading: false,
+      error: null,
+    });
+    useUpdateOneCompanyStore.setState({
+      message: null,
+      company: null,
+      loading: false,
+      error: null,
+    });
+    useUploadCompanyAvatarStore.setState({
+      message: null,
+      loading: false,
+      error: null,
+    });
+    useUploadCompanyCoverStore.setState({
+      message: null,
+      loading: false,
+      error: null,
+    });
+    useUploadCompanyImagesStore.setState({
+      message: null,
+      loading: false,
+      error: null,
+    });
   });
 
   it("loads all companies", async () => {
@@ -95,26 +136,40 @@ describe("company API stores", () => {
 
     await remove();
 
-    expect(useRemoveCmpAvatarStore === store || useRemoveCmpCoverStore === store
-      ? axiosMocks.post
-      : axiosMocks.delete).toHaveBeenCalledTimes(1);
-    expect(store.getState()).toMatchObject({ message: "Removed", loading: false, error: null });
+    expect(
+      useRemoveCmpAvatarStore === store || useRemoveCmpCoverStore === store
+        ? axiosMocks.post
+        : axiosMocks.delete,
+    ).toHaveBeenCalledTimes(1);
+    expect(store.getState()).toMatchObject({
+      message: "Removed",
+      loading: false,
+      error: null,
+    });
   });
 
   it("maps editable company fields to the update API payload", async () => {
     const company = { id: "company-1", name: "Updated" };
-    axiosMocks.patch.mockResolvedValueOnce({ data: { message: "Saved", company } });
+    axiosMocks.patch.mockResolvedValueOnce({
+      data: { message: "Saved", company },
+    });
     const body: TCompanyUpdateBody = {
       name: "Updated",
       values: ["Integrity"],
       jobIdsToDelete: ["job-old"],
     };
 
-    await useUpdateOneCompanyStore.getState().updateOneCompany("company-1", body);
+    await useUpdateOneCompanyStore
+      .getState()
+      .updateOneCompany("company-1", body);
 
     expect(axiosMocks.patch).toHaveBeenCalledWith(
       expect.stringContaining("company-1"),
-      { name: "Updated", values: [{ label: "Integrity" }], jobIdsToDelete: ["job-old"] },
+      {
+        name: "Updated",
+        values: [{ label: "Integrity" }],
+        jobIdsToDelete: ["job-old"],
+      },
     );
     expect(useUpdateOneCompanyStore.getState()).toMatchObject({
       message: "Saved",
@@ -147,14 +202,20 @@ describe("company API stores", () => {
 
     const formData = axiosMocks.post.mock.calls[0]?.[1] as FormData;
     expect(formData.get(field)).toBe(file);
-    expect(store.getState()).toMatchObject({ message: "Uploaded", loading: false, error: null });
+    expect(store.getState()).toMatchObject({
+      message: "Uploaded",
+      loading: false,
+      error: null,
+    });
   });
 
   it("uploads all company gallery images", async () => {
     axiosMocks.post.mockResolvedValueOnce({ data: { message: "Uploaded" } });
     const files = [new File(["one"], "one.png"), new File(["two"], "two.png")];
 
-    await useUploadCompanyImagesStore.getState().uploadImages("company-1", files);
+    await useUploadCompanyImagesStore
+      .getState()
+      .uploadImages("company-1", files);
 
     const formData = axiosMocks.post.mock.calls[0]?.[1] as FormData;
     expect(formData.getAll("images")).toEqual(files);
@@ -173,18 +234,82 @@ describe("company API stores", () => {
   });
 
   it.each([
-    ["single company", useGetOneCompanyStore, axiosMocks.get, () => useGetOneCompanyStore.getState().queryOneCompany("company-1")],
-    ["avatar removal", useRemoveCmpAvatarStore, axiosMocks.post, () => useRemoveCmpAvatarStore.getState().removeCmpAvatar("company-1")],
-    ["cover removal", useRemoveCmpCoverStore, axiosMocks.post, () => useRemoveCmpCoverStore.getState().removeCmpCover("company-1")],
-    ["gallery removal", useRemoveOneCmpImageStore, axiosMocks.delete, () => useRemoveOneCmpImageStore.getState().removeOneCmpImage("company-1", "image-1")],
-    ["position removal", useRemoveOneOpenPositionStore, axiosMocks.delete, () => useRemoveOneOpenPositionStore.getState().removeOneOpenPosition("company-1", "job-1")],
-    ["profile update", useUpdateOneCompanyStore, axiosMocks.patch, () => useUpdateOneCompanyStore.getState().updateOneCompany("company-1", {})],
-    ["avatar upload", useUploadCompanyAvatarStore, axiosMocks.post, () => useUploadCompanyAvatarStore.getState().uploadAvatar("company-1", new File(["x"], "a.png"))],
-    ["cover upload", useUploadCompanyCoverStore, axiosMocks.post, () => useUploadCompanyCoverStore.getState().uploadCover("company-1", new File(["x"], "c.png"))],
-    ["gallery upload", useUploadCompanyImagesStore, axiosMocks.post, () => useUploadCompanyImagesStore.getState().uploadImages("company-1", [new File(["x"], "g.png")])],
+    [
+      "single company",
+      useGetOneCompanyStore,
+      axiosMocks.get,
+      () => useGetOneCompanyStore.getState().queryOneCompany("company-1"),
+    ],
+    [
+      "avatar removal",
+      useRemoveCmpAvatarStore,
+      axiosMocks.post,
+      () => useRemoveCmpAvatarStore.getState().removeCmpAvatar("company-1"),
+    ],
+    [
+      "cover removal",
+      useRemoveCmpCoverStore,
+      axiosMocks.post,
+      () => useRemoveCmpCoverStore.getState().removeCmpCover("company-1"),
+    ],
+    [
+      "gallery removal",
+      useRemoveOneCmpImageStore,
+      axiosMocks.delete,
+      () =>
+        useRemoveOneCmpImageStore
+          .getState()
+          .removeOneCmpImage("company-1", "image-1"),
+    ],
+    [
+      "position removal",
+      useRemoveOneOpenPositionStore,
+      axiosMocks.delete,
+      () =>
+        useRemoveOneOpenPositionStore
+          .getState()
+          .removeOneOpenPosition("company-1", "job-1"),
+    ],
+    [
+      "profile update",
+      useUpdateOneCompanyStore,
+      axiosMocks.patch,
+      () =>
+        useUpdateOneCompanyStore.getState().updateOneCompany("company-1", {}),
+    ],
+    [
+      "avatar upload",
+      useUploadCompanyAvatarStore,
+      axiosMocks.post,
+      () =>
+        useUploadCompanyAvatarStore
+          .getState()
+          .uploadAvatar("company-1", new File(["x"], "a.png")),
+    ],
+    [
+      "cover upload",
+      useUploadCompanyCoverStore,
+      axiosMocks.post,
+      () =>
+        useUploadCompanyCoverStore
+          .getState()
+          .uploadCover("company-1", new File(["x"], "c.png")),
+    ],
+    [
+      "gallery upload",
+      useUploadCompanyImagesStore,
+      axiosMocks.post,
+      () =>
+        useUploadCompanyImagesStore
+          .getState()
+          .uploadImages("company-1", [new File(["x"], "g.png")]),
+    ],
   ] as const)("handles %s failures", async (_label, store, request, action) => {
     request.mockRejectedValueOnce(new Error("request failed"));
     await action().catch(() => undefined);
-    expect(store.getState()).toMatchObject({ loading: false, error: "request failed" });
+    expect(store.getState()).toMatchObject({
+      loading: false,
+      error: "request failed",
+    });
   });
 });

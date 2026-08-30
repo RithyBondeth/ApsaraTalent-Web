@@ -7,10 +7,12 @@
  * (apsaratalent-api .../resume-html-import/resume-html-template.util.ts).
  */
 
+/* -------------------------------- Constants -------------------------------- */
 /** Strict #RRGGBB only — this value is rendered into PDF HTML, so nothing
  *  looser (named colors, rgb(), url(...)) is ever accepted. */
 export const CUSTOM_ACCENT_PATTERN = /^#[0-9A-Fa-f]{6}$/;
 
+/* --------------------------------- Methods --------------------------------- */
 export function isValidCustomAccent(value?: string): value is string {
   return Boolean(value && CUSTOM_ACCENT_PATTERN.test(value));
 }

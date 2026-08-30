@@ -2,7 +2,6 @@
 
 import LandingLiveStats from "@/components/landing/landing-live-stats";
 import { Button } from "@/components/ui/button";
-import { GridRunners } from "@/components/ui/grid-runners";
 import { TypographyH1 } from "@/components/utils/typography/typography-h1";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useGsapHeroAnimation } from "@/hooks/utils/use-gsap-animation";
@@ -33,11 +32,7 @@ export default function LandingHero() {
       ref={heroRef}
       className="relative min-h-[100dvh] overflow-hidden border-b border-border pt-[72px]"
     >
-      {/* Grid Background Section */}
-      <div className="landing-grid pointer-events-none absolute inset-0" />
-      <GridRunners className="landing-grid-runners" density="quiet" />
-
-      <div className="relative mx-auto grid min-h-[calc(100dvh-72px)] max-w-7xl border-x border-border lg:grid-cols-[1.08fr_0.92fr]"> 
+      <div className="relative mx-auto grid min-h-[calc(100dvh-72px)] max-w-7xl border-x border-border lg:grid-cols-[1.08fr_0.92fr]">
         {/* Hero Content Section */}
         <div
           data-hero-content
@@ -57,7 +52,7 @@ export default function LandingHero() {
           {/* Heading Section */}
           <TypographyH1
             data-hero="heading"
-            className="max-w-3xl text-4xl font-bold tracking-[-0.04em] opacity-0 sm:text-5xl md:text-6xl lg:text-[4.25rem] !leading-[1.02]"
+            className="max-w-3xl text-4xl font-bold !leading-[1.02] tracking-[-0.04em] opacity-0 sm:text-5xl md:text-6xl lg:text-[4.25rem]"
           >
             {t("heroHeading1")} <br />
             {t("heroHeading2")} {t("heroHeadingTalent")} {t("heroHeadingAnd")}{" "}
@@ -66,7 +61,7 @@ export default function LandingHero() {
             </span>
           </TypographyH1>
 
-          {/* Description Section */} 
+          {/* Description Section */}
           <TypographyMuted
             data-hero="description"
             className="mt-7 max-w-xl text-base !leading-relaxed opacity-0 sm:text-lg"
@@ -74,7 +69,6 @@ export default function LandingHero() {
             {t("heroDescription")}
           </TypographyMuted>
 
-          
           {/* CTA Buttons Section */}
           <div
             data-hero="cta"
@@ -108,8 +102,6 @@ export default function LandingHero() {
 
         {/* Feature Card Section */}
         <div className="landing-dark-panel landing-swap-panel relative flex min-h-[560px] flex-col overflow-hidden border-t border-border p-6 sm:p-10 lg:min-h-0 lg:border-l lg:border-t-0 lg:p-12">
-          <div className="landing-dark-grid pointer-events-none absolute inset-0" />
-          <GridRunners className="landing-swap-grid-runners" density="quiet" />
           <div className="relative z-10 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--landing-panel-ink)/0.55)]">
             <span>Apsara Talent</span>
             <span>Phnom Penh · KH</span>

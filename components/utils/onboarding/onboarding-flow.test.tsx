@@ -34,14 +34,15 @@ describe("OnboardingFlow", () => {
 
     await act(async () => vi.advanceTimersByTime(1_200));
     expect(screen.getByText("Welcome")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Go to onboarding step 1" })).toHaveAttribute(
-      "aria-current",
-      "step",
-    );
+    expect(
+      screen.getByRole("button", { name: "Go to onboarding step 1" }),
+    ).toHaveAttribute("aria-current", "step");
 
     fireEvent.click(screen.getByRole("button", { name: "Next" }));
     expect(screen.getByText("Like profiles")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Go to onboarding step 4" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Go to onboarding step 4" }),
+    );
     expect(screen.getByText("Track matches")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Get started" }));
     await act(async () => vi.advanceTimersByTime(250));

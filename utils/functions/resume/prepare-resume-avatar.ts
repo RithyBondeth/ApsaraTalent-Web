@@ -1,5 +1,6 @@
 import { normalizeMediaUrl } from "@/utils/functions/media";
 
+/* ---------------------------------- Utils --------------------------------- */
 const MAX_SOURCE_AVATAR_BYTES = 5 * 1024 * 1024;
 const MAX_INLINE_AVATAR_LENGTH = 1_500_000;
 const AVATAR_OUTPUT_SIZE = 200;
@@ -17,6 +18,7 @@ interface IPrepareResumeAvatarOptions {
   timeoutMs?: number;
 }
 
+/* --------------------------------- Methods --------------------------------- */
 export function isSafeInlineResumeAvatar(value?: string): value is string {
   return Boolean(
     value &&

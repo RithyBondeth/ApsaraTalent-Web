@@ -7,7 +7,7 @@ import { IResumeTemplateTheme } from "@/utils/interfaces/resume/resume-theme.int
 import {
   deriveCustomAccentColors,
   isValidCustomAccent,
-} from "@/utils/functions/resume/resume-color";
+} from "@/utils/functions/resume";
 import {
   RESUME_TEMPLATE_THEMES,
   DESIGN_PALETTES,

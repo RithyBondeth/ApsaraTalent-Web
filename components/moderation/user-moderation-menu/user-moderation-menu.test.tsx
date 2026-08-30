@@ -31,7 +31,9 @@ vi.mock("@/stores/apis/moderation/moderation.store", () => ({
   },
 }));
 
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: mocks.routerPush }) }));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: mocks.routerPush }),
+}));
 vi.mock("sonner", () => ({
   toast: {
     loading: mocks.toastLoading,
@@ -99,7 +101,10 @@ describe("UserModerationMenu", () => {
     await user.click(screen.getByRole("menuitem", { name: "Report" }));
     expect(screen.getByRole("dialog", { name: "Report Sophea" })).toBeVisible();
     await user.click(screen.getByText("Harassment"));
-    await user.type(screen.getByPlaceholderText("Extra details"), "  repeated abuse  ");
+    await user.type(
+      screen.getByPlaceholderText("Extra details"),
+      "  repeated abuse  ",
+    );
     await user.click(screen.getByRole("button", { name: "Submit report" }));
 
     await waitFor(() =>
@@ -121,7 +126,9 @@ describe("UserModerationMenu", () => {
 
     await user.click(screen.getByRole("button", { name: "More options" }));
     await user.click(screen.getByRole("menuitem", { name: "Unblock" }));
-    await waitFor(() => expect(mocks.unblockUser).toHaveBeenCalledWith("user-2"));
+    await waitFor(() =>
+      expect(mocks.unblockUser).toHaveBeenCalledWith("user-2"),
+    );
     expect(mocks.toastError).toHaveBeenCalledWith("actionFailed", {
       id: "toast-1",
     });

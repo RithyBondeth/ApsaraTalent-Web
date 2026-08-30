@@ -8,7 +8,9 @@ vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }));
 
 vi.mock("@/components/ui/select", async () => {
   const ReactModule = await import("react");
-  const Context = ReactModule.createContext<((value: string) => void) | null>(null);
+  const Context = ReactModule.createContext<((value: string) => void) | null>(
+    null,
+  );
   return {
     Select: ({
       onValueChange,
@@ -20,13 +22,21 @@ vi.mock("@/components/ui/select", async () => {
     SelectTrigger: ({ children }: { children: React.ReactNode }) => {
       const change = ReactModule.useContext(Context);
       return (
-        <button type="button" aria-label="location" onClick={() => change?.("Phnom Penh")}>
+        <button
+          type="button"
+          aria-label="location"
+          onClick={() => change?.("Phnom Penh")}
+        >
           {children}
         </button>
       );
     },
-    SelectContent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-    SelectItem: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
+    SelectContent: ({ children }: { children: React.ReactNode }) => (
+      <>{children}</>
+    ),
+    SelectItem: ({ children }: { children: React.ReactNode }) => (
+      <span>{children}</span>
+    ),
   };
 });
 
@@ -66,7 +76,9 @@ function Harness({ onValues }: { onValues: (values: FormValues) => void }) {
 describe("SearchBar", () => {
   it("focuses and selects the keyword through the command shortcut", async () => {
     render(<Harness onValues={vi.fn()} />);
-    const input = screen.getByPlaceholderText("jobTitleKeywords") as HTMLInputElement;
+    const input = screen.getByPlaceholderText(
+      "jobTitleKeywords",
+    ) as HTMLInputElement;
 
     document.dispatchEvent(
       new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }),

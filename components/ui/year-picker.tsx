@@ -7,7 +7,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  LucideCalendar,
+  LucideChevronLeft,
+  LucideChevronRight,
+} from "lucide-react";
 import { useState } from "react";
 
 interface YearPickerProps {
@@ -61,8 +65,8 @@ export function YearPicker({
           variant="outline"
           disabled={disabled}
           className={cn(
-            "w-full justify-between border rounded-none px-4 py-6 text-left text-muted-foreground bg-primary-foreground",
-            disabled && "opacity-50 cursor-not-allowed",
+            "w-full justify-between rounded-none border bg-primary-foreground px-4 py-6 text-left text-muted-foreground",
+            disabled && "cursor-not-allowed opacity-50",
             className,
           )}
         >
@@ -71,7 +75,7 @@ export function YearPicker({
           ) : (
             <span>{placeholder}</span>
           )}
-          <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
+          <LucideCalendar className="ml-auto h-5 w-5 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -80,7 +84,7 @@ export function YearPicker({
         sideOffset={8}
       >
         {/* Navigation */}
-        <div className="flex items-center justify-between mb-2">
+        <div className="mb-2 flex items-center justify-between">
           <Button
             type="button"
             variant="ghost"
@@ -89,7 +93,7 @@ export function YearPicker({
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <LucideChevronLeft className="h-4 w-4" />
           </Button>
           <span className="text-sm font-medium">
             {pageStartYear} - {pageEndYear}
@@ -102,7 +106,7 @@ export function YearPicker({
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1}
           >
-            <ChevronRight className="h-4 w-4" />
+            <LucideChevronRight className="h-4 w-4" />
           </Button>
         </div>
 

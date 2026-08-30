@@ -120,7 +120,7 @@ export function AvatarField(props: {
 
       {/* Hover Over Section */}
       <div
-        className="absolute inset-0 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center"
+        className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover/avatar:opacity-100"
         style={{
           borderRadius: theme.avatarRadius,
           background: "rgba(79,70,229,0.55)",

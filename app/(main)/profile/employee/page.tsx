@@ -44,6 +44,7 @@ import LabelInput from "@/components/utils/forms/label-input";
 import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { LoginMethodIcon } from "@/components/utils/brand/login-method-icon";
 import { useAvatarState } from "@/hooks/profile/employee/use-avatar-state";
 import { useCareerScopesState } from "@/hooks/profile/employee/use-careerscope-state";
 import { useReferenceFilesState } from "@/hooks/profile/employee/use-referencefile-state";
@@ -71,14 +72,13 @@ import {
   loginMethodConstant,
   noticePeriodConstant,
   platformConstant,
-  salaryCurrencyConstant,
   workModeConstant,
 } from "@/utils/constants/ui.constant";
-import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
+import { PlatformIcon } from "@/components/utils/brand/platform-icon";
 import { capitalizeWords } from "@/utils/functions/text";
 import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { MAX_IMAGE_SIZE } from "@/utils/constants/config.constant";
-import { isUuid } from "@/utils/functions/validation/check-uuid";
+import { isUuid } from "@/utils/functions/validation";
 import {
   extractCleanFilename,
   isSupportedProfileImage,
@@ -92,17 +92,16 @@ import { ISocialLink } from "@/utils/interfaces/user/social.interface";
 import { TPlatform } from "@/utils/types/user/platform.type";
 import { cn } from "@/lib/utils";
 import {
-  Check,
-  ChevronDown,
+  LucideCheck,
+  LucideChevronDown,
   LucideAtSign,
   LucideBadgeCheck,
+  LucideBriefcase,
   LucideBriefcaseBusiness,
   LucideCamera,
   LucideCircleCheck,
-  LucideCircleDollarSign,
   LucideClock3,
   LucideCompass,
-  LucideLoader2,
   LucideDownload,
   LucideEdit,
   LucideEye,
@@ -111,6 +110,7 @@ import {
   LucideGlobe,
   LucideGraduationCap,
   LucideLink2,
+  LucideLoader2,
   LucideMail,
   LucideMapPin,
   LucideMonitor,
@@ -123,13 +123,12 @@ import {
   LucideVenusAndMars,
   LucideXCircle,
   LucideZap,
-  Sparkles,
+  LucideSparkles,
 } from "lucide-react";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import Link from "next/link";
 import {
   Controller,
@@ -140,10 +139,6 @@ import {
 } from "react-hook-form";
 import { PageState } from "@/components/utils/feedback/page-state";
 import type { TEmployeeProfileForm } from "./validation";
-import {
-  addNewEducationSvg,
-  addNewExperienceSvg,
-} from "@/utils/constants/asset.constant";
 import { getEmployeeProfileCompletion } from "@/utils/functions/profile";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
@@ -151,10 +146,9 @@ import { EmployeeProfilePageLoadingSkeleton } from "@/components/profile/skeleto
 import MissingProfileFieldButton from "@/components/profile/missing-profile-field-button";
 import ProfileEditActionBar from "@/components/profile/profile-edit-action-bar";
 
-  /* -------------------------------- Helpers --------------------------------- */
+/* -------------------------------- Helpers --------------------------------- */
 let employeeProfileResolverPromise:
-  | Promise<Resolver<TEmployeeProfileForm>>
-  | undefined;
+  Promise<Resolver<TEmployeeProfileForm>> | undefined;
 
 const lazyEmployeeProfileResolver: Resolver<TEmployeeProfileForm> = async (
   ...args
@@ -324,9 +318,6 @@ export default function EmployeeProfilePage() {
         portfolioUrl: "",
         linkedinUrl: "",
         languages: [],
-        expectedSalaryMin: null,
-        expectedSalaryMax: null,
-        salaryCurrency: "USD",
       },
       educations: [],
       experiences: [],
@@ -416,14 +407,6 @@ export default function EmployeeProfilePage() {
     control: form.control,
     name: "profession.languages",
   }) as string[] | undefined;
-  const salaryMinValue = useWatch({
-    control: form.control,
-    name: "profession.expectedSalaryMin",
-  });
-  const salaryMaxValue = useWatch({
-    control: form.control,
-    name: "profession.expectedSalaryMax",
-  });
 
   const [langPopoverOpen, setLangPopoverOpen] = useState<boolean>(false);
   const [skillDescriptionInput, setSkillDescriptionInput] =
@@ -458,9 +441,6 @@ export default function EmployeeProfilePage() {
         portfolioUrl: employee.portfolioUrl ?? "",
         linkedinUrl: employee.linkedinUrl ?? "",
         languages: employee.languages ?? [],
-        expectedSalaryMin: employee.expectedSalaryMin ?? null,
-        expectedSalaryMax: employee.expectedSalaryMax ?? null,
-        salaryCurrency: "USD",
       },
       experiences:
         employee.experiences?.map((exp) => ({
@@ -998,8 +978,6 @@ export default function EmployeeProfilePage() {
         "portfolioUrl",
         "linkedinUrl",
         "languages",
-        "expectedSalaryMin",
-        "expectedSalaryMax",
       ];
 
       professionKeys.forEach((key) => {
@@ -1283,7 +1261,9 @@ export default function EmployeeProfilePage() {
   /* -------------------------------- Profile Completion ---------------------- */
   const profileCompletion = getEmployeeProfileCompletion({
     ...employee,
-    email: user.email,
+    // The API omits `email` rather than sending null, and the completion
+    // helper distinguishes "absent" as null.
+    email: user.email ?? null,
     avatar: avatarLoadError ? undefined : employee.avatar,
   });
 
@@ -1291,7 +1271,7 @@ export default function EmployeeProfilePage() {
   return (
     <form
       data-profile-editing={isEdit}
-      className="profile-editorial profile-employee !min-w-full flex flex-col gap-6 animate-page-in sm:gap-7"
+      className="profile-editorial profile-employee animate-page-in flex !min-w-full flex-col gap-6 sm:gap-7"
       onSubmit={handleSubmit}
       onKeyDown={(e) => {
         if (
@@ -1323,9 +1303,8 @@ export default function EmployeeProfilePage() {
       {/* Header Section */}
       <section className="profile-hero profile-employee-hero overflow-hidden border border-border bg-card">
         {/* Gradient Banner Section */}
-        <div className="profile-cover relative h-40 overflow-hidden bg-foreground sm:h-52">
-          <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_48%,hsl(var(--background)/0.09)_48%,hsl(var(--background)/0.09)_50%,transparent_50%,transparent_100%)] bg-[length:34px_34px]" />
-          <div className="absolute inset-x-5 top-5 flex items-start justify-between text-background sm:inset-x-6 sm:top-6">
+        <div className="profile-cover relative h-40 overflow-hidden border-b border-border bg-muted sm:h-52">
+          <div className="absolute inset-x-5 top-5 flex items-start justify-between text-foreground sm:inset-x-6 sm:top-6">
             <span className="text-[10px] font-bold uppercase tracking-[0.24em] opacity-80">
               {tP("employeeProfileLabel")}
             </span>
@@ -1333,8 +1312,8 @@ export default function EmployeeProfilePage() {
         </div>
 
         {/* Identity Row Section */}
-        <div className="px-5 sm:px-6 pb-6">
-          <div className="flex items-end gap-4 -mt-10 sm:-mt-12 tablet-md:flex-col tablet-md:items-center">
+        <div className="px-5 pb-6 sm:px-6">
+          <div className="-mt-10 flex items-end gap-4 tablet-md:flex-col tablet-md:items-center sm:-mt-12">
             {/* Avatar Section */}
             <div
               className="relative flex-shrink-0"
@@ -1343,22 +1322,22 @@ export default function EmployeeProfilePage() {
               }}
             >
               <Avatar
-                className="size-24 cursor-pointer border-[6px] border-card shadow-none sm:size-28 !rounded-none"
+                className="size-24 cursor-pointer !rounded-none border-[6px] border-card shadow-none sm:size-28"
                 rounded="md"
               >
                 <AvatarImage
                   src={avatarPreview}
                   onError={() => setAvatarLoadError(true)}
                 />
-                <AvatarFallback className="uppercase text-lg font-semibold">
+                <AvatarFallback className="text-lg font-semibold uppercase">
                   {employee.username?.slice(0, AVATAR_INITIALS_LENGTH)}
                 </AvatarFallback>
               </Avatar>
 
               {(isEdit || !employee.avatar) && (
-                <div className="flex items-center gap-1 absolute -bottom-1 -right-1">
+                <div className="absolute -bottom-1 -right-1 flex items-center gap-1">
                   <Button
-                    className="size-7 rounded-none bg-foreground p-0 text-primary-foreground shadow-none"
+                    className="size-7 rounded-none border-primary bg-primary p-0 text-primary-foreground shadow-none"
                     type="button"
                     onClick={() => {
                       if (isEdit) {
@@ -1434,7 +1413,7 @@ export default function EmployeeProfilePage() {
             />
 
             {/* Name and Job Section */}
-            <div className="flex-1 min-w-0 pb-1 tablet-md:text-center">
+            <div className="min-w-0 flex-1 pb-1 tablet-md:text-center">
               <h1 className="truncate text-2xl font-black leading-tight tracking-[-0.04em] sm:text-3xl">
                 {employee.username}
               </h1>
@@ -1708,7 +1687,7 @@ export default function EmployeeProfilePage() {
                   return (
                     <div className="col-span-12 flex items-center justify-between gap-4 border border-border bg-muted/25 px-4 py-3 tablet-md:col-span-1">
                       <div className="flex min-w-0 items-start gap-3">
-                        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center bg-foreground text-background">
+                        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center border border-border bg-muted/60 text-foreground">
                           {isVisible ? (
                             <LucideEye className="size-4" />
                           ) : (
@@ -1773,12 +1752,12 @@ export default function EmployeeProfilePage() {
                         if (result) toast.success(tr("refinedSuccess"));
                       }}
                       disabled={jobLoading}
-                      className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                      className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                     >
                       {jobLoading ? (
                         <LucideLoader2 size={10} className="animate-spin" />
                       ) : (
-                        <Sparkles size={10} />
+                        <LucideSparkles size={10} />
                       )}
                       {tr("aiRefine")}
                     </Button>
@@ -2044,8 +2023,7 @@ export default function EmployeeProfilePage() {
                         </span>
                         {isEdit && (
                           <LucideXCircle
-                            className="cursor-pointer text-primary/60 hover:text-primary"
-                            width="14px"
+                            className="size-3.5 cursor-pointer text-primary/60 hover:text-primary"
                             onClick={() => {
                               const updated = (languagesValue ?? []).filter(
                                 (l) => l !== lang,
@@ -2069,7 +2047,7 @@ export default function EmployeeProfilePage() {
                       <Button
                         type="button"
                         variant="outline"
-                        className="w-full justify-start text-muted-foreground font-normal h-10"
+                        className="h-10 w-full justify-start font-normal text-muted-foreground"
                       >
                         <LucidePlus />
                         {tP("addLanguage")}
@@ -2101,7 +2079,7 @@ export default function EmployeeProfilePage() {
                                   );
                                 }}
                               >
-                                <Check
+                                <LucideCheck
                                   className={cn(
                                     "mr-2 h-4 w-4",
                                     (languagesValue ?? []).includes(lang)
@@ -2120,103 +2098,9 @@ export default function EmployeeProfilePage() {
                 )}
               </div>
 
-              {/* Expected Salary Section */}
-              <div className="col-span-12 flex w-full flex-col items-start gap-2 tablet-md:col-span-1">
-                <TypographyMuted className="text-xs">
-                  {tP("expectedSalary")}
-                </TypographyMuted>
-                {!isEdit && salaryMinValue == null && salaryMaxValue == null ? (
-                  <MissingProfileFieldButton
-                    label={tP("addMissingField", {
-                      field: tP("expectedSalary"),
-                    })}
-                    onClick={() => beginEditingField("salary-min")}
-                  />
-                ) : (
-                  <div className="grid w-full grid-cols-[160px_minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 tablet-sm:grid-cols-1">
-                    <div className="min-w-0">
-                      <Controller
-                        name="profession.salaryCurrency"
-                        control={form.control}
-                        render={({ field }) => (
-                          <Select
-                            value={field.value ?? "USD"}
-                            onValueChange={field.onChange}
-                            disabled={!isEdit}
-                          >
-                            <SelectTrigger className="h-12 gap-2 text-muted-foreground [&>svg:last-child]:ml-auto">
-                              <div className="flex min-w-0 items-center gap-2">
-                                <LucideCircleDollarSign className="size-[18px] shrink-0" />
-                                <SelectValue placeholder="USD" />
-                              </div>
-                            </SelectTrigger>
-                            <SelectContent className="profile-overlay profile-select-content">
-                              {salaryCurrencyConstant.map((c) => (
-                                <SelectItem key={c.value} value={c.value}>
-                                  {c.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <Controller
-                        name="profession.expectedSalaryMin"
-                        control={form.control}
-                        render={({ field }) => (
-                          <Input
-                            id="salary-min"
-                            type="number"
-                            placeholder={tP("salaryMin")}
-                            {...field}
-                            value={field.value ?? ""}
-                            onChange={(e) =>
-                              field.onChange(
-                                e.target.value === ""
-                                  ? null
-                                  : parseFloat(e.target.value),
-                              )
-                            }
-                            disabled={!isEdit}
-                          />
-                        )}
-                      />
-                    </div>
-                    <TypographyMuted className="shrink-0 text-sm tablet-sm:hidden">
-                      —
-                    </TypographyMuted>
-                    <div className="flex-1">
-                      <Controller
-                        name="profession.expectedSalaryMax"
-                        control={form.control}
-                        render={({ field }) => (
-                          <Input
-                            id="salary-max"
-                            type="number"
-                            placeholder={tP("salaryMax")}
-                            {...field}
-                            value={field.value ?? ""}
-                            onChange={(e) =>
-                              field.onChange(
-                                e.target.value === ""
-                                  ? null
-                                  : parseFloat(e.target.value),
-                              )
-                            }
-                            disabled={!isEdit}
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-
               {/* Description Section */}
               <div className="col-span-12 flex w-full flex-col items-start gap-1 tablet-md:col-span-1">
-                <div className="w-full flex items-center justify-between">
+                <div className="flex w-full items-center justify-between">
                   <TypographyMuted className="text-xs font-bold text-foreground">
                     {tP("description")}
                   </TypographyMuted>
@@ -2244,18 +2128,18 @@ export default function EmployeeProfilePage() {
                         if (result) toast.success(tr("refinedSuccess"));
                       }}
                       disabled={descLoading}
-                      className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                      className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                     >
                       {descLoading ? (
                         <LucideLoader2 size={10} className="animate-spin" />
                       ) : (
-                        <Sparkles size={10} />
+                        <LucideSparkles size={10} />
                       )}
                       {tr("aiRefine")}
                     </Button>
                   )}
                 </div>
-                <div className="w-full flex flex-col items-start gap-2">
+                <div className="flex w-full flex-col items-start gap-2">
                   {!isEdit && !descValue?.trim() ? (
                     <MissingProfileFieldButton
                       label={tP("addMissingField", {
@@ -2366,26 +2250,20 @@ export default function EmployeeProfilePage() {
                     );
                   })
                 ) : (
-                  <div className="w-full flex flex-col items-center justify-center p-3">
-                    {/* Add New Experience Section */}
-                    <Image
-                      alt="empty"
-                      src={addNewExperienceSvg}
-                      className="size-60 animate-float"
-                    />
-                    <Button
-                      className="text-xs"
-                      variant={"secondary"}
-                      type="button"
-                      onClick={() => {
+                  <PageState
+                    variant="empty"
+                    title={tP("experienceEmpty")}
+                    description={tP("experienceEmptyDescription")}
+                    icon={LucideBriefcase}
+                    compact
+                    action={{
+                      label: tP("addExperienceBackground"),
+                      onClick: () => {
                         setIsEdit(true);
                         addNewExperience();
-                      }}
-                    >
-                      {tP("addExperienceBackground")}
-                      <LucidePlus />
-                    </Button>
-                  </div>
+                      },
+                    }}
+                  />
                 )}
               </div>
 
@@ -2439,8 +2317,7 @@ export default function EmployeeProfilePage() {
                 {educationFA.fields.length > 0 ? (
                   educationFA.fields.map((row, index) => {
                     const educationId = form.watch(`educations.${index}.id`) as
-                      | string
-                      | undefined;
+                      string | undefined;
 
                     return (
                       <EmployeeEducationForm
@@ -2484,26 +2361,20 @@ export default function EmployeeProfilePage() {
                     );
                   })
                 ) : (
-                  <div className="w-full flex flex-col items-center justify-center p-3">
-                    {/* Add New Education Section */}
-                    <Image
-                      alt="empty"
-                      src={addNewEducationSvg}
-                      className="size-60 animate-float"
-                    />
-                    <Button
-                      variant={"secondary"}
-                      className="text-xs"
-                      type="button"
-                      onClick={() => {
+                  <PageState
+                    variant="empty"
+                    title={tP("educationEmpty")}
+                    description={tP("educationEmptyDescription")}
+                    icon={LucideGraduationCap}
+                    compact
+                    action={{
+                      label: tP("addEducationBackground"),
+                      onClick: () => {
                         setIsEdit(true);
                         addNewEducation();
-                      }}
-                    >
-                      {tP("addEducationBackground")}
-                      <LucidePlus />
-                    </Button>
-                  </div>
+                      },
+                    }}
+                  />
                 )}
               </div>
 
@@ -2547,11 +2418,7 @@ export default function EmployeeProfilePage() {
                     <HoverCard>
                       <HoverCardTrigger asChild>
                         <div>
-                          <Tag
-                            label={skill.name}
-                            neutral
-                            className="!rounded-none border border-border hover:shadow-none"
-                          />
+                          <Tag label={skill.name} />
                         </div>
                       </HoverCardTrigger>
                       <HoverCardContent>
@@ -2564,14 +2431,14 @@ export default function EmployeeProfilePage() {
                         onClick={() => removeSkill(skill.name)}
                         className="inline-flex items-center justify-center"
                       >
-                        <LucideXCircle className="text-red-500" width="18px" />
+                        <LucideXCircle className="size-3.5 text-destructive" />
                       </button>
                     )}
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="w-full flex items-center justify-center">
+              <div className="flex w-full items-center justify-center">
                 {/* No Skill Section */}
                 <TypographyMuted className="text-sm">
                   {tP("noSkillAvailable")}
@@ -2649,18 +2516,14 @@ export default function EmployeeProfilePage() {
             </div>
 
             {/* Career Scopes List Section */}
-            <div className="w-full flex flex-wrap gap-3">
+            <div className="flex w-full flex-wrap gap-3">
               {careerScopes.length > 0 ? (
                 careerScopes.map((career, index) => (
                   <div key={index} className="flex items-center gap-1">
                     <HoverCard>
                       <HoverCardTrigger asChild>
                         <div>
-                          <Tag
-                            label={career.name}
-                            neutral
-                            className="!rounded-none border border-border hover:shadow-none"
-                          />
+                          <Tag label={career.name} />
                         </div>
                       </HoverCardTrigger>
                       <HoverCardContent>
@@ -2678,13 +2541,13 @@ export default function EmployeeProfilePage() {
                         onClick={() => removeCareerScope(career.name)}
                         className="inline-flex items-center justify-center"
                       >
-                        <LucideXCircle className="text-red-500" width="18px" />
+                        <LucideXCircle className="size-3.5 text-destructive" />
                       </button>
                     )}
                   </div>
                 ))
               ) : (
-                <div className="w-full flex items-center justify-center">
+                <div className="flex w-full items-center justify-center">
                   {/* No CareerScopes Section */}
                   <TypographyMuted className="text-sm">
                     {tP("noCareerScopeAvailable")}
@@ -2716,7 +2579,7 @@ export default function EmployeeProfilePage() {
                             (c) => c.name === careerScopeInput.name,
                           )?.name
                         : tP("selectCareers")}
-                      <ChevronDown className="opacity-50" />
+                      <LucideChevronDown className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent
@@ -2794,10 +2657,10 @@ export default function EmployeeProfilePage() {
               icon={<LucideFileText />}
               title={tP("referencesInformation")}
             />
-            <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
+            <div className="flex w-full flex-col items-start gap-5 [&>div]:w-full">
               {/* Resume Section */}
               <div className="flex items-center justify-between border border-border bg-muted/50 px-3 py-2">
-                <div className="flex items-center text-muted-foreground gap-1">
+                <div className="flex items-center gap-1 text-muted-foreground">
                   <LucideFileText strokeWidth={"1.3px"} />
                   <TypographyMuted>
                     {resumeFile
@@ -2861,7 +2724,7 @@ export default function EmployeeProfilePage() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      className="text-red-500 bg-red-100"
+                      className="bg-destructive-subtle text-destructive-accent"
                       onClick={() => setOpenRemoveResumeDialog(true)}
                     >
                       <LucideTrash2 />
@@ -2900,7 +2763,7 @@ export default function EmployeeProfilePage() {
 
               {/* CoverLetter Section */}
               <div className="flex items-center justify-between border border-border bg-muted/50 px-3 py-2">
-                <div className="flex items-center text-muted-foreground gap-1">
+                <div className="flex items-center gap-1 text-muted-foreground">
                   <LucideFileText strokeWidth={"1.3px"} />
                   <TypographyMuted>
                     {coverLetterFile
@@ -2967,7 +2830,7 @@ export default function EmployeeProfilePage() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      className="text-red-500 bg-red-100"
+                      className="bg-destructive-subtle text-destructive-accent"
                       onClick={() => setOpenRemoveCoverLetterDialog(true)}
                     >
                       <LucideTrash2 />
@@ -3030,7 +2893,7 @@ export default function EmployeeProfilePage() {
               <div className="flex flex-wrap gap-2">
                 {socials.map((item, index) => (
                   <div
-                    className="flex items-center gap-1.5 max-w-full"
+                    className="flex max-w-full items-center gap-1.5"
                     key={index}
                   >
                     <Link
@@ -3038,13 +2901,13 @@ export default function EmployeeProfilePage() {
                       className="inline-flex max-w-[200px] items-center gap-1.5 overflow-hidden border border-border bg-muted/50 px-3 py-1.5 text-foreground hover:bg-muted sm:max-w-[260px]"
                     >
                       <span className="flex-shrink-0">
-                        {getSocialPlatformTypeIcon(item.platform as TPlatform)}
+                        <PlatformIcon platform={item.platform as TPlatform} />
                       </span>
-                      <span className="text-sm truncate">{item.platform}</span>
+                      <span className="truncate text-sm">{item.platform}</span>
                     </Link>
                     {isEdit && (
                       <LucideXCircle
-                        className="flex-shrink-0 cursor-pointer text-red-500 hover:text-red-600 transition-colors"
+                        className="size-3.5 flex-shrink-0 cursor-pointer text-destructive transition-colors hover:text-destructive-accent"
                         size={18}
                         onClick={() => removeSocial(item.platform as TPlatform)}
                       />
@@ -3053,7 +2916,7 @@ export default function EmployeeProfilePage() {
                 ))}
               </div>
             ) : (
-              <div className="w-full flex items-center justify-center pt-2">
+              <div className="flex w-full items-center justify-center pt-2">
                 {/* No Social Section */}
                 <TypographyMuted className="text-sm">
                   {tP("noSocialAvailable")}
@@ -3066,8 +2929,8 @@ export default function EmployeeProfilePage() {
               <div>
                 {isEdit && (
                   <div className="mt-3 flex w-full flex-col items-start gap-4 overflow-hidden border border-border p-4">
-                    <div className="w-full flex flex-col gap-3">
-                      <div className="w-full flex-shrink-0 flex flex-col items-start gap-1">
+                    <div className="flex w-full flex-col gap-3">
+                      <div className="flex w-full flex-shrink-0 flex-col items-start gap-1">
                         <TypographyMuted className="text-xs">
                           {tP("platform")}
                         </TypographyMuted>
@@ -3087,9 +2950,9 @@ export default function EmployeeProfilePage() {
                             <div className="flex min-w-0 items-center gap-2">
                               <span className="flex size-5 shrink-0 items-center justify-center [&>svg]:size-4">
                                 {socialInput?.platform ? (
-                                  getSocialPlatformTypeIcon(
-                                    socialInput.platform as TPlatform,
-                                  )
+                                  <PlatformIcon
+                                    platform={socialInput.platform as TPlatform}
+                                  />
                                 ) : (
                                   <LucideGlobe />
                                 )}
@@ -3105,9 +2968,9 @@ export default function EmployeeProfilePage() {
                               >
                                 <span className="flex items-center gap-2">
                                   <span className="flex size-5 shrink-0 items-center justify-center [&>svg]:size-4">
-                                    {getSocialPlatformTypeIcon(
-                                      platform.value as TPlatform,
-                                    )}
+                                    <PlatformIcon
+                                      platform={platform.value as TPlatform}
+                                    />
                                   </span>
                                   {platform.label}
                                 </span>
@@ -3117,7 +2980,7 @@ export default function EmployeeProfilePage() {
                         </Select>
                       </div>
 
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <LabelInput
                           label={tP("link")}
                           input={
@@ -3150,7 +3013,7 @@ export default function EmployeeProfilePage() {
                 <Button
                   type="button"
                   variant="secondary"
-                  className="text-xs w-full mt-3"
+                  className="mt-3 w-full text-xs"
                   onClick={() => {
                     const openPlatformSelect = () => {
                       const el = socialSelectPlatformRef.current;
@@ -3197,7 +3060,7 @@ export default function EmployeeProfilePage() {
               title={tP("authentication")}
             />
 
-            <div className="w-full flex flex-col items-start gap-3">
+            <div className="flex w-full flex-col items-start gap-3">
               {/* Google, Facebook, LinkedIn and Github Methods Section */}
               {loginMethodConstant.map((item) => (
                 <div
@@ -3205,26 +3068,22 @@ export default function EmployeeProfilePage() {
                   key={item.id}
                 >
                   <div className="flex items-center gap-2">
-                    <Image
-                      src={item.icon}
-                      alt={item.label}
-                      width={30}
-                      height={30}
-                      className="rounded-full"
-                    />
+                    <span className="mx-1 flex items-center">
+                      <LoginMethodIcon method={item.label} />
+                    </span>
                     <TypographySmall>{item.label}</TypographySmall>
                   </div>
 
                   {user.lastLoginMethod &&
                   user.lastLoginMethod.toUpperCase() ===
                     item.label.toUpperCase() ? (
-                    <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
+                    <div className="cursor-pointer border border-destructive-border bg-destructive-subtle px-3 py-1 text-destructive-accent">
                       <TypographySmall className="text-xs font-medium">
                         {tP("disconnect")}
                       </TypographySmall>
                     </div>
                   ) : (
-                    <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
+                    <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-accent-foreground">
                       <TypographySmall className="text-xs font-medium">
                         {tP("connect")}
                       </TypographySmall>
@@ -3240,13 +3099,13 @@ export default function EmployeeProfilePage() {
                   <TypographySmall>{tP("email")}</TypographySmall>
                 </div>
                 {user.email ? (
-                  <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
+                  <div className="cursor-pointer border border-destructive-border bg-destructive-subtle px-3 py-1 text-destructive-accent">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
+                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-accent-foreground">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>
@@ -3261,13 +3120,13 @@ export default function EmployeeProfilePage() {
                   <TypographySmall>{tP("phoneOtp")}</TypographySmall>
                 </div>
                 {user.phone ? (
-                  <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
+                  <div className="cursor-pointer border border-destructive-border bg-destructive-subtle px-3 py-1 text-destructive-accent">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
+                  <div className="cursor-pointer border border-primary/25 bg-primary/10 px-3 py-1 text-accent-foreground">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>

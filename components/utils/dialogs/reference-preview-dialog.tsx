@@ -62,9 +62,13 @@ export default function ReferencePreviewDialog(props: IReferencePreviewDialog) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={props.openRefPreview} onOpenChange={props.setOpenRefPreview}>
-      <DialogContent className="flex h-[85vh] w-[95vw] max-w-5xl flex-col overflow-hidden rounded-none p-0 sm:w-[85vw] sm:rounded-none lg:w-[60vw] [&>button]:rounded-none">
+      <DialogContent
+        variant="flush"
+        size="full"
+        className="h-[85vh] w-[95vw] sm:w-[85vw] lg:w-[60vw]"
+      >
         {/* Dialog Header Section: Title */}
-        <DialogHeader className="px-4 py-3 border-b">
+        <DialogHeader className="border-b px-4 py-3">
           <DialogTitle className="text-sm">
             {props.previewRefType === "resume"
               ? `${props.employeeName}'s Resume Preview`
@@ -73,11 +77,11 @@ export default function ReferencePreviewDialog(props: IReferencePreviewDialog) {
         </DialogHeader>
 
         {/* Document Preview Section */}
-        <div className="flex-1 min-h-0 w-full">
+        <div className="min-h-0 w-full flex-1">
           {(() => {
             if (!props.referenceUrl) {
               return (
-                <div className="h-full flex items-center justify-center">
+                <div className="flex h-full items-center justify-center">
                   <TypographyMuted>{t("noDocumentFound")}</TypographyMuted>
                 </div>
               );
@@ -85,7 +89,7 @@ export default function ReferencePreviewDialog(props: IReferencePreviewDialog) {
 
             if (loading) {
               return (
-                <div className="h-full flex items-center justify-center">
+                <div className="flex h-full items-center justify-center">
                   <TypographyMuted>Loading document…</TypographyMuted>
                 </div>
               );
@@ -93,7 +97,7 @@ export default function ReferencePreviewDialog(props: IReferencePreviewDialog) {
 
             if (!previewAvailable || !previewUrl) {
               return (
-                <div className="h-full flex items-center justify-center px-6 text-center">
+                <div className="flex h-full items-center justify-center px-6 text-center">
                   <TypographyMuted>
                     Preview is available for PDF documents. Download this file
                     to view it safely.
@@ -106,7 +110,7 @@ export default function ReferencePreviewDialog(props: IReferencePreviewDialog) {
               <iframe
                 key={previewUrl}
                 src={previewUrl}
-                className="w-full h-full border-0"
+                className="h-full w-full border-0"
                 title={
                   props.previewRefType === "resume"
                     ? "Resume Preview"

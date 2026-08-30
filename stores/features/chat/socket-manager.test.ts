@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const socketIoMocks = vi.hoisted(() => ({ io: vi.fn() }));
-const mediaMocks = vi.hoisted(() => ({ getApiOrigin: vi.fn(() => "https://api.example.com") }));
+const mediaMocks = vi.hoisted(() => ({
+  getApiOrigin: vi.fn(() => "https://api.example.com"),
+}));
 
 vi.mock("socket.io-client", () => ({ default: socketIoMocks.io }));
 vi.mock("@/utils/functions/media", () => mediaMocks);
@@ -41,10 +43,13 @@ describe("chat socket manager", () => {
     socketIoMocks.io.mockReturnValueOnce(socket);
 
     expect(createSocket()).toBe(socket);
-    expect(socketIoMocks.io).toHaveBeenCalledWith("https://api.example.com/chat", {
-      withCredentials: true,
-      transports: ["websocket", "polling"],
-    });
+    expect(socketIoMocks.io).toHaveBeenCalledWith(
+      "https://api.example.com/chat",
+      {
+        withCredentials: true,
+        transports: ["websocket", "polling"],
+      },
+    );
   });
 
   it("deduplicates delayed disconnects and permits a later schedule", () => {

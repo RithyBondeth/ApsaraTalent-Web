@@ -105,9 +105,6 @@ export default function EmployeeSignup() {
         workMode: undefined,
         noticePeriod: undefined,
         languages: [],
-        expectedSalaryCurrency: "USD",
-        expectedSalaryMin: undefined,
-        expectedSalaryMax: undefined,
       },
       experience: parsedData?.experiences?.length
         ? parsedData.experiences.map((exp) => ({
@@ -168,12 +165,44 @@ export default function EmployeeSignup() {
   };
 
   /* --------------------------------- Methods --------------------------------- */
+  // ── Build Employee Payload ─────────────────────────────────────────
+  const buildEmployeePayload = (data: TEmployeeSignUp) => ({
+    job: data.profession.job,
+    yearsOfExperience: data.profession.yearOfExperience,
+    availability: data.profession.availability,
+    description: data.profession.description,
+    workMode: data.profession.workMode ?? null,
+    noticePeriod: data.profession.noticePeriod ?? null,
+    languages: data.profession.languages ?? [],
+    educations: data.educations.map((edu) => ({
+      school: edu.school,
+      degree: edu.degree,
+      year: new Date(edu.year, 0, 1).toISOString(),
+    })),
+    experiences: data.experience.map((exp) => ({
+      title: exp.title,
+      company: exp.company,
+      description: exp.description,
+      startDate: new Date(exp.startDate).toISOString(),
+      endDate: new Date(exp.endDate).toISOString(),
+    })),
+    skills: data.skillAndReference.skills.map((skill) => ({
+      name: skill,
+      description: skill,
+    })),
+    careerScopes: data.careerScopes.map((cs) => ({
+      name: cs,
+      description: cs,
+    })),
+    socials: [],
+  });
+
   // ── Navigation Helpers Function ────────────────────────────────────
-  // Check if user has no experience (to skip step 2)
+  // Check no-experience users (To skip step 2)
   const hasNoExperience = () =>
     getValues("profession.yearOfExperience") === "No Experience";
 
-  // Step navigation helper – skips step 2 for no-experience users
+  // Step Navigation Helper (Skips step 2 for no-experience users)
   const resolveNextStep = (current: number) => {
     if (current === 1 && hasNoExperience()) return 3;
     return current + 1;
@@ -212,6 +241,7 @@ export default function EmployeeSignup() {
         if (basicSignupData) {
           // Signup employee first to get employeeID
           const employeeId = await empSignup.signup({
+            ...buildEmployeePayload(data),
             authEmail: true,
             email: basicSignupData.email ?? null,
             password: basicSignupData.password ?? null,
@@ -220,33 +250,8 @@ export default function EmployeeSignup() {
             dob: basicSignupData.dob ?? undefined,
             username: basicSignupData.username ?? null,
             gender: (basicSignupData.gender as TGender) ?? ("other" as TGender),
-            job: data.profession.job,
-            yearsOfExperience: data.profession.yearOfExperience,
-            availability: data.profession.availability,
-            description: data.profession.description,
             location: basicSignupData.selectedLocation ?? null,
             phone: basicSignupData.phone!,
-            educations: data.educations.map((edu) => ({
-              school: edu.school,
-              degree: edu.degree,
-              year: new Date(edu.year, 0, 1).toISOString(),
-            })),
-            experiences: data.experience.map((exp) => ({
-              title: exp.title,
-              company: exp.company,
-              description: exp.description,
-              startDate: new Date(exp.startDate).toISOString(),
-              endDate: new Date(exp.endDate).toISOString(),
-            })),
-            skills: data.skillAndReference.skills.map((skill) => ({
-              name: skill,
-              description: skill,
-            })),
-            careerScopes: data.careerScopes.map((cs) => ({
-              name: cs,
-              description: cs,
-            })),
-            socials: [],
           });
 
           if (!employeeId) {
@@ -287,6 +292,7 @@ export default function EmployeeSignup() {
         if (basicPhoneSignupData) {
           // Signup employee first to get employeeID
           const employeeId = await empSignup.signup({
+            ...buildEmployeePayload(data),
             authEmail: false,
             email: null,
             password: null,
@@ -295,33 +301,8 @@ export default function EmployeeSignup() {
             dob: undefined,
             username: null,
             gender: "other" as TGender,
-            job: data.profession.job,
-            yearsOfExperience: data.profession.yearOfExperience,
-            availability: data.profession.availability,
-            description: data.profession.description,
             location: null,
             phone: basicPhoneSignupData.phone!,
-            educations: data.educations.map((edu) => ({
-              school: edu.school,
-              degree: edu.degree,
-              year: new Date(edu.year).toISOString(),
-            })),
-            experiences: data.experience.map((exp) => ({
-              title: exp.title,
-              company: exp.company,
-              description: exp.description,
-              startDate: new Date(exp.startDate).toISOString(),
-              endDate: new Date(exp.endDate).toISOString(),
-            })),
-            skills: data.skillAndReference.skills.map((skill) => ({
-              name: skill,
-              description: skill,
-            })),
-            careerScopes: data.careerScopes.map((cs) => ({
-              name: cs,
-              description: cs,
-            })),
-            socials: [],
           });
 
           if (!employeeId) {
@@ -378,7 +359,12 @@ export default function EmployeeSignup() {
       toast.success(t("signupSuccessful"), {
         duration: TOAST_DURATION_MS.SHORT,
       });
-      setTimeout(() => router.replace("/feed"), DEFAULT_REDIRECT_DELAY_MS);
+      const pendingEmail = basicSignupData?.email ?? null;
+      const destination = pendingEmail
+        ? `/login/email-verification?email=${encodeURIComponent(pendingEmail)}`
+        : "/feed";
+
+      setTimeout(() => router.replace(destination), DEFAULT_REDIRECT_DELAY_MS);
       return;
     }
 
@@ -414,9 +400,10 @@ export default function EmployeeSignup() {
     uploadsComplete,
     uploadAvatar.message,
     router,
+    basicSignupData?.email,
   ]);
 
-  /* -------------------------------- Loading States -------------------------------- */
+  /* -------------------------------- Loading State -------------------------------- */
   const isSignupLoading =
     empSignup.loading ||
     uploadAvatar.loading ||
@@ -436,18 +423,18 @@ export default function EmployeeSignup() {
 
   /* ----------------------------------- Render UI ---------------------------------- */
   return (
-    <div className="auth-wizard w-full max-w-4xl mx-auto flex flex-col gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
+    <div className="auth-wizard mx-auto flex w-full max-w-4xl flex-col gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* SmartResumeUpload Chip Title Section */}
       {!!parsedData && (
-        <div className="auth-wizard-notice flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-800/50 border-l-[4px] border-l-emerald-500 px-3 py-1.5 rounded-none w-fit">
+        <div className="auth-wizard-notice flex w-fit items-center gap-1.5 rounded-none border border-l-[4px] border-emerald-200/50 border-l-emerald-500 bg-emerald-50 px-3 py-1.5 text-xs text-emerald-700 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-400">
           <LucideCheckCircle2 size={13} className="shrink-0" />
           {t("smartUploadDataApplied")}
         </div>
       )}
 
       {/* Step Progress Indicator Section */}
-      <div className="auth-wizard-progress w-full overflow-x-auto border border-border border-t-[5px] border-t-foreground bg-card p-4 shadow-[4px_4px_0_hsl(var(--foreground)/0.05)]">
-        <div className="w-full min-w-[280px] flex items-center gap-0">
+      <div className="auth-wizard-progress w-full overflow-x-auto border border-border bg-card p-4 shadow-hard">
+        <div className="flex w-full min-w-[280px] items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => {
               const isSkipped =
@@ -456,22 +443,22 @@ export default function EmployeeSignup() {
                   "no_experience";
               const isActive = step >= st && !isSkipped;
               return (
-                <div key={st} className="w-full flex items-center">
+                <div key={st} className="flex w-full items-center">
                   <div
-                    className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-none font-bold transition-all ${
+                    className={`flex size-8 items-center justify-center rounded-none text-xs font-bold transition-all sm:size-9 sm:text-sm ${
                       isSkipped
-                        ? "bg-muted text-muted-foreground opacity-40 line-through"
+                        ? "bg-muted text-muted-foreground line-through opacity-40"
                         : isActive
-                          ? "bg-primary text-primary-foreground shadow-[2px_2px_0_hsl(var(--foreground)/0.16)]"
+                          ? "bg-primary text-primary-foreground shadow-hard-xs"
                           : "bg-muted text-muted-foreground"
                     }`}
                   >
                     {st}
                   </div>
                   {index < totalSteps - 1 && (
-                    <div className="flex-1 h-1 bg-muted rounded-none relative">
+                    <div className="relative h-1 flex-1 rounded-none bg-muted">
                       <div
-                        className={`absolute top-0 left-0 h-full rounded-none bg-primary transition-all duration-300 ${
+                        className={`absolute left-0 top-0 h-full rounded-none bg-primary transition-all duration-300 ${
                           step > st && !isSkipped ? "w-full" : "w-0"
                         }`}
                       />

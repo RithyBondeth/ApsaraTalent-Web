@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { streamFetch } from "@/utils/functions/stream-fetch";
+import { streamFetch } from "@/utils/functions/network";
 import { API_RESUME_REFINE_BIO_STREAM_URL } from "@/utils/constants/apis/resume.api.constant";
 
 /* --------------------------------- Usage --------------------------------- */
@@ -41,7 +41,7 @@ export function useAIRefine() {
   const [isRefining, setIsRefining] = useState<boolean>(false);
   const requestControllerRef = useRef<AbortController | null>(null);
 
-  /* ------------------------------ All Effects ------------------------------- */
+  /* ------------------------------ Effects ------------------------------- */
   useEffect(
     () => () => {
       requestControllerRef.current?.abort();

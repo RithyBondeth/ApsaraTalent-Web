@@ -1,19 +1,30 @@
 import { expect, test } from "@playwright/test";
 import {
   captureRuntimeFailures,
+  loginEmployee,
+  mockApi,
   mockBackendUnavailable,
   setRole,
+  successfulEmployeeApi,
 } from "./helpers";
 
-test("anonymous users return to login with the complete callback URL", async ({ page }) => {
+test("anonymous users return to login with the complete callback URL", async ({
+  page,
+}) => {
   await page.goto("/search/employee?q=typescript&page=2");
   await expect(page).toHaveURL(/\/login\?callbackUrl=/);
   const url = new URL(page.url());
-  expect(url.searchParams.get("callbackUrl")).toBe("/search/employee?q=typescript&page=2");
-  await expect(page.getByRole("heading", { name: "Log in to your Account" })).toBeVisible();
+  expect(url.searchParams.get("callbackUrl")).toBe(
+    "/search/employee?q=typescript&page=2",
+  );
+  await expect(
+    page.getByRole("heading", { name: "Log in to your Account" }),
+  ).toBeVisible();
 });
 
-test("authenticated users are redirected away from guest pages", async ({ page }) => {
+test("authenticated users are redirected away from guest pages", async ({
+  page,
+}) => {
   await setRole(page, "employee");
   await mockBackendUnavailable(page);
   await page.goto("/login");
@@ -21,7 +32,9 @@ test("authenticated users are redirected away from guest pages", async ({ page }
   await expect(page.locator("body")).not.toBeEmpty();
 });
 
-test("users without a role are sent to onboarding and can remain there", async ({ page }) => {
+test("users without a role are sent to onboarding and can remain there", async ({
+  page,
+}) => {
   await setRole(page, "none");
   await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/signup\/option$/);
@@ -44,7 +57,9 @@ test("an expired session returns the user to login", async ({ page }) => {
   );
 });
 
-test("representative authenticated pages render without uncaught runtime errors", async ({ page }) => {
+test("representative authenticated pages render without uncaught runtime errors", async ({
+  page,
+}) => {
   test.setTimeout(180_000);
   await setRole(page, "employee");
   const failures: string[] = [];
@@ -81,4 +96,49 @@ test("representative authenticated pages render without uncaught runtime errors"
   }
 
   expect(failures).toEqual([]);
+});
+
+/* ---------------------------------------------------------------------------
+ * Logging out is the API's job, not the web origin's.
+ *
+ * The API issues its auth cookies as httpOnly on its own domain, so the browser
+ * cannot clear them and neither can a Set-Cookie from this origin — only a call
+ * to the API's own /auth/logout ends the session. This asserts the click
+ * actually reaches it, because `clearAuthCookiesServerSide` swallows failures:
+ * if that request stops going out, the user still gets redirected and still
+ * looks logged out while their refresh token stays live.
+ * ------------------------------------------------------------------------- */
+test("logging out ends the session through the API", async ({ page }) => {
+  const apiLogoutCalls: string[] = [];
+  await mockApi(page, (request) => {
+    const { pathname } = new URL(request.url());
+    if (pathname.endsWith("/auth/logout")) {
+      apiLogoutCalls.push(`${request.method()} ${pathname}`);
+      return { body: { message: "Logged out", success: true } };
+    }
+    return successfulEmployeeApi(request);
+  });
+
+  await loginEmployee(page);
+  expect(
+    (await page.context().cookies()).map((cookie) => cookie.name),
+  ).toContain("auth-session-role");
+
+  await page.getByRole("button", { name: /sophea/i }).click();
+  await page.getByRole("menuitem", { name: "Log out" }).click();
+  await page.getByRole("button", { name: "Logout", exact: true }).click();
+
+  // 1. the session was revoked at the API, not merely dropped locally
+  await expect.poll(() => apiLogoutCalls).toEqual(["POST /auth/logout"]);
+
+  // 2. the web origin's own routing cookie is gone
+  await expect
+    .poll(async () =>
+      (await page.context().cookies()).map((cookie) => cookie.name),
+    )
+    .not.toContain("auth-session-role");
+
+  // 3. and the session is really over — protected routes bounce to login
+  await page.goto("/dashboard");
+  await expect(page).toHaveURL(/\/login\?callbackUrl=/);
 });

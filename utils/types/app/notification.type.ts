@@ -1,7 +1,2 @@
 export type TNotificationFilterType =
-  | "all"
-  | "match"
-  | "message"
-  | "like"
-  | "interview"
-  | "unread";
+  "all" | "match" | "message" | "like" | "interview" | "unread";

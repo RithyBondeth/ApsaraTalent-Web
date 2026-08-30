@@ -10,11 +10,14 @@ import { useSearchParams } from "next/navigation";
 import InterviewLoadingSkeleton from "@/components/interview/skeleton";
 import { InterviewCard } from "@/components/interview/interview-card";
 import { CreateInterviewDialog } from "@/components/interview/create-interview-dialog";
-import { emptySvg, interviewBannerSvg } from "@/utils/constants/asset.constant";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
-import Image from "next/image";
-import { CalendarCheck2 } from "lucide-react";
+import {
+  LucideCalendarCheck2,
+  LucideCalendarClock,
+  LucideCircleCheckBig,
+} from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
+import { PageBanner } from "@/components/utils/layout/page-banner";
 
 interface Props {
   initialIsEmployee: boolean;
@@ -106,74 +109,48 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="interview-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 animate-page-in sm:gap-9 sm:px-4 lg:px-5">
+    <div className="interview-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
-      <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
-        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
-          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            <span className="h-px w-7 bg-primary" />
-            {t("interviewDesk")}
-          </div>
-          <div className="max-w-3xl">
-            <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.05] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl">
-              {isEmployee ? t("bannerTitleEmployee") : t("bannerTitleCompany")}
-            </h1>
-            <p className="mt-4 max-w-[60ch] text-sm leading-6 text-muted-foreground sm:text-base">
-              {isEmployee
-                ? t("bannerSubtitle1Employee")
-                : t("bannerSubtitle1Company")}{" "}
-              {isEmployee
-                ? t("bannerSubtitle2Employee")
-                : t("bannerSubtitle2Company")}
-            </p>
-          </div>
-          <p className="max-w-[70ch] border-l-2 border-foreground pl-3 text-xs leading-5 text-muted-foreground">
-            {isEmployee ? t("bannerMutedEmployee") : t("bannerMutedCompany")}
-          </p>
-        </div>
-
-        <div className="feed-hero-visual">
-          <div aria-hidden className="feed-hero-visual-grid" />
-          <div className="feed-hero-network-chip">
-            <span className="feed-hero-network-icon" aria-hidden>
-              <CalendarCheck2 />
-            </span>
-            <span>{t("interviewDesk")}</span>
-            <span aria-hidden className="feed-hero-network-status" />
-          </div>
-          <div aria-hidden className="feed-hero-art-stage">
-            <span className="feed-hero-node feed-hero-node-one" />
-            <span className="feed-hero-node feed-hero-node-two" />
-            <span className="feed-hero-node feed-hero-node-three" />
-            <div className="feed-hero-art-frame">
-              <div className="feed-hero-art-grid" />
-              <div className="feed-hero-art-glow" />
-              <Image
-                src={interviewBannerSvg}
-                alt=""
-                height={260}
-                width={360}
-                className="feed-hero-artwork"
-                priority
-              />
-              <span className="feed-hero-corner feed-hero-corner-nw" />
-              <span className="feed-hero-corner feed-hero-corner-ne" />
-              <span className="feed-hero-corner feed-hero-corner-sw" />
-              <span className="feed-hero-corner feed-hero-corner-se" />
-            </div>
-          </div>
-          <div aria-hidden className="feed-hero-signal-bars">
-            <span />
-            <span />
-            <span />
-            <span />
-          </div>
-        </div>
-      </section>
+      <PageBanner
+        eyebrow={t("interviewDesk")}
+        title={isEmployee ? t("bannerTitleEmployee") : t("bannerTitleCompany")}
+        subtitle={`${
+          isEmployee
+            ? t("bannerSubtitle1Employee")
+            : t("bannerSubtitle1Company")
+        } ${
+          isEmployee
+            ? t("bannerSubtitle2Employee")
+            : t("bannerSubtitle2Company")
+        }`}
+        stats={
+          loading && interviews.length === 0
+            ? undefined
+            : [
+                {
+                  icon: LucideCalendarCheck2,
+                  label: t("statScheduled"),
+                  value: interviews.length,
+                },
+                {
+                  icon: LucideCalendarClock,
+                  label: t("statPending"),
+                  value: interviews.filter((i) => i.status === "pending")
+                    .length,
+                },
+                {
+                  icon: LucideCircleCheckBig,
+                  label: t("statAccepted"),
+                  value: interviews.filter((i) => i.status === "accepted")
+                    .length,
+                },
+              ]
+        }
+      />
 
       {/* Error Banner Section */}
       {error && interviews.length > 0 && (
-        <div className="w-full border border-destructive/20 border-l-[5px] border-l-destructive bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="w-full border border-l-[5px] border-destructive/20 border-l-destructive bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
         </div>
       )}
@@ -202,7 +179,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
             />
           ) : (
             <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
-              <CalendarCheck2 className="size-4" />
+              <LucideCalendarCheck2 className="size-4" />
             </div>
           )}
         </div>
@@ -224,7 +201,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
             }
           />
         ) : interviews.length > 0 ? (
-          <div className="flex w-full flex-col gap-3 stagger-list">
+          <div className="stagger-list flex w-full flex-col gap-3">
             {interviews.map((interview) => (
               <InterviewCard
                 key={interview.id}
@@ -241,11 +218,14 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
           <PageState
             variant="empty"
             title={
-              isEmployee
-                ? t("noInterviewsEmployee")
-                : t("noInterviewsCompany")
+              isEmployee ? t("noInterviewsEmployee") : t("noInterviewsCompany")
             }
-            image={emptySvg}
+            description={
+              isEmployee
+                ? t("noInterviewsEmployeeDescription")
+                : t("noInterviewsCompanyDescription")
+            }
+            icon={LucideCalendarClock}
             compact
             className="my-6 sm:my-8"
           />

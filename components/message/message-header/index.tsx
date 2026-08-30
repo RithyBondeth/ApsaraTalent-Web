@@ -4,12 +4,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  Phone,
-  Users,
-  Video,
+  LucideArrowLeft,
+  LucideChevronLeft,
+  LucideChevronRight,
+  LucideMenu,
+  LucidePhone,
+  LucideUsers,
 } from "lucide-react";
 import { IChatHeaderProps } from "./props";
 import { useTranslations } from "next-intl";
@@ -25,7 +25,6 @@ export default function ChatHeader(props: IChatHeaderProps) {
     onBack,
     onOpenMobileSidebar,
     onStartVoiceCall,
-    onStartVideoCall,
   } = props;
 
   /* ---------------------------------- Utils --------------------------------- */
@@ -39,19 +38,19 @@ export default function ChatHeader(props: IChatHeaderProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="px-2.5 sm:px-3 md:px-5 py-2.5 md:py-3 border-b border-border flex items-center justify-between bg-card shrink-0 gap-1.5 sm:gap-2 min-h-16">
+    <div className="flex min-h-16 shrink-0 items-center justify-between gap-1.5 border-b border-border bg-card px-2.5 py-2.5 sm:gap-2 sm:px-3 md:px-5 md:py-3">
       {/* Header Identity Section */}
-      <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+      <div className="flex min-w-0 flex-1 items-center gap-1.5 sm:gap-2">
         {/* Back Button (Mobile) */}
         {onBack && (
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden h-8 w-8 shrink-0 -ml-1 rounded-none"
+            className="-ml-1 h-8 w-8 shrink-0 rounded-none lg:hidden"
             onClick={onBack}
             aria-label="Back to conversations"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <LucideArrowLeft className="h-4 w-4" />
           </Button>
         )}
 
@@ -60,27 +59,27 @@ export default function ChatHeader(props: IChatHeaderProps) {
           variant="ghost"
           size="icon"
           onClick={onToggleSidebar}
-          className="hidden lg:flex h-9 w-9 shrink-0 rounded-none border border-border"
+          className="hidden h-9 w-9 shrink-0 rounded-none border border-border lg:flex"
           aria-label={sidebarToggleLabel}
         >
           {isSidebarOpen ? (
-            <ChevronLeft className="h-5 w-5" />
+            <LucideChevronLeft className="h-5 w-5" />
           ) : (
-            <ChevronRight className="h-5 w-5" />
+            <LucideChevronRight className="h-5 w-5" />
           )}
         </Button>
 
         {/* Avatar and Online Status Section */}
         <div className="relative shrink-0">
-          <Avatar className="h-8 w-8 sm:h-9 sm:w-9 rounded-none border border-border">
+          <Avatar className="h-8 w-8 rounded-none border border-border sm:h-9 sm:w-9">
             {chat.isGroup ? (
-              <AvatarFallback className="bg-primary/10 rounded-none">
-                <Users className="h-4 w-4 text-primary" />
+              <AvatarFallback className="rounded-none bg-primary/10">
+                <LucideUsers className="h-4 w-4 text-primary" />
               </AvatarFallback>
             ) : (
               <>
                 <AvatarImage src={chat.avatar} alt={chat.name} />
-                <AvatarFallback className="text-sm font-medium rounded-none">
+                <AvatarFallback className="rounded-none text-sm font-medium">
                   {avatarInitials}
                 </AvatarFallback>
               </>
@@ -90,14 +89,14 @@ export default function ChatHeader(props: IChatHeaderProps) {
           {isOnline && (
             <span
               aria-label="Online"
-              className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background"
+              className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background bg-green-500"
             />
           )}
         </div>
 
         {/* Chat Name and Status Section */}
         <div className="min-w-0 max-w-[52vw] sm:max-w-none">
-          <h2 className="font-black text-sm text-foreground truncate leading-tight tracking-[-0.01em]">
+          <h2 className="truncate text-sm font-black leading-tight tracking-[-0.01em] text-foreground">
             {chat.name}
           </h2>
           <TypographyMuted
@@ -111,27 +110,16 @@ export default function ChatHeader(props: IChatHeaderProps) {
       </div>
 
       {/* Header Actions Section */}
-      <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
-        {/* Video Call Button (Desktop) */}
-        <Button
-          variant="outline"
-          size="icon"
-          className="hidden sm:flex h-9 w-9 rounded-none text-muted-foreground hover:text-foreground"
-          onClick={onStartVideoCall}
-          aria-label="Start video call"
-        >
-          <Video className="h-4 w-4" />
-        </Button>
-
+      <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
         {/* Voice Call Button */}
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8 sm:h-9 sm:w-9 rounded-none text-muted-foreground hover:text-foreground"
+          className="h-8 w-8 rounded-none text-muted-foreground hover:text-foreground sm:h-9 sm:w-9"
           onClick={onStartVoiceCall}
           aria-label="Start voice call"
         >
-          <Phone className="h-4 w-4" />
+          <LucidePhone className="h-4 w-4" />
         </Button>
 
         {/* Mobile Conversations Button */}
@@ -139,23 +127,11 @@ export default function ChatHeader(props: IChatHeaderProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden h-8 w-8 rounded-none"
+            className="h-8 w-8 rounded-none lg:hidden"
             onClick={onOpenMobileSidebar}
             aria-label="Open conversations"
           >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
+            <LucideMenu className="h-5 w-5" />
           </Button>
         )}
 

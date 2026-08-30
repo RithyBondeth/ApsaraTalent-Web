@@ -19,12 +19,12 @@ import { TemplateCardSkeleton } from "@/components/resume-builder/skeleton";
 import { useTranslations } from "next-intl";
 import {
   normalizeResumePayload,
+  prepareResumeAvatar,
   removeLegacyResumeDraft,
   resumeDraftSchema,
   resumeSchema,
   saveResumeDraft,
-} from "@/utils/functions/resume/resume-draft";
-import { prepareResumeAvatar } from "@/utils/functions/resume/prepare-resume-avatar";
+} from "@/utils/functions/resume";
 import { useGenerateAiResumeStore } from "@/stores/apis/resume/generate-ai-resume.store";
 import { toast } from "sonner";
 import { useAiQuotaStore } from "@/stores/apis/ai/get-ai-quota.store";
@@ -34,13 +34,14 @@ import {
   RESUME_TEMPLATE_LABEL_KEYS,
 } from "@/utils/constants/resume.constant";
 import { PageState } from "@/components/utils/feedback/page-state";
+import { LucideLayoutTemplate } from "lucide-react";
 
 /* --------------------------------- Helper ---------------------------------- */
 /** Numbered step header shared by each stage of the builder flow */
 function StepHeader({ number, title }: { number: string; title: string }) {
   return (
     <div className="flex w-full items-center gap-3">
-      <div className="flex size-8 shrink-0 items-center justify-center border border-foreground bg-foreground text-xs font-black text-background shadow-[3px_3px_0_hsl(var(--foreground)/0.12)]">
+      <div className="flex size-8 shrink-0 items-center justify-center border border-border bg-muted/60 text-xs font-black text-foreground shadow-hard-sm">
         {number}
       </div>
       <span className="shrink-0 text-xs font-black uppercase tracking-[0.14em] text-foreground">
@@ -168,7 +169,7 @@ export default function ResumeBuilder() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="resume-builder-editorial mx-auto flex w-full max-w-[1500px] animate-page-in flex-col items-start gap-6 px-3 pb-8 sm:px-4 lg:px-5">
+    <div className="resume-builder-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-6 px-3 pb-8 sm:px-4 lg:px-5">
       {/* Banner Section */}
       <ResumeBuilderBanner />
 
@@ -218,6 +219,7 @@ export default function ResumeBuilder() {
                 variant="empty"
                 title={t("noTemplatesTitle")}
                 description={t("noTemplatesAvailable")}
+                icon={LucideLayoutTemplate}
                 compact
                 className="col-span-full"
                 action={{

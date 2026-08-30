@@ -27,7 +27,7 @@ import { toast } from "sonner";
 /* ---------------------------------- Helper ---------------------------------- */
 function Chip({ icon, label }: { icon?: React.ReactNode; label: string }) {
   return (
-    <span className="inline-flex items-center gap-1 text-[11px] bg-background border rounded-none px-2.5 py-0.5 text-foreground/80">
+    <span className="inline-flex items-center gap-1 rounded-none border bg-background px-2.5 py-0.5 text-[11px] text-foreground/80">
       {icon}
       {label}
     </span>
@@ -116,11 +116,11 @@ export default function SmartResumeUpload({
   if (data) {
     const filled = countFilledFields(data);
     return (
-      <div className="w-full rounded-none border border-green-500/30 border-l-[5px] border-l-green-500 bg-green-50/50 dark:bg-green-950/20 overflow-hidden">
+      <div className="w-full overflow-hidden rounded-none border border-l-[5px] border-green-500/30 border-l-green-500 bg-green-50/50 dark:bg-green-950/20">
         {/* Header Section */}
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <LucideCheckCircle2 className="size-4 text-green-600 shrink-0" />
+            <LucideCheckCircle2 className="size-4 shrink-0 text-green-600" />
             <span className="text-sm font-medium text-green-700 dark:text-green-400">
               {t("smartUploadSuccess", { count: filled })}
             </span>
@@ -129,7 +129,7 @@ export default function SmartResumeUpload({
             <button
               type="button"
               onClick={() => setShowDetails((p) => !p)}
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded"
+              className="flex items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
               {showDetails ? (
                 <>
@@ -146,7 +146,7 @@ export default function SmartResumeUpload({
             <button
               type="button"
               onClick={() => reset()}
-              className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+              className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               title={t("smartUploadClear")}
             >
               <LucideX className="size-3.5" />
@@ -156,11 +156,11 @@ export default function SmartResumeUpload({
 
         {/* Details Panel Section */}
         {showDetails && (
-          <div className="border-t border-green-500/20 px-4 py-3 space-y-3">
+          <div className="space-y-3 border-t border-green-500/20 px-4 py-3">
             {/* Personal Info Found Section (Reference only) */}
             {(data.firstName || data.email || data.phone) && (
               <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1.5">
+                <p className="mb-1.5 text-xs font-medium text-muted-foreground">
                   {t("smartUploadFoundInResume")}
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -199,7 +199,7 @@ export default function SmartResumeUpload({
 
             {/* Auto-filled Professional Fields Section */}
             <div>
-              <p className="text-xs font-medium text-muted-foreground mb-1.5">
+              <p className="mb-1.5 text-xs font-medium text-muted-foreground">
                 {t("smartUploadAutoFilled")}
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -254,24 +254,24 @@ export default function SmartResumeUpload({
   /* --------------------------------- Loading State -------------------------------- */
   if (loading) {
     return (
-      <div className="w-full rounded-none border border-dashed border-primary/40 border-l-[5px] border-l-primary bg-primary/5 px-6 py-8 flex flex-col items-center gap-3">
+      <div className="flex w-full flex-col items-center gap-3 rounded-none border border-l-[5px] border-dashed border-primary/40 border-l-primary bg-primary/5 px-6 py-8">
         {/* Icon Section */}
-        <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
+        <div className="flex size-10 animate-pulse items-center justify-center rounded-full bg-primary/10">
           <LucideFileText className="size-5 text-primary" />
         </div>
         {/* Content Section */}
         <div className="text-center">
           <p className="text-sm font-medium">{t("smartUploadAnalyzing")}</p>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             {t("smartUploadAnalyzingDesc")}
           </p>
         </div>
         {/* Loading Animation Section */}
-        <div className="flex gap-1 mt-1">
+        <div className="mt-1 flex gap-1">
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="size-1.5 rounded-full bg-primary/60 animate-bounce"
+              className="size-1.5 animate-bounce rounded-full bg-primary/60"
               style={{ animationDelay: `${i * 150}ms` }}
             />
           ))}
@@ -288,14 +288,14 @@ export default function SmartResumeUpload({
       onDrop={onDrop}
       className={`w-full rounded-none border-2 border-dashed transition-all duration-200 ${
         isDragging
-          ? "border-primary bg-primary/10 scale-[1.01]"
+          ? "scale-[1.01] border-primary bg-primary/10"
           : "border-border bg-muted/30 hover:border-primary/50 hover:bg-muted/50"
       }`}
     >
-      <div className="px-6 py-7 flex flex-col items-center gap-3 text-center">
+      <div className="flex flex-col items-center gap-3 px-6 py-7 text-center">
         {/* Icon Section */}
         <div
-          className={`size-11 rounded-full flex items-center justify-center transition-colors ${isDragging ? "bg-primary/20" : "bg-primary/10"}`}
+          className={`flex size-11 items-center justify-center rounded-full transition-colors ${isDragging ? "bg-primary/20" : "bg-primary/10"}`}
         >
           <LucideZap
             className={`size-5 transition-colors ${isDragging ? "text-primary" : "text-primary/70"}`}
@@ -305,7 +305,7 @@ export default function SmartResumeUpload({
         {/* Copy Section */}
         <div>
           <p className="text-sm font-semibold">{t("smartUploadTitle")}</p>
-          <p className="text-xs text-muted-foreground mt-0.5 max-w-xs">
+          <p className="mt-0.5 max-w-xs text-xs text-muted-foreground">
             {t("smartUploadSubtitle")}
           </p>
         </div>
@@ -315,7 +315,7 @@ export default function SmartResumeUpload({
           type="button"
           variant="outline"
           size="sm"
-          className="gap-2 mt-1"
+          className="mt-1 gap-2"
           onClick={() => inputRef.current?.click()}
         >
           <LucideUpload className="size-3.5" />

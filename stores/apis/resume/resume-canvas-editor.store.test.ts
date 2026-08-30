@@ -34,9 +34,7 @@ describe("resume canvas editor store", () => {
 
   it("copies custom orders and restores a fresh default", () => {
     const customOrder = ["skills", "summary", "education"] as const;
-    useResumeCanvasEditorStore
-      .getState()
-      .setSectionOrder([...customOrder]);
+    useResumeCanvasEditorStore.getState().setSectionOrder([...customOrder]);
 
     expect(useResumeCanvasEditorStore.getState().sectionOrder).toEqual(
       customOrder,

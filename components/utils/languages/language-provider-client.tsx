@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguageStore } from "@/stores/languages/language-store";
+import { FONT_STACK } from "@/utils/constants/ui.constant";
 import { NextIntlClientProvider } from "next-intl";
 import { useEffect, useState } from "react";
 import enMessages from "@/language/en.json";
@@ -32,6 +33,14 @@ export function LanguageProviderClient({
 
   /* ---------------------------------- Utils --------------------------------- */
   const activeLocale = mounted ? language : (defaultLanguage as "en" | "km");
+
+  // Mirror the locale onto <html lang>. The server renders it from the cookie;
+  // this keeps it honest after an in-page switch, which is what the Khmer
+  // typography rules in globals.css key off.
+  useEffect(() => {
+    document.documentElement.lang = activeLocale;
+    document.body.style.fontFamily = FONT_STACK[activeLocale];
+  }, [activeLocale]);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (

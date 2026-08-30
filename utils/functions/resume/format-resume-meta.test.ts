@@ -7,9 +7,7 @@ describe("getYearsExperienceSuffix", () => {
   });
 
   it("does not append a suffix when experience is already explicit", () => {
-    expect(getYearsExperienceSuffix("5 years experience", "yrs exp.")).toBe(
-      "",
-    );
+    expect(getYearsExperienceSuffix("5 years experience", "yrs exp.")).toBe("");
   });
 
   it("uses the localized default for a bare numeric value", () => {

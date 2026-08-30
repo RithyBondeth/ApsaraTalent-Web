@@ -10,47 +10,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import { MultiSelectCombobox } from "@/components/ui/multi-select-combobox";
 import ErrorMessage from "@/components/utils/feedback/error-message";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import {
   workModeConstant,
   noticePeriodConstant,
   languageConstant,
-  salaryCurrencyConstant,
 } from "@/utils/constants/ui.constant";
 import { useTranslations } from "next-intl";
 import { Controller, useWatch } from "react-hook-form";
 import { IStepFormProps } from "../props";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import {
-  AlignLeft,
-  BarChart3,
-  Briefcase,
-  CalendarClock,
-  Check,
-  CircleDollarSign,
-  Clock3,
-  Languages,
-  Laptop,
-  Loader2,
-  Sparkles,
+  LucideAlignLeft,
+  LucideBarChart3,
+  LucideBriefcase,
+  LucideCalendarClock,
+  LucideClock3,
+  LucideLanguages,
+  LucideLaptop,
+  LucideLoader2,
+  LucideSparkles,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { useState } from "react";
 
 export default function ProfessionStepForm({
   control,
@@ -101,9 +84,6 @@ export default function ProfessionStepForm({
     ),
   }));
 
-  /* --------------------------------- All State -------------------------------- */
-  const [langPopoverOpen, setLangPopoverOpen] = useState<boolean>(false);
-
   /* ----------------------------- API Integration ---------------------------- */
   const { isRefining: jobLoading, refineContent: refineJob } = useAIRefine();
   const { isRefining: descLoading, refineContent: refineDesc } = useAIRefine();
@@ -111,9 +91,6 @@ export default function ProfessionStepForm({
   /* ------------------------------ React Hook Form ---------------------------- */
   const jobValue = useWatch({ control, name: "profession.job" });
   const descValue = useWatch({ control, name: "profession.description" });
-  const languagesValue = useWatch({ control, name: "profession.languages" }) as
-    | string[]
-    | undefined;
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Job Refine ─────────────────────────────────────────
@@ -132,15 +109,6 @@ export default function ProfessionStepForm({
       setValue("profession.description", result, { shouldDirty: true });
       toast.success(tr("refinedSuccess"));
     }
-  };
-
-  // ── Toggle Language ──────────────────────────────────────────
-  const toggleLanguage = (lang: string) => {
-    const current = languagesValue ?? [];
-    const updated = current.includes(lang)
-      ? current.filter((l) => l !== lang)
-      : [...current, lang];
-    setValue?.("profession.languages", updated, { shouldDirty: true });
   };
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -162,7 +130,7 @@ export default function ProfessionStepForm({
           render={({ field }) => (
             <Input
               placeholder={`${t("empProfessionLookingForPositionPlaceholder")} *`}
-              prefix={<Briefcase />}
+              prefix={<LucideBriefcase />}
               suffix={
                 jobValue ? (
                   <Button
@@ -171,12 +139,12 @@ export default function ProfessionStepForm({
                     size="sm"
                     onClick={handleJobRefine}
                     disabled={jobLoading}
-                    className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                    className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                   >
                     {jobLoading ? (
-                      <Loader2 size={10} className="animate-spin" />
+                      <LucideLoader2 size={10} className="animate-spin" />
                     ) : (
-                      <Sparkles size={10} />
+                      <LucideSparkles size={10} />
                     )}
                     {tr("aiRefine")}
                   </Button>
@@ -194,8 +162,8 @@ export default function ProfessionStepForm({
       {/* Year of Experience and Availability Section */}
       <div className="field-row w-full">
         {/* Year of Experience Section */}
-        <div className="w-full flex flex-col items-start gap-2">
-          <div className="w-full flex flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
+          <div className="flex w-full flex-col items-start gap-2">
             <Controller
               name="profession.yearOfExperience"
               control={control!}
@@ -205,7 +173,7 @@ export default function ProfessionStepForm({
                   value={field.value || ""}
                   onChange={field.onChange}
                   placeholder={`${t("empProfessionYearOfExperiencePlaceholder")} *`}
-                  icon={<BarChart3 />}
+                  icon={<LucideBarChart3 />}
                   required
                 />
               )}
@@ -217,8 +185,8 @@ export default function ProfessionStepForm({
         </div>
 
         {/* Availability Section */}
-        <div className="w-full flex flex-col items-start gap-2">
-          <div className="w-full flex flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
+          <div className="flex w-full flex-col items-start gap-2">
             <Controller
               name="profession.availability"
               control={control!}
@@ -228,7 +196,7 @@ export default function ProfessionStepForm({
                   value={field.value || ""}
                   onChange={field.onChange}
                   placeholder={`${t("empProfessionAvailabilityPlaceholder")} *`}
-                  icon={<CalendarClock />}
+                  icon={<LucideCalendarClock />}
                   required
                 />
               )}
@@ -242,37 +210,62 @@ export default function ProfessionStepForm({
 
       {/* Work Mode and Notice Period Section */}
       <div className="field-row w-full">
-        {/* Work Mode Section */}
-        <div className="w-full flex flex-col items-start gap-2">
+        {/* Work Mode Section — a fixed set of four, matching what a company
+            picks for an open position. Not creatable: a custom value could
+            never be matched or filtered against a job. */}
+        <div className="flex w-full flex-col items-start gap-2">
           <Controller
             name="profession.workMode"
             control={control!}
             render={({ field }) => (
-              <CreatableCombobox
-                options={workModeOptions}
-                value={field.value ?? ""}
-                onChange={field.onChange}
-                placeholder={t("empProfessionWorkModePlaceholder")}
-                icon={<Laptop />}
-              />
+              <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                <SelectTrigger
+                  className="h-12 text-muted-foreground"
+                  aria-label={t("empProfessionWorkMode")}
+                >
+                  <LucideLaptop className="mr-2 size-[18px] shrink-0" />
+                  <SelectValue
+                    placeholder={t("empProfessionWorkModePlaceholder")}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {workModeOptions.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
           />
           <ErrorMessage>{errors!.profession?.workMode?.message}</ErrorMessage>
         </div>
 
-        {/* Notice Period Section */}
-        <div className="w-full flex flex-col items-start gap-2">
+        {/* Notice Period Section — also a closed set; the API validates it
+            against ENoticePeriod, so a typed-in value would 400. */}
+        <div className="flex w-full flex-col items-start gap-2">
           <Controller
             name="profession.noticePeriod"
             control={control!}
             render={({ field }) => (
-              <CreatableCombobox
-                options={noticePeriodOptions}
-                value={field.value ?? ""}
-                onChange={field.onChange}
-                placeholder={t("empProfessionNoticePeriodPlaceholder")}
-                icon={<Clock3 />}
-              />
+              <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                <SelectTrigger
+                  className="h-12 text-muted-foreground"
+                  aria-label={t("empProfessionNoticePeriod")}
+                >
+                  <LucideClock3 className="mr-2 size-[18px] shrink-0" />
+                  <SelectValue
+                    placeholder={t("empProfessionNoticePeriodPlaceholder")}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {noticePeriodOptions.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
           />
           <ErrorMessage>
@@ -281,151 +274,30 @@ export default function ProfessionStepForm({
         </div>
       </div>
 
-      {/* Languages and Expected Salary Section */}
-      <div className="grid w-full gap-4">
-        <div className="w-full flex flex-col items-start gap-2">
-          {/* Languages Dropdown Section */}
-          <Popover open={langPopoverOpen} onOpenChange={setLangPopoverOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full justify-start text-muted-foreground font-normal h-12"
-              >
-                <Languages />
-                <span className="truncate">
-                  {(languagesValue ?? []).length > 0
-                    ? (languagesValue ?? []).join(", ")
-                    : t("empProfessionLanguagesPlaceholder")}
-                </span>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              align="start"
-              className="w-[var(--radix-popover-trigger-width)] p-0"
-            >
-              <Command>
-                <CommandInput
-                  placeholder={t("empProfessionLanguagesPlaceholder")}
-                />
-                <CommandList>
-                  <CommandEmpty>No language found.</CommandEmpty>
-                  <CommandGroup>
-                    {languageConstant.map((lang) => (
-                      <CommandItem
-                        key={lang}
-                        value={lang}
-                        onSelect={() => toggleLanguage(lang)}
-                      >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            (languagesValue ?? []).includes(lang)
-                              ? "opacity-100"
-                              : "opacity-0",
-                          )}
-                        />
-                        {lang}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-          <ErrorMessage>{errors!.profession?.languages?.message}</ErrorMessage>
-        </div>
-
-        {/* Expected Salary Section */}
-        <div className="w-full flex flex-col items-start gap-2">
-          <div className="auth-salary-grid grid w-full grid-cols-[108px_minmax(0,1fr)_minmax(0,1fr)] items-start gap-2">
-            {/* Currency Section */}
-            <div>
-              <Controller
-                name="profession.expectedSalaryCurrency"
-                control={control!}
-                render={({ field }) => (
-                  <Select
-                    value={field.value ?? "USD"}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger
-                      className="h-12"
-                      aria-label={t("empProfessionExpectedSalary")}
-                    >
-                      <CircleDollarSign className="mr-1 size-4 shrink-0 text-muted-foreground" />
-                      <SelectValue>{field.value ?? "USD"}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {salaryCurrencyConstant.map((c) => (
-                        <SelectItem key={c.value} value={c.value}>
-                          {c.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </div>
-
-            {/* Min Salary Section */}
-            <div className="flex-1 flex flex-col gap-1">
-              <Controller
-                name="profession.expectedSalaryMin"
-                control={control!}
-                render={({ field }) => (
-                  <Input
-                    type="number"
-                    placeholder={t("empProfessionExpectedSalaryMin")}
-                    {...field}
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value === ""
-                          ? null
-                          : parseFloat(e.target.value),
-                      )
-                    }
-                    validationMessage={
-                      errors!.profession?.expectedSalaryMin?.message
-                    }
-                  />
-                )}
-              />
-            </div>
-
-            {/* Max Salary Section */}
-            <div className="auth-salary-max flex min-w-0 flex-col gap-1">
-              <Controller
-                name="profession.expectedSalaryMax"
-                control={control!}
-                render={({ field }) => (
-                  <Input
-                    type="number"
-                    placeholder={t("empProfessionExpectedSalaryMax")}
-                    {...field}
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value === ""
-                          ? null
-                          : parseFloat(e.target.value),
-                      )
-                    }
-                    validationMessage={
-                      errors!.profession?.expectedSalaryMax?.message
-                    }
-                  />
-                )}
-              />
-            </div>
-          </div>
-        </div>
+      {/* Languages Section — the same list a company picks from when stating
+          a role's language requirements, so the two compare directly. */}
+      <div className="flex w-full flex-col items-start gap-2">
+        <Controller
+          name="profession.languages"
+          control={control!}
+          render={({ field }) => (
+            <MultiSelectCombobox
+              options={languageConstant}
+              value={field.value ?? []}
+              onChange={field.onChange}
+              placeholder={t("empProfessionLanguagesPlaceholder")}
+              emptyText={t("empProfessionLanguagesEmpty")}
+              ariaLabel={t("empProfessionLanguages")}
+              icon={<LucideLanguages />}
+            />
+          )}
+        />
+        <ErrorMessage>{errors!.profession?.languages?.message}</ErrorMessage>
       </div>
 
       {/* Description Section */}
-      <div className="w-full flex flex-col items-start gap-1">
-        <div className="w-full flex flex-col items-start gap-2">
+      <div className="flex w-full flex-col items-start gap-1">
+        <div className="flex w-full flex-col items-start gap-2">
           <Controller
             name="profession.description"
             control={control!}
@@ -433,7 +305,7 @@ export default function ProfessionStepForm({
               <Textarea
                 autoResize
                 placeholder={`${t("empProfessionDescriptionPlaceholder")} *`}
-                prefix={<AlignLeft />}
+                prefix={<LucideAlignLeft />}
                 action={
                   descValue ? (
                     <Button
@@ -442,12 +314,12 @@ export default function ProfessionStepForm({
                       size="sm"
                       onClick={handleDescRefine}
                       disabled={descLoading}
-                      className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                      className="h-6 gap-1 px-1.5 text-[9px] text-primary hover:bg-primary/5 hover:text-primary"
                     >
                       {descLoading ? (
-                        <Loader2 size={10} className="animate-spin" />
+                        <LucideLoader2 size={10} className="animate-spin" />
                       ) : (
-                        <Sparkles size={10} />
+                        <LucideSparkles size={10} />
                       )}
                       {tr("aiRefine")}
                     </Button>

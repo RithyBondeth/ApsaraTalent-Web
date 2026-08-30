@@ -20,9 +20,16 @@ describe("chat API stores", () => {
       .mockResolvedValueOnce({ data: chats })
       .mockResolvedValueOnce({ data: { unexpected: true } });
 
-    await expect(useGetRecentChatsStore.getState().fetchRecentChats()).resolves.toEqual(chats);
-    await expect(useGetRecentChatsStore.getState().fetchRecentChats()).resolves.toEqual([]);
-    expect(useGetRecentChatsStore.getState()).toMatchObject({ loading: false, error: null });
+    await expect(
+      useGetRecentChatsStore.getState().fetchRecentChats(),
+    ).resolves.toEqual(chats);
+    await expect(
+      useGetRecentChatsStore.getState().fetchRecentChats(),
+    ).resolves.toEqual([]);
+    expect(useGetRecentChatsStore.getState()).toMatchObject({
+      loading: false,
+      error: null,
+    });
   });
 
   it("initiates a chat with the correct participants", async () => {
@@ -47,9 +54,9 @@ describe("chat API stores", () => {
 
   it("exposes chat request failures", async () => {
     axiosMocks.get.mockRejectedValueOnce(new Error("chat unavailable"));
-    await expect(useGetRecentChatsStore.getState().fetchRecentChats()).rejects.toThrow(
-      "chat unavailable",
-    );
+    await expect(
+      useGetRecentChatsStore.getState().fetchRecentChats(),
+    ).rejects.toThrow("chat unavailable");
     expect(useGetRecentChatsStore.getState()).toMatchObject({
       loading: false,
       error: "chat unavailable",

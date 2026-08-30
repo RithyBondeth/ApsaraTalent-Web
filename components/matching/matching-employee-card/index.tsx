@@ -1,8 +1,5 @@
 import MetaChip from "@/components/utils/data-display/meta-chip";
-import {
-  formatAvailabilityWords,
-  getNameInitials,
-} from "@/utils/functions/text";
+import { getNameInitials, translateLocation } from "@/utils/functions/text";
 import {
   LucideBriefcaseBusiness,
   LucideCalendarCheck,
@@ -21,15 +18,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { LazyAiMatchExplanationAction } from "@/components/matching/lazy-ai-actions";
+import MatchScoreBadge from "@/components/matching/match-score-badge";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import { IMatchingEmployeeCardProps } from "./props";
-import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
+import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { translateLocation } from "@/utils/functions/text";
 
 const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
   props: IMatchingEmployeeCardProps,
@@ -40,14 +37,13 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("matching");
   const tl = useTranslations("locations");
-  const availabilityLabel = formatAvailabilityWords(props.availability);
 
   /* -------------------------------- All States ------------------------------ */
   const [unmatchDialogOpen, setUnmatchDialogOpen] = useState<boolean>(false);
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <article className="group w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+    <article className="group w-full overflow-hidden rounded-none border border-border bg-card shadow-hard transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-hard-lg">
       <div className="flex gap-4 p-4 sm:gap-5 sm:p-5">
         {/* Avatar Section */}
         <Avatar
@@ -68,20 +64,22 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
               <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
                 {props.name}
               </h3>
-              <TypographyMuted className="text-sm text-muted-foreground mt-0.5">
+              <TypographyMuted className="mt-0.5 text-sm text-muted-foreground">
                 @{props.username}
               </TypographyMuted>
             </div>
-            <span
-              className={`flex-shrink-0 whitespace-nowrap rounded-none border border-current/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
-            >
-              {availabilityLabel}
-            </span>
+            <div className="flex flex-shrink-0 items-center gap-2">
+              <MatchScoreBadge score={props.matchScore} />
+              <AvailabilityBadge
+                availability={props.availability}
+                className="whitespace-nowrap"
+              />
+            </div>
           </div>
 
           {/* Description Section */}
           {props.description && (
-            <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            <TypographyMuted className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
               {props.description}
             </TypographyMuted>
           )}
@@ -90,12 +88,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
           {props.skills.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {props.skills.slice(0, 6).map((skill, index) => (
-                <Tag
-                  label={skill}
-                  key={index}
-                  neutral
-                  className="!rounded-none border border-border hover:shadow-none"
-                />
+                <Tag label={skill} key={index} />
               ))}
             </div>
           )}

@@ -3,17 +3,23 @@ import { ICompany } from "./company.interface";
 import { IEmployee } from "./employee.interface";
 import { TUserRole } from "@/utils/types/auth/role.type";
 
+/**
+ * Mirrors the API's UserResponseDTO. The API omits a key rather than sending
+ * null, so the profile relations are optional here, not `| null` — an employee
+ * response has no `company` key at all. Do not narrow these back to required:
+ * the API only ever populates the one matching `role`.
+ */
 export interface IUser {
   id: string;
   role: TUserRole;
-  email: string;
+  email?: string;
   phone?: string | null;
   isEmailVerified?: boolean;
   profileCompleted?: boolean;
   isTwoFactorEnabled?: boolean | null;
   lastLoginMethod?: TAuthLoginMethod | null;
   lastLoginAt?: string | null;
-  employee: IEmployee | null;
-  company: ICompany | null;
-  createdAt: string;
+  employee?: IEmployee;
+  company?: ICompany;
+  createdAt?: string;
 }

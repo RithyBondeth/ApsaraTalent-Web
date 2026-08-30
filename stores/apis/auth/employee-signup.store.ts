@@ -53,6 +53,9 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()((set) => ({
         description: body.description,
         location: body.location,
         phone: body.phone,
+        workMode: body.workMode ?? undefined,
+        noticePeriod: body.noticePeriod ?? undefined,
+        languages: body.languages ?? undefined,
         educations: body.educations.map((edu) => ({
           school: edu.school,
           degree: edu.degree,

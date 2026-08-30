@@ -5,7 +5,7 @@ import { IMobileTabItemProps } from "./props";
 
 export default function MobileTabItem(props: IMobileTabItemProps) {
   /* --------------------------------- Props --------------------------------- */
-  const { href, icon: Icon, label, count, active, onClick } = props;
+  const { href, icon: Icon, label, count, badgeLabel, active, onClick } = props;
 
   /* ------------------------------- Render UI ------------------------------- */
   return (
@@ -14,7 +14,12 @@ export default function MobileTabItem(props: IMobileTabItemProps) {
       prefetch={true}
       onClick={onClick}
       aria-current={active ? "page" : undefined}
-      aria-label={label}
+      /*
+        The count has to live in the accessible name: aria-label overrides all
+        inner content, so BadgePill's number was invisible to screen readers —
+        the nav read as plain "Message" whether or not anything was waiting.
+      */
+      aria-label={count > 0 ? `${label}, ${badgeLabel}` : label}
       className={cn(
         "group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 px-1 py-2",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
@@ -25,7 +30,7 @@ export default function MobileTabItem(props: IMobileTabItemProps) {
       <span
         aria-hidden="true"
         className={cn(
-          "absolute left-1/2 top-0 h-[3px] -translate-x-1/2 bg-foreground transition-[width,opacity] duration-200",
+          "absolute left-1/2 top-0 h-[3px] -translate-x-1/2 bg-primary transition-[width,opacity] duration-200",
           active ? "w-8 opacity-100" : "w-0 opacity-0",
         )}
       />
@@ -36,7 +41,7 @@ export default function MobileTabItem(props: IMobileTabItemProps) {
           className={cn(
             "relative flex h-8 w-9 items-center justify-center border transition-[background-color,border-color,color,transform] duration-200",
             active
-              ? "border-primary bg-primary text-primary-foreground shadow-[2px_2px_0_hsl(var(--primary)/0.22)]"
+              ? "border-primary bg-primary text-primary-foreground shadow-hard-primary-xs"
               : "border-transparent group-hover:border-border group-hover:bg-muted/60 group-active:translate-y-px",
           )}
         >

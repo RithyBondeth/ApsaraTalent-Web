@@ -1,3 +1,10 @@
+// Per-page illustration sections used to live here — Feed, Notification,
+// Matching, Message, Favorite, Search, Profile, Interview, Resume Builder and
+// Legal. They emptied out as the page banners lost their hero SVGs and the
+// empty states moved to Lucide glyphs, and are not coming back: a raster or SVG
+// asset cannot take a colour token, so it cannot follow the theme the way an
+// icon does. What is left is the artwork that genuinely has to be an image.
+
 // ─── Socials ─────────────────────────────────────────────────────────────────
 import facebookIcon from "@/assets/socials/facebook.webp";
 import githubIcon from "@/assets/socials/github.png";
@@ -13,47 +20,23 @@ import emailVerificationSvg from "@/assets/auth/email-verification.svg";
 import phoneNumberSvg from "@/assets/auth/phone-number.svg";
 import phoneOTPSvg from "@/assets/auth/phone-otp.svg";
 
-// ─── Feed ─────────────────────────────────────────────────────────────────────
-import feedCompanyBannerSvg from "@/assets/feed/company-banner.svg";
-import feedEmployeeBannerSvg from "@/assets/feed/employee-banner.svg";
-
-// ─── Notification ─────────────────────────────────────────────────────────────
-import notificationBannerSvg from "@/assets/notification/banner.svg";
-import notificationEmptySvg from "@/assets/notification/empty.svg";
-
-// ─── Matching ─────────────────────────────────────────────────────────────────
-import matchingBannerSvg from "@/assets/matching/banner.svg";
-
-// ─── Message ──────────────────────────────────────────────────────────────────
-import messageEmptySvg from "@/assets/message/empty.svg";
-import messageSvg from "@/assets/message/message.svg";
-
-// ─── Favorite ─────────────────────────────────────────────────────────────────
-import favoriteBannerSvg from "@/assets/favorite/banner.svg";
-
-// ─── Search ───────────────────────────────────────────────────────────────────
-import employeeSearchBannerSvg from "@/assets/search/employee-banner.svg";
-import companySearchBannerSvg from "@/assets/search/company-banner.svg";
-
-// ─── Profile ──────────────────────────────────────────────────────────────────
-import addNewEducationSvg from "@/assets/profile/add-new-education.svg";
-import addNewExperienceSvg from "@/assets/profile/add-new-experience.svg";
-
-// ─── Interview ────────────────────────────────────────────────────────────────
-import interviewBannerSvg from "@/assets/interview/banner.svg";
-
-// ─── Resume Builder ───────────────────────────────────────────────────────────
-import resumeBuilderBannerSvg from "@/assets/resume-builder/banner.svg";
-
-// ─── Legal ────────────────────────────────────────────────────────────────────
-import termsBannerSvg from "@/assets/legal/terms-banner.svg";
-import privacyBannerSvg from "@/assets/legal/privacy-banner.svg";
-
 // ─── Utils (shared across pages) ──────────────────────────────────────────────
-import emptySvg from "@/assets/utils/empty.svg";
-import logo from "@/assets/utils/logo.svg";
-import logoBlack from "@/assets/utils/logo-black.svg";
-import logoWithoutTitle from "@/assets/utils/logo-icon.svg";
+// Supplied artwork, trimmed to its alpha box and re-encoded — the files arrived
+// with transparent padding (34% of the mark's width was empty) and weighed
+// 1.8 MB between them; they are 610 KB now.
+//
+// The two lockups are cropped to the SAME rectangle, the union of their two
+// alpha boxes, so they share one aspect ratio and the dancer does not shift
+// when the theme flips. Cropped to their own boxes they were 1.7483 and 1.7052,
+// and LogoComponent carries a single ratio per variant.
+//
+// Only the lockup needs a twin: its wordmark is near-black ink that all but
+// vanishes on the dark page, so the dark file letters it in white. The mark is
+// the dancer alone — blue and white throughout — and reads on either theme, so
+// it ships once.
+import logo from "@/assets/utils/logo-for-lightmode.png";
+import logoDark from "@/assets/utils/logo-for-darkmode.png";
+import logoWithoutTitle from "@/assets/utils/logo-without-text.png";
 
 export {
   // Socials
@@ -69,35 +52,8 @@ export {
   emailVerificationSvg,
   phoneNumberSvg,
   phoneOTPSvg,
-  // Feed
-  feedCompanyBannerSvg,
-  feedEmployeeBannerSvg,
-  // Notification
-  notificationBannerSvg,
-  notificationEmptySvg,
-  // Matching
-  matchingBannerSvg,
-  // Message
-  messageEmptySvg,
-  messageSvg,
-  // Favorite
-  favoriteBannerSvg,
-  // Search
-  employeeSearchBannerSvg,
-  companySearchBannerSvg,
-  // Profile
-  addNewEducationSvg,
-  addNewExperienceSvg,
-  // Interview
-  interviewBannerSvg,
-  // Resume Builder
-  resumeBuilderBannerSvg,
-  // Legal
-  termsBannerSvg,
-  privacyBannerSvg,
   // Utils
-  emptySvg,
   logo,
-  logoBlack,
+  logoDark,
   logoWithoutTitle,
 };

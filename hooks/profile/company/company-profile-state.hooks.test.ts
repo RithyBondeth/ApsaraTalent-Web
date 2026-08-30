@@ -77,7 +77,9 @@ describe("company profile state hooks", () => {
 
   it("initializes and updates company career scopes", () => {
     const initial = [{ id: "scope-1", name: "Engineering" }];
-    const { result } = renderHook(() => useCmpCareerScopesState(initial as never));
+    const { result } = renderHook(() =>
+      useCmpCareerScopesState(initial as never),
+    );
 
     act(() => {
       result.current.setCareerScopeInput(initial[0] as never);

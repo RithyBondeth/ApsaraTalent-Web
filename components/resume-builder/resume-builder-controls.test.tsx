@@ -6,29 +6,27 @@ import ResumeSourceInput from "./source-input";
 import TemplateCard from "./template";
 
 vi.mock("next-intl", () => ({
-  useTranslations: () => (
-    key: string,
-    values?: Record<string, string | number>,
-  ) =>
-    ({
-      pasteInfoTitle: "Paste information",
-      pasteInfoDescription: "Paste source information",
-      pasteInfoLabel: "Resume source",
-      pasteInfoPlaceholder: "Paste your experience",
-      pasteInfoPrivacy: "Private",
-      usingPastedInfo: "Using pasted information",
-      usingProfileInfo: "Using profile information",
-      useProfileInstead: "Use profile instead",
-      pasteInfoCharacterCount: `${values?.count}/${values?.max}`,
-      templateLabel: "Template",
-      selectTemplateFirst: "Select a template first",
-      generateDesc: "Generate a résumé",
-      preparingResume: "Preparing résumé",
-      generateMyResume: "Generate my résumé",
-      selectedTemplate: "Selected",
-      useTemplate: "Use template",
-      preview: "Preview",
-    })[key] ?? key,
+  useTranslations:
+    () => (key: string, values?: Record<string, string | number>) =>
+      ({
+        pasteInfoTitle: "Paste information",
+        pasteInfoDescription: "Paste source information",
+        pasteInfoLabel: "Resume source",
+        pasteInfoPlaceholder: "Paste your experience",
+        pasteInfoPrivacy: "Private",
+        usingPastedInfo: "Using pasted information",
+        usingProfileInfo: "Using profile information",
+        useProfileInstead: "Use profile instead",
+        pasteInfoCharacterCount: `${values?.count}/${values?.max}`,
+        templateLabel: "Template",
+        selectTemplateFirst: "Select a template first",
+        generateDesc: "Generate a résumé",
+        preparingResume: "Preparing résumé",
+        generateMyResume: "Generate my résumé",
+        selectedTemplate: "Selected",
+        useTemplate: "Use template",
+        preview: "Preview",
+      })[key] ?? key,
 }));
 
 vi.mock("@/components/utils/feedback/ai-quota-badge", () => ({
@@ -61,7 +59,9 @@ describe("résumé builder controls", () => {
     );
     expect(screen.getByText("Using pasted information")).toBeInTheDocument();
     expect(screen.getByText("20/40")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Use profile instead" }));
+    await user.click(
+      screen.getByRole("button", { name: "Use profile instead" }),
+    );
     expect(onChange).toHaveBeenLastCalledWith("");
   });
 
@@ -92,7 +92,9 @@ describe("résumé builder controls", () => {
         selectedTemplateLabel="Modern"
       />,
     );
-    await user.click(screen.getByRole("button", { name: /Generate my résumé/ }));
+    await user.click(
+      screen.getByRole("button", { name: /Generate my résumé/ }),
+    );
     expect(onGenerateClick).toHaveBeenCalledOnce();
   });
 

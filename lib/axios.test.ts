@@ -159,7 +159,9 @@ describe("configured axios client", () => {
       mocks.post.mockRejectedValue(new Error("no refresh token"));
       const { onRejected } = await loadClient();
 
-      await expect(onRejected(unauthorized({ url: "/a" }))).rejects.toBeTruthy();
+      await expect(
+        onRejected(unauthorized({ url: "/a" })),
+      ).rejects.toBeTruthy();
 
       expect(mocks.clearAuthCookies).toHaveBeenCalledOnce();
       expect(replace).not.toHaveBeenCalled();

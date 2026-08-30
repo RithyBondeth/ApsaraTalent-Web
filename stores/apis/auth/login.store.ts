@@ -12,7 +12,7 @@ type TLoginResponse = {
   message: string;
   user?: IUserAuthResponse;
   requiresTwoFactor?: boolean;
-  userId?: string;
+  twoFactorToken?: string;
 };
 
 // ── Login State ────────────────────────────────────────
@@ -23,7 +23,7 @@ type TLoginState = {
   message: string | null;
   user: IUserAuthResponse | null;
   requiresTwoFactor: boolean;
-  pendingUserId: string | null;
+  pendingTwoFactorToken: string | null;
   pendingRememberMe: boolean;
   login: (
     email: string,
@@ -42,14 +42,14 @@ export const useLoginStore = create<TLoginState>((set) => ({
   message: null,
   user: null,
   requiresTwoFactor: false,
-  pendingUserId: null,
+  pendingTwoFactorToken: null,
   pendingRememberMe: false,
   login: async (identifier: string, password: string, rememberMe: boolean) => {
     set({
       loading: true,
       error: null,
       requiresTwoFactor: false,
-      pendingUserId: null,
+      pendingTwoFactorToken: null,
     });
 
     try {
@@ -57,15 +57,19 @@ export const useLoginStore = create<TLoginState>((set) => ({
         identifier: identifier,
         password: password,
       });
-      const { message, requiresTwoFactor, userId, user } = response.data;
+      const { message, requiresTwoFactor, twoFactorToken, user } =
+        response.data;
 
-      if (requiresTwoFactor && userId) {
+      // The server hands back a short-lived signed challenge rather than a
+      // user id; it is the only thing that proves to verify-login that this
+      // browser just cleared the password step.
+      if (requiresTwoFactor && twoFactorToken) {
         set({
           loading: false,
           error: null,
           isAuthenticated: false,
           requiresTwoFactor: true,
-          pendingUserId: userId,
+          pendingTwoFactorToken: twoFactorToken,
           pendingRememberMe: rememberMe,
           message: null,
         });
@@ -97,7 +101,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
   clearTwoFactorPending: () => {
     set({
       requiresTwoFactor: false,
-      pendingUserId: null,
+      pendingTwoFactorToken: null,
       pendingRememberMe: false,
     });
   },

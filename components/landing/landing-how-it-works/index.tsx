@@ -29,7 +29,7 @@ export function LandingHowItWorks() {
           </span>
           <TypographyH2
             data-gsap="split-chars"
-            className="text-3xl font-semibold tracking-[-0.035em] sm:text-4xl lg:text-5xl [perspective:800px]"
+            className="text-3xl font-semibold tracking-[-0.035em] [perspective:800px] sm:text-4xl lg:text-5xl"
           >
             {t("howItWorksHeading")}{" "}
             <span className="landing-highlight">
@@ -55,7 +55,11 @@ export function LandingHowItWorks() {
               className="group relative min-h-[300px] border-b border-r border-border p-7 sm:p-9"
             >
               <div className="flex items-start justify-between">
-                <span className="text-6xl font-semibold tracking-[-0.06em] text-foreground/10 transition-colors group-hover:text-foreground/20 sm:text-7xl">
+                <span
+                  aria-hidden="true"
+                  data-decorative="true"
+                  className="landing-step-watermark text-6xl font-semibold tracking-[-0.06em] text-foreground/10 transition-colors group-hover:text-foreground/20 sm:text-7xl"
+                >
                   {step.number}
                 </span>
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">

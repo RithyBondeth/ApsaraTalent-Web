@@ -2,7 +2,6 @@
 
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
-import Image from "next/image";
 import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
@@ -13,19 +12,19 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { emptySvg, favoriteBannerSvg } from "@/utils/constants/asset.constant";
 import { FavoriteLoadingSkeleton } from "@/components/favorite/skeleton";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
-import { Bookmark, Building2, Users } from "lucide-react";
+import { LucideBookmark, LucideBuilding2, LucideUsers } from "lucide-react";
 import { PageState } from "@/components/utils/feedback/page-state";
+import { PageBanner } from "@/components/utils/layout/page-banner";
 
-interface Props {
+export default function FavoritePageClient({
+  initialIsEmployee,
+}: {
   initialIsEmployee: boolean;
-}
-
-export default function FavoritePageClient({ initialIsEmployee }: Props) {
+}) {
   /* --------------------------------- Utils ---------------------------------- */
   const t = useTranslations("toast");
   const tFav = useTranslations("favorite");
@@ -92,6 +91,7 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
     queryAllCompanyFavorites,
   ]);
 
+  /* --------------------------------- Memos --------------------------------- */
   // Filter Out Liked Users From Favorites (Safety Net For Stale Data)
   const filteredEmployeeFavorites = useMemo(() => {
     const data = getAllEmployeeFavoritesStore.companyData;
@@ -252,65 +252,22 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="favorite-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 animate-page-in sm:gap-9 sm:px-4 lg:px-5">
+    <div className="favorite-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
-      <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
-        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
-          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            <span className="h-px w-7 bg-primary" />
-            {tFav("savedFavorites")}
-          </div>
-          <div className="max-w-3xl">
-            <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.05] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl">
-            {tFav("bannerTitle")}
-            </h1>
-            <p className="mt-4 max-w-[60ch] text-sm leading-6 text-muted-foreground sm:text-base">
-              {tFav("bannerSubtitle1")} {tFav("bannerSubtitle2")}
-            </p>
-          </div>
-          <p className="max-w-[70ch] border-l-2 border-foreground pl-3 text-xs leading-5 text-muted-foreground">
-            {tFav("bannerMuted")}
-          </p>
-        </div>
-
-        <div className="feed-hero-visual">
-          <div aria-hidden className="feed-hero-visual-grid" />
-          <div className="feed-hero-network-chip">
-            <span className="feed-hero-network-icon" aria-hidden>
-              <Bookmark />
-            </span>
-            <span>{tFav("savedFavorites")}</span>
-            <span aria-hidden className="feed-hero-network-status" />
-          </div>
-          <div aria-hidden className="feed-hero-art-stage">
-            <span className="feed-hero-node feed-hero-node-one" />
-            <span className="feed-hero-node feed-hero-node-two" />
-            <span className="feed-hero-node feed-hero-node-three" />
-            <div className="feed-hero-art-frame">
-              <div className="feed-hero-art-grid" />
-              <div className="feed-hero-art-glow" />
-              <Image
-                src={favoriteBannerSvg}
-                alt=""
-                height={260}
-                width={360}
-                className="feed-hero-artwork"
-                priority
-              />
-              <span className="feed-hero-corner feed-hero-corner-nw" />
-              <span className="feed-hero-corner feed-hero-corner-ne" />
-              <span className="feed-hero-corner feed-hero-corner-sw" />
-              <span className="feed-hero-corner feed-hero-corner-se" />
-            </div>
-          </div>
-          <div aria-hidden className="feed-hero-signal-bars">
-            <span />
-            <span />
-            <span />
-            <span />
-          </div>
-        </div>
-      </section>
+      <PageBanner
+        eyebrow={tFav("savedFavorites")}
+        title={tFav("bannerTitle")}
+        subtitle={`${tFav("bannerSubtitle1")} ${tFav("bannerSubtitle2")}`}
+        stats={[
+          {
+            icon: LucideBookmark,
+            label: isEmployee ? tFav("companiesSaved") : tFav("talentSaved"),
+            value: isEmployee
+              ? (filteredEmployeeFavorites?.length ?? 0)
+              : (filteredCompanyFavorites?.length ?? 0),
+          },
+        ]}
+      />
 
       {/* Favorite Card List Section */}
       <section className="flex w-full flex-col gap-5">
@@ -332,86 +289,87 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
           </div>
           <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
             {isEmployee ? (
-              <Building2 className="size-4" />
+              <LucideBuilding2 className="size-4" />
             ) : (
-              <Users className="size-4" />
+              <LucideUsers className="size-4" />
             )}
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-start gap-3 stagger-list">
-        {isEmployee &&
-        filteredEmployeeFavorites &&
-        filteredEmployeeFavorites.length > 0 ? (
-          filteredEmployeeFavorites.map((fav) => (
-            <FavoriteCompanyCard
-              key={fav.id}
-              id={fav.company.id}
-              name={fav.company.name}
-              avatar={fav.company.avatar ?? ""}
-              industry={fav.company.industry}
-              description={fav.company.description}
-              companySize={fav.company.companySize}
-              foundedYear={fav.company.foundedYear}
-              openPosition={fav.company.openPositions ?? []}
-              location={fav.company.location}
-              isRemoving={removingFavIds.has(fav.id)}
-              onRemoveFromFavorite={() => {
-                if (currentUser && currentUser.employee) {
-                  handleEmployeeRemoveCompanyFromFavorite(
-                    currentUser.employee.id,
-                    fav.company.id,
-                    fav.id,
-                    fav.company.name,
-                  );
-                }
+        <div className="stagger-list flex w-full flex-col items-start gap-3">
+          {isEmployee &&
+          filteredEmployeeFavorites &&
+          filteredEmployeeFavorites.length > 0 ? (
+            filteredEmployeeFavorites.map((fav) => (
+              <FavoriteCompanyCard
+                key={fav.id}
+                id={fav.company.id}
+                name={fav.company.name}
+                avatar={fav.company.avatar ?? ""}
+                industry={fav.company.industry}
+                description={fav.company.description}
+                companySize={fav.company.companySize}
+                foundedYear={fav.company.foundedYear}
+                openPosition={fav.company.openPositions ?? []}
+                location={fav.company.location}
+                isRemoving={removingFavIds.has(fav.id)}
+                onRemoveFromFavorite={() => {
+                  if (currentUser && currentUser.employee) {
+                    handleEmployeeRemoveCompanyFromFavorite(
+                      currentUser.employee.id,
+                      fav.company.id,
+                      fav.id,
+                      fav.company.name,
+                    );
+                  }
+                }}
+              />
+            ))
+          ) : !isEmployee &&
+            filteredCompanyFavorites &&
+            filteredCompanyFavorites.length > 0 ? (
+            filteredCompanyFavorites.map((fav) => (
+              <FavoriteEmployeeCard
+                key={fav.id}
+                id={fav.employee.id}
+                name={`${fav.employee.firstname} ${fav.employee.lastname}`}
+                username={fav.employee.username ?? ""}
+                avatar={fav.employee.avatar ?? ""}
+                description={fav.employee.description}
+                position={fav.employee.job}
+                experience={fav.employee.yearsOfExperience}
+                availability={fav.employee.availability}
+                location={fav.employee.location ?? ""}
+                skills={(fav.employee.skills ?? []).map((skill) => skill.name)}
+                isRemoving={removingFavIds.has(fav.id)}
+                onRemoveFromFavorite={() => {
+                  if (currentUser && currentUser.company) {
+                    handleCompanyRemoveEmployeeFromFavorite(
+                      currentUser.company.id,
+                      fav.employee.id,
+                      fav.id,
+                      fav.employee.username ??
+                        `${fav.employee.firstname} ${fav.employee.lastname}`,
+                    );
+                  }
+                }}
+              />
+            ))
+          ) : (
+            /* Empty Favorite List */
+            <PageState
+              variant="empty"
+              title={tFav("emptyList")}
+              description={tFav("emptyListDescription")}
+              icon={LucideBookmark}
+              compact
+              className="my-6 sm:my-8"
+              action={{
+                label: tFav("explore"),
+                href: isEmployee ? "/search/company" : "/search/employee",
               }}
             />
-          ))
-        ) : !isEmployee &&
-          filteredCompanyFavorites &&
-          filteredCompanyFavorites.length > 0 ? (
-          filteredCompanyFavorites.map((fav) => (
-            <FavoriteEmployeeCard
-              key={fav.id}
-              id={fav.employee.id}
-              name={`${fav.employee.firstname} ${fav.employee.lastname}`}
-              username={fav.employee.username ?? ""}
-              avatar={fav.employee.avatar ?? ""}
-              description={fav.employee.description}
-              position={fav.employee.job}
-              experience={fav.employee.yearsOfExperience}
-              availability={fav.employee.availability}
-              location={fav.employee.location ?? ""}
-              skills={(fav.employee.skills ?? []).map((skill) => skill.name)}
-              isRemoving={removingFavIds.has(fav.id)}
-              onRemoveFromFavorite={() => {
-                if (currentUser && currentUser.company) {
-                  handleCompanyRemoveEmployeeFromFavorite(
-                    currentUser.company.id,
-                    fav.employee.id,
-                    fav.id,
-                    fav.employee.username ??
-                      `${fav.employee.firstname} ${fav.employee.lastname}`,
-                  );
-                }
-              }}
-            />
-          ))
-        ) : (
-          /* Empty Favorite List */
-          <PageState
-            variant="empty"
-            title={tFav("emptyList")}
-            image={emptySvg}
-            compact
-            className="my-6 sm:my-8"
-            action={{
-              label: tFav("explore"),
-              href: isEmployee ? "/search/company" : "/search/employee",
-            }}
-          />
-        )}
+          )}
         </div>
       </section>
     </div>

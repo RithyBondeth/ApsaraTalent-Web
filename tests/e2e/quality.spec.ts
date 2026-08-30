@@ -34,10 +34,28 @@ const protectedRoutes = [
   "/setting",
 ] as const;
 
-async function expectAccessible(page: import("@playwright/test").Page, route: string) {
+async function expectAccessible(
+  page: import("@playwright/test").Page,
+  route: string,
+) {
+  // Audit the settled page, not a frame of its entrance. The landing hero fades
+  // its heading and description in over ~1.6s, so an 800ms sample caught them
+  // mid-tween — axe read the transient opacity as a contrast failure on text
+  // that reaches full contrast a moment later. Reduced motion makes the state
+  // deterministic: the GSAP hooks show everything instantly under it, which is
+  // the same thing visual.spec.ts already does for its baselines.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.waitForTimeout(800);
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+    // WCAG 1.4.3 exempts text that is pure decoration, but axe measures colour
+    // on screen and cannot infer intent, so the exemption is declared here. The
+    // only member is the how-it-works step watermark: a 10%-opacity ghost
+    // numeral whose value is already carried, accessibly, by the "01 / 03"
+    // label beside it. It cannot reach 3:1 without ceasing to be a watermark.
+    // Nothing else may join this list without the same two properties — purely
+    // decorative, and duplicated by accessible text.
+    .exclude("[data-decorative='true']")
     .analyze();
   expect(
     results.violations,
@@ -53,8 +71,12 @@ test("public pages expose production security headers", async ({ page }) => {
   expect(contentSecurityPolicy).toContain("frame-ancestors 'none'");
   expect(response?.headers()["x-content-type-options"]).toBe("nosniff");
   expect(response?.headers()["x-frame-options"]).toBe("DENY");
-  expect(response?.headers()["referrer-policy"]).toBe("strict-origin-when-cross-origin");
-  expect(response?.headers()["permissions-policy"]).toContain("microphone=(self)");
+  expect(response?.headers()["referrer-policy"]).toBe(
+    "strict-origin-when-cross-origin",
+  );
+  expect(response?.headers()["permissions-policy"]).toContain(
+    "microphone=(self)",
+  );
 });
 
 test("authentication pages have no automatically detectable WCAG A/AA violations", async ({
@@ -77,7 +99,10 @@ test("public content pages have no detectable WCAG A/AA violations", async ({
   page,
   browserName,
 }) => {
-  test.skip(browserName !== "chromium", "The complete accessibility matrix runs once");
+  test.skip(
+    browserName !== "chromium",
+    "The complete accessibility matrix runs once",
+  );
   test.setTimeout(120_000);
   for (const route of publicContentRoutes) {
     await page.goto(route);
@@ -89,7 +114,10 @@ test("authenticated pages have no detectable WCAG A/AA violations", async ({
   page,
   browserName,
 }) => {
-  test.skip(browserName !== "chromium", "The complete accessibility matrix runs once");
+  test.skip(
+    browserName !== "chromium",
+    "The complete accessibility matrix runs once",
+  );
   test.setTimeout(180_000);
   await mockApi(page, successfulEmployeeApi);
   await loginEmployee(page);
@@ -129,21 +157,33 @@ test("key production pages stay within navigation and resource budgets", async (
   page,
   browserName,
 }) => {
-  test.skip(browserName !== "chromium", "Performance budgets are calibrated for Chromium");
+  test.skip(
+    browserName !== "chromium",
+    "Performance budgets are calibrated for Chromium",
+  );
   test.setTimeout(75_000);
   await mockApi(page, successfulEmployeeApi);
 
   for (const route of ["/", "/product"] as const) {
     await page.goto(route, { waitUntil: "networkidle" });
     const metrics = await page.evaluate(() => ({
-      durationMs: (performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming)
-        .duration,
+      durationMs: (
+        performance.getEntriesByType(
+          "navigation",
+        )[0] as PerformanceNavigationTiming
+      ).duration,
       transferredBytes: performance
         .getEntriesByType("resource")
-        .reduce((total, entry) => total + (entry as PerformanceResourceTiming).transferSize, 0),
+        .reduce(
+          (total, entry) =>
+            total + (entry as PerformanceResourceTiming).transferSize,
+          0,
+        ),
     }));
     expect(metrics.durationMs, `${route} navigation`).toBeLessThan(10_000);
-    expect(metrics.transferredBytes, `${route} transfer`).toBeLessThan(6_000_000);
+    expect(metrics.transferredBytes, `${route} transfer`).toBeLessThan(
+      6_000_000,
+    );
   }
 
   await loginEmployee(page);
@@ -159,7 +199,11 @@ test("key production pages stay within navigation and resource budgets", async (
     const transferredBytes = await page.evaluate(() =>
       performance
         .getEntriesByType("resource")
-        .reduce((total, entry) => total + (entry as PerformanceResourceTiming).transferSize, 0),
+        .reduce(
+          (total, entry) =>
+            total + (entry as PerformanceResourceTiming).transferSize,
+          0,
+        ),
     );
     expect(transferredBytes, `${route} transfer`).toBeLessThan(8_000_000);
   }
@@ -168,9 +212,16 @@ test("key production pages stay within navigation and resource budgets", async (
 test("@mobile public and authenticated pages avoid horizontal overflow", async ({
   page,
 }, testInfo) => {
-  test.skip(testInfo.project.name !== "mobile-chromium", "The mobile matrix uses the Pixel viewport");
+  test.skip(
+    testInfo.project.name !== "mobile-chromium",
+    "The mobile matrix uses the Pixel viewport",
+  );
   test.setTimeout(75_000);
-  for (const route of [...publicContentRoutes, "/login", "/forgot-password"] as const) {
+  for (const route of [
+    ...publicContentRoutes,
+    "/login",
+    "/forgot-password",
+  ] as const) {
     await page.goto(route);
     await expect(page.locator("body")).not.toBeEmpty();
     await expectNoHorizontalOverflow(page);
