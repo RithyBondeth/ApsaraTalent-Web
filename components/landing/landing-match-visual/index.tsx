@@ -91,7 +91,7 @@ function CompanyDevice() {
         {/* Identity Panel Section */}
         <div className="flex flex-col border-b border-border bg-muted p-2.5">
           <div className="flex items-start justify-between gap-2">
-            <span className="text-[6px] font-extrabold uppercase tracking-[0.24em] opacity-65">
+            <span className="text-[6px] font-extrabold uppercase tracking-[0.24em] text-muted-foreground">
               {t("matchVisualEmployeeEyebrow")}
             </span>
             <span className="border border-border bg-card px-1.5 py-[3px] text-[5px] font-extrabold uppercase tracking-[0.18em] opacity-75">
@@ -103,7 +103,7 @@ function CompanyDevice() {
               SD
             </span>
             <span className="min-w-0">
-              <span className="mb-0.5 block text-[5px] font-bold uppercase tracking-[0.2em] opacity-55">
+              <span className="mb-0.5 block text-[5px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
                 Apsara profile
               </span>
               <span className="block text-[15px] font-bold leading-[0.95] tracking-[-0.045em]">
@@ -208,14 +208,14 @@ function EmployeeDevice() {
         {/* Company Cover Section */}
         <div className="relative flex min-h-[104px] flex-col justify-end border-b border-border bg-muted p-2.5">
           <div className="absolute inset-x-2.5 top-2.5 flex items-start justify-between gap-2">
-            <span className="text-[6px] font-extrabold uppercase tracking-[0.24em] opacity-65">
+            <span className="text-[6px] font-extrabold uppercase tracking-[0.24em] text-muted-foreground">
               {t("matchVisualCompanyEyebrow")}
             </span>
             <span className="border border-border bg-card px-1.5 py-[3px] text-[5px] font-extrabold uppercase tracking-[0.18em] opacity-75">
               Apsara Talent
             </span>
           </div>
-          <span className="text-[6px] font-bold uppercase tracking-[0.2em] opacity-55">
+          <span className="text-[6px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
             Technology
           </span>
           <span className="mt-0.5 block text-[17px] font-bold leading-[0.95] tracking-[-0.05em]">
