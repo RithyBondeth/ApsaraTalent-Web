@@ -1,11 +1,12 @@
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import type { TUserRole } from "@/utils/types/auth/role.type";
 
-/** Where the admin panel starts. */
-export const ADMIN_HOME = "/admin";
-
-/** Where everyone else starts. */
-export const DEFAULT_HOME = "/feed";
+/**
+ * Where the admin panel starts. Local to this module — the default landing
+ * route for everyone else is whatever callback the sign-in flow resolved, so
+ * there is no matching constant for it to pair with.
+ */
+const ADMIN_HOME = "/admin";
 
 /* --------------------------------- Method ---------------------------------- */
 /**
