@@ -57,6 +57,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { resolveLandingRoute } from "@/utils/functions/url";
 
 function LoginPage() {
   /* ------------------------------------ Utils -------------------------------- */
@@ -142,6 +143,23 @@ function LoginPage() {
     }
     return value;
   }, [searchParams]);
+
+  // ── Landing Route Function ───────────────────────────────────
+  /*
+    Sign-in resolves its own destination on the client, so the middleware's
+    role routing never runs for it. Without this an administrator lands on
+    /feed — a page built entirely around an employee or company profile their
+    role does not have.
+
+    Read at call time rather than memoised on `user`: the store is populated by
+    preloadUserData() inside the same promise chain that navigates, so a memo
+    would still be holding the pre-login value when it is needed.
+  */
+  const landingRoute = (target: string) =>
+    resolveLandingRoute(
+      target,
+      useGetCurrentUserStore.getState().user?.role ?? null,
+    );
 
   // ── Phone Login Href Function ────────────────────────────────
   const phoneLoginHref = useMemo(() => {
@@ -246,7 +264,7 @@ function LoginPage() {
         setIsPreloadingData(false);
         setTwoFactorInitiated(false);
         setTwoFactorOtp("");
-        router.replace(callbackUrl);
+        router.replace(landingRoute(callbackUrl));
       });
   };
 
@@ -306,7 +324,7 @@ function LoginPage() {
         setIsPreloadingData(false);
         setLoginInitiated(false);
         isProcessingRegularLogin.current = false;
-        router.replace(callbackUrl);
+        router.replace(landingRoute(callbackUrl));
       });
   }, [
     error,
@@ -378,7 +396,7 @@ function LoginPage() {
           setIsPreloadingData(false);
           setSocialLoginInitiated(false);
           isProcessingSocialLogin.current = false;
-          router.replace(callbackUrl);
+          router.replace(landingRoute(callbackUrl));
         });
 
       return;
