@@ -590,7 +590,7 @@ export default function CompanySearchPage() {
                                 <LucideXCircle
                                   role="button"
                                   aria-label={`${t("remove")} ${skill}`}
-                                  className="size-3.5 cursor-pointer text-red-500"
+                                  className="size-3.5 cursor-pointer text-destructive"
                                   onClick={() => removeSkill(skill)}
                                 />
                               </div>
