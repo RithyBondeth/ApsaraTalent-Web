@@ -15,6 +15,43 @@ function redirectLocation(path: string, role?: string) {
   return middleware(request(path, role)).headers.get("location");
 }
 
+describe("content security policy", () => {
+  const policyOf = (path: string, role?: string) =>
+    middleware(request(path, role)).headers.get("Content-Security-Policy");
+
+  it("carries a policy on a plain pass-through", () => {
+    expect(policyOf("/privacy")).toMatch(/script-src/);
+  });
+
+  it("mints a different nonce per request", () => {
+    // A nonce reused across responses is worth no more than 'unsafe-inline'.
+    const first = policyOf("/privacy");
+    const second = policyOf("/privacy");
+    expect(first).not.toBe(second);
+  });
+
+  /*
+    Every redirect exit has to carry the policy too, not just the pass-through.
+    The admin gates are the newest of them, and they were written on a branch
+    where `middleware()` still returned bare NextResponse.redirect(...) calls —
+    exactly the shape that silently ships an unprotected document.
+  */
+  it.each([
+    ["a non-admin bounced off the panel", "/admin/users", "employee"],
+    ["an admin bounced out of the employee app", "/feed", "admin"],
+    ["an anonymous visitor sent to login", "/admin/reports", undefined],
+    ["a roleless user sent to onboarding", "/dashboard", "none"],
+    ["a signed-in visitor sent off the marketing home", "/", "employee"],
+  ])("carries a policy when redirecting %s", (_label, path, role) => {
+    const response = middleware(request(path, role as string | undefined));
+
+    expect(response.headers.get("location")).not.toBeNull();
+    expect(response.headers.get("Content-Security-Policy")).toMatch(
+      /nonce-[a-f0-9]+/,
+    );
+  });
+});
+
 describe("authentication middleware", () => {
   it("redirects an anonymous protected request and preserves its callback", () => {
     const location = redirectLocation("/search/employee?q=typescript&page=2");
