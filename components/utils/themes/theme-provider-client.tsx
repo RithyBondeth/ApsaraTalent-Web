@@ -28,6 +28,8 @@ function ThemeSync({ theme }: { theme: TTheme }) {
 export function ThemeProviderClient(props: {
   children: React.ReactNode;
   defaultTheme: string;
+  /** Nonce for next-themes' inline anti-flash script. See theme-provider.tsx. */
+  nonce?: string;
 }) {
   /* ----------------------------- API Integration ---------------------------- */
   const theme = useThemeStore((state) => state.theme);
@@ -44,6 +46,7 @@ export function ThemeProviderClient(props: {
       defaultTheme={fallbackTheme}
       enableSystem
       disableTransitionOnChange={false}
+      nonce={props.nonce}
     >
       <ThemeSync theme={activeTheme} />
       {props.children}
