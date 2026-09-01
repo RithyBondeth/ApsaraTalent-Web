@@ -27,7 +27,10 @@ import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-curr
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useModerationStore } from "@/stores/apis/moderation/moderation.store";
 import { SEARCH_DEBOUNCE_MS } from "@/utils/constants/search.constant";
-import { yearOfExperienceConstant } from "@/utils/constants/ui.constant";
+import {
+  workModeConstant,
+  yearOfExperienceConstant,
+} from "@/utils/constants/ui.constant";
 import { TAvailability } from "@/utils/types/user/availability.type";
 import { TLocations } from "@/utils/types/user/location.type";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,6 +43,8 @@ import {
   LucideGraduationCap,
   LucideSearchX,
   LucideSlidersHorizontal,
+  LucideTarget,
+  LucideLaptop,
   LucideUsers,
   LucideX,
 } from "lucide-react";
@@ -65,9 +70,10 @@ export default function EmployeeSearchPage() {
 
   // Parse URL params for form initialisation (evaluated once at first render)
   const urlPage = Math.max(1, parseInt(searchParams.get("page") ?? "1") || 1);
-  const urlSortRaw = searchParams.get("sort") ?? "createdAt-desc";
+  const urlSortRaw = searchParams.get("sort") ?? "relevance-desc";
   const [urlSortBy, urlOrderBy] = urlSortRaw.split("-");
   const urlEdu = searchParams.get("edu");
+  const urlWorkMode = searchParams.get("wm");
   const urlCmin = searchParams.get("cmin");
   const urlCmax = searchParams.get("cmax");
   const urlSmin = searchParams.get("smin");
@@ -104,6 +110,10 @@ export default function EmployeeSearchPage() {
   // Holds blocked companies' profile IDs so they never appear in the feed.
   const blockedCompanyIdsRef = useRef<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
+  // Drives whether the career-scope toggle renders at all — a profile with no
+  // scopes has nothing to narrow by. State, not a ref, because the panel has
+  // to re-render once the user loads.
+  const [hasScopes, setHasScopes] = useState<boolean>(false);
 
   // Merge liked + blocked exclusions into the single list the search accepts.
   const buildExcludeCompanyIds = (): string[] | undefined => {
@@ -112,6 +122,14 @@ export default function EmployeeSearchPage() {
     );
     return merged.length > 0 ? merged : undefined;
   };
+
+  // The profile's career scopes narrow the feed only while the toggle is on.
+  // Off means search the whole board — an explicit filter the user controls,
+  // rather than a hidden one they can only escape by getting zero results.
+  const buildCareerScopes = (enabled?: boolean): string[] | undefined =>
+    enabled && scopeNamesRef.current.length > 0
+      ? scopeNamesRef.current
+      : undefined;
 
   /* ------------------------------- Search Form ------------------------------ */
   /* 
@@ -140,8 +158,10 @@ export default function EmployeeSearchPage() {
         },
         educationLevel: urlEdu ? urlEdu.split(",") : [],
         experienceLevel: searchParams.get("exp") ?? undefined,
-        sortBy: urlSortBy ?? "createdAt",
+        workMode: urlWorkMode ?? undefined,
+        sortBy: urlSortBy ?? "relevance",
         orderBy: urlOrderBy ?? "desc",
+        useCareerScopes: searchParams.get("scope") === "1",
       },
     });
 
@@ -171,8 +191,13 @@ export default function EmployeeSearchPage() {
     if (allValues.educationLevel && allValues.educationLevel.length > 0)
       count++;
     if (allValues.experienceLevel !== undefined) count++;
+    if (allValues.workMode) count++;
+    // Counted while ON: it is the one filter that narrows the feed without the
+    // user having chosen anything, so it has to show up in the badge and in
+    // the empty state's "clear filters" affordance.
+    if (hasScopes && allValues.useCareerScopes) count++;
     return count;
-  }, [allValues]);
+  }, [allValues, hasScopes]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Sync Filter State to URL (immediate, no debounce) ─────────────────────
@@ -187,11 +212,12 @@ export default function EmployeeSearchPage() {
         params.set("loc", values.location);
       if (values.jobType && values.jobType !== "all")
         params.set("type", values.jobType);
-      const sortStr = `${values.sortBy ?? "createdAt"}-${values.orderBy ?? "desc"}`;
-      if (sortStr !== "createdAt-desc") params.set("sort", sortStr);
+      const sortStr = `${values.sortBy ?? "relevance"}-${values.orderBy ?? "desc"}`;
+      if (sortStr !== "relevance-desc") params.set("sort", sortStr);
       if (values.educationLevel && values.educationLevel.length > 0)
         params.set("edu", values.educationLevel.join(","));
       if (values.experienceLevel) params.set("exp", values.experienceLevel);
+      if (values.workMode) params.set("wm", values.workMode);
       if (values.companySize?.min !== undefined)
         params.set("cmin", String(values.companySize.min));
       if (values.companySize?.max !== undefined)
@@ -203,6 +229,8 @@ export default function EmployeeSearchPage() {
       if (values.date?.from)
         params.set("dfrom", values.date.from.toISOString());
       if (values.date?.to) params.set("dto", values.date.to.toISOString());
+      // Default is off, so only the on state needs to survive a refresh.
+      if (values.useCareerScopes) params.set("scope", "1");
       const qs = params.toString();
       router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     },
@@ -228,8 +256,7 @@ export default function EmployeeSearchPage() {
   const runSearch = useCallback(
     (data: TEmployeeSearchSchema, restorePage?: number) => {
       querySearchJobs({
-        careerScopes:
-          scopeNamesRef.current.length > 0 ? scopeNamesRef.current : undefined,
+        careerScopes: buildCareerScopes(data.useCareerScopes),
         // Only send keyword when it satisfies the server's @MinLength(2);
         // a 1-char keyword is treated as no keyword to avoid a 400.
         keyword:
@@ -249,6 +276,7 @@ export default function EmployeeSearchPage() {
             ? undefined
             : data.educationLevel,
         experienceLevel: data.experienceLevel,
+        workMode: data.workMode,
         sortBy: data.sortBy,
         sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
         excludeCompanyIds: buildExcludeCompanyIds(),
@@ -275,6 +303,9 @@ export default function EmployeeSearchPage() {
     setValue("salaryRange", { min: undefined, max: undefined });
     setValue("educationLevel", []);
     setValue("experienceLevel", undefined);
+    setValue("workMode", undefined);
+    // "Clear filters" has to mean "show me everything", including the scopes.
+    setValue("useCareerScopes", false);
   }, [setValue]);
 
   /* --------------------------------- Effects --------------------------------- */
@@ -293,6 +324,7 @@ export default function EmployeeSearchPage() {
         : user.employee?.careerScopes;
 
     scopeNamesRef.current = scopes?.map((cs) => cs.name) ?? [];
+    setHasScopes(scopeNamesRef.current.length > 0);
 
     if (hasUrlFiltersRef.current) {
       // URL already has filter params (page refresh / shared link) — run the
@@ -317,13 +349,12 @@ export default function EmployeeSearchPage() {
       }
 
       querySearchJobs({
-        careerScopes:
-          scopeNamesRef.current.length > 0 ? scopeNamesRef.current : undefined,
+        careerScopes: buildCareerScopes(getValues("useCareerScopes")),
         location:
           userLocation && userLocation !== "all"
             ? (userLocation as TLocations)
             : undefined,
-        sortBy: "createdAt",
+        sortBy: "relevance",
         sortOrder: "DESC",
         excludeCompanyIds: buildExcludeCompanyIds(),
       });
@@ -349,6 +380,7 @@ export default function EmployeeSearchPage() {
   useEffect(() => {
     const subscription = watch((value) => {
       if (!isInitialSearchDoneRef.current) return;
+
       debouncedRunSearch(value as TEmployeeSearchSchema);
       // Sync immediately so URL reflects the filter before the debounce fires
       syncToUrl(value as TEmployeeSearchSchema);
@@ -502,6 +534,48 @@ export default function EmployeeSearchPage() {
               </div>
             ) : (
               <>
+                {/* Career Scope Section */}
+                {hasScopes && (
+                  <>
+                    <div className="flex flex-col items-start gap-3">
+                      <TypographyP className="flex items-center gap-1 text-sm font-medium">
+                        <LucideTarget strokeWidth={"1.5px"} />
+                        {t("careerScope")}
+                      </TypographyP>
+
+                      <Controller
+                        name="useCareerScopes"
+                        control={control}
+                        render={({ field }) => (
+                          <div className="ml-3 flex items-start gap-2">
+                            <Checkbox
+                              id="use-career-scopes"
+                              className="mt-0.5 rounded-none"
+                              checked={field.value ?? false}
+                              onCheckedChange={(checked) =>
+                                field.onChange(checked === true)
+                              }
+                            />
+                            <label
+                              htmlFor="use-career-scopes"
+                              className="flex cursor-pointer flex-col gap-1"
+                            >
+                              <span className="text-sm font-medium leading-none">
+                                {t("matchMyCareerScope")}
+                              </span>
+                              <TypographyMuted className="text-xs">
+                                {t("matchMyCareerScopeHint")}
+                              </TypographyMuted>
+                            </label>
+                          </div>
+                        )}
+                      />
+                    </div>
+
+                    <Separator />
+                  </>
+                )}
+
                 {/* Date Posted Section */}
                 <div className="flex flex-col items-start gap-3">
                   <TypographyP className="flex items-center gap-1 text-sm font-medium">
@@ -775,6 +849,51 @@ export default function EmployeeSearchPage() {
 
                 <Separator />
 
+                {/* Work Mode Section */}
+                <div className="flex flex-col items-start gap-3">
+                  <TypographyP className="flex items-center gap-1 text-sm font-medium">
+                    <LucideLaptop strokeWidth={"1.5px"} />
+                    {t("workMode")}
+                  </TypographyP>
+
+                  <Controller
+                    name="workMode"
+                    control={control}
+                    render={({ field }) => (
+                      <RadioGroup
+                        value={field.value ?? "all"}
+                        onValueChange={(val) =>
+                          handleRadioChange(
+                            "workMode",
+                            val === "all" ? undefined : val,
+                          )
+                        }
+                        className="ml-3"
+                      >
+                        <RadioGroupItemWithLabel
+                          id="wm-all"
+                          value="all"
+                          htmlFor="wm-all"
+                        >
+                          {t("allWorkModes")}
+                        </RadioGroupItemWithLabel>
+                        {workModeConstant.map((mode) => (
+                          <RadioGroupItemWithLabel
+                            key={mode.id}
+                            id={`wm-${mode.value}`}
+                            value={mode.value}
+                            htmlFor={`wm-${mode.value}`}
+                          >
+                            {t(mode.value)}
+                          </RadioGroupItemWithLabel>
+                        ))}
+                      </RadioGroup>
+                    )}
+                  />
+                </div>
+
+                <Separator />
+
                 {/* Experience Level Section */}
                 <div className="flex flex-col items-start gap-3">
                   <TypographyP className="flex items-center gap-1 text-sm font-medium">
@@ -878,6 +997,9 @@ export default function EmployeeSearchPage() {
                           <SelectValue placeholder={t("sortBy")} />
                         </SelectTrigger>
                         <SelectContent className="rounded-none border-border shadow-hard [&_[role=option]]:rounded-none">
+                          <SelectItem value="relevance-desc">
+                            {t("bestMatch")}
+                          </SelectItem>
                           <SelectItem value="createdAt-desc">
                             {t("newestFirst")}
                           </SelectItem>
@@ -948,10 +1070,9 @@ export default function EmployeeSearchPage() {
                       disabled={loadingMore}
                       onClick={async () => {
                         await loadMoreJobs({
-                          careerScopes:
-                            scopeNamesRef.current.length > 0
-                              ? scopeNamesRef.current
-                              : undefined,
+                          careerScopes: buildCareerScopes(
+                            getValues("useCareerScopes"),
+                          ),
                           keyword:
                             getValues("keyword") &&
                             getValues("keyword")!.trim().length >= 2
@@ -976,6 +1097,7 @@ export default function EmployeeSearchPage() {
                             ? getValues("educationLevel")
                             : undefined,
                           experienceLevel: getValues("experienceLevel"),
+                          workMode: getValues("workMode"),
                           sortBy: getValues("sortBy"),
                           sortOrder: getValues("orderBy")?.toUpperCase() as
                             "ASC" | "DESC",
