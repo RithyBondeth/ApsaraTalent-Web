@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --font-ubuntu: "Ubuntu";
-    --font-kantumruy: "Kantumruy Pro";
+    --font-khmer: "Koh Santepheap";
 
     /* Pure white page. The cards on it are white too, so the surface step
        that used to separate them is gone — a card is now delineated by its
@@ -1032,13 +1032,39 @@ html.theme-fallback-transition body *::after {
 /* Keyed off <html lang>, which the root layout renders from the language cookie
    and LanguageProviderClient keeps in step after an in-page switch. */
 
-/* Kantumruy Pro leads the stack so the line box is measured from the script
-   actually being drawn. With Ubuntu first, Khmer fell through to Kantumruy for
-   glyphs but kept Ubuntu's ascent and descent, so a heading at 30px got a 36px
-   line box — no room for the marks Khmer stacks above and below its base
+/* Koh Santepheap is self-hosted (the two woff2 are in /public/fonts) and scoped
+   to the Khmer block with unicode-range so it never takes the Latin glyphs on
+   a Khmer page. The fontsource `khmer-*.css` files ship WITHOUT a unicode-range,
+   and the "khmer" subset carries the Latin alphabet too — so once loaded, the
+   face covered every character and the English text on a Khmer page rendered in
+   it instead of falling through to Ubuntu. Restricting to U+1780-17FF (Khmer) +
+   the coeng/punctuation extras keeps Khmer in Koh Santepheap and Latin in
+   Ubuntu. */
+@font-face {
+  font-family: "Koh Santepheap";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/koh-santepheap-khmer-400.woff2") format("woff2");
+  unicode-range: U+1780-17FF, U+19E0-19FF, U+200C-200D, U+25CC;
+}
+
+@font-face {
+  font-family: "Koh Santepheap";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/koh-santepheap-khmer-700.woff2") format("woff2");
+  unicode-range: U+1780-17FF, U+19E0-19FF, U+200C-200D, U+25CC;
+}
+
+/* The Khmer font leads the stack so the line box is measured from the script
+   actually being drawn. With Ubuntu first, Khmer fell through to the Khmer face
+   for glyphs but kept Ubuntu's ascent and descent, so a heading at 30px got a
+   36px line box — no room for the marks Khmer stacks above and below its base
    letters, which is why the banner title read as having no leading at all. */
 [lang="km"] body {
-  font-family: var(--font-kantumruy), var(--font-ubuntu), sans-serif;
+  font-family: var(--font-khmer), var(--font-ubuntu), sans-serif;
 }
 
 /* Letter-spacing is a Latin device. A Khmer cluster is a base glyph plus marks
@@ -2506,7 +2532,7 @@ body:has(.landing-scope),
   --apsara-toast-soft: 38 19% 92%;
   --apsara-toast-shadow: 36 32% 13%;
   --apsara-toast-accent: 38 9% 34%;
-  font-family: var(--font-ubuntu), var(--font-kantumruy), sans-serif;
+  font-family: var(--font-ubuntu), var(--font-khmer), sans-serif;
 }
 
 [data-sonner-toaster].apsara-toaster[data-sonner-theme="dark"] {

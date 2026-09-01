@@ -52,7 +52,7 @@ function resolvePreviewFont(font: string): string {
 
   return usesSpecialtyFont
     ? font
-    : "var(--font-ubuntu), var(--font-kantumruy), sans-serif";
+    : "var(--font-ubuntu), var(--font-khmer), sans-serif";
 }
 
 /* Small readable text used inside the miniature resume. */

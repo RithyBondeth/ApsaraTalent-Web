@@ -16,6 +16,8 @@ type TSearchEmpQueryParams = {
   jobType?: TAvailability;
   experienceLevel?: string;
   education?: string | string[];
+  /** Match candidates holding ANY of these skills. */
+  skills?: string[];
   sortBy?: string;
   sortOrder?: "ASC" | "DESC";
   excludeEmployeeIds?: string[];

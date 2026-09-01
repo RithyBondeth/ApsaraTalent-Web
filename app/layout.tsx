@@ -5,8 +5,6 @@ import { TitleSync } from "@/components/utils/seo/title-sync";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { FONT_STACK } from "@/utils/constants/ui.constant";
-import "@fontsource/kantumruy-pro/khmer-400.css";
-import "@fontsource/kantumruy-pro/khmer-700.css";
 import "@fontsource/ubuntu/latin-400.css";
 import "@fontsource/ubuntu/latin-700.css";
 import "./globals.css";
