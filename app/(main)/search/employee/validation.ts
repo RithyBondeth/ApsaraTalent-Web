@@ -31,6 +31,9 @@ export const employeeSearchSchema = z.object({
 
   experienceLevel: z.string().optional(),
   educationLevel: z.array(z.string()).optional(),
+  workMode: z.string().optional(),
+  /** Narrow results to the viewer's own career scopes. Default on. */
+  useCareerScopes: z.boolean().optional(),
   sortBy: textValidation("Sort By", 100),
   orderBy: textValidation("Sort Order", 100),
 });

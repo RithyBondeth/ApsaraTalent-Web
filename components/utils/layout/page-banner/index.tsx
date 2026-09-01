@@ -44,7 +44,7 @@ export function PageBanner({
         </div>
 
         {/* Title Section */}
-        <h1 className="mt-3 max-w-[26ch] text-balance text-2xl font-black leading-[1.08] tracking-[-0.04em] text-foreground sm:text-3xl">
+        <h1 className="mt-3 max-w-[26ch] text-balance text-2xl font-bold leading-[1.08] tracking-[-0.04em] text-foreground sm:text-3xl">
           {title}
         </h1>
 

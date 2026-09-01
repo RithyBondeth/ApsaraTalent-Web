@@ -18,6 +18,8 @@ type TSearchJobQueryParams = {
   salaryMax?: number;
   experienceLevel?: string;
   educationRequired?: string | string[];
+  /** remote | on_site | hybrid | flexible */
+  workMode?: string;
   postedDateFrom?: string;
   postedDateTo?: string;
   sortBy?: string;

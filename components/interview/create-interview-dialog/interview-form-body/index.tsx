@@ -213,7 +213,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
               </Button>
             </PopoverTrigger>
             <PopoverContent
-              className="w-auto p-0"
+              className="w-[var(--radix-popover-trigger-width)] min-w-[17.5rem] max-w-[calc(100vw-1.5rem)] p-0"
               align="start"
               onInteractOutside={(e) => e.preventDefault()}
             >
