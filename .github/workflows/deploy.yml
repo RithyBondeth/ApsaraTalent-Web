@@ -11,6 +11,11 @@ on:
     branches: [main]
   pull_request:
     branches: [main, develop]
+  # A release can fail for reasons that have nothing to do with the commit —
+  # an expired token, a misconfigured project variable. Without this the only
+  # way to retry is another merge to main, which means an empty commit just to
+  # re-run a deploy that was already green everywhere except the last step.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -208,7 +213,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     needs: [security, dependencies, lint, test, build]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: >-
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      && github.ref == 'refs/heads/main'
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
