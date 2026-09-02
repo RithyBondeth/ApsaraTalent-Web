@@ -1886,6 +1886,13 @@
       "cancel": "Cancel",
       "confirm": "Take it down",
       "hiding": "Taking down..."
+    },
+    "header": {
+      "title": "Administration",
+      "signOut": "Sign out",
+      "confirmSignOut": "Sign out?",
+      "signOutQuestion": "You will need to sign in again to reach the admin panel.",
+      "cancel": "Cancel"
     }
   }
 }
