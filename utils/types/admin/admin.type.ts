@@ -110,8 +110,13 @@ export type TAdminOverview = {
   bannedUsers: number;
   pendingReports: number;
   newUsersLast7Days: number;
-  liveJobs: number;
-  hiddenJobs: number;
+  /**
+   * Added with job moderation. Optional because the web can be deployed
+   * ahead of the API, and an older API omits them entirely — rendering one
+   * unguarded took the whole overview page down with a TypeError.
+   */
+  liveJobs?: number;
+  hiddenJobs?: number;
 };
 
 /* --------------------------------- Paging ---------------------------------- */
