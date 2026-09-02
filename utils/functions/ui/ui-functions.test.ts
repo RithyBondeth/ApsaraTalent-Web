@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getApplicationStatusClass } from "./get-application-status-class";
 import { getStatusBadgeStyleClass } from "./get-interview-status-class";
 import { getPaginationPages } from "./get-pagination-pages";
 import { getScoreTone } from "./get-score-tone";
@@ -62,5 +63,27 @@ describe("UI functions", () => {
     ).toEqual([1, 2, "...", 5]);
     expect(getPaginationPages({ currentPage: 5, totalPages: 5 })).toEqual([5]);
     expect(getPaginationPages({ currentPage: 99, totalPages: 3 })).toEqual([3]);
+  });
+
+  it("spends a status colour only on application stages that need one", () => {
+    expect(getApplicationStatusClass("hired")).toContain("success");
+    expect(getApplicationStatusClass("rejected")).toContain("destructive");
+
+    // Progress stages share the info family. They are told apart by their
+    // label, not by borrowing `warning` — a category must never be mistakable
+    // for a state.
+    for (const stage of ["shortlisted", "interviewing", "offered"] as const) {
+      expect(getApplicationStatusClass(stage)).toContain("info");
+    }
+
+    // An application nobody has moved yet is the resting condition, not a
+    // warning. Painting the whole inbox amber is what stops a real warning
+    // from being seen.
+    for (const stage of ["pending", "reviewed", "withdrawn"] as const) {
+      const classes = getApplicationStatusClass(stage);
+      expect(classes).toContain("muted");
+      expect(classes).not.toContain("warning");
+      expect(classes).not.toContain("destructive");
+    }
   });
 });

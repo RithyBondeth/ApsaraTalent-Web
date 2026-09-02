@@ -188,6 +188,7 @@ export default function TopNavbar() {
       Favorite: t("favorite"),
       Matching: t("matching"),
       Interview: t("interview"),
+      Application: t("application"),
       Message: t("message"),
       Notification: t("notification"),
     }),
