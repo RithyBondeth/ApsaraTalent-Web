@@ -7,6 +7,7 @@ import { PageBanner } from "@/components/utils/layout/page-banner";
 import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
 import { useAdminStore } from "@/stores/apis/admin/admin.store";
 import {
+  LucideBriefcase,
   LucideBuilding2,
   LucideFlag,
   LucideShieldAlert,
@@ -64,6 +65,8 @@ export default function AdminOverviewPage() {
       icon: LucideShieldAlert,
     },
     { key: "banned", value: overview.bannedUsers, icon: LucideShieldAlert },
+    { key: "liveJobs", value: overview.liveJobs, icon: LucideBriefcase },
+    { key: "hiddenJobs", value: overview.hiddenJobs, icon: LucideBriefcase },
   ] as const;
 
   return (

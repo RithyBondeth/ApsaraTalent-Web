@@ -18,3 +18,11 @@ export const API_ADMIN_REPORT_STATUS_URL = (reportId: string) =>
   `${API_ADMIN_BASE_URL}/reports/${reportId}/status`;
 
 export const API_ADMIN_AUDIT_URL = `${API_ADMIN_BASE_URL}/audit`;
+
+export const API_ADMIN_JOBS_URL = `${API_ADMIN_BASE_URL}/jobs`;
+
+export const API_ADMIN_JOB_URL = (jobId: string) =>
+  `${API_ADMIN_BASE_URL}/jobs/${jobId}`;
+
+export const API_ADMIN_JOB_RESTORE_URL = (jobId: string) =>
+  `${API_ADMIN_BASE_URL}/jobs/${jobId}/restore`;
