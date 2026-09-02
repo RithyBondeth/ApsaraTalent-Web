@@ -16,16 +16,6 @@ export type TApplicationStatus =
   | "hired"
   | "withdrawn";
 
-/** The order stages appear in the pipeline, for sorting and for the stage rail. */
-export const APPLICATION_STAGE_ORDER: TApplicationStatus[] = [
-  "pending",
-  "reviewed",
-  "shortlisted",
-  "interviewing",
-  "offered",
-  "hired",
-];
-
 /**
  * What a company may move each stage into — the browser's copy of
  * `APPLICATION_STATUS_TRANSITIONS`, so the dropdown only ever offers moves the
