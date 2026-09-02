@@ -90,6 +90,7 @@ const PROTECTED_ROUTES = [
   "/resume-builder",
   "/dashboard",
   "/interview",
+  "/application",
   "/setting",
 ];
 
