@@ -126,8 +126,15 @@ export default function AdminOverviewPage() {
                 {t(key)}
               </span>
             </div>
+            {/*
+              A count the API did not send renders as a dash rather than
+              throwing. The overview is the panel's landing page, so one
+              missing field taking it down locks an admin out of everything
+              — which is exactly what happened when the web ran ahead of an
+              API without job moderation.
+            */}
             <p className="mt-2 text-3xl font-black tabular-nums tracking-[-0.04em] text-foreground">
-              {value.toLocaleString()}
+              {typeof value === "number" ? value.toLocaleString() : "—"}
             </p>
           </div>
         ))}
