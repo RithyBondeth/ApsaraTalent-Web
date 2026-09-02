@@ -1714,7 +1714,8 @@
       "overview": "Overview",
       "users": "Users",
       "reports": "Reports",
-      "audit": "Audit log"
+      "audit": "Audit log",
+      "jobs": "Jobs"
     },
     "common": {
       "showing": "Showing {first}–{last} of {total}",
@@ -1750,7 +1751,9 @@
       "queueWaiting": "{count} reports are waiting to be reviewed.",
       "queueBadge": "Needs review",
       "queueAction": "Open the queue",
-      "retry": "Try again"
+      "retry": "Try again",
+      "liveJobs": "Live postings",
+      "hiddenJobs": "Hidden postings"
     },
     "users": {
       "eyebrow": "Administration",
@@ -1798,7 +1801,9 @@
         "user_suspended": "Account suspended",
         "user_banned": "Account banned",
         "user_reinstated": "Account reinstated",
-        "report_status_changed": "Report status changed"
+        "report_status_changed": "Report status changed",
+        "job_hidden": "Job posting taken down",
+        "job_restored": "Job posting restored"
       }
     },
     "statusDialog": {
@@ -1850,6 +1855,37 @@
       "deletedAdmin": "a former administrator",
       "emptyTitle": "Nothing recorded yet",
       "emptyDescription": "Administrative actions appear here as soon as they are taken."
+    },
+    "jobs": {
+      "eyebrow": "Administration",
+      "title": "Job postings",
+      "subtitle": "Every posting on the platform. Hiding one removes it from search, the feed and every recommendation.",
+      "statInView": "in this view",
+      "searchPlaceholder": "Search by job title or company",
+      "filterVisibility": "Filter by visibility",
+      "filterLive": "Live postings",
+      "filterHidden": "Hidden postings",
+      "filterAll": "All postings",
+      "liveLabel": "Live",
+      "hiddenLabel": "Hidden",
+      "companyReports": "{count} open on this company",
+      "posted": "posted {date}",
+      "hide": "Take down",
+      "restore": "Restore",
+      "hidden": "\"{title}\" is no longer visible to candidates.",
+      "restored": "\"{title}\" is visible to candidates again.",
+      "emptyTitle": "No postings match those filters",
+      "emptyDescription": "Try a broader search, or change the visibility filter."
+    },
+    "jobDialog": {
+      "title": "Take down \"{title}\"",
+      "description": "This removes the posting from search, the feed and every recommendation. {company} keeps the posting but it reaches nobody.",
+      "reasonLabel": "Reason",
+      "reasonPlaceholder": "Explain what is wrong with this posting, in at least ten characters.",
+      "reasonHelp": "Recorded in the audit log and kept against the posting. Write it for the company that placed it.",
+      "cancel": "Cancel",
+      "confirm": "Take it down",
+      "hiding": "Taking down..."
     }
   }
 }

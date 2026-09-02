@@ -10,7 +10,12 @@ export type TAdminAction =
   | "user_suspended"
   | "user_banned"
   | "user_reinstated"
-  | "report_status_changed";
+  | "report_status_changed"
+  | "job_hidden"
+  | "job_restored";
+
+/** Which side of the takedown line to list. Defaults to visible. */
+export type TJobVisibility = "visible" | "hidden" | "all";
 
 /* ---------------------------------- Users ---------------------------------- */
 export type TAdminUser = {
@@ -73,6 +78,29 @@ export type TAdminAuditEntry = {
   createdAt: string;
 };
 
+/* ---------------------------------- Jobs ----------------------------------- */
+export type TAdminJob = {
+  id: string;
+  title: string;
+  companyId: string | null;
+  companyName: string;
+  location: string | null;
+  type: string;
+  createdAt: string;
+  expireDate: string | null;
+  /** Null means the posting is live. */
+  hiddenAt: string | null;
+  hiddenReason: string | null;
+  companyOpenReportCount: number;
+};
+
+export type TAdminJobQuery = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  visibility?: TJobVisibility;
+};
+
 /* --------------------------------- Overview -------------------------------- */
 export type TAdminOverview = {
   totalUsers: number;
@@ -82,6 +110,8 @@ export type TAdminOverview = {
   bannedUsers: number;
   pendingReports: number;
   newUsersLast7Days: number;
+  liveJobs: number;
+  hiddenJobs: number;
 };
 
 /* --------------------------------- Paging ---------------------------------- */

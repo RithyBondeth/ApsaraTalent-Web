@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import {
+  LucideBriefcase,
   LucideClipboardList,
   LucideFlag,
   LucideLayoutDashboard,
@@ -14,13 +15,14 @@ import { usePathname } from "next/navigation";
 
 type TAdminNavItem = {
   href: string;
-  labelKey: "overview" | "users" | "reports" | "audit";
+  labelKey: "overview" | "users" | "jobs" | "reports" | "audit";
   icon: LucideIcon;
 };
 
 const NAV_ITEMS: TAdminNavItem[] = [
   { href: "/admin", labelKey: "overview", icon: LucideLayoutDashboard },
   { href: "/admin/users", labelKey: "users", icon: LucideUsers },
+  { href: "/admin/jobs", labelKey: "jobs", icon: LucideBriefcase },
   { href: "/admin/reports", labelKey: "reports", icon: LucideFlag },
   { href: "/admin/audit", labelKey: "audit", icon: LucideClipboardList },
 ];
