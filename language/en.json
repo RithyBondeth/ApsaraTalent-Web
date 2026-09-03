@@ -82,7 +82,25 @@
     "enable": "Enable",
     "disable": "Disable",
     "noBlockedUsersDescription": "People you block can't message you or appear in your feed.",
-    "bannerEyebrow": "Account Center"
+    "bannerEyebrow": "Account Center",
+    "notifications": "Notifications",
+    "notificationsDescription": "Choose what Apsara Talent may contact you about",
+    "emailNotifications": "Email",
+    "emailNotificationsDescription": "Turn off to stop all notification emails. Security and account emails still arrive.",
+    "pushNotifications": "Push",
+    "pushNotificationsDescription": "Alerts on the devices you have signed in on",
+    "channelEmail": "Email",
+    "channelPush": "Push",
+    "categoryChannelLabel": "{category} by {channel}",
+    "category_application": "Applications",
+    "category_application_description": "Updates on applications you sent or received",
+    "category_interview": "Interviews",
+    "category_interview_description": "Invitations, reschedules and cancellations",
+    "category_match": "Matches",
+    "category_match_description": "New mutual matches and profile likes",
+    "category_message": "Messages",
+    "category_message_description": "Chat messages you were not online to see",
+    "accountEmailNotice": "Security and account emails — verification codes, password resets and account notices — are always sent. They cannot be switched off."
   },
   "states": {
     "sessionErrorDescription": "We could not load your account. Check your connection and try again.",
@@ -426,7 +444,8 @@
     "resumeSavedToDownloads": "Your resume has been saved to your downloads folder.",
     "somethingWentWrong": "Something went wrong. Please try again.",
     "twoFactorEnabled": "Two-factor authentication enabled.",
-    "twoFactorDisabled": "Two-factor authentication disabled."
+    "twoFactorDisabled": "Two-factor authentication disabled.",
+    "failedToSaveNotificationPreferences": "Failed to save notification preferences"
   },
   "dashboard": {
     "insightCenter": "Insight Center",
@@ -1894,5 +1913,17 @@
       "signOutQuestion": "You will need to sign in again to reach the admin panel.",
       "cancel": "Cancel"
     }
+  },
+  "unsubscribe": {
+    "confirmTitle": "Unsubscribe from notification emails?",
+    "confirmBody": "You will stop receiving emails about applications, interviews, matches and messages. Security and account emails still arrive.",
+    "confirmAction": "Unsubscribe",
+    "working": "Unsubscribing…",
+    "doneTitle": "You're unsubscribed",
+    "doneBody": "We won't send you notification emails any more. You can turn them back on from your settings at any time.",
+    "manageSettings": "Notification settings",
+    "invalidTitle": "This link is incomplete",
+    "invalidBody": "The unsubscribe link is missing its token. Open the link from your email again, or change your preferences from your settings.",
+    "errorBody": "Something went wrong. Please try again."
   }
 }

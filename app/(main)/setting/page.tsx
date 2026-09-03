@@ -4,12 +4,13 @@ import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store
 import { PageBanner } from "@/components/utils/layout/page-banner";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useLanguageStore } from "@/stores/languages/language-store";
+import { useNotificationPreferenceStore } from "@/stores/apis/notification/notification-preference.store";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import { useThemeTransition } from "@/hooks/utils/use-theme-transition";
 import { TLanguage } from "@/utils/types/app/language.type";
 import { TTheme } from "@/utils/types/app/theme.type";
 import { setCookie } from "cookies-next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AppearanceSection } from "@/components/setting/appearance-section";
@@ -17,6 +18,7 @@ import { LanguageSection } from "@/components/setting/language-section";
 import { AccountSection } from "@/components/setting/account-section";
 import { BlockedUsersSection } from "@/components/setting/blocked-users-section";
 import { AboutSection } from "@/components/setting/about-section";
+import { NotificationSection } from "@/components/setting/notification-section";
 import { ResetPasswordDialog } from "@/components/setting/reset-password-dialog";
 import { TwoFactorDialog } from "@/components/setting/two-factor-dialog";
 import { T2FADialogMode } from "@/components/setting/two-factor-dialog/props";
@@ -37,6 +39,20 @@ export default function SettingPage() {
   // Security Integration
   const { forgotPassword } = useForgotPasswordStore();
   const { getCurrentUser } = useGetCurrentUserStore();
+
+  // Notification Preference Integration
+  const {
+    preferences,
+    loading: preferencesLoading,
+    loaded: preferencesLoaded,
+    saving: preferencesSaving,
+    getPreferences,
+    updatePreferences,
+  } = useNotificationPreferenceStore();
+
+  useEffect(() => {
+    if (!preferencesLoaded) getPreferences();
+  }, [preferencesLoaded, getPreferences]);
 
   /* -------------------------------- All States ------------------------------ */
   // Dialog and Process States
@@ -131,6 +147,16 @@ export default function SettingPage() {
     }
   };
 
+  // ── API: Save Notification Preferences ──────────────────
+  // The store applies the toggle optimistically and rolls it back on failure,
+  // so this only has to say what went wrong.
+  const handlePreferenceChange = async (
+    payload: Parameters<typeof updatePreferences>[0],
+  ) => {
+    const saved = await updatePreferences(payload);
+    if (!saved) toast.error(t("failedToSaveNotificationPreferences"));
+  };
+
   /* ------------------------------- Loading State ----------------------------- */
   if (currentUser === null) return <SettingLoadingSkeleton />;
 
@@ -169,6 +195,14 @@ export default function SettingPage() {
           setResetDialogOpen(true);
         }}
         onToggleTwoFactor={handleToggleTwoFactor}
+      />
+
+      {/* Notification Section */}
+      <NotificationSection
+        preferences={preferences}
+        loading={preferencesLoading || !preferencesLoaded}
+        saving={preferencesSaving}
+        onChange={handlePreferenceChange}
       />
 
       <div className="grid items-start gap-7 lg:grid-cols-2 lg:gap-8">

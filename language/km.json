@@ -82,7 +82,25 @@
     "enable": "បើក",
     "disable": "បិទ",
     "noBlockedUsersDescription": "អ្នកដែលអ្នកបានទប់ស្កាត់មិនអាចផ្ញើសារ ឬបង្ហាញក្នុងផ្ទាំងព័ត៌មានរបស់អ្នកបានទេ។",
-    "bannerEyebrow": "មជ្ឈមណ្ឌលគណនី"
+    "bannerEyebrow": "មជ្ឈមណ្ឌលគណនី",
+    "notifications": "ការជូនដំណឹង",
+    "notificationsDescription": "ជ្រើសរើសអ្វីដែល Apsara Talent អាចទាក់ទងអ្នកបាន",
+    "emailNotifications": "អ៊ីមែល",
+    "emailNotificationsDescription": "បិទដើម្បីឈប់ទទួលអ៊ីមែលជូនដំណឹងទាំងអស់។ អ៊ីមែលសុវត្ថិភាព និងគណនីនៅតែមកដល់។",
+    "pushNotifications": "ការជូនដំណឹងលើឧបករណ៍",
+    "pushNotificationsDescription": "ការជូនដំណឹងលើឧបករណ៍ដែលអ្នកបានចូលប្រើ",
+    "channelEmail": "អ៊ីមែល",
+    "channelPush": "ឧបករណ៍",
+    "categoryChannelLabel": "{category} តាម{channel}",
+    "category_application": "ពាក្យសុំការងារ",
+    "category_application_description": "ព័ត៌មានថ្មីអំពីពាក្យសុំដែលអ្នកបានផ្ញើ ឬទទួល",
+    "category_interview": "ការសម្ភាសន៍",
+    "category_interview_description": "ការអញ្ជើញ ការប្តូរពេល និងការលុបចោល",
+    "category_match": "ការផ្គូផ្គង",
+    "category_match_description": "ការផ្គូផ្គងថ្មី និងការចូលចិត្តប្រវត្តិរូប",
+    "category_message": "សារ",
+    "category_message_description": "សារជជែកដែលអ្នកមិនបានឃើញពេលនៅលើប្រព័ន្ធ",
+    "accountEmailNotice": "អ៊ីមែលសុវត្ថិភាព និងគណនី — លេខកូដផ្ទៀងផ្ទាត់ ការកំណត់ពាក្យសម្ងាត់ឡើងវិញ និងសេចក្តីជូនដំណឹងគណនី — ត្រូវបានផ្ញើជានិច្ច។ វាមិនអាចបិទបានទេ។"
   },
   "states": {
     "sessionErrorDescription": "យើងមិនអាចផ្ទុកគណនីរបស់អ្នកបានទេ។ សូមពិនិត្យការតភ្ជាប់ ហើយព្យាយាមម្តងទៀត។",
@@ -426,7 +444,8 @@
     "resumeSavedToDownloads": "Resume របស់អ្នកត្រូវបានរក្សាទុកក្នុងថតទាញយក។",
     "somethingWentWrong": "មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀតល",
     "twoFactorEnabled": "ការផ្ទៀងផ្ទាត់ពីរជំហានបានបើក។",
-    "twoFactorDisabled": "ការផ្ទៀងផ្ទាត់ពីរជំហានបានបិទ។"
+    "twoFactorDisabled": "ការផ្ទៀងផ្ទាត់ពីរជំហានបានបិទ។",
+    "failedToSaveNotificationPreferences": "មិនអាចរក្សាទុកចំណូលចិត្តការជូនដំណឹងបានទេ"
   },
   "dashboard": {
     "insightCenter": "មជ្ឈមណ្ឌលទិន្នន័យ",
@@ -1894,5 +1913,17 @@
       "signOutQuestion": "អ្នកនឹងត្រូវចូលម្ដងទៀត ដើម្បីចូលទៅផ្ទាំងគ្រប់គ្រង។",
       "cancel": "បោះបង់"
     }
+  },
+  "unsubscribe": {
+    "confirmTitle": "ឈប់ទទួលអ៊ីមែលជូនដំណឹងមែនទេ?",
+    "confirmBody": "អ្នកនឹងឈប់ទទួលអ៊ីមែលអំពីពាក្យសុំការងារ ការសម្ភាសន៍ ការផ្គូផ្គង និងសារ។ អ៊ីមែលសុវត្ថិភាព និងគណនីនៅតែមកដល់។",
+    "confirmAction": "ឈប់ជាវ",
+    "working": "កំពុងដំណើរការ…",
+    "doneTitle": "អ្នកបានឈប់ជាវហើយ",
+    "doneBody": "យើងនឹងមិនផ្ញើអ៊ីមែលជូនដំណឹងទៅអ្នកទៀតទេ។ អ្នកអាចបើកវាឡើងវិញពីការកំណត់របស់អ្នកបានគ្រប់ពេល។",
+    "manageSettings": "ការកំណត់ការជូនដំណឹង",
+    "invalidTitle": "តំណនេះមិនពេញលេញ",
+    "invalidBody": "តំណឈប់ជាវខ្វះនិមិត្តសញ្ញារបស់វា។ សូមបើកតំណពីអ៊ីមែលរបស់អ្នកម្តងទៀត ឬប្តូរចំណូលចិត្តពីការកំណត់របស់អ្នក។",
+    "errorBody": "មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀត។"
   }
 }
