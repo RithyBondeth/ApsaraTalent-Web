@@ -3,6 +3,15 @@ import { API_BASE_URL } from "./base.api.constant";
 const API_JOB_BASE_URL = `${API_BASE_URL}/job`;
 export const API_SEARCH_JOB_URL = `${API_JOB_BASE_URL}/search`;
 
+/* --------------------------------- Public --------------------------------- */
+// Unauthenticated, and served from a separate controller in the gateway for
+// that reason. Read server-side by the job page and the sitemap.
+const API_PUBLIC_JOB_BASE_URL = `${API_BASE_URL}/public/job`;
+
+export const API_PUBLIC_JOB_URL = (jobID: string) =>
+  `${API_PUBLIC_JOB_BASE_URL}/${jobID}`;
+export const API_PUBLIC_JOB_SITEMAP_URL = `${API_PUBLIC_JOB_BASE_URL}/sitemap/entries`;
+
 /* ------------------------------ Applications ------------------------------ */
 const API_APPLICATION_BASE_URL = `${API_JOB_BASE_URL}/application`;
 

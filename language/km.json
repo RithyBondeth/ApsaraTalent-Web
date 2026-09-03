@@ -1925,5 +1925,26 @@
     "invalidTitle": "តំណនេះមិនពេញលេញ",
     "invalidBody": "តំណឈប់ជាវខ្វះនិមិត្តសញ្ញារបស់វា។ សូមបើកតំណពីអ៊ីមែលរបស់អ្នកម្តងទៀត ឬប្តូរចំណូលចិត្តពីការកំណត់របស់អ្នក។",
     "errorBody": "មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀត។"
+  },
+  "publicJob": {
+    "companyLogoAlt": "រូបសញ្ញា {company}",
+    "openings": "កន្លែងទំនេរ {count}",
+    "employees": "បុគ្គលិក {count} នាក់",
+    "viewAndApply": "មើល និងដាក់ពាក្យ",
+    "signInToApply": "ចូលគណនីដើម្បីដាក់ពាក្យ",
+    "posted": "បានប្រកាស",
+    "closes": "បិទ",
+    "aboutRole": "អំពីតួនាទីនេះ",
+    "requirements": "តម្រូវការ",
+    "experience": "បទពិសោធន៍",
+    "education": "ការអប់រំ",
+    "skills": "ជំនាញ",
+    "languages": "ភាសា",
+    "aboutCompany": "អំពី {company}",
+    "viewCompany": "មើលប្រវត្តិរូបក្រុមហ៊ុន",
+    "closingNotice": "ការដាក់ពាក្យបិទនៅថ្ងៃទី {date}។",
+    "notFoundTitle": "ការងារនេះលែងមានទៀតហើយ",
+    "notFoundBody": "ការប្រកាសនេះអាចត្រូវបានបំពេញ បិទ ឬដកចេញ។ សូមរកមើលតួនាទីផ្សេងទៀត។",
+    "browseJobs": "រកមើលការងារ"
   }
 }

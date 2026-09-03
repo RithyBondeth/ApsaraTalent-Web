@@ -1925,5 +1925,26 @@
     "invalidTitle": "This link is incomplete",
     "invalidBody": "The unsubscribe link is missing its token. Open the link from your email again, or change your preferences from your settings.",
     "errorBody": "Something went wrong. Please try again."
+  },
+  "publicJob": {
+    "companyLogoAlt": "{company} logo",
+    "openings": "{count, plural, one {# opening} other {# openings}}",
+    "employees": "{count, plural, one {# employee} other {# employees}}",
+    "viewAndApply": "View and apply",
+    "signInToApply": "Sign in to apply",
+    "posted": "Posted",
+    "closes": "closes",
+    "aboutRole": "About this role",
+    "requirements": "Requirements",
+    "experience": "Experience",
+    "education": "Education",
+    "skills": "Skills",
+    "languages": "Languages",
+    "aboutCompany": "About {company}",
+    "viewCompany": "View company profile",
+    "closingNotice": "Applications close on {date}.",
+    "notFoundTitle": "This job is no longer available",
+    "notFoundBody": "The posting may have been filled, closed, or taken down. Browse open roles instead.",
+    "browseJobs": "Browse jobs"
   }
 }
