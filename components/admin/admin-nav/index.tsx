@@ -6,6 +6,7 @@ import {
   LucideClipboardList,
   LucideFlag,
   LucideLayoutDashboard,
+  LucideLifeBuoy,
   LucideUsers,
   type LucideIcon,
 } from "lucide-react";
@@ -15,7 +16,8 @@ import { usePathname } from "next/navigation";
 
 type TAdminNavItem = {
   href: string;
-  labelKey: "overview" | "users" | "jobs" | "reports" | "audit";
+  labelKey:
+    "overview" | "users" | "jobs" | "reports" | "problemReports" | "audit";
   icon: LucideIcon;
 };
 
@@ -24,6 +26,11 @@ const NAV_ITEMS: TAdminNavItem[] = [
   { href: "/admin/users", labelKey: "users", icon: LucideUsers },
   { href: "/admin/jobs", labelKey: "jobs", icon: LucideBriefcase },
   { href: "/admin/reports", labelKey: "reports", icon: LucideFlag },
+  {
+    href: "/admin/problem-reports",
+    labelKey: "problemReports",
+    icon: LucideLifeBuoy,
+  },
   { href: "/admin/audit", labelKey: "audit", icon: LucideClipboardList },
 ];
 

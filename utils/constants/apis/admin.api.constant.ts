@@ -26,3 +26,8 @@ export const API_ADMIN_JOB_URL = (jobId: string) =>
 
 export const API_ADMIN_JOB_RESTORE_URL = (jobId: string) =>
   `${API_ADMIN_BASE_URL}/jobs/${jobId}/restore`;
+
+export const API_ADMIN_PROBLEM_REPORTS_URL = `${API_ADMIN_BASE_URL}/problem-reports`;
+
+export const API_ADMIN_PROBLEM_REPORT_STATUS_URL = (reportId: string) =>
+  `${API_ADMIN_BASE_URL}/problem-reports/${reportId}/status`;

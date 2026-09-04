@@ -148,3 +148,42 @@ export type TAdminUpdateReportPayload = {
   status: TReportStatus;
   note?: string;
 };
+
+/* ---------------------------- Problem reports ------------------------------ */
+/**
+ * Categories the support form ships. Kept in sync with `EProblemCategory` on
+ * the API — a new value there needs a matching entry here plus a translation.
+ */
+export type TProblemCategory =
+  "bug" | "account" | "payment" | "content" | "other";
+
+export type TAdminProblemReportReporter = {
+  id: string;
+  email: string;
+  role: TUserRole;
+};
+
+export type TAdminProblemReport = {
+  id: string;
+  category: TProblemCategory;
+  details: string;
+  pageUrl: string | null;
+  userAgent: string | null;
+  status: TReportStatus;
+  resolutionNote: string | null;
+  createdAt: string;
+  /** Null once the reporter has deleted their account (FK is SET NULL). */
+  reporter: TAdminProblemReportReporter | null;
+};
+
+export type TAdminProblemReportQuery = {
+  page?: number;
+  limit?: number;
+  status?: TReportStatus;
+  category?: TProblemCategory;
+};
+
+export type TAdminUpdateProblemReportPayload = {
+  status: TReportStatus;
+  note?: string;
+};

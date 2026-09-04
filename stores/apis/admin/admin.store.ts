@@ -6,6 +6,8 @@ import {
   API_ADMIN_JOB_RESTORE_URL,
   API_ADMIN_JOB_URL,
   API_ADMIN_OVERVIEW_URL,
+  API_ADMIN_PROBLEM_REPORTS_URL,
+  API_ADMIN_PROBLEM_REPORT_STATUS_URL,
   API_ADMIN_REPORTS_URL,
   API_ADMIN_REPORT_STATUS_URL,
   API_ADMIN_USERS_URL,
@@ -18,7 +20,10 @@ import {
   TAdminJobQuery,
   TAdminOverview,
   TAdminPage,
+  TAdminProblemReport,
+  TAdminProblemReportQuery,
   TAdminReport,
+  TAdminUpdateProblemReportPayload,
   TAdminUpdateReportPayload,
   TAdminUpdateStatusPayload,
   TAdminUser,
@@ -41,6 +46,9 @@ type TAdminState = {
 
   reports: TAdminPage<TAdminReport> | null;
   loadingReports: boolean;
+
+  problemReports: TAdminPage<TAdminProblemReport> | null;
+  loadingProblemReports: boolean;
 
   audit: TAdminPage<TAdminAuditEntry> | null;
   loadingAudit: boolean;
@@ -67,6 +75,11 @@ type TAdminState = {
   updateReportStatus: (
     reportId: string,
     payload: TAdminUpdateReportPayload,
+  ) => Promise<boolean>;
+  getProblemReports: (query?: TAdminProblemReportQuery) => Promise<void>;
+  updateProblemReportStatus: (
+    reportId: string,
+    payload: TAdminUpdateProblemReportPayload,
   ) => Promise<boolean>;
   getAudit: (query?: {
     page?: number;
@@ -101,6 +114,8 @@ export const useAdminStore = create<TAdminState>((set, get) => ({
   userDetail: null,
   loadingUserDetail: false,
   reports: null,
+  loadingProblemReports: false,
+  problemReports: null,
   loadingReports: false,
   audit: null,
   loadingAudit: false,
@@ -204,6 +219,62 @@ export const useAdminStore = create<TAdminState>((set, get) => ({
               items: state.reports.items.map((report) =>
                 report.id === reportId
                   ? { ...report, status: payload.status }
+                  : report,
+              ),
+            }
+          : null,
+      }));
+      return true;
+    } catch (error) {
+      set({
+        saving: false,
+        error: extractApiErrorMessage(error, "Failed to update the report"),
+      });
+      return false;
+    }
+  },
+
+  getProblemReports: async (query = {}) => {
+    set({ loadingProblemReports: true });
+    try {
+      const res = await apiClient.get<TAdminPage<TAdminProblemReport>>(
+        API_ADMIN_PROBLEM_REPORTS_URL,
+        { params: pruneParams(query) },
+      );
+      set({
+        problemReports: res.data,
+        loadingProblemReports: false,
+        error: null,
+      });
+    } catch (error) {
+      set({
+        loadingProblemReports: false,
+        error: extractApiErrorMessage(error, "Failed to load problem reports"),
+      });
+    }
+  },
+
+  updateProblemReportStatus: async (reportId, payload) => {
+    set({ saving: true, error: null });
+    try {
+      await apiClient.patch(
+        API_ADMIN_PROBLEM_REPORT_STATUS_URL(reportId),
+        payload,
+      );
+      set((state) => ({
+        saving: false,
+        // Same in-place patch as user reports — the row must not jump out of
+        // the list while the admin is still reading it.
+        problemReports: state.problemReports
+          ? {
+              ...state.problemReports,
+              items: state.problemReports.items.map((report) =>
+                report.id === reportId
+                  ? {
+                      ...report,
+                      status: payload.status,
+                      resolutionNote: payload.note ?? report.resolutionNote,
+                    }
                   : report,
               ),
             }

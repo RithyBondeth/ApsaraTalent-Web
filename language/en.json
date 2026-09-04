@@ -1734,7 +1734,8 @@
       "users": "Users",
       "reports": "Reports",
       "audit": "Audit log",
-      "jobs": "Jobs"
+      "jobs": "Jobs",
+      "problemReports": "Problem reports"
     },
     "common": {
       "showing": "Showing {first}–{last} of {total}",
@@ -1912,6 +1913,36 @@
       "confirmSignOut": "Sign out?",
       "signOutQuestion": "You will need to sign in again to reach the admin panel.",
       "cancel": "Cancel"
+    },
+    "problemReports": {
+      "eyebrow": "Support",
+      "title": "Problem reports",
+      "subtitle": "Reports users submitted through the support form. Emailed to the support inbox too; this queue is what makes them findable later.",
+      "statInQueue": "in queue",
+      "filterStatus": "Filter by status",
+      "filterCategory": "Filter by category",
+      "allStatuses": "All statuses",
+      "allCategories": "All categories",
+      "filedBy": "Filed by",
+      "deletedReporter": "deleted user",
+      "pageUrl": "Page",
+      "userAgent": "Browser",
+      "lastNote": "Note",
+      "updated": "Marked {status}",
+      "emptyTitle": "Nothing in the queue",
+      "emptyDescription": "Problem reports users file will appear here.",
+      "markAs": {
+        "reviewed": "Mark reviewed",
+        "resolved": "Mark resolved",
+        "dismissed": "Dismiss"
+      },
+      "categories": {
+        "bug": "Bug",
+        "account": "Account",
+        "payment": "Payment",
+        "content": "Content",
+        "other": "Other"
+      }
     }
   },
   "unsubscribe": {
