@@ -4,6 +4,7 @@ import { StatusPill } from "@/components/admin/status-pill";
 import { Button } from "@/components/ui/button";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
 import { useAdminStore } from "@/stores/apis/admin/admin.store";
 import {
@@ -34,7 +35,20 @@ export default function AdminOverviewPage() {
   if (loadingOverview && !overview) {
     return (
       <div className="flex flex-col gap-5">
-        <PageBannerSkeleton stats={3} />
+        {/* Two stats to match the real banner (totalUsers, pendingReports).
+            stats={3} above would have drawn a third column that then vanished
+            when data landed. */}
+        <PageBannerSkeleton stats={2} />
+        {/* Queue call-to-action card — a single row that resolves to the
+            "Nothing waiting" / "N waiting" copy once overview lands. */}
+        <Skeleton className="h-20 w-full" />
+        {/* KPI grid — seven cards in the real layout, matched here so the
+            first paint does not stretch downward when data lands. */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 7 }).map((_, index) => (
+            <Skeleton key={index} className="h-28 w-full" />
+          ))}
+        </div>
       </div>
     );
   }
