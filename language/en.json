@@ -100,7 +100,24 @@
     "category_match_description": "New mutual matches and profile likes",
     "category_message": "Messages",
     "category_message_description": "Chat messages you were not online to see",
-    "accountEmailNotice": "Security and account emails — verification codes, password resets and account notices — are always sent. They cannot be switched off."
+    "accountEmailNotice": "Security and account emails — verification codes, password resets and account notices — are always sent. They cannot be switched off.",
+    "dangerZone": "Danger zone",
+    "dangerZoneDescription": "Export a copy of your data, or delete your account. Both apply to this account only.",
+    "exportData": "Export your data",
+    "exportDataDescription": "Download a JSON copy of your profile, applications, interviews, matches, and notifications.",
+    "exportDataAction": "Download",
+    "deleteAccount": "Delete account",
+    "deleteAccountDescription": "Schedule your account for permanent deletion. You have 30 days to change your mind.",
+    "deleteAccountAction": "Delete",
+    "deleteAccountDialogTitle": "Delete your account?",
+    "deleteAccountDialogDescription": "Your account will be scheduled for permanent deletion in 30 days. During that time you can cancel from this page. After 30 days your profile, applications, interviews, matches, and messages will be removed.",
+    "deleteAccountAcknowledge": "I understand that deleting my account is permanent after 30 days.",
+    "deleteAccountConfirm": "Schedule deletion",
+    "deleteAccountProcessing": "Scheduling…",
+    "deletionScheduledTitle": "Your account is scheduled for deletion",
+    "deletionScheduledBody": "It will be permanently removed on {date}. You can cancel any time before then.",
+    "deletionCancelAction": "Cancel deletion",
+    "deletionCancelProcessing": "Cancelling…"
   },
   "states": {
     "sessionErrorDescription": "We could not load your account. Check your connection and try again.",
@@ -445,7 +462,11 @@
     "somethingWentWrong": "Something went wrong. Please try again.",
     "twoFactorEnabled": "Two-factor authentication enabled.",
     "twoFactorDisabled": "Two-factor authentication disabled.",
-    "failedToSaveNotificationPreferences": "Failed to save notification preferences"
+    "failedToSaveNotificationPreferences": "Failed to save notification preferences",
+    "deletionScheduledToast": "Deletion scheduled. You can cancel any time in the next 30 days.",
+    "deletionCancelledToast": "Deletion cancelled. Your account is safe.",
+    "failedToRequestDeletion": "Could not schedule deletion. Please try again.",
+    "failedToCancelDeletion": "Could not cancel deletion. Please try again."
   },
   "dashboard": {
     "insightCenter": "Insight Center",

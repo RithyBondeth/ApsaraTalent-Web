@@ -22,3 +22,13 @@ export const API_GET_COMPANY_RECOMMENDATIONS_URL = (
 // Support — problem reports raised from the profile menu.
 export const API_REPORT_PROBLEM_URL =
   API_BASE_URL + "/user/support/report-problem";
+
+/* --------------------- Account lifecycle (self-service) ------------------ */
+const API_ACCOUNT_BASE_URL = API_BASE_URL + "/user/account";
+// The download endpoint is a GET because the browser needs to save the file
+// via a link href, not an XHR body — the download attribute + a fresh
+// filename land the file in Downloads instead of a blob URL that expires.
+export const API_ACCOUNT_EXPORT_URL = API_ACCOUNT_BASE_URL + "/export";
+export const API_ACCOUNT_DELETE_URL = API_ACCOUNT_BASE_URL + "/delete";
+export const API_ACCOUNT_DELETE_CANCEL_URL =
+  API_ACCOUNT_BASE_URL + "/delete/cancel";

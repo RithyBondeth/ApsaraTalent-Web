@@ -5,6 +5,7 @@ import { PageBanner } from "@/components/utils/layout/page-banner";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { useNotificationPreferenceStore } from "@/stores/apis/notification/notification-preference.store";
+import { useAccountLifecycleStore } from "@/stores/apis/users/account-lifecycle.store";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import { useThemeTransition } from "@/hooks/utils/use-theme-transition";
 import { TLanguage } from "@/utils/types/app/language.type";
@@ -19,6 +20,9 @@ import { AccountSection } from "@/components/setting/account-section";
 import { BlockedUsersSection } from "@/components/setting/blocked-users-section";
 import { AboutSection } from "@/components/setting/about-section";
 import { NotificationSection } from "@/components/setting/notification-section";
+import { DangerZoneSection } from "@/components/setting/danger-zone-section";
+import { DeleteAccountDialog } from "@/components/setting/delete-account-dialog";
+import { DeletionScheduledBanner } from "@/components/setting/deletion-scheduled-banner";
 import { ResetPasswordDialog } from "@/components/setting/reset-password-dialog";
 import { TwoFactorDialog } from "@/components/setting/two-factor-dialog";
 import { T2FADialogMode } from "@/components/setting/two-factor-dialog/props";
@@ -53,6 +57,14 @@ export default function SettingPage() {
   useEffect(() => {
     if (!preferencesLoaded) getPreferences();
   }, [preferencesLoaded, getPreferences]);
+
+  // Account Lifecycle Integration
+  const {
+    processing: lifecycleProcessing,
+    requestDeletion,
+    cancelDeletion,
+  } = useAccountLifecycleStore();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   /* -------------------------------- All States ------------------------------ */
   // Dialog and Process States
@@ -157,12 +169,46 @@ export default function SettingPage() {
     if (!saved) toast.error(t("failedToSaveNotificationPreferences"));
   };
 
+  // ── API: Request Account Deletion ──────────────────────
+  const handleRequestDeletion = async () => {
+    const result = await requestDeletion();
+    if (!result) {
+      toast.error(t("failedToRequestDeletion"));
+      return false;
+    }
+    toast.success(t("deletionScheduledToast"));
+    // Re-fetch so the banner appears — deletedAt is now populated server-side
+    // and the cache was busted by the RPC.
+    await getCurrentUser();
+    return true;
+  };
+
+  // ── API: Cancel Account Deletion ───────────────────────
+  const handleCancelDeletion = async () => {
+    const ok = await cancelDeletion();
+    if (!ok) {
+      toast.error(t("failedToCancelDeletion"));
+      return;
+    }
+    toast.success(t("deletionCancelledToast"));
+    await getCurrentUser();
+  };
+
   /* ------------------------------- Loading State ----------------------------- */
   if (currentUser === null) return <SettingLoadingSkeleton />;
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="animate-page-in mx-auto flex w-full max-w-[1200px] flex-col gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
+      {/* Deletion Scheduled Banner Section */}
+      {currentUser?.deletedAt ? (
+        <DeletionScheduledBanner
+          requestedAt={currentUser.deletedAt}
+          processing={lifecycleProcessing}
+          onCancel={handleCancelDeletion}
+        />
+      ) : null}
+
       {/* Header Section */}
       <PageBanner
         eyebrow={tS("bannerEyebrow")}
@@ -212,6 +258,20 @@ export default function SettingPage() {
         {/* About Section */}
         <AboutSection />
       </div>
+
+      {/* Danger Zone Section — export data or delete the account */}
+      <DangerZoneSection
+        onRequestDeletion={() => setDeleteDialogOpen(true)}
+        processing={lifecycleProcessing}
+      />
+
+      {/* Delete Account Dialog Section */}
+      <DeleteAccountDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleRequestDeletion}
+        processing={lifecycleProcessing}
+      />
 
       {/* Two-Factor Auth Dialog Section */}
       <TwoFactorDialog
