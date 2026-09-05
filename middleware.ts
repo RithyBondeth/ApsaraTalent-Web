@@ -42,6 +42,11 @@ function buildContentSecurityPolicy(nonce: string) {
     "'self'",
     "https://*.sentry.io",
     "https://*.ingest.sentry.io",
+    // PostHog analytics — its ingestion + asset CDN. The JS SDK is bundled
+    // with our own build (via posthog-js), so no cross-origin script-src is
+    // needed for it under `strict-dynamic`.
+    "https://*.i.posthog.com",
+    "https://*.posthog.com",
     ...(apiOrigin ? [apiOrigin, apiOrigin.replace(/^http/, "ws")] : []),
     ...(isProduction ? [] : ["ws:", "wss:"]),
   ];

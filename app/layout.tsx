@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/components/utils/languages/language-provider";
+import { PostHogProvider } from "@/components/utils/analytics/posthog-provider";
 import { ThemeProvider } from "@/components/utils/themes/theme-provider";
 import { TitleSync } from "@/components/utils/seo/title-sync";
 import type { Metadata } from "next";
@@ -64,7 +65,7 @@ export default async function RootLayout({
         <LanguageProvider>
           {/* Theme Provider Section */}
           <ThemeProvider>
-            {children}
+            <PostHogProvider>{children}</PostHogProvider>
             {/* Toast Container Section */}
             <Toaster />
           </ThemeProvider>

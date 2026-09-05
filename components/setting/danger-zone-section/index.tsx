@@ -7,6 +7,8 @@ import { API_ACCOUNT_EXPORT_URL } from "@/utils/constants/apis/user-api/user.api
 import { LucideDownload, LucideShieldAlert, LucideTrash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { SettingWrapper } from "../setting-wrapper";
+import { EWebAnalyticsEvent } from "@/lib/posthog/event";
+import { useAnalytics } from "@/components/utils/analytics/use-analytics";
 import { IDangerZoneSectionProps } from "./props";
 
 /**
@@ -28,6 +30,7 @@ export function DangerZoneSection(props: IDangerZoneSectionProps) {
 
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("setting");
+  const { capture } = useAnalytics();
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
@@ -53,6 +56,7 @@ export function DangerZoneSection(props: IDangerZoneSectionProps) {
               // automatically. No need to route through JS.
               download
               rel="noopener"
+              onClick={() => capture(EWebAnalyticsEvent.ACCOUNT_EXPORT_CLICKED)}
             >
               <LucideDownload aria-hidden />
               {t("exportDataAction")}
@@ -76,7 +80,10 @@ export function DangerZoneSection(props: IDangerZoneSectionProps) {
             variant="destructive"
             size="sm"
             disabled={processing}
-            onClick={onRequestDeletion}
+            onClick={() => {
+              capture(EWebAnalyticsEvent.ACCOUNT_DELETE_DIALOG_OPENED);
+              onRequestDeletion();
+            }}
             className="w-fit"
           >
             <LucideTrash2 aria-hidden />

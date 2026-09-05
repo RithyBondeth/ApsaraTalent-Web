@@ -22,6 +22,9 @@ import {
 import { useFormatter, useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
+import { EWebAnalyticsEvent } from "@/lib/posthog/event";
+import { useAnalytics } from "@/components/utils/analytics/use-analytics";
+import { useEffect } from "react";
 import { IPublicJobDetailProps } from "./props";
 
 /**
@@ -38,6 +41,17 @@ export function PublicJobDetail(props: IPublicJobDetailProps) {
 
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("publicJob");
+  const { capture } = useAnalytics();
+
+  // One capture per mount — a signed-out visitor counts, and gets stitched
+  // into a funnel with any subsequent sign-in via posthog's alias.
+  useEffect(() => {
+    capture(EWebAnalyticsEvent.PUBLIC_JOB_VIEWED, {
+      job_id: job.id,
+      company_id: job.company.id,
+      signed_in: sessionRole !== null && sessionRole !== "none",
+    });
+  }, [capture, job.id, job.company.id, sessionRole]);
   const tCommon = useTranslations("common");
   const format = useFormatter();
 
