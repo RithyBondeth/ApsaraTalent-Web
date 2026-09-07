@@ -28,16 +28,20 @@ const API_SAVED_SEARCH_BASE_URL = `${API_JOB_BASE_URL}/saved-search`;
 export const API_SAVED_SEARCHES_URL = API_SAVED_SEARCH_BASE_URL;
 export const API_SAVED_SEARCH_URL = (savedSearchID: string) =>
   `${API_SAVED_SEARCH_BASE_URL}/${savedSearchID}`;
-export const API_SAVED_SEARCH_PREVIEW_URL = (savedSearchID: string) =>
-  `${API_SAVED_SEARCH_BASE_URL}/${savedSearchID}/preview`;
+// The saved-search preview endpoint exists on the API; the web has no caller
+// for it yet (the "Save" dialog does not preview before saving). Left for a
+// future "show me how many new matches" affordance rather than exported here
+// where knip would flag it as dead.
 
 /* ---------------------------- Employer analytics ---------------------------- */
 export const API_EMPLOYER_ANALYTICS_URL = `${API_JOB_BASE_URL}/employer-analytics`;
 
 // ATS pipeline additions — bulk moves, kanban read, notes, status trail.
 export const API_BULK_UPDATE_APPLICATION_STATUS_URL = `${API_APPLICATION_BASE_URL}/bulk-status`;
-export const API_GET_JOB_PIPELINE_URL = (jobID: string, cmpID: string) =>
-  `${API_APPLICATION_BASE_URL}/pipeline/job/${jobID}/company/${cmpID}`;
+// The pipeline endpoint (grouped-by-stage read) also exists API-side, but
+// PipelineBoard buckets the existing flat applicant list client-side to keep
+// state in sync with the ATS list view. Leaving that URL out of this barrel
+// until a caller needs it.
 export const API_APPLICATION_NOTES_URL = (applicationID: string) =>
   `${API_APPLICATION_BASE_URL}/${applicationID}/notes`;
 export const API_APPLICATION_NOTE_URL = (
