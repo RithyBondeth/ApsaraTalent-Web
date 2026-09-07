@@ -1,11 +1,14 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import {
+  API_BULK_UPDATE_APPLICATION_STATUS_URL,
   API_GET_JOB_APPLICATIONS_URL,
   API_UPDATE_APPLICATION_STATUS_URL,
 } from "@/utils/constants/apis/job.api.constant";
 import {
   IApplication,
+  IBulkUpdateApplicationStatusPayload,
+  IBulkUpdateApplicationStatusResponse,
   IUpdateApplicationStatusPayload,
 } from "@/utils/interfaces/application/application.interface";
 import { create } from "zustand";
@@ -19,8 +22,13 @@ type TJobApplicationsState = {
   loading: boolean;
   error: string | null;
   updatingId: string | null;
+  /** True while a bulk-status request is in flight, for the toolbar button. */
+  bulkUpdating: boolean;
   queryJobApplications: (jobId: string, companyId: string) => Promise<void>;
   updateStatus: (payload: IUpdateApplicationStatusPayload) => Promise<boolean>;
+  bulkUpdateStatus: (
+    payload: IBulkUpdateApplicationStatusPayload,
+  ) => Promise<IBulkUpdateApplicationStatusResponse | null>;
   reset: () => void;
 };
 
@@ -31,6 +39,7 @@ export const useJobApplicationsStore = create<TJobApplicationsState>((set) => ({
   loading: false,
   error: null,
   updatingId: null,
+  bulkUpdating: false,
 
   reset: () =>
     set({
@@ -39,6 +48,7 @@ export const useJobApplicationsStore = create<TJobApplicationsState>((set) => ({
       loading: false,
       error: null,
       updatingId: null,
+      bulkUpdating: false,
     }),
 
   queryJobApplications: async (jobId, companyId) => {
@@ -95,6 +105,55 @@ export const useJobApplicationsStore = create<TJobApplicationsState>((set) => ({
         updatingId: null,
       });
       return false;
+    }
+  },
+
+  /*
+    Bulk move for the recruiter selection toolbar. The backend returns a per-
+    row result rather than throwing on the first refused transition, so a mix
+    of applicable and non-applicable rows still updates the ones it can — we
+    merge every `ok: true` row back into local state and hand the whole result
+    to the caller so it can surface the failures.
+  */
+  bulkUpdateStatus: async (payload) => {
+    set({ bulkUpdating: true, error: null });
+
+    try {
+      const response = await axios.patch<IBulkUpdateApplicationStatusResponse>(
+        API_BULK_UPDATE_APPLICATION_STATUS_URL,
+        payload,
+      );
+
+      const okById = new Map(
+        response.data.results
+          .filter((row) => row.ok)
+          .map((row) => [row.applicationId, row.status] as const),
+      );
+
+      set((state) => ({
+        applicants: state.applicants.map((a) =>
+          okById.has(a.id)
+            ? {
+                ...a,
+                status: okById.get(a.id)!,
+                rejectionReason:
+                  payload.status === "rejected"
+                    ? (payload.rejectionReason ?? null)
+                    : null,
+                statusChangedAt: new Date().toISOString(),
+                reviewedAt: a.reviewedAt ?? new Date().toISOString(),
+              }
+            : a,
+        ),
+        bulkUpdating: false,
+      }));
+      return response.data;
+    } catch (error) {
+      set({
+        error: extractApiErrorMessage(error, "Failed to update selection"),
+        bulkUpdating: false,
+      });
+      return null;
     }
   },
 }));

@@ -3,8 +3,11 @@
 import ApplicationLoadingSkeleton, {
   ApplicationListSkeleton,
 } from "@/components/application/skeleton";
+import { ApplicantActivityDrawer } from "@/components/application/applicant-activity-drawer";
 import { ApplicantCard } from "@/components/application/applicant-card";
 import { ApplicationCard } from "@/components/application/application-card";
+import { BulkActionToolbar } from "@/components/application/bulk-action-toolbar";
+import { PipelineBoard } from "@/components/application/pipeline-board";
 import { RejectApplicantDialog } from "@/components/application/reject-applicant-dialog";
 import { Button } from "@/components/ui/button";
 import { PageBanner } from "@/components/utils/layout/page-banner";
@@ -25,6 +28,8 @@ import {
   LucideCircleCheckBig,
   LucideFileText,
   LucideInbox,
+  LucideKanban,
+  LucideList,
   LucideSparkles,
   LucideUsers,
 } from "lucide-react";
@@ -39,6 +44,9 @@ interface Props {
 /** How the company's applicant list is ordered. */
 type TSort = "fit" | "newest";
 
+/** How the company's applicant list is shown. */
+type TView = "list" | "board";
+
 export default function ApplicationPageClient({ initialIsEmployee }: Props) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("application");
@@ -47,7 +55,11 @@ export default function ApplicationPageClient({ initialIsEmployee }: Props) {
   const [mounted, setMounted] = useState<boolean>(false);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const [sort, setSort] = useState<TSort>("fit");
+  const [view, setView] = useState<TView>("list");
   const [rejecting, setRejecting] = useState<IApplication | null>(null);
+  // Set of application ids selected in the board's checkboxes, for bulk moves.
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [activityFor, setActivityFor] = useState<IApplication | null>(null);
 
   /* ----------------------------- API Integration ---------------------------- */
   const {
@@ -64,8 +76,10 @@ export default function ApplicationPageClient({ initialIsEmployee }: Props) {
     loading: applicantsLoading,
     error: applicantsError,
     updatingId,
+    bulkUpdating,
     queryJobApplications,
     updateStatus,
+    bulkUpdateStatus,
   } = useJobApplicationsStore();
 
   const { companyData, queryOneCompany } = useGetOneCompanyStore();
@@ -110,6 +124,12 @@ export default function ApplicationPageClient({ initialIsEmployee }: Props) {
     if (!isCompany || !selectedJobId || !companyId) return;
     queryJobApplications(selectedJobId, companyId);
   }, [isCompany, selectedJobId, companyId, queryJobApplications]);
+
+  // Selection is per-job. Switching jobs clears anything the recruiter had
+  // ticked, so a bulk action can never fan out across the wrong role.
+  useEffect(() => {
+    setSelectedIds(new Set());
+  }, [selectedJobId]);
 
   /* ---------------------------------- Memos --------------------------------- */
   const sortedApplicants = useMemo(() => {
@@ -184,6 +204,94 @@ export default function ApplicationPageClient({ initialIsEmployee }: Props) {
     },
     [updateStatus, t],
   );
+
+  // ── Handle Selection ────────────────────────────────────────────────
+  const handleToggleSelect = useCallback((applicationId: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(applicationId)) next.delete(applicationId);
+      else next.add(applicationId);
+      return next;
+    });
+  }, []);
+
+  const clearSelection = useCallback(() => setSelectedIds(new Set()), []);
+
+  // ── Handle Bulk Move ────────────────────────────────────────────────
+  const handleBulkMove = useCallback(
+    async (status: TApplicationStatus) => {
+      const ids = Array.from(selectedIds);
+      if (ids.length === 0) return;
+      const result = await bulkUpdateStatus({ applicationIds: ids, status });
+      if (!result) {
+        toast.error(
+          useJobApplicationsStore.getState().error ?? t("updateError"),
+        );
+        return;
+      }
+      // Two cases the recruiter cares about: everything moved, or some rows
+      // were refused by the state machine. A mixed result names both counts
+      // so the failures do not vanish silently.
+      if (result.failedCount === 0) {
+        toast.success(
+          t("bulk.moveSuccess", {
+            count: result.updatedCount,
+            stage: t(`status.${status}`),
+          }),
+        );
+      } else {
+        toast.warning(
+          t("bulk.moveMixed", {
+            ok: result.updatedCount,
+            failed: result.failedCount,
+          }),
+        );
+      }
+      // Drop the rows that moved out of the selection; keep the ones that
+      // were refused so the recruiter can see which they were.
+      const okIds = new Set(
+        result.results.filter((r) => r.ok).map((r) => r.applicationId),
+      );
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        for (const id of okIds) next.delete(id);
+        return next;
+      });
+    },
+    [selectedIds, bulkUpdateStatus, t],
+  );
+
+  // ── Handle Bulk Reject ──────────────────────────────────────────────
+  const handleBulkReject = useCallback(async () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    const result = await bulkUpdateStatus({
+      applicationIds: ids,
+      status: "rejected",
+    });
+    if (!result) {
+      toast.error(useJobApplicationsStore.getState().error ?? t("updateError"));
+      return;
+    }
+    if (result.failedCount === 0) {
+      toast.success(t("rejectSuccess"));
+    } else {
+      toast.warning(
+        t("bulk.moveMixed", {
+          ok: result.updatedCount,
+          failed: result.failedCount,
+        }),
+      );
+    }
+    const okIds = new Set(
+      result.results.filter((r) => r.ok).map((r) => r.applicationId),
+    );
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      for (const id of okIds) next.delete(id);
+      return next;
+    });
+  }, [selectedIds, bulkUpdateStatus, t]);
 
   /* ------------------------------ Loading State ----------------------------- */
   const isLoading =
@@ -313,21 +421,54 @@ export default function ApplicationPageClient({ initialIsEmployee }: Props) {
             </div>
           </div>
 
-          {/* Sort Control Section */}
-          {isCompany && rows.length > 1 ? (
-            <div className="flex items-center gap-1">
-              {(["fit", "newest"] as const).map((option) => (
-                <Button
-                  key={option}
-                  type="button"
-                  size="sm"
-                  variant={sort === option ? "default" : "outline"}
-                  className="rounded-none"
-                  onClick={() => setSort(option)}
-                >
-                  {t(`sortBy.${option}`)}
-                </Button>
-              ))}
+          {/* View + Sort Controls */}
+          {isCompany && rows.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <div
+                className="flex items-center gap-1"
+                role="tablist"
+                aria-label={t("view.list")}
+              >
+                {(["list", "board"] as const).map((option) => (
+                  <Button
+                    key={option}
+                    type="button"
+                    size="sm"
+                    variant={view === option ? "default" : "outline"}
+                    className="rounded-none"
+                    onClick={() => setView(option)}
+                    aria-pressed={view === option}
+                  >
+                    {option === "list" ? (
+                      <LucideList className="size-3.5" />
+                    ) : (
+                      <LucideKanban className="size-3.5" />
+                    )}
+                    {t(`view.${option}`)}
+                  </Button>
+                ))}
+              </div>
+              {/*
+                The sort order applies to the flat list only. Ordering makes no
+                sense inside a stage bucket where the whole point is grouping,
+                so the toggle disappears on the board.
+              */}
+              {view === "list" && rows.length > 1 && (
+                <div className="flex items-center gap-1">
+                  {(["fit", "newest"] as const).map((option) => (
+                    <Button
+                      key={option}
+                      type="button"
+                      size="sm"
+                      variant={sort === option ? "default" : "outline"}
+                      className="rounded-none"
+                      onClick={() => setSort(option)}
+                    >
+                      {t(`sortBy.${option}`)}
+                    </Button>
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
@@ -335,6 +476,20 @@ export default function ApplicationPageClient({ initialIsEmployee }: Props) {
             </div>
           )}
         </div>
+
+        {/* Bulk Toolbar Section — visible only on the board and only when at
+            least one row is ticked. Sits above the columns rather than
+            floating over them so the recruiter never loses the row they just
+            selected under a scrim. */}
+        {isCompany && view === "board" && (
+          <BulkActionToolbar
+            selectedCount={selectedIds.size}
+            isBusy={bulkUpdating}
+            onClear={clearSelection}
+            onMove={handleBulkMove}
+            onRejectSelection={handleBulkReject}
+          />
+        )}
 
         {/* List Section */}
         {isCompany && applicantsLoading ? (
@@ -360,26 +515,38 @@ export default function ApplicationPageClient({ initialIsEmployee }: Props) {
             }
           />
         ) : rows.length > 0 ? (
-          <div className="stagger-list flex w-full flex-col gap-3">
-            {isEmployee
-              ? applications.map((application) => (
-                  <ApplicationCard
-                    key={application.id}
-                    application={application}
-                    isWithdrawing={withdrawingId === application.id}
-                    onWithdraw={handleWithdraw}
-                  />
-                ))
-              : sortedApplicants.map((application) => (
-                  <ApplicantCard
-                    key={application.id}
-                    application={application}
-                    isUpdating={updatingId === application.id}
-                    onAdvance={handleAdvance}
-                    onReject={setRejecting}
-                  />
-                ))}
-          </div>
+          isCompany && view === "board" ? (
+            <PipelineBoard
+              applications={sortedApplicants}
+              selectedIds={selectedIds}
+              updatingId={updatingId}
+              onToggleSelect={handleToggleSelect}
+              onAdvance={handleAdvance}
+              onReject={setRejecting}
+              onOpenActivity={setActivityFor}
+            />
+          ) : (
+            <div className="stagger-list flex w-full flex-col gap-3">
+              {isEmployee
+                ? applications.map((application) => (
+                    <ApplicationCard
+                      key={application.id}
+                      application={application}
+                      isWithdrawing={withdrawingId === application.id}
+                      onWithdraw={handleWithdraw}
+                    />
+                  ))
+                : sortedApplicants.map((application) => (
+                    <ApplicantCard
+                      key={application.id}
+                      application={application}
+                      isUpdating={updatingId === application.id}
+                      onAdvance={handleAdvance}
+                      onReject={setRejecting}
+                    />
+                  ))}
+            </div>
+          )
         ) : (
           /* Empty State Section */
           <PageState
@@ -416,6 +583,14 @@ export default function ApplicationPageClient({ initialIsEmployee }: Props) {
           isSubmitting={updatingId === rejecting?.id}
           onCancel={() => setRejecting(null)}
           onConfirm={handleReject}
+        />
+      )}
+
+      {/* Notes + history drawer, opened from a card on the board. */}
+      {isCompany && (
+        <ApplicantActivityDrawer
+          application={activityFor}
+          onClose={() => setActivityFor(null)}
         />
       )}
     </div>

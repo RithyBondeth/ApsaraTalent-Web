@@ -479,6 +479,8 @@
     "matchRate": "Match Rate",
     "matchRateDescription": "Percentage of likes that became matches",
     "recentMatches": "Recent Matches",
+    "profileAnalytics": "Profile Analytics",
+    "employerAnalytics": "Hiring Analytics",
     "likesGiven": "Likes Given",
     "likesReceived": "Likes Received",
     "totalMatches": "Total Matches",
@@ -622,6 +624,7 @@
     "open": "Open",
     "refineResult": "Refine Result",
     "clearFilters": "Clear Filters",
+    "saveSearch": "Save search",
     "careerScope": "Career Scope",
     "matchMyCareerScope": "Match my career scopes",
     "matchMyCareerScopeHint": "Narrow results to the career scopes on your profile. Off by default — search covers every job.",
@@ -1696,7 +1699,121 @@
     "noApplicantsCompany": "No applicants for this role yet",
     "noApplicantsCompanyDescription": "As candidates apply, they will appear here sorted by how well they fit.",
     "noJobsCompany": "You have no open roles",
-    "noJobsCompanyDescription": "Add an open position to your company profile and candidates will be able to apply to it."
+    "noJobsCompanyDescription": "Add an open position to your company profile and candidates will be able to apply to it.",
+    "view": {
+      "list": "List",
+      "board": "Board"
+    },
+    "pipeline": {
+      "columnCount": "{count, plural, one {# candidate} other {# candidates}}",
+      "emptyColumn": "Nothing here yet.",
+      "select": "Select {name}",
+      "openActivity": "Open activity",
+      "activity": "Activity"
+    },
+    "bulk": {
+      "selectionCount": "{count, plural, one {# selected} other {# selected}}",
+      "clear": "Clear",
+      "moveTo": "Move to",
+      "rejectSelection": "Reject selection",
+      "moveSuccess": "{count, plural, one {# moved} other {# moved}} to {stage}.",
+      "moveMixed": "{ok, plural, one {# moved} other {# moved}}, {failed, plural, one {# skipped} other {# skipped}}."
+    },
+    "notes": {
+      "tab": "Notes",
+      "empty": "No notes yet — the first one will only be seen by your team.",
+      "placeholder": "Add a private note about this candidate...",
+      "save": "Save note",
+      "saved": "Note saved.",
+      "delete": "Delete",
+      "deleteConfirm": "Delete this note?",
+      "deleted": "Note deleted.",
+      "loadError": "Could not load notes.",
+      "author": "By {name}",
+      "unknownAuthor": "Unknown"
+    },
+    "history": {
+      "tab": "History",
+      "empty": "No stage moves recorded yet.",
+      "first": "Applied",
+      "moved": "{from} → {to}",
+      "actor": "by {name}",
+      "unknownActor": "unknown",
+      "loadError": "Could not load history."
+    }
+  },
+  "employerAnalytics": {
+    "title": "Hiring at a glance",
+    "subtitle": "Where your applicants sit and how the funnel is moving.",
+    "empty": "No analytics yet. As candidates apply and move through your pipeline, numbers land here.",
+    "openPositions": "Open positions",
+    "activePipeline": "In pipeline",
+    "hired30d": "Hired (30d)",
+    "rejected30d": "Rejected (30d)",
+    "applicationsCurrent": "{count} applications in the last 30 days",
+    "vsPrevious": "vs. {previous} in the 30 days before",
+    "medianDays": "{days} day median",
+    "medianDaysHint": "From apply to first pipeline move",
+    "funnel": "Funnel",
+    "topJobs": "Top jobs by applicant volume",
+    "topJobsEmpty": "No jobs posted yet.",
+    "perJobBreakdown": "{active} active · {hired} hired · {rejected} rejected",
+    "status": {
+      "pending": "Pending",
+      "shortlisted": "Shortlisted",
+      "interviewing": "Interviewing",
+      "offered": "Offered",
+      "hired": "Hired",
+      "rejected": "Rejected"
+    }
+  },
+  "profileAnalytics": {
+    "title": "Who's been looking",
+    "subtitle": "How often your profile appears — and to whom.",
+    "profileViews7d": "Profile views (7d)",
+    "profileViews30d": "Profile views (30d)",
+    "searchAppearances30d": "Search appearances (30d)",
+    "recentViewers": "Recent viewers",
+    "noRecentViewers": "Nobody has opened your profile yet — the number moves as soon as they do.",
+    "anonymousViewer": "Someone",
+    "privateChip": "You are browsing privately",
+    "role": {
+      "employee": "Candidate",
+      "company": "Company"
+    }
+  },
+  "privacy": {
+    "sectionTitle": "Privacy",
+    "sectionDescription": "Control what other people see about you as you browse the platform.",
+    "browsePrivatelyLabel": "Browse privately",
+    "browsePrivatelyHint": "When on, profiles you visit still see that someone was there — but they won't see it was you.",
+    "nowPrivateToast": "You're now browsing privately.",
+    "nowVisibleToast": "Your visits are visible again."
+  },
+  "savedSearch": {
+    "dialogTitle": "Save this search",
+    "dialogDescription": "We'll email you when new jobs match. You can pause or delete it any time.",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g. Senior Go in Phnom Penh",
+    "frequencyLabel": "How often",
+    "frequency": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "off": "Paused"
+    },
+    "save": "Save search",
+    "cancel": "Cancel",
+    "saveSuccess": "Saved \"{name}\". You'll hear about new matches.",
+    "sectionTitle": "Saved-search alerts",
+    "sectionDescription": "Digests of new jobs matching a search you saved. Turn off or delete any time.",
+    "emptyDescription": "You have no saved searches yet. Save one from the job search to get a digest of new matches.",
+    "emptyCta": "Go to job search",
+    "lastSent": "Last sent {date}",
+    "notYetSent": "No digest sent yet",
+    "pausedToast": "\"{name}\" paused.",
+    "frequencyChangedToast": "\"{name}\" set to {cadence}.",
+    "deletedToast": "\"{name}\" deleted.",
+    "delete": "Delete"
   },
   "twoFactor": {
     "enableTitle": "Enable Two-Factor Authentication",

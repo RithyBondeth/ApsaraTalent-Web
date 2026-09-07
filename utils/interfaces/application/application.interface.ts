@@ -33,3 +33,55 @@ export interface IUpdateApplicationStatusPayload {
   status: TApplicationStatus;
   rejectionReason?: string;
 }
+
+export interface IApplicationNote {
+  id: string;
+  applicationId: string;
+  body: string;
+  createdAt: string;
+  authorId: string | null;
+  authorName: string | null;
+}
+
+export interface IApplicationStatusHistoryEntry {
+  id: string;
+  applicationId: string;
+  from: TApplicationStatus | null;
+  to: TApplicationStatus;
+  note: string | null;
+  createdAt: string;
+  actorId: string | null;
+  actorName: string | null;
+}
+
+export interface IBulkUpdateApplicationStatusPayload {
+  applicationIds: string[];
+  status: TApplicationStatus;
+  rejectionReason?: string;
+}
+
+export interface IBulkUpdateApplicationStatusItemResult {
+  applicationId: string;
+  ok: boolean;
+  status: TApplicationStatus;
+  reason: string | null;
+}
+
+export interface IBulkUpdateApplicationStatusResponse {
+  results: IBulkUpdateApplicationStatusItemResult[];
+  updatedCount: number;
+  failedCount: number;
+}
+
+export interface IPipelineColumn {
+  status: TApplicationStatus;
+  count: number;
+  applications: IApplication[];
+}
+
+export interface IJobPipeline {
+  jobId: string;
+  jobTitle: string;
+  columns: IPipelineColumn[];
+  totalCount: number;
+}
