@@ -225,9 +225,8 @@ describe("high-impact features API stores", () => {
         .createNote("app-1", "newer");
 
       expect(ok).toBe(true);
-      const notes = useApplicationNotesStore.getState().notesByApplication[
-        "app-1"
-      ];
+      const notes =
+        useApplicationNotesStore.getState().notesByApplication["app-1"];
       expect(notes[0].id).toBe("note-2");
     });
 

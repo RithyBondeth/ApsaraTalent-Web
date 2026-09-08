@@ -54,7 +54,9 @@ describe("profile-analytics store", () => {
       .updatePrivacy({ browsePrivately: true });
 
     expect(ok).toBe(true);
-    expect(useProfileAnalyticsStore.getState().data?.browsePrivately).toBe(true);
+    expect(useProfileAnalyticsStore.getState().data?.browsePrivately).toBe(
+      true,
+    );
   });
 
   it("surfaces a privacy-update failure without corrupting local state", async () => {
