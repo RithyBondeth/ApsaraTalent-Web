@@ -20,6 +20,8 @@ import { AccountSection } from "@/components/setting/account-section";
 import { BlockedUsersSection } from "@/components/setting/blocked-users-section";
 import { AboutSection } from "@/components/setting/about-section";
 import { NotificationSection } from "@/components/setting/notification-section";
+import { PrivacySection } from "@/components/setting/privacy-section";
+import { SavedSearchesSection } from "@/components/setting/saved-searches-section";
 import { DangerZoneSection } from "@/components/setting/danger-zone-section";
 import { DeleteAccountDialog } from "@/components/setting/delete-account-dialog";
 import { DeletionScheduledBanner } from "@/components/setting/deletion-scheduled-banner";
@@ -250,6 +252,13 @@ export default function SettingPage() {
         saving={preferencesSaving}
         onChange={handlePreferenceChange}
       />
+
+      {/* Privacy — every account sees the browse-privately toggle. */}
+      <PrivacySection />
+
+      {/* Saved-search alerts — employees only. Companies never save a job
+          search, so hiding the section keeps the page shorter for them. */}
+      {currentUser?.role === "employee" && <SavedSearchesSection />}
 
       <div className="grid items-start gap-7 lg:grid-cols-2 lg:gap-8">
         {/* Blocked Users Section */}

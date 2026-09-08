@@ -2,7 +2,12 @@
 
 import { useAnalyticsStore } from "@/stores/apis/matching/analytics.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { LucideActivity, LucideBarChart3, LucideUsers } from "lucide-react";
+import {
+  LucideActivity,
+  LucideBarChart3,
+  LucideEye,
+  LucideUsers,
+} from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { statisticCardConstants } from "@/utils/constants/dashboard.constant";
 import dynamic from "next/dynamic";
@@ -11,6 +16,8 @@ import { RecentMatchesList } from "@/components/dashboard/recent-matches-list";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import StatisticCard from "@/components/dashboard/statistic-card";
 import { ProfileCompletenessCard } from "@/components/dashboard/profile-completeness-card";
+import { ProfileAnalyticsWidget } from "@/components/dashboard/profile-analytics-widget";
+import { EmployerAnalyticsWidget } from "@/components/dashboard/employer-analytics-widget";
 import { DashboardLoadingSkeleton } from "@/components/dashboard/skeleton";
 import { useTranslations } from "next-intl";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
@@ -257,6 +264,32 @@ export default function DashboardPage() {
           />
         </div>
       </section>
+
+      {/* Profile Analytics Row Section */}
+      <section className="flex w-full flex-col gap-5">
+        <SectionHeader
+          number="04"
+          title={t("profileAnalytics")}
+          icon={<LucideEye className="size-4" />}
+        />
+        <ProfileAnalyticsWidget />
+      </section>
+
+      {/*
+        Employer Analytics — company-only, showing the ATS funnel + top jobs
+        the recruiter posted. Rendered as its own numbered section so it
+        drops into the existing 01–04 ladder without a special layout.
+      */}
+      {!isEmployee && (
+        <section className="flex w-full flex-col gap-5">
+          <SectionHeader
+            number="05"
+            title={t("employerAnalytics")}
+            icon={<LucideBarChart3 className="size-4" />}
+          />
+          <EmployerAnalyticsWidget />
+        </section>
+      )}
     </div>
   );
 }

@@ -32,3 +32,8 @@ export const API_ACCOUNT_EXPORT_URL = API_ACCOUNT_BASE_URL + "/export";
 export const API_ACCOUNT_DELETE_URL = API_ACCOUNT_BASE_URL + "/delete";
 export const API_ACCOUNT_DELETE_CANCEL_URL =
   API_ACCOUNT_BASE_URL + "/delete/cancel";
+
+/* ---------------------- Profile analytics + privacy ---------------------- */
+export const API_MY_PROFILE_ANALYTICS_URL =
+  API_BASE_URL + "/user/me/profile-analytics";
+export const API_MY_PRIVACY_URL = API_BASE_URL + "/user/me/privacy";
