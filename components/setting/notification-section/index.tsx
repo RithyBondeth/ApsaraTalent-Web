@@ -107,7 +107,13 @@ export function NotificationSection(props: INotificationSectionProps) {
             </div>
 
             {NOTIFICATION_PREFERENCE_CATEGORIES.map((category, index) => {
-              const channels = preferences.categories[category];
+              // Optional-chain the read: a preferences payload that came back
+              // without a `categories` object (a partial API response, an
+              // upstream shape change, or a test fixture) would otherwise
+              // throw `Cannot read properties of undefined` here and take the
+              // whole settings page down. The switches below already handle a
+              // null `channels` — this just prevents the throw.
+              const channels = preferences.categories?.[category];
               const isLast =
                 index === NOTIFICATION_PREFERENCE_CATEGORIES.length - 1;
 
