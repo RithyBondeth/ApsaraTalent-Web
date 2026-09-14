@@ -115,7 +115,7 @@
     "eslint-config-next": "^15.5.24",
     "eslint-config-prettier": "^10.1.8",
     "jsdom": "^30.0.1",
-    "knip": "^5.88.1",
+    "knip": "^6.35.1",
     "openapi-typescript": "^7.13.0",
     "postcss": "8.5.26",
     "prettier": "^3.9.6",
