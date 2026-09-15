@@ -32,8 +32,8 @@ import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useLanguageStore } from "@/stores/languages/language-store";
-import { useThemeStore } from "@/stores/themes/theme-store";
+import { useLanguageStore } from "@/stores/languages/language.store";
+import { useThemeStore } from "@/stores/themes/theme.store";
 import { useThemeTransition } from "@/hooks/utils/use-theme-transition";
 import {
   clearAuthCookies,

@@ -5,7 +5,7 @@ import { AdminNav } from "@/components/admin/admin-nav";
 import { ScrollToTop } from "@/components/utils/layout/scroll-to-top";
 import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useThemeStore } from "@/stores/themes/theme-store";
+import { useThemeStore } from "@/stores/themes/theme.store";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 

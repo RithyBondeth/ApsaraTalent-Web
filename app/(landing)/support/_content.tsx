@@ -16,7 +16,7 @@ import {
   StaticPageShell,
   StaticSection,
 } from "@/components/static-content/static-page";
-import { useLanguageStore } from "@/stores/languages/language-store";
+import { useLanguageStore } from "@/stores/languages/language.store";
 import { useId, useState } from "react";
 
 function FaqItem({ question, answer }: { question: string; answer: string }) {

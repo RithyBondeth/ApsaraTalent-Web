@@ -1,8 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useLanguageStore } from "@/stores/languages/language-store";
-import { useThemeStore } from "@/stores/themes/theme-store";
+import { useLanguageStore } from "@/stores/languages/language.store";
+import { useThemeStore } from "@/stores/themes/theme.store";
 import { setCookie } from "cookies-next";
 import { LucideLanguages, LucideMoon, LucideSun } from "lucide-react";
 import { useTheme } from "next-themes";

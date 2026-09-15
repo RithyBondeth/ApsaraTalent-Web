@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useThemeTransition } from "./use-theme-transition";
-import { useThemeStore } from "@/stores/themes/theme-store";
+import { useThemeStore } from "@/stores/themes/theme.store";
 
 const setNextTheme = vi.fn();
 vi.mock("next-themes", () => ({

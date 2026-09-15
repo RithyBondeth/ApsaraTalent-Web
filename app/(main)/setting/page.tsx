@@ -3,10 +3,10 @@
 import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useLanguageStore } from "@/stores/languages/language-store";
+import { useLanguageStore } from "@/stores/languages/language.store";
 import { useNotificationPreferenceStore } from "@/stores/apis/notification/notification-preference.store";
 import { useAccountLifecycleStore } from "@/stores/apis/users/account-lifecycle.store";
-import { useThemeStore } from "@/stores/themes/theme-store";
+import { useThemeStore } from "@/stores/themes/theme.store";
 import { useThemeTransition } from "@/hooks/utils/use-theme-transition";
 import { TLanguage } from "@/utils/types/app/language.type";
 import { TTheme } from "@/utils/types/app/theme.type";
