@@ -1,15 +1,21 @@
 import { Toaster } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/components/utils/languages/language-provider";
+import { PostHogProvider } from "@/components/utils/analytics/posthog-provider";
 import { ThemeProvider } from "@/components/utils/themes/theme-provider";
 import { TitleSync } from "@/components/utils/seo/title-sync";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { FONT_STACK } from "@/utils/constants/ui.constant";
+import { siteUrl } from "@/utils/functions/seo";
 import "@fontsource/ubuntu/latin-400.css";
 import "@fontsource/ubuntu/latin-700.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  // Required for `alternates.canonical` and the relative OG image below to
+  // resolve to absolute URLs. Without it Next emits relative canonical tags,
+  // which search engines and link unfurlers both ignore.
+  metadataBase: new URL(siteUrl()),
   title: {
     template: "%s — Apsara Talent",
     default: "Apsara Talent",
@@ -18,6 +24,18 @@ export const metadata: Metadata = {
   // No `icons` block: app/icon.png is picked up by Next's file convention,
   // which fingerprints and sizes it. Naming the file here as well pinned it to a
   // literal path and is what kept the retired icon.svg alive.
+  openGraph: {
+    type: "website",
+    siteName: "Apsara Talent",
+    title: "Apsara Talent",
+    description: "Professional community for employees and employers",
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Apsara Talent",
+    description: "Professional community for employees and employers",
+  },
 };
 
 export default async function RootLayout({
@@ -47,7 +65,7 @@ export default async function RootLayout({
         <LanguageProvider>
           {/* Theme Provider Section */}
           <ThemeProvider>
-            {children}
+            <PostHogProvider>{children}</PostHogProvider>
             {/* Toast Container Section */}
             <Toaster />
           </ThemeProvider>

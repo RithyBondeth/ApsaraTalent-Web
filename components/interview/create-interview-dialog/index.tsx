@@ -104,6 +104,9 @@ export function CreateInterviewDialog({
       title: title.trim(),
       description: description.trim() || undefined,
       scheduledAt,
+      // The picker was rendered in this browser's zone, so this is what the
+      // server needs to label every email with. Same value the picker used.
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       durationMinutes,
       location: location.trim() || undefined,
       meetingLink: meetingLink.trim() || undefined,

@@ -411,6 +411,29 @@ common status-badge case.
 - `app/design-system` renders every token and primitive in both themes. Dev
   only — it `notFound()`s in production.
 
+### Public pages and SEO
+`/jobs/[jobId]` is the app's only indexable content route, and the reason the
+SEO surface exists at all. It is outside every route group so nothing in
+`middleware.ts` matches it — anything not listed as an auth, protected or
+landing route is public by default.
+
+- `app/sitemap.ts` and `app/robots.ts` are Next file conventions. The sitemap
+  lists only pages a signed-out visitor can reach; submitting authenticated
+  routes trains search engines to distrust it. Both read `siteUrl()`
+  (`utils/functions/seo`), which needs `NEXT_PUBLIC_SITE_URL` in production or
+  it falls back to localhost.
+- `metadataBase` in `app/layout.tsx` is what makes `alternates.canonical` and
+  the OG URLs absolute. Without it Next emits relative ones, which crawlers and
+  link unfurlers both ignore.
+- The `JobPosting` JSON-LD (`utils/functions/seo/job-posting-json-ld.ts`) is
+  what puts a posting into Google Jobs — the visible markup is not read for
+  that. It is emitted from the server component so it is in the initial HTML.
+  Employment types are mapped to schema.org's controlled vocabulary and an
+  unmappable one is **omitted**, because a value outside that set invalidates
+  the whole posting.
+- Job descriptions render with `whitespace-pre-line`, never a markdown
+  renderer. They are plain text a company typed, served to anonymous visitors.
+
 ### API Development
 - API URLs are centralized in `utils/constants/apis/`
 - Store methods should handle loading, error, and success states

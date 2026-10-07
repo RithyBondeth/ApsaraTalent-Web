@@ -20,11 +20,13 @@ describe("admin store", () => {
       users: null,
       userDetail: null,
       reports: null,
+      problemReports: null,
       audit: null,
       loadingOverview: false,
       loadingUsers: false,
       loadingUserDetail: false,
       loadingReports: false,
+      loadingProblemReports: false,
       loadingAudit: false,
       saving: false,
       error: null,
@@ -127,6 +129,95 @@ describe("admin store", () => {
     await useAdminStore.getState().getUsers({ page: 2 });
 
     expect(useAdminStore.getState().users?.items).toHaveLength(1);
+    expect(useAdminStore.getState().error).toBeTruthy();
+  });
+});
+
+describe("problem reports", () => {
+  it("loads a page from the queue", async () => {
+    const page = {
+      items: [
+        {
+          id: "r1",
+          category: "bug",
+          details: "broke",
+          pageUrl: "/x",
+          userAgent: "Chrome",
+          status: "pending",
+          resolutionNote: null,
+          createdAt: "2026-08-01T00:00:00.000Z",
+          reporter: {
+            id: "u1",
+            email: "r@example.com",
+            role: "employee",
+          },
+        },
+      ],
+      total: 1,
+      page: 1,
+      limit: 25,
+    };
+    axiosMocks.get.mockResolvedValue({ data: page });
+
+    await useAdminStore
+      .getState()
+      .getProblemReports({ page: 1, limit: 25, status: "pending" });
+
+    expect(useAdminStore.getState().problemReports).toEqual(page);
+    // The query params are pruned like every other admin call — empty
+    // fields do not travel to the API.
+    expect(axiosMocks.get).toHaveBeenCalledWith(
+      expect.stringContaining("/admin/problem-reports"),
+      { params: expect.objectContaining({ status: "pending", page: 1 }) },
+    );
+  });
+
+  it("patches the row in place after a status change", async () => {
+    useAdminStore.setState({
+      problemReports: {
+        items: [
+          {
+            id: "r1",
+            category: "bug",
+            details: "broke",
+            pageUrl: null,
+            userAgent: null,
+            status: "pending",
+            resolutionNote: null,
+            createdAt: "2026-08-01T00:00:00.000Z",
+            reporter: null,
+          },
+        ],
+        total: 1,
+        page: 1,
+        limit: 25,
+      },
+    });
+    axiosMocks.patch.mockResolvedValue({ data: undefined });
+
+    const ok = await useAdminStore.getState().updateProblemReportStatus("r1", {
+      status: "resolved",
+      note: "shipped",
+    });
+
+    expect(ok).toBe(true);
+    // Patched in place — the row must not jump out of the list while the
+    // admin is still reading it.
+    const [row] = useAdminStore.getState().problemReports!.items;
+    expect(row.status).toBe("resolved");
+    expect(row.resolutionNote).toBe("shipped");
+  });
+
+  it("surfaces the error and returns false on a failed patch", async () => {
+    axiosMocks.patch.mockRejectedValue(
+      new AxiosError("network", "ERR_NETWORK"),
+    );
+
+    await expect(
+      useAdminStore
+        .getState()
+        .updateProblemReportStatus("r1", { status: "resolved" }),
+    ).resolves.toBe(false);
     expect(useAdminStore.getState().error).toBeTruthy();
   });
 });

@@ -4,9 +4,11 @@ import { StatusPill } from "@/components/admin/status-pill";
 import { Button } from "@/components/ui/button";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PageBannerSkeleton } from "@/components/utils/layout/page-banner/skeleton";
 import { useAdminStore } from "@/stores/apis/admin/admin.store";
 import {
+  LucideBriefcase,
   LucideBuilding2,
   LucideFlag,
   LucideShieldAlert,
@@ -33,7 +35,20 @@ export default function AdminOverviewPage() {
   if (loadingOverview && !overview) {
     return (
       <div className="flex flex-col gap-5">
-        <PageBannerSkeleton stats={3} />
+        {/* Two stats to match the real banner (totalUsers, pendingReports).
+            stats={3} above would have drawn a third column that then vanished
+            when data landed. */}
+        <PageBannerSkeleton stats={2} />
+        {/* Queue call-to-action card — a single row that resolves to the
+            "Nothing waiting" / "N waiting" copy once overview lands. */}
+        <Skeleton className="h-20 w-full" />
+        {/* KPI grid — seven cards in the real layout, matched here so the
+            first paint does not stretch downward when data lands. */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 7 }).map((_, index) => (
+            <Skeleton key={index} className="h-28 w-full" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -64,6 +79,8 @@ export default function AdminOverviewPage() {
       icon: LucideShieldAlert,
     },
     { key: "banned", value: overview.bannedUsers, icon: LucideShieldAlert },
+    { key: "liveJobs", value: overview.liveJobs, icon: LucideBriefcase },
+    { key: "hiddenJobs", value: overview.hiddenJobs, icon: LucideBriefcase },
   ] as const;
 
   return (
@@ -123,8 +140,15 @@ export default function AdminOverviewPage() {
                 {t(key)}
               </span>
             </div>
+            {/*
+              A count the API did not send renders as a dash rather than
+              throwing. The overview is the panel's landing page, so one
+              missing field taking it down locks an admin out of everything
+              — which is exactly what happened when the web ran ahead of an
+              API without job moderation.
+            */}
             <p className="mt-2 text-3xl font-black tabular-nums tracking-[-0.04em] text-foreground">
-              {value.toLocaleString()}
+              {typeof value === "number" ? value.toLocaleString() : "—"}
             </p>
           </div>
         ))}

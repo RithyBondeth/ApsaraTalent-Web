@@ -1,6 +1,6 @@
 "use client";
 
-import { useLanguageStore } from "@/stores/languages/language-store";
+import { useLanguageStore } from "@/stores/languages/language.store";
 import { FONT_STACK } from "@/utils/constants/ui.constant";
 import { NextIntlClientProvider } from "next-intl";
 import { useEffect, useState } from "react";

@@ -14,6 +14,7 @@ export default defineConfig({
     include: ["**/*.{test,spec}.{ts,tsx}"],
     exclude: [
       "tests/e2e/**",
+      "lib/generated/live-gateway.test.ts",
       "node_modules/**",
       ".next/**",
       "coverage/**",
@@ -50,6 +51,7 @@ export default defineConfig({
         "utils/constants/**",
         "utils/interfaces/**",
         "utils/types/**",
+        "lib/generated/**",
       ],
       reporter: ["text", "html", "lcov"],
       reportsDirectory: "coverage",
