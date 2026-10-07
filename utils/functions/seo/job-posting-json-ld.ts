@@ -1,5 +1,16 @@
 import { TPublicJob } from "@/utils/types/job/public-job.type";
 
+/** Keep user text from closing the script element that contains the JSON. */
+export function serializeJobPostingJsonLd(
+  job: TPublicJob,
+  origin: string,
+): string {
+  return JSON.stringify(buildJobPostingJsonLd(job, origin)).replace(
+    /</g,
+    "\\u003c",
+  );
+}
+
 /**
  * Maps the app's employment type values onto schema.org's controlled
  * vocabulary. Google rejects values outside this set, so an unknown type is
