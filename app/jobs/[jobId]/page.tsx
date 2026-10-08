@@ -3,7 +3,7 @@ import LandingFooter from "@/components/landing/landing-footer";
 import { PublicJobDetail } from "@/components/job/public-job-detail";
 import { COOKIE_CONFIG } from "@/utils/constants/cookie.constant";
 import { fetchPublicJob } from "@/utils/functions/job";
-import { buildJobPostingJsonLd, siteUrl } from "@/utils/functions/seo";
+import { serializeJobPostingJsonLd, siteUrl } from "@/utils/functions/seo";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
@@ -84,7 +84,7 @@ export default async function PublicJobPage({ params }: IJobPageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(buildJobPostingJsonLd(job, siteUrl())),
+          __html: serializeJobPostingJsonLd(job, siteUrl()),
         }}
       />
 

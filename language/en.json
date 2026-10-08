@@ -1837,7 +1837,10 @@
     "pausedToast": "\"{name}\" paused.",
     "frequencyChangedToast": "\"{name}\" set to {cadence}.",
     "deletedToast": "\"{name}\" deleted.",
-    "delete": "Delete"
+    "delete": "Delete",
+    "previewCounts": "{total, plural, one {# matching job} other {# matching jobs}} · {newCount} new",
+    "previewLoading": "Checking matching jobs…",
+    "previewRetry": "Retry match count"
   },
   "twoFactor": {
     "enableTitle": "Enable Two-Factor Authentication",

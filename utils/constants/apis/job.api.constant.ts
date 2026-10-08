@@ -28,10 +28,8 @@ const API_SAVED_SEARCH_BASE_URL = `${API_JOB_BASE_URL}/saved-search`;
 export const API_SAVED_SEARCHES_URL = API_SAVED_SEARCH_BASE_URL;
 export const API_SAVED_SEARCH_URL = (savedSearchID: string) =>
   `${API_SAVED_SEARCH_BASE_URL}/${savedSearchID}`;
-// The saved-search preview endpoint exists on the API; the web has no caller
-// for it yet (the "Save" dialog does not preview before saving). Left for a
-// future "show me how many new matches" affordance rather than exported here
-// where knip would flag it as dead.
+export const API_SAVED_SEARCH_PREVIEW_URL = (savedSearchID: string) =>
+  `${API_SAVED_SEARCH_URL(savedSearchID)}/preview`;
 
 /* ---------------------------- Employer analytics ---------------------------- */
 export const API_EMPLOYER_ANALYTICS_URL = `${API_JOB_BASE_URL}/employer-analytics`;

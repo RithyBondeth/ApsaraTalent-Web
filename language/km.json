@@ -1837,7 +1837,10 @@
     "pausedToast": "បានផ្អាក «{name}»។",
     "frequencyChangedToast": "«{name}» កំណត់ជា {cadence}។",
     "deletedToast": "បានលុប «{name}»។",
-    "delete": "លុប"
+    "delete": "លុប",
+    "previewCounts": "ការងារត្រូវគ្នា {total} · ថ្មី {newCount}",
+    "previewLoading": "កំពុងពិនិត្យការងារត្រូវគ្នា…",
+    "previewRetry": "ព្យាយាមរាប់ការងារម្តងទៀត"
   },
   "twoFactor": {
     "enableTitle": "បើកការផ្ទៀងផ្ទាត់ពីរជំហាន",

@@ -41,7 +41,9 @@
     "check:inline-colors": "node scripts/check-inline-colors.mjs",
     "api:client": "node scripts/contracts/generate-clients.mjs",
     "api:client:check": "node scripts/contracts/generate-clients.mjs --check",
-    "test:contract:live": "vitest run --config vitest.contract.config.ts"
+    "test:contract:live": "vitest run --config vitest.contract.config.ts",
+    "resources:export": "node scripts/export-public-content.mjs",
+    "resources:check": "node scripts/export-public-content.mjs --check"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

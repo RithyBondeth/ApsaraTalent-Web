@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { buildJobPostingJsonLd } from "./job-posting-json-ld";
+import {
+  buildJobPostingJsonLd,
+  serializeJobPostingJsonLd,
+} from "./job-posting-json-ld";
 import type { TPublicJob } from "@/utils/types/job/public-job.type";
 
 const job = (overrides: Partial<TPublicJob> = {}): TPublicJob => ({
@@ -106,6 +109,19 @@ describe("buildJobPostingJsonLd", () => {
     // JSON.stringify and parse back identically.
     const jsonLd = buildJobPostingJsonLd(job(), origin);
     expect(() => JSON.parse(JSON.stringify(jsonLd))).not.toThrow();
+  });
+
+  it("keeps malicious job text inside the JSON script element", () => {
+    const description = '</script><img src=x onerror="alert(1)"><script>';
+    const serialized = serializeJobPostingJsonLd(job({ description }), origin);
+    const container = document.createElement("div");
+    container.innerHTML = `<script type="application/ld+json">${serialized}</script>`;
+
+    expect(container.children).toHaveLength(1);
+    expect(container.querySelector("img")).toBeNull();
+    expect(
+      JSON.parse(container.firstElementChild!.textContent!).description,
+    ).toBe(description);
   });
 });
 
