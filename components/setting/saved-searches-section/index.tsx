@@ -34,6 +34,9 @@ export function SavedSearchesSection({
   const t = useTranslations("savedSearch");
 
   const items = useSavedSearchesStore((s) => s.items);
+  const previews = useSavedSearchesStore((s) => s.previews);
+  const previewErrors = useSavedSearchesStore((s) => s.previewErrors);
+  const fetchPreview = useSavedSearchesStore((s) => s.fetchPreview);
   const loading = useSavedSearchesStore((s) => s.loading);
   const loaded = useSavedSearchesStore((s) => s.loaded);
   const updatingId = useSavedSearchesStore((s) => s.updatingId);
@@ -131,6 +134,27 @@ export function SavedSearchesSection({
                         })
                       : t("notYetSent")}
                   </TypographyMuted>
+                  {previewErrors[row.id] ? (
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={() => fetchPreview(row.id)}
+                    >
+                      {t("previewRetry")}
+                    </Button>
+                  ) : (
+                    <TypographyMuted
+                      className="mt-1 text-xs"
+                      aria-live="polite"
+                    >
+                      {previews[row.id]
+                        ? t("previewCounts", {
+                            total: previews[row.id].totalMatches,
+                            newCount: previews[row.id].newMatchCount,
+                          })
+                        : t("previewLoading")}
+                    </TypographyMuted>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
