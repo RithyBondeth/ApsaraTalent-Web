@@ -57,7 +57,7 @@ export default function Header({
     >
       {/* Left Menu Section */}
       <div className="flex items-center gap-8">
-        <LogoComponent className="!h-11 w-auto shrink-0" priority />
+        <LogoComponent height={32} className="!h-7 shrink-0 sm:!h-8" priority />
         <div className="hidden items-center gap-1 lg:flex">
           <Link href="/product">
             <Button variant="ghost">{t("products")}</Button>
