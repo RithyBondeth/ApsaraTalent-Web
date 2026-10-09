@@ -321,7 +321,7 @@ export default function SignupPage() {
   return (
     <div className="flex w-full flex-col gap-6">
       {/* Logo Section */}
-      <LogoComponent className="!h-16 w-auto self-start" priority />
+      <LogoComponent height={40} className="self-start" priority />
 
       {/* Title Section */}
       <div>
