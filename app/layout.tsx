@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     default: "Apsara Talent",
   },
   description: "Professional community for employees and employers",
-  // No `icons` block: app/icon.png is picked up by Next's file convention,
+  // No `icons` block: the PNG, ICO and Apple icons use Next's file conventions,
   // which fingerprints and sizes it. Naming the file here as well pinned it to a
   // literal path and is what kept the retired icon.svg alive.
   openGraph: {
