@@ -157,7 +157,7 @@ jobs:
         run: npm ci
 
       - name: Run automated tests
-        run: npm run test:ci
+        run: npm run test:ci && npm run test:release
 
   build:
     name: Production build and browser tests
@@ -255,6 +255,9 @@ jobs:
       - name: Pull production environment
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
+      - name: Verify the production API before building
+        run: node --env-file=.vercel/.env.production.local scripts/verify-api.mjs
+
       - name: Build production bundle
         run: vercel build --prod --token="$VERCEL_TOKEN"
         env:
@@ -272,7 +275,7 @@ jobs:
         run: |
           # The CLI writes progress to stderr and the deployment URL to stdout;
           # take the last line so a stray stdout notice cannot become the URL.
-          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" | tail -n1)
+          url=$(vercel deploy --prebuilt --prod --skip-domain --token="$VERCEL_TOKEN" | tail -n1)
           if [[ ! "$url" =~ ^https:// ]]; then
             echo "::error::Expected a deployment URL, got: $url"
             exit 1
@@ -280,31 +283,31 @@ jobs:
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "Deployed $url"
 
-      # The production alias is the gate, because it is what users actually hit.
-      # EXPECTED_RELEASE makes this prove the NEW build is serving: a healthy
-      # response from the previous deployment would otherwise pass.
+      # Verify the immutable production build before assigning public domains.
+      - name: Verify the staged production build
+        env:
+          EXPECTED_RELEASE: ${{ github.sha }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node scripts/verify-deployment.mjs "${{ steps.deploy.outputs.url }}"
+
+      - name: Recheck the API before promotion
+        run: node --env-file=.vercel/.env.production.local scripts/verify-api.mjs
+
+      - name: Promote the verified production build
+        id: promote
+        run: vercel promote "${{ steps.deploy.outputs.url }}" --yes --token="$VERCEL_TOKEN"
+
       - name: Verify the production domain
         env:
           EXPECTED_RELEASE: ${{ github.sha }}
         run: node scripts/verify-deployment.mjs "$PRODUCTION_WEB_URL"
-
-      # Best-effort only. Deployment URLs sit behind Deployment Protection,
-      # which serves an HTML login page instead of the app, so this cannot be a
-      # gate — it failed the first real release for exactly that reason while
-      # the alias above was healthy the whole time.
-      - name: Probe the deployment URL directly
-        continue-on-error: true
-        env:
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          DEPLOY_VERIFY_TIMEOUT_MS: "30000"
-        run: node scripts/verify-deployment.mjs "${{ steps.deploy.outputs.url }}"
 
       # Vercel deployments are immutable, so rollback is an alias switch back to
       # the previous production deployment — fast, and safe to automate. It is
       # NOT safe if this release shipped a breaking API contract; see
       # ../ApsaraTalent-Api/docs/RUNBOOK.md §5 before assuming this is enough.
       - name: Roll back to the previous production deployment
-        if: failure() && steps.deploy.outcome == 'success'
+        if: failure() && steps.promote.outcome == 'success'
         shell: bash
         env:
           # Proves the alias moved OFF this release. `vercel rollback` has been

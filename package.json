@@ -23,6 +23,8 @@
     "knip:check": "knip --exclude types",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:release": "node --test scripts/verify-api.test.mjs",
+    "test:acceptance:local": "node scripts/cross-platform-acceptance.mjs",
     "test:ci": "vitest run --coverage",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "npm run test:e2e:smoke && PLAYWRIGHT_SKIP_BUILD=1 npm run test:e2e:browser",
