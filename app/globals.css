@@ -18,8 +18,7 @@
     --card-foreground: 45 7.8% 20%;
     --popover: 0 0% 100%;
     --popover-foreground: 45 7.8% 20%;
-    /* Apsara Gold Accent Section — the deep gold of the dancer's outline,
-       darkened just enough that it clears AA as link text on the ivory page. */
+    /* Primary action blue, also used by the generated AT brand artwork. */
     --primary: 209.8 76.7% 44.5%;
     --primary-foreground: 0 0% 100%;
     --secondary: 60 6.7% 94.1%;
@@ -185,8 +184,7 @@
     --card-foreground: 0 0% 83.1%;
     --popover: 0 0% 18.4%;
     --popover-foreground: 0 0% 83.1%;
-    /* Apsara Gold Accent Section — dark mode takes the logo's highlight gold
-       rather than its outline gold; the deep tone disappears on a black page. */
+    /* Lighter action blue for dark surfaces and dark-theme AT artwork. */
     --primary: 203 53.1% 55.7%;
     --primary-foreground: 209.8 60% 12%;
     --secondary: 0 0% 18.4%;

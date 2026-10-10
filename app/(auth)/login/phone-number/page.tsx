@@ -134,7 +134,7 @@ export default function PhoneNumberPage() {
       <div className="auth-stagger flex w-full flex-col gap-7">
         {/* Logo and Title Section */}
         <div style={{ "--d": "0ms" } as React.CSSProperties}>
-          <LogoComponent className="!h-16 w-auto self-start" priority />
+          <LogoComponent height={40} className="self-start" priority />
           <TypographyH2 className="mt-5 phone-xl:text-xl">
             {t("phoneLoginTitle")}
           </TypographyH2>

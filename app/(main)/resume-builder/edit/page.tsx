@@ -1,5 +1,11 @@
 "use client";
 
+import { useAccountDraft } from "@/hooks/resume/use-account-draft";
+import {
+  accountDrafts,
+  readDraftIdentity,
+  selectAccountDraft,
+} from "@/utils/functions/resume/account-drafts";
 import ResumeEditorFormPanel from "@/components/resume-builder/editor/form-panel";
 import ResumeEditorPreviewPanel from "@/components/resume-builder/editor/preview-panel";
 import TemplateSelector from "@/components/resume-builder/editor/template-selector";
@@ -101,7 +107,7 @@ export default function ResumeEditorPage() {
   const [previewUpdating, setPreviewUpdating] = useState<boolean>(false);
   const hasInteracted = useRef<boolean>(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const initializedRef = useRef<boolean>(false);
+  const initializedRef = useRef<string | null>(null);
   const [draftReady, setDraftReady] = useState<boolean>(false);
   const [userResolved, setUserResolved] = useState<boolean>(false);
   const [downloading, setDownloading] = useState<boolean>(false);
@@ -117,6 +123,14 @@ export default function ResumeEditorPage() {
       defaultValues: payload ?? undefined,
     });
   const watchedValues = useWatch({ control }) as IBuildResume;
+  const accountSync = useAccountDraft(
+    currentUser?.id,
+    watchedValues,
+    draftReady &&
+      initializedRef.current === currentUser?.id &&
+      ownerId === currentUser?.id,
+  );
+  const [loadError, setLoadError] = useState(false);
 
   /* ------------------------------ Effects --------------------------------- */
   useEffect(() => {
@@ -129,13 +143,16 @@ export default function ResumeEditorPage() {
 
   // Recover and validate a draft exactly once for the authenticated user.
   useEffect(() => {
-    if (!userResolved || initializedRef.current) return;
+    const currentUser = useGetCurrentUserStore.getState().user;
+    if (!userResolved || initializedRef.current === currentUser?.id) return;
     if (!currentUser?.id || !currentUser.employee) {
       router.replace("/resume-builder");
       return;
     }
 
-    initializedRef.current = true;
+    initializedRef.current = currentUser.id;
+    setDraftReady(false);
+    const { payload, ownerId } = useResumeEditStore.getState();
     const employee = currentUser.employee;
     const employeeAvatar = employee.avatar;
     removeLegacyResumeDraft();
@@ -153,11 +170,22 @@ export default function ResumeEditorPage() {
     let cancelled = false;
     void (async () => {
       let hydratedInitial = initial;
+      const identity = readDraftIdentity(currentUser.id);
+      if (identity?.revision && !identity.dirty) {
+        try {
+          const remote = await accountDrafts.read(identity.id);
+          if (cancelled) return;
+          hydratedInitial = selectAccountDraft(currentUser.id, remote);
+        } catch {
+          if (!cancelled) setLoadError(true);
+          return;
+        }
+      }
       const employeeFullName = [employee.firstname, employee.lastname]
         .filter(Boolean)
         .join(" ");
       const resumeBelongsToCurrentUser = matchesResumeOwnerName(
-        initial.personalInfo.fullName,
+        hydratedInitial.personalInfo.fullName,
         [
           employeeFullName,
           employee.username ?? undefined,
@@ -165,15 +193,15 @@ export default function ResumeEditorPage() {
         ],
       );
       if (
-        !initial.personalInfo.profilePicture &&
+        !hydratedInitial.personalInfo.profilePicture &&
         employeeAvatar &&
         resumeBelongsToCurrentUser
       ) {
         const profilePicture = await prepareResumeAvatar(employeeAvatar);
         if (profilePicture) {
           hydratedInitial = {
-            ...initial,
-            personalInfo: { ...initial.personalInfo, profilePicture },
+            ...hydratedInitial,
+            personalInfo: { ...hydratedInitial.personalInfo, profilePicture },
           };
         }
       }
@@ -194,16 +222,7 @@ export default function ResumeEditorPage() {
     return () => {
       cancelled = true;
     };
-  }, [
-    clearPayload,
-    currentUser,
-    ownerId,
-    payload,
-    reset,
-    router,
-    setPayload,
-    userResolved,
-  ]);
+  }, [clearPayload, currentUser?.id, reset, router, setPayload, userResolved]);
 
   // Mobile always uses the dedicated Edit/Preview switch instead of a hidden panel.
   useEffect(() => {
@@ -299,6 +318,7 @@ export default function ResumeEditorPage() {
       setPayload(currentDraft, currentUser.id);
       saveResumeDraft(currentUser.id, currentDraft);
     }
+    void accountSync.retry();
     router.push("/resume-builder");
   };
 
@@ -348,6 +368,21 @@ export default function ResumeEditorPage() {
   );
 
   /* ------------------------------- Null State -------------------------------- */
+  if (loadError)
+    return (
+      <div role="alert" className="p-6">
+        {tRb("draftLoadFailed")}{" "}
+        <Button onClick={() => window.location.reload()}>
+          {tRb("retryDraft")}
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => router.push("/resume-builder")}
+        >
+          {tRb("back")}
+        </Button>
+      </div>
+    );
   if (!draftReady || !currentUser?.id) {
     return <ResumeEditorLoadingSkeleton />;
   }
@@ -355,6 +390,44 @@ export default function ResumeEditorPage() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="resume-editor-shell animate-page-in flex h-[calc(100dvh-4rem)] flex-col overflow-hidden text-foreground">
+      {!accountSync.recoveryAvailable && (
+        <div role="alert" className="border-b border-border p-3">
+          {tRb("draftRecoveryUnavailable")}
+        </div>
+      )}
+      {(accountSync.status === "conflict" ||
+        accountSync.status === "offline") && (
+        <div
+          role="alert"
+          className="flex flex-wrap items-center gap-2 border-b border-border p-3"
+        >
+          <span>
+            {tRb(
+              accountSync.status === "conflict"
+                ? "draftConflict"
+                : "draftOffline",
+            )}
+          </span>
+          {accountSync.status === "conflict" ? (
+            <>
+              <Button size="sm" onClick={accountSync.saveAsNew}>
+                {tRb("saveAsNewDraft")}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => router.push("/resume-builder")}
+              >
+                {tRb("myResumes")}
+              </Button>
+            </>
+          ) : (
+            <Button size="sm" onClick={() => void accountSync.retry()}>
+              {tRb("retryDraft")}
+            </Button>
+          )}
+        </div>
+      )}
       {/* Primary Action Bar Section */}
       <div className="resume-editor-controls flex flex-col gap-2 border-b border-border bg-card px-3 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-5">
         {/* Editor Identity and Template Section */}
@@ -413,7 +486,15 @@ export default function ResumeEditorPage() {
             ) : (
               <LucideSaveAll className="size-3.5" />
             )}
-            {previewUpdating ? tRb("savingChanges") : tRb("savedAutomatically")}
+            {tRb(
+              accountSync.status === "saved"
+                ? "savedToAccount"
+                : accountSync.status === "saving"
+                  ? "savingToAccount"
+                  : accountSync.status === "conflict"
+                    ? "draftConflict"
+                    : "draftOffline",
+            )}
           </div>
 
           <DropdownMenu>

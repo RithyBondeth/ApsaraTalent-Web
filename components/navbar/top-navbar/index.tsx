@@ -188,6 +188,7 @@ export default function TopNavbar() {
       Favorite: t("favorite"),
       Matching: t("matching"),
       Interview: t("interview"),
+      Application: t("application"),
       Message: t("message"),
       Notification: t("notification"),
     }),
@@ -249,13 +250,12 @@ export default function TopNavbar() {
               aria-label="Apsara Talent"
               className="group flex h-full shrink-0 items-center border-x border-transparent px-1 transition-colors hover:border-border hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-2 lg:min-w-[96px] lg:justify-center"
             >
-              {/* Height-driven; the width follows the mark's own ratio, so
-                  the box can never stretch it. Now that the artwork's
-                  transparent padding is trimmed, this height is all mark. */}
+              {/* Keep the AT mark compact beside the navigation controls. */}
               <LogoComponent
                 priority
-                height={56}
-                className="h-11 transition-transform duration-300 group-hover:-translate-y-0.5 lg:h-14"
+                withoutTitle
+                height={32}
+                className="transition-transform duration-300 group-hover:-translate-y-0.5"
               />
             </Link>
 

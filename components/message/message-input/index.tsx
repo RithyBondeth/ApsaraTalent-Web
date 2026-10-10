@@ -24,7 +24,7 @@ import {
 import { useVoiceRecorder } from "@/hooks/chat/use-voice-recorder";
 import { MessageAttachmentStrip } from "./attachment-strip";
 import { VoiceRecordingUI } from "./voice-recording";
-import { useThemeStore } from "@/stores/themes/theme-store";
+import { useThemeStore } from "@/stores/themes/theme.store";
 import dynamic from "next/dynamic";
 import { MessageReplyPreview } from "./reply-preview";
 import { API_BASE_URL } from "@/utils/constants/apis/base.api.constant";

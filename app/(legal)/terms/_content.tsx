@@ -25,7 +25,7 @@ import {
   StaticSection,
 } from "@/components/static-content/static-page";
 import { formatCount } from "@/utils/functions/text";
-import { useLanguageStore } from "@/stores/languages/language-store";
+import { useLanguageStore } from "@/stores/languages/language.store";
 
 /* -------------------------- Sub Components -------------------------- */
 const termsSectionNumbers: Record<string, string> = {

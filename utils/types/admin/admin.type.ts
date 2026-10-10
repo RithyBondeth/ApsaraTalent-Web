@@ -10,7 +10,12 @@ export type TAdminAction =
   | "user_suspended"
   | "user_banned"
   | "user_reinstated"
-  | "report_status_changed";
+  | "report_status_changed"
+  | "job_hidden"
+  | "job_restored";
+
+/** Which side of the takedown line to list. Defaults to visible. */
+export type TJobVisibility = "visible" | "hidden" | "all";
 
 /* ---------------------------------- Users ---------------------------------- */
 export type TAdminUser = {
@@ -73,6 +78,29 @@ export type TAdminAuditEntry = {
   createdAt: string;
 };
 
+/* ---------------------------------- Jobs ----------------------------------- */
+export type TAdminJob = {
+  id: string;
+  title: string;
+  companyId: string | null;
+  companyName: string;
+  location: string | null;
+  type: string;
+  createdAt: string;
+  expireDate: string | null;
+  /** Null means the posting is live. */
+  hiddenAt: string | null;
+  hiddenReason: string | null;
+  companyOpenReportCount: number;
+};
+
+export type TAdminJobQuery = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  visibility?: TJobVisibility;
+};
+
 /* --------------------------------- Overview -------------------------------- */
 export type TAdminOverview = {
   totalUsers: number;
@@ -82,6 +110,13 @@ export type TAdminOverview = {
   bannedUsers: number;
   pendingReports: number;
   newUsersLast7Days: number;
+  /**
+   * Added with job moderation. Optional because the web can be deployed
+   * ahead of the API, and an older API omits them entirely — rendering one
+   * unguarded took the whole overview page down with a TypeError.
+   */
+  liveJobs?: number;
+  hiddenJobs?: number;
 };
 
 /* --------------------------------- Paging ---------------------------------- */
@@ -110,6 +145,45 @@ export type TAdminUpdateStatusPayload = {
 };
 
 export type TAdminUpdateReportPayload = {
+  status: TReportStatus;
+  note?: string;
+};
+
+/* ---------------------------- Problem reports ------------------------------ */
+/**
+ * Categories the support form ships. Kept in sync with `EProblemCategory` on
+ * the API — a new value there needs a matching entry here plus a translation.
+ */
+export type TProblemCategory =
+  "bug" | "account" | "payment" | "content" | "other";
+
+export type TAdminProblemReportReporter = {
+  id: string;
+  email: string;
+  role: TUserRole;
+};
+
+export type TAdminProblemReport = {
+  id: string;
+  category: TProblemCategory;
+  details: string;
+  pageUrl: string | null;
+  userAgent: string | null;
+  status: TReportStatus;
+  resolutionNote: string | null;
+  createdAt: string;
+  /** Null once the reporter has deleted their account (FK is SET NULL). */
+  reporter: TAdminProblemReportReporter | null;
+};
+
+export type TAdminProblemReportQuery = {
+  page?: number;
+  limit?: number;
+  status?: TReportStatus;
+  category?: TProblemCategory;
+};
+
+export type TAdminUpdateProblemReportPayload = {
   status: TReportStatus;
   note?: string;
 };

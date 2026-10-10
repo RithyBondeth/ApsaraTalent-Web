@@ -1,7 +1,7 @@
 "use client";
 
 import { AdminPagination } from "@/components/admin/admin-pagination";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AdminListSkeleton } from "@/components/admin/admin-list-skeleton";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 import { useAdminStore } from "@/stores/apis/admin/admin.store";
@@ -53,11 +53,7 @@ export default function AdminAuditPage() {
       {/* Log Section */}
       <section className="border border-border bg-card p-5 shadow-hard">
         {loadingAudit && !audit ? (
-          <div className="space-y-3">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <Skeleton key={index} className="h-12 w-full" />
-            ))}
-          </div>
+          <AdminListSkeleton count={8} rowClassName="h-12" />
         ) : error && !audit ? (
           <PageState variant="error" title={error} compact />
         ) : audit && audit.items.length === 0 ? (
