@@ -37,7 +37,10 @@ for (const url of [web, api]) {
 }
 if (device.startsWith("emulator-")) {
   assert.equal(
-    execFileSync(adb, ["-s", device, "get-state"], { encoding: "utf8" }).trim(),
+    execFileSync(adb, ["-s", device, "get-state"], {
+      encoding: "utf8",
+      timeout: 10_000,
+    }).trim(),
     "device",
     "Start the Android emulator first",
   );
@@ -46,7 +49,7 @@ if (device.startsWith("emulator-")) {
     execFileSync(
       "xcrun",
       ["simctl", "list", "devices", "available", "--json"],
-      { encoding: "utf8" },
+      { encoding: "utf8", timeout: 10_000 },
     ),
   );
   assert(
@@ -61,6 +64,7 @@ const results = [];
 let cookie = "";
 async function request(path, method = "GET", body) {
   const response = await fetch(new URL(path, api), {
+    signal: AbortSignal.timeout(15_000),
     method,
     headers: {
       "Content-Type": "application/json",
@@ -156,7 +160,7 @@ try {
         `--dart-define=ACCEPTANCE_BROWSER_TEXT=${browserText}`,
         `--dart-define=ACCEPTANCE_MOBILE_TEXT=${mobileText}`,
       ],
-      { cwd: mobile, stdio: ["ignore", "pipe", "pipe"] },
+      { cwd: mobile, stdio: ["ignore", "pipe", "pipe"], timeout: 8 * 60_000 },
     );
     child.stdout.on("data", (chunk) => void appendFile(nativeLog, chunk));
     child.stderr.on("data", (chunk) => void appendFile(nativeLog, chunk));
@@ -173,7 +177,7 @@ try {
       const bytes = execFileSync(
         adb,
         ["-s", device, "exec-out", "run-as", appId, "cat", `cache/${filename}`],
-        { maxBuffer: 10 * 1024 * 1024 },
+        { maxBuffer: 10 * 1024 * 1024, timeout: 15_000 },
       );
       await writeFile(`${output}/native-${shot}.png`, bytes);
     } else {
@@ -184,12 +188,12 @@ try {
           "Print :CFBundleIdentifier",
           `${mobile}/build/ios/iphonesimulator/Runner.app/Info.plist`,
         ],
-        { encoding: "utf8" },
+        { encoding: "utf8", timeout: 10_000 },
       ).trim();
       const container = execFileSync(
         "xcrun",
         ["simctl", "get_app_container", device, appId, "data"],
-        { encoding: "utf8" },
+        { encoding: "utf8", timeout: 10_000 },
       ).trim();
       await copyFile(
         `${container}/tmp/${filename}`,
