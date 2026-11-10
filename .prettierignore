@@ -23,3 +23,9 @@ utils/interfaces/generated/
 tests/e2e/*-snapshots/
 public/
 assets/
+
+# Canonical OpenAPI snapshots are verified by the contract exporter.
+contracts/openapi.json
+
+# Shared backend-owned generator follows the API repository formatting.
+scripts/contracts/generate-clients.mjs

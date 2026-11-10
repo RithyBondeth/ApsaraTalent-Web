@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
 import { setCookie } from "cookies-next/client";
-import { useThemeStore } from "@/stores/themes/theme-store";
+import { useThemeStore } from "@/stores/themes/theme.store";
 import type { TTheme } from "@/utils/types/app/theme.type";
 import type { TThemeTransitionDocument } from "@/components/utils/switcher/props";
 

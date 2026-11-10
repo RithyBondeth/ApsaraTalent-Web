@@ -16,7 +16,7 @@ export default function LandingFooter() {
         <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
           {/* Brand Section */}
           <div className="flex max-w-xs flex-col gap-3">
-            <LogoComponent className="!h-12 w-auto self-start" />
+            <LogoComponent height={36} className="self-start" />
             <TypographyMuted className="!text-xs !leading-relaxed">
               {t("matchVisualDescription")}
             </TypographyMuted>

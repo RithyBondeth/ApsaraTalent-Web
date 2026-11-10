@@ -21,7 +21,11 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { makeCompanySignupSchema, TCompanySignup } from "./validation";
+import {
+  makeCompanySignupSchema,
+  TCompanySignup,
+  TCompanySignupInput,
+} from "./validation";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
@@ -101,7 +105,7 @@ export default function CompanySignup() {
   );
 
   // ── Initialize Company Form with Default Values ─────────────────────
-  const cmpForm = useForm<TCompanySignup>({
+  const cmpForm = useForm<TCompanySignupInput, unknown, TCompanySignup>({
     mode: "onChange",
     resolver: zodResolver(companySignupSchema),
     defaultValues: {

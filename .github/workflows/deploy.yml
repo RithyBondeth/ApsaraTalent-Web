@@ -115,6 +115,9 @@ jobs:
       - name: Run lint
         run: npm run lint
 
+      - name: Check generated API clients
+        run: npm run api:client:check && npm run api:types:check && npm run resources:check
+
       - name: Run TypeScript checks
         run: npm run typecheck
 

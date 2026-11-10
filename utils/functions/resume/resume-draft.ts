@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 import {
   RESUME_DRAFT_STORAGE_PREFIX,
   RESUME_DRAFT_VERSION,

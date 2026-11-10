@@ -5,26 +5,20 @@ import {
   logo,
   logoDark,
   logoWithoutTitle,
+  logoWithoutTitleDark,
 } from "@/utils/constants/asset.constant";
 import Image from "next/image";
+import {
+  BRAND_LOCKUP_ASPECT_RATIO,
+  BRAND_SYMBOL_ASPECT_RATIO,
+} from "@/utils/constants/brand-dimensions.constant";
 
-/* ---------------------------------------------------------------------------
- * The brand mark.
- *
- * The lockup pairs the dancer with a near-black wordmark that all but vanishes
- * on the dark theme's page, so it ships as a twin lettered in white. The swap is
- * a pair of `dark:` visibility classes — no JS, so no hydration flash and no
- * post-paint jump (next-themes stamps the class before first paint). Both files
- * download, which is the cost of a CSS-only swap; the optimizer serves each at
- * the rendered width and nothing here renders past 64px tall.
- *
- * The icon-only mark needs no twin. It is the dancer alone, blue and white
- * throughout with no wordmark to lose, so it reads on either theme and renders
- * as a single image — one request instead of two.
- * ------------------------------------------------------------------------- */
+// The approved AT monogram and horizontal name lockup share vector masters
+// with mobile. CSS switches to the matching primary blue and white wordmark
+// before dark-theme paint.
 
 interface ILogoProps {
-  /** Icon-only mark — the dancer without the wordmark. */
+  /** The AT monogram without the wordmark. */
   withoutTitle?: boolean;
   /** Rendered height in px. Width follows the artwork's own ratio. */
   height?: number;
@@ -32,14 +26,14 @@ interface ILogoProps {
   priority?: boolean;
 }
 
-/* The files are already trimmed to their alpha box (see asset.constant), so
-   these are simply their pixel dimensions. Both lockups share a rectangle on
-   purpose, so one ratio serves the pair. */
-const RATIO = { lockup: 1542 / 884, icon: 843 / 1206 } as const;
+const RATIO = {
+  lockup: BRAND_LOCKUP_ASPECT_RATIO,
+  icon: BRAND_SYMBOL_ASPECT_RATIO,
+} as const;
 
 export default function LogoComponent({
   withoutTitle = false,
-  height = 56,
+  height = 32,
   className,
   priority = false,
 }: ILogoProps) {
@@ -54,30 +48,21 @@ export default function LogoComponent({
     priority,
   };
 
-  if (withoutTitle) {
-    return (
-      <Image
-        {...shared}
-        alt="Apsara Talent"
-        src={logoWithoutTitle}
-        className={cn("w-auto object-contain", className)}
-      />
-    );
-  }
-
   return (
     <>
       <Image
         {...shared}
         alt="Apsara Talent"
-        src={logo}
-        className={cn("w-auto object-contain dark:hidden", className)}
+        src={withoutTitle ? logoWithoutTitle : logo}
+        className={cn("max-w-full object-contain dark:hidden", className)}
+        style={{ height, width: "auto" }}
       />
       <Image
         {...shared}
         alt="Apsara Talent"
-        src={logoDark}
-        className={cn("hidden w-auto object-contain dark:block", className)}
+        src={withoutTitle ? logoWithoutTitleDark : logoDark}
+        className={cn("hidden max-w-full object-contain dark:block", className)}
+        style={{ height, width: "auto" }}
       />
     </>
   );

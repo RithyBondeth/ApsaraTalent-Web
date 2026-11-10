@@ -1,3 +1,4 @@
+import { realtimeEvents } from "@/lib/generated/gateway-api";
 import type { StoreApi } from "zustand";
 import type { INotification } from "@/utils/interfaces/notification/notification.interface";
 import type { TChatProfile, TChatState, SocketInstance } from "./types";
@@ -405,7 +406,7 @@ export const registerSocketListeners = (
   // ── New Notification ─────────────────────────────────────────────────────
   // Fired by the server AFTER the notification record is confirmed saved in DB.
   // This is the single source of truth for badge + list updates — no race condition.
-  socket.on("newNotification", (notification: unknown) => {
+  socket.on(realtimeEvents.newNotification, (notification: unknown) => {
     if (isNotification(notification)) {
       useNotificationStore.getState().addNotification(notification);
     }
@@ -432,7 +433,7 @@ export const registerSocketListeners = (
     Re-fetching makes every delivery channel idempotent — duplicates, replays
     after a reconnect, and multi-tab all converge on the server's number.
   */
-  socket.on("badgeIncrement", () => {
+  socket.on(realtimeEvents.badgeIncrement, () => {
     void useNotificationStore.getState().queryUnreadCount();
     /*
       Also the live path for the matching badge. The 'newNotification' handler
@@ -449,7 +450,7 @@ export const registerSocketListeners = (
   // ── Interview Update ──────────────────────────────────────────────────────
   // Fired when the other party creates or changes the status of an interview.
   // Silently re-fetches so the interview page updates without a skeleton flash.
-  socket.on("interviewUpdate", () => {
+  socket.on(realtimeEvents.interviewUpdate, () => {
     silentRefetchInterviews();
   });
 
@@ -457,7 +458,7 @@ export const registerSocketListeners = (
   // Fired to BOTH parties when a match is deleted. The initiating party
   // already removed things optimistically; this event updates the OTHER party
   // so their matching list, interview list, and badge all update live.
-  socket.on("unmatchUpdate", () => {
+  socket.on(realtimeEvents.unmatchUpdate, () => {
     silentRefetchMatchingList();
     silentRefetchInterviews();
     refreshMatchingCount();

@@ -1,9 +1,12 @@
 "use client";
 
+import type { z } from "zod/v3";
+
 import SearchBar from "@/components/search/search-bar";
 import SearchCompanyCard from "@/components/search/search-company-card";
 import SearchPageHero from "@/components/search/search-page-hero";
 import { SearchErrorCard } from "@/components/search/search-error-card";
+import { SaveSearchDialog } from "@/components/search/save-search-dialog";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -36,6 +39,7 @@ import { TLocations } from "@/utils/types/user/location.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import debounce from "lodash.debounce";
 import {
+  LucideBellPlus,
   LucideBriefcaseBusiness,
   LucideBuilding2,
   LucideCalendarDays,
@@ -56,6 +60,12 @@ import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { SearchCompanyCardSkeleton } from "@/components/search/skeleton";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
+
+function dateFilterToIso(value: unknown): string | undefined {
+  return value instanceof Date && !Number.isNaN(value.getTime())
+    ? value.toISOString()
+    : undefined;
+}
 
 export default function EmployeeSearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -110,6 +120,7 @@ export default function EmployeeSearchPage() {
   // Holds blocked companies' profile IDs so they never appear in the feed.
   const blockedCompanyIdsRef = useRef<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
+  const [saveSearchOpen, setSaveSearchOpen] = useState<boolean>(false);
   // Drives whether the career-scope toggle renders at all — a profile with no
   // scopes has nothing to narrow by. State, not a ref, because the panel has
   // to re-render once the user loads.
@@ -138,7 +149,11 @@ export default function EmployeeSearchPage() {
     restores the exact filter state that was active when the URL was captured.
   */
   const { register, control, setValue, getValues, handleSubmit, watch } =
-    useForm<TEmployeeSearchSchema>({
+    useForm<
+      z.input<typeof employeeSearchSchema>,
+      unknown,
+      TEmployeeSearchSchema
+    >({
       resolver: zodResolver(employeeSearchSchema),
       defaultValues: {
         keyword: searchParams.get("q") ?? "",
@@ -205,7 +220,7 @@ export default function EmployeeSearchPage() {
   // the user's back button still exits the search page cleanly.
   // Note: filter changes always reset to page 1, so no page param is written here.
   const syncToUrl = useCallback(
-    (values: TEmployeeSearchSchema) => {
+    (values: z.input<typeof employeeSearchSchema>) => {
       const params = new URLSearchParams();
       if (values.keyword) params.set("q", values.keyword);
       if (values.location && values.location !== "all")
@@ -226,9 +241,10 @@ export default function EmployeeSearchPage() {
         params.set("smin", String(values.salaryRange.min));
       if (values.salaryRange?.max !== undefined)
         params.set("smax", String(values.salaryRange.max));
-      if (values.date?.from)
+      if (values.date?.from instanceof Date)
         params.set("dfrom", values.date.from.toISOString());
-      if (values.date?.to) params.set("dto", values.date.to.toISOString());
+      if (values.date?.to instanceof Date)
+        params.set("dto", values.date.to.toISOString());
       // Default is off, so only the on state needs to survive a refresh.
       if (values.useCareerScopes) params.set("scope", "1");
       const qs = params.toString();
@@ -254,7 +270,7 @@ export default function EmployeeSearchPage() {
 
   // ── Real Search Function ────────────────────────────────────────
   const runSearch = useCallback(
-    (data: TEmployeeSearchSchema, restorePage?: number) => {
+    (data: z.input<typeof employeeSearchSchema>, restorePage?: number) => {
       querySearchJobs({
         careerScopes: buildCareerScopes(data.useCareerScopes),
         // Only send keyword when it satisfies the server's @MinLength(2);
@@ -267,8 +283,8 @@ export default function EmployeeSearchPage() {
         jobType: data.jobType === "all" ? undefined : data.jobType,
         companySizeMin: data.companySize?.min,
         companySizeMax: data.companySize?.max,
-        postedDateFrom: data.date?.from?.toISOString(),
-        postedDateTo: data.date?.to?.toISOString(),
+        postedDateFrom: dateFilterToIso(data.date?.from),
+        postedDateTo: dateFilterToIso(data.date?.to),
         salaryMin: data.salaryRange?.min,
         salaryMax: data.salaryRange?.max,
         educationRequired:
@@ -292,6 +308,41 @@ export default function EmployeeSearchPage() {
     () => debounce(runSearch, SEARCH_DEBOUNCE_MS),
     [runSearch],
   );
+
+  // ── Build the payload the saved-search alert will store ─────────────
+  // Kept in step with `runSearch` above so a digest reruns the same query
+  // the user saved. Two things intentionally omitted: `excludeCompanyIds`
+  // (per-session state that would ossify into the saved payload) and
+  // `restorePage` (a page-load implementation detail, never a filter).
+  const buildSavedFilters = useCallback((): Record<string, unknown> => {
+    const data = getValues();
+    return {
+      careerScopes: buildCareerScopes(data.useCareerScopes),
+      keyword:
+        data.keyword && data.keyword.trim().length >= 2
+          ? data.keyword.trim()
+          : undefined,
+      location: data.location === "all" ? undefined : data.location,
+      jobType: data.jobType === "all" ? undefined : data.jobType,
+      companySizeMin: data.companySize?.min,
+      companySizeMax: data.companySize?.max,
+      postedDateFrom: dateFilterToIso(data.date?.from),
+      postedDateTo: dateFilterToIso(data.date?.to),
+      salaryMin: data.salaryRange?.min,
+      salaryMax: data.salaryRange?.max,
+      educationRequired:
+        data.educationLevel === undefined || data.educationLevel.length === 0
+          ? undefined
+          : data.educationLevel,
+      experienceLevel: data.experienceLevel,
+      workMode: data.workMode,
+      sortBy: data.sortBy,
+      sortOrder: data.orderBy?.toUpperCase(),
+    };
+    // getValues is stable per react-hook-form's contract; scopeNamesRef +
+    // buildCareerScopes are refs / pure helpers so the payload always reflects
+    // the very latest form state at click time rather than a stale closure.
+  }, [getValues]);
 
   // ── Clear All Filters ─────────────────────────────────────────────
   const clearAllFilters = useCallback(() => {
@@ -503,19 +554,38 @@ export default function EmployeeSearchPage() {
           }`}
         >
           {/* Filter Header Section */}
-          <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-4 sm:px-5">
+          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-4 py-4 sm:px-5">
             <TypographyH4 className="font-semibold">
               {t("refineResult")}
             </TypographyH4>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={clearAllFilters}
-              className="h-8 rounded-none px-2 text-xs"
-            >
-              {t("clearFilters")}
-            </Button>
+            <div className="flex items-center gap-1">
+              {/*
+                "Save this search" is what turns the current filter combination
+                into a digest — hidden until the user has actually narrowed
+                something so an empty search cannot become an all-jobs alert.
+              */}
+              {activeFilterCount > 0 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSaveSearchOpen(true)}
+                  className="h-8 rounded-none px-2 text-xs"
+                >
+                  <LucideBellPlus className="size-3" />
+                  {t("saveSearch")}
+                </Button>
+              )}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={clearAllFilters}
+                className="h-8 rounded-none px-2 text-xs"
+              >
+                {t("clearFilters")}
+              </Button>
+            </div>
           </div>
 
           {/* Filter Body Section */}
@@ -587,8 +657,14 @@ export default function EmployeeSearchPage() {
                     name="date"
                     control={control}
                     render={({ field }) => {
-                      const from = field.value?.from;
-                      const to = field.value?.to;
+                      const from =
+                        field.value?.from instanceof Date
+                          ? field.value.from
+                          : undefined;
+                      const to =
+                        field.value?.to instanceof Date
+                          ? field.value.to
+                          : undefined;
 
                       let selectedValue: string = "all";
                       if (!from && !to) selectedValue = "all";
@@ -1088,9 +1164,10 @@ export default function EmployeeSearchPage() {
                               : getValues("jobType"),
                           companySizeMin: getValues("companySize")?.min,
                           companySizeMax: getValues("companySize")?.max,
-                          postedDateFrom:
-                            getValues("date")?.from?.toISOString(),
-                          postedDateTo: getValues("date")?.to?.toISOString(),
+                          postedDateFrom: dateFilterToIso(
+                            getValues("date")?.from,
+                          ),
+                          postedDateTo: dateFilterToIso(getValues("date")?.to),
                           salaryMin: getValues("salaryRange")?.min,
                           salaryMax: getValues("salaryRange")?.max,
                           educationRequired: getValues("educationLevel")?.length
@@ -1130,6 +1207,15 @@ export default function EmployeeSearchPage() {
           </div>
         </div>
       </div>
+
+      {/* Save-search dialog — populated on submit from `buildSavedFilters`
+          so a keystroke that lands after the dialog opens is still captured. */}
+      <SaveSearchDialog
+        open={saveSearchOpen}
+        buildFilters={buildSavedFilters}
+        suggestedName={allValues.keyword?.trim() || undefined}
+        onClose={() => setSaveSearchOpen(false)}
+      />
     </form>
   );
 }

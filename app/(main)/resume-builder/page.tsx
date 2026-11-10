@@ -1,5 +1,7 @@
 "use client";
 
+import AccountDrafts from "@/components/resume-builder/account-drafts";
+import { startAccountDraft } from "@/utils/functions/resume/account-drafts";
 import ResumeBuilderBanner from "@/components/resume-builder/banner";
 import ResumeBuilderGenerate from "@/components/resume-builder/generate";
 import ResumeSourceInput from "@/components/resume-builder/source-input";
@@ -153,6 +155,7 @@ export default function ResumeBuilder() {
       const payload = parsed.data;
 
       removeLegacyResumeDraft();
+      startAccountDraft(currentUser.id);
       saveResumeDraft(currentUser.id, payload);
       setPayload(payload, currentUser.id);
       router.push("/resume-builder/edit");
@@ -172,6 +175,7 @@ export default function ResumeBuilder() {
     <div className="resume-builder-editorial animate-page-in mx-auto flex w-full max-w-[1500px] flex-col items-start gap-6 px-3 pb-8 sm:px-4 lg:px-5">
       {/* Banner Section */}
       <ResumeBuilderBanner />
+      {currentUser?.employee && <AccountDrafts owner={currentUser.id} />}
 
       {/* Builder Workspace Section */}
       <div className="grid w-full items-start gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">

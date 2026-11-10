@@ -35,7 +35,7 @@ vi.mock("@/hooks/chat/use-voice-recorder", () => ({
   }),
 }));
 
-vi.mock("@/stores/themes/theme-store", () => ({
+vi.mock("@/stores/themes/theme.store", () => ({
   useThemeStore: () => ({ theme: "light", systemTheme: "light" }),
 }));
 

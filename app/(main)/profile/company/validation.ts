@@ -8,7 +8,7 @@ import {
   selectedValidation,
   textValidation,
 } from "@/utils/functions/validation";
-import * as z from "zod";
+import * as z from "zod/v3";
 
 const basicInfoSchema = z.object({
   basicInfo: z

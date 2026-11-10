@@ -8,7 +8,6 @@ export interface IWeeklyActivity {
 export interface IRecentMatch {
   id: string;
   name: string;
-  avatar: string;
-  matchScore: number;
-  matchDate: string;
+  avatar: string | null;
+  matchedAt: string;
 }

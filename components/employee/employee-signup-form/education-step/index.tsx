@@ -1,4 +1,7 @@
-import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
+import {
+  TEmployeeSignUp,
+  TEmployeeSignUpInput,
+} from "@/app/(auth)/signup/employee/validation";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -32,9 +35,9 @@ function IsStudyingWatcher({
   errors,
 }: {
   index: number;
-  control: Control<TEmployeeSignUp> | undefined;
-  register: UseFormRegister<TEmployeeSignUp>;
-  errors: FieldErrors<TEmployeeSignUp> | undefined;
+  control: Control<TEmployeeSignUpInput, unknown, TEmployeeSignUp> | undefined;
+  register: UseFormRegister<TEmployeeSignUpInput>;
+  errors: FieldErrors<TEmployeeSignUpInput> | undefined;
 }) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
@@ -103,7 +106,7 @@ export default function EducationStepForm({
   register,
   errors,
   control,
-}: IStepFormProps<TEmployeeSignUp>) {
+}: IStepFormProps<TEmployeeSignUpInput, TEmployeeSignUp>) {
   /* ---------------------------------- Utils -------------------------------- */
   const t = useTranslations("auth");
 

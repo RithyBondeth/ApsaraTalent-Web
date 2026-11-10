@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getStatusBadgeStyleClass } from "@/utils/functions/ui";
-import { formatShortDate } from "@/utils/functions/date";
+import { formatInterviewTime, formatShortDate } from "@/utils/functions/date";
 import {
   LucideCalendarCheck,
   LucideCheck,
@@ -83,7 +83,7 @@ export function InterviewCard({
         <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1.5 border border-border bg-muted/45 px-3 py-1.5">
             <LucideCalendarCheck className="size-3.5" />
-            {formatShortDate(interview.scheduledAt)}
+            {formatInterviewTime(interview.scheduledAt, interview.timezone)}
           </span>
           <span className="inline-flex items-center gap-1.5 border border-border bg-muted/45 px-3 py-1.5">
             <LucideClock className="size-3.5" />

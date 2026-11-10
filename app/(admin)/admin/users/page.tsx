@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AdminListSkeleton } from "@/components/admin/admin-list-skeleton";
 import { PageState } from "@/components/utils/feedback/page-state";
 import { PageBanner } from "@/components/utils/layout/page-banner";
 import { useAdminStore } from "@/stores/apis/admin/admin.store";
@@ -126,11 +126,7 @@ export default function AdminUsersPage() {
       {/* Results Section */}
       <section className="border border-border bg-card p-5 shadow-hard">
         {loadingUsers && !users ? (
-          <div className="space-y-3">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <Skeleton key={index} className="h-14 w-full" />
-            ))}
-          </div>
+          <AdminListSkeleton rowClassName="h-14" />
         ) : error && !users ? (
           <PageState variant="error" title={error} compact />
         ) : users && users.items.length === 0 ? (

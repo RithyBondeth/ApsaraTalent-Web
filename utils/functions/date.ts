@@ -7,3 +7,4 @@ export * from "./date/format-short-date";
 export * from "./date/founded-year-options";
 export * from "./date/parse-maybe-date";
 export * from "./date/time-ago";
+export * from "./date/format-interview-time";

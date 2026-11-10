@@ -21,7 +21,7 @@ import {
   StaticPageShell,
   StaticSection,
 } from "@/components/static-content/static-page";
-import { useLanguageStore } from "@/stores/languages/language-store";
+import { useLanguageStore } from "@/stores/languages/language.store";
 
 /* -------------------------- Content & Data -------------------------- */
 const content = {

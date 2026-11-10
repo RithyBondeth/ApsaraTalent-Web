@@ -1,5 +1,6 @@
 import {
   LucideBarChart3,
+  LucideFileText,
   LucideBellRing,
   LucideBookMarked,
   LucideCalendarCheck,
@@ -38,6 +39,13 @@ export const sidebarList = [
     description: "All of the matching users",
     url: "/matching",
     icon: LucideHandshake,
+    badge: 0,
+  },
+  {
+    title: "Application",
+    description: "Track applications and applicants",
+    url: "/application",
+    icon: LucideFileText,
     badge: 0,
   },
   {

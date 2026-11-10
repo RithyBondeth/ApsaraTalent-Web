@@ -10,7 +10,7 @@ import LandingMatchVisual from "@/components/landing/landing-match-visual";
 import LandingFeatureTour from "@/components/landing/landing-feature-tour";
 import LandingFooter from "@/components/landing/landing-footer";
 import { ScrollProgressBar } from "@/components/utils/layout/scroll-progress-bar";
-import { useLanguageStore } from "@/stores/languages/language-store";
+import { useLanguageStore } from "@/stores/languages/language.store";
 
 export default function IndexPage() {
   /* ----------------------------------- Utils ---------------------------------- */

@@ -4,6 +4,198 @@
  */
 
 export interface paths {
+    "/admin/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminReportController_listAudit"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminJobController_listJobs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/jobs/{jobId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["AdminJobController_hideJob"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/jobs/{jobId}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AdminJobController_restoreJob"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/problem-reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminProblemReportController_listReports"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/problem-reports/{reportId}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["AdminProblemReportController_updateStatus"];
+        trace?: never;
+    };
+    "/admin/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminReportController_listReports"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/reports/{reportId}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["AdminReportController_updateReportStatus"];
+        trace?: never;
+    };
+    "/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminUserController_listUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminUserController_getOverview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminUserController_getUser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users/{userId}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["AdminUserController_updateUserStatus"];
+        trace?: never;
+    };
     "/ai/quota": {
         parameters: {
             query?: never;
@@ -20,7 +212,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/register-company": {
+    "/auth/2fa/disable": {
         parameters: {
             query?: never;
             header?: never;
@@ -29,14 +221,15 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["AuthController_registerCompany"];
+        /** Verify TOTP code and disable 2FA on the account. Requires auth. */
+        post: operations["AuthController_twoFactorDisable"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/auth/register-employee": {
+    "/auth/2fa/enable": {
         parameters: {
             query?: never;
             header?: never;
@@ -45,7 +238,75 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["AuthController_registerEmployee"];
+        /** Confirm TOTP code and activate 2FA on the account. Requires auth. */
+        post: operations["AuthController_twoFactorEnable"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/2fa/setup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Initiate 2FA setup — Generates TOTP secret and QR code URI. Requires auth. */
+        post: operations["AuthController_twoFactorSetup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/2fa/verify-login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify TOTP code after password login when 2FA is required. Public route. */
+        post: operations["AuthController_twoFactorVerifyLogin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/forgot-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthController_forgotPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/ice-servers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Returns Twilio TURN credentials for WebRTC peer connections. */
+        get: operations["AuthController_getIceServers"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -84,7 +345,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/verify-otp": {
+    "/auth/logout": {
         parameters: {
             query?: never;
             header?: never;
@@ -93,14 +354,14 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["AuthController_verifyOtp"];
+        post: operations["AuthController_logout"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/auth/forgot-password": {
+    "/auth/parse-resume": {
         parameters: {
             query?: never;
             header?: never;
@@ -109,23 +370,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["AuthController_forgotPassword"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/reset-password/{token}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["AuthController_resetPassword"];
+        post: operations["AuthController_parseResume"];
         delete?: never;
         options?: never;
         head?: never;
@@ -148,7 +393,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/logout": {
+    "/auth/register-company": {
         parameters: {
             query?: never;
             header?: never;
@@ -157,7 +402,39 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["AuthController_logout"];
+        post: operations["AuthController_registerCompany"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/register-employee": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthController_registerEmployee"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/reset-password/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthController_resetPassword"];
         delete?: never;
         options?: never;
         head?: never;
@@ -196,7 +473,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/2fa/setup": {
+    "/auth/verify-otp": {
         parameters: {
             query?: never;
             header?: never;
@@ -205,1276 +482,23 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Initiate 2FA setup — Generates TOTP secret and QR code URI. Requires auth. */
-        post: operations["AuthController_twoFactorSetup"];
+        post: operations["AuthController_verifyOtp"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/auth/2fa/enable": {
+    "/chat/attachment/{date}/{filename}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        put?: never;
-        /** Confirm TOTP code and activate 2FA on the account. Requires auth. */
-        post: operations["AuthController_twoFactorEnable"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/2fa/disable": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Verify TOTP code and disable 2FA on the account. Requires auth. */
-        post: operations["AuthController_twoFactorDisable"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/2fa/verify-login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Verify TOTP code after password login when 2FA is required. Public route. */
-        post: operations["AuthController_twoFactorVerifyLogin"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/parse-resume": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["AuthController_parseResume"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/ice-servers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Returns Twilio TURN credentials for WebRTC peer connections. */
-        get: operations["AuthController_getIceServers"];
+        get: operations["ChatController_getAttachment"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/social/google/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GoogleController_googleAuth"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/social/google/callback": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GoogleController_googleCallback"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/social/linkedin/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["LinkedInController_linkedInAuth"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/social/linkedin/callback": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["LinkedInController_linkedInCallback"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/social/github/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GithubController_githubAuth"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/social/github/callback": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GithubController_githubCallback"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/social/facebook/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["FacebookController_facebookAuth"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/social/facebook/callback": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["FacebookController_facebookCallback"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/storage/{folder}/{path}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["PublicStorageController_getPublicFile"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["HealthController_checkHealth"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/health/ready": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["HealthController_checkReadiness"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/health/live": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["HealthController_checkLiveness"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/generate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ResumeBuilderController_generateResume"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/generate-from-text": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ResumeBuilderController_generateResumeFromText"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/build-resume": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ResumeBuilderController_buildResume"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/optimize": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ResumeBuilderController_optimizeResume"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/cover-letter": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ResumeBuilderController_generateCoverLetter"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/cover-letter/stream": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ResumeBuilderController_streamCoverLetter"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/polish-cover-letter": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ResumeBuilderController_polishCoverLetter"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/polish-cover-letter/stream": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ResumeBuilderController_streamPolishCoverLetter"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/optimize/stream": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ResumeBuilderController_streamOptimizeResume"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/cover-letter-pdf": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ResumeBuilderController_generateCoverLetterPdf"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/interview-prep-pdf": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ResumeBuilderController_generateInterviewPrepPdf"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/refine-bio/stream": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ResumeBuilderController_streamRefineBio"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/template/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ResumeTemplateController_findAllResumeTemplate"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/template/one/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ResumeTemplateController_findOneResumeTemplateById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/template/create": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ResumeTemplateController_createResumeTemplate"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/resume/template/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ResumeTemplateController_searchResumeTemplate"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["UserController_findAllUsers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/one/{userId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["UserController_findOneUserById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/current-user": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["UserController_getCurrentUser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/push-token": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["UserController_updatePushNotificationToken"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/{eid}/favorite/company/{cid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["UserController_employeeFavoriteCompany"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/{eid}/unfavorite/{favoriteId}/company/{cid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["UserController_employeeUnfavoriteCompany"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/{cid}/favorite/employee/{eid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["UserController_companyFavoriteEmployee"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/{cid}/unfavorite/{favoriteId}/employee/{eid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["UserController_companyUnfavoriteEmployee"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/all-favorites/{eid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["UserController_findAllEmployeeFavorite"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/all-favorites/{cid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["UserController_findAllCompanyFavorite"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/count-favorite/{eid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["UserController_countEmployeeFavorite"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/count-favorite/{cid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["UserController_countCompanyFavorite"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/find-all-career-scopes": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["UserController_findAllCareerScopes"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/recommendation/employee/{employeeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["UserController_getEmployeeRecommendations"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/recommendation/company/{companyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["UserController_getCompanyRecommendations"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["EmployeeController_findAll"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/one/{employeeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["EmployeeController_findOneById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/{employeeId}/document/{type}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["EmployeeController_getDocument"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/update-info/{employeeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["EmployeeController_updateEmployeeInfo"];
-        trace?: never;
-    };
-    "/user/employee/upload-avatar/{employeeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["EmployeeController_uploadEmployeeAvatar"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/remove-avatar/{employeeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["EmployeeController_removeEmployeeAvatar"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/upload-resume/{employeeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["EmployeeController_uploadEmployeeResume"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/remove-resume/{employeeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["EmployeeController_removeEmployeeResume"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/upload-cover-letter/{employeeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["EmployeeController_uploadEmployeeCoverLetter"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/remove-cover-letter/{employeeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["EmployeeController_removeEmployeeCoverLetter"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/remove-education/{employeeId}/{educationId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["EmployeeController_removeEmployeeEducation"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/remove-experience/{employeeId}/{experienceId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["EmployeeController_removeEmployeeExperience"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/employee/search-employee": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["EmployeeController_searchEmployee"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["CompanyController_findAll"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/one/{companyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["CompanyController_findOneById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/update-info/{companyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["CompanyController_updateCompanyInfo"];
-        trace?: never;
-    };
-    "/user/company/upload-avatar/{companyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["CompanyController_uploadCompanyAvatar"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/remove-avatar/{companyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["CompanyController_removeCompanyAvatar"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/upload-cover/{companyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["CompanyController_uploadCompanyCover"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/remove-cover/{companyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["CompanyController_removeCompanyCover"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/upload-images/{companyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["CompanyController_uploadCompanyImages"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/remove-images/{companyId}/{imageId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["CompanyController_removeCompanyImage"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/remove-open-position/{companyId}/{opId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["CompanyController_removeOpenPosition"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/company/count": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["CompanyController_countAllCompanies"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/public/user/landing-stats": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["PublicUserController_getLandingStats"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/moderation/block/{userId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ModerationController_blockUser"];
-        delete: operations["ModerationController_unblockUser"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/moderation/blocked": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ModerationController_listBlockedUsers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/moderation/block-status/{userId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ModerationController_getBlockStatus"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/moderation/hidden-ids": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ModerationController_getHiddenProfileIds"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/moderation/report": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ModerationController_reportUser"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/user/support/report-problem": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["SupportController_reportProblem"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1529,14 +553,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/chat/attachment/{date}/{filename}": {
+    "/health": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["ChatController_getAttachment"];
+        get: operations["HealthController_checkHealth"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/health/live": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HealthController_checkLiveness"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/health/ready": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HealthController_checkReadiness"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1561,6 +617,236 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/job/application": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ApplicationController_applyApplication"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job/application/bulk-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Company-only. Moves many applications to the same stage in one request;
+         *     per-row failures are returned in the response body, not thrown, so a
+         *     mixed selection still updates the rows it can.
+         */
+        patch: operations["ApplicationController_bulkUpdateApplicationStatus"];
+        trace?: never;
+    };
+    "/job/application/job/{jobId}/company/{companyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ApplicationController_getJobApplications"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job/application/mine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ApplicationController_getMyApplications"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job/application/pipeline/job/{jobId}/company/{companyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Kanban read for one job. Same access rule as the flat applicant list. */
+        get: operations["ApplicationController_getJobPipeline"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job/application/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["ApplicationController_updateApplicationStatus"];
+        trace?: never;
+    };
+    "/job/application/{applicationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["ApplicationController_withdrawApplication"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job/application/{applicationId}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ApplicationController_listApplicationStatusHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job/application/{applicationId}/notes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ApplicationController_listApplicationNotes"];
+        put?: never;
+        post: operations["ApplicationController_createApplicationNote"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job/application/{applicationId}/notes/{noteId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["ApplicationController_deleteApplicationNote"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job/employer-analytics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["EmployerAnalyticsController_getEmployerAnalytics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job/saved-search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SavedSearchController_listSavedSearches"];
+        put?: never;
+        post: operations["SavedSearchController_createSavedSearch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/job/saved-search/{savedSearchId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["SavedSearchController_deleteSavedSearch"];
+        options?: never;
+        head?: never;
+        patch: operations["SavedSearchController_updateSavedSearch"];
+        trace?: never;
+    };
+    "/job/saved-search/{savedSearchId}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SavedSearchController_previewSavedSearch"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/job/search": {
         parameters: {
             query?: never;
@@ -1569,198 +855,6 @@ export interface paths {
             cookie?: never;
         };
         get: operations["JobController_searchJobs"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/match/employee/{eid}/like/{cid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["JobMatchingController_employeeLikes"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/match/unmatch/{eid}/{cid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["JobMatchingController_unmatch"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/match/employee/{eid}/matching-seen": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["JobMatchingController_markEmployeeMatchingSeen"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/match/company/{cid}/matching-seen": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["JobMatchingController_markCompanyMatchingSeen"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/match/company/{cid}/like/{eid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["JobMatchingController_companyLikes"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/match/current-employee-liked/{eid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["JobMatchingController_findCurrentEmployeeLiked"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/match/current-company-liked/{cid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["JobMatchingController_findCurrentCompanyLiked"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/match/current-employee-matching/{eid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["JobMatchingController_findCurrentEmployeeMatching"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/match/current-company-matching/{cid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["JobMatchingController_findCurrentCompanyMatching"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/match/current-employee-matching-count/{eid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["JobMatchingController_findCurrentEmployeeMatchingCount"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/match/current-company-matching-count/{cid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["JobMatchingController_findCurrentCompanyMatchingCount"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/match/analytics/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["JobMatchingController_getMatchingAnalytics"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1849,6 +943,182 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/match/analytics/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["JobMatchingController_getMatchingAnalytics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/company/{cid}/like/{eid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["JobMatchingController_companyLikes"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/company/{cid}/matching-seen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["JobMatchingController_markCompanyMatchingSeen"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/current-company-liked/{cid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["JobMatchingController_findCurrentCompanyLiked"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/current-company-matching-count/{cid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["JobMatchingController_findCurrentCompanyMatchingCount"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/current-company-matching/{cid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["JobMatchingController_findCurrentCompanyMatching"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/current-employee-liked/{eid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["JobMatchingController_findCurrentEmployeeLiked"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/current-employee-matching-count/{eid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["JobMatchingController_findCurrentEmployeeMatchingCount"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/current-employee-matching/{eid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["JobMatchingController_findCurrentEmployeeMatching"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/employee/{eid}/like/{cid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["JobMatchingController_employeeLikes"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/employee/{eid}/matching-seen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["JobMatchingController_markEmployeeMatchingSeen"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/match/interview": {
         parameters: {
             query?: never;
@@ -1865,22 +1135,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/match/interview/employee/{employeeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["InterviewController_getInterviewsByEmployee"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/match/interview/company/{companyId}": {
         parameters: {
             query?: never;
@@ -1889,6 +1143,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["InterviewController_getInterviewsByCompany"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/match/interview/employee/{employeeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["InterviewController_getInterviewsByEmployee"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1913,55 +1183,7 @@ export interface paths {
         patch: operations["InterviewController_updateInterviewStatus"];
         trace?: never;
     };
-    "/job/application": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ApplicationController_applyApplication"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/job/application/mine": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ApplicationController_getMyApplications"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/job/application/job/{jobId}/company/{companyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ApplicationController_getJobApplications"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/job/application/status": {
+    "/match/unmatch/{eid}/{cid}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1971,103 +1193,7 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["ApplicationController_updateApplicationStatus"];
-        trace?: never;
-    };
-    "/job/application/{applicationId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["ApplicationController_withdrawApplication"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/notification": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["NotificationController_listByUser"];
-        put?: never;
-        post: operations["NotificationController_createForCurrentUser"];
-        delete: operations["NotificationController_deleteAllNotifications"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/notification/unread-count": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["NotificationController_getUnreadCount"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/notification/{id}/read": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["NotificationController_markRead"];
-        trace?: never;
-    };
-    "/notification/read-all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["NotificationController_markAllRead"];
-        trace?: never;
-    };
-    "/notification/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["NotificationController_deleteNotification"];
+        delete: operations["JobMatchingController_unmatch"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2089,215 +1215,1898 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/notification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["NotificationController_listByUser"];
+        put?: never;
+        post: operations["NotificationController_createForCurrentUser"];
+        delete: operations["NotificationController_deleteAllNotifications"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notification/device-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["NotificationController_registerDeviceToken"];
+        post?: never;
+        delete: operations["NotificationController_removeDeviceToken"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notification/preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["NotificationPreferenceController_getPreferences"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["NotificationPreferenceController_updatePreferences"];
+        trace?: never;
+    };
+    "/notification/preferences/unsubscribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * One-click unsubscribe, reached from an email footer without a session.
+         *
+         *     POST rather than GET, and that is not a style choice. Corporate mail
+         *     scanners and link-preview bots fetch every URL in an incoming message; a
+         *     GET unsubscribe would opt people out of their own notifications before
+         *     they had read the email. RFC 8058 specifies POST for the same reason. The
+         *     link in the footer points at a page on the web app, which posts here.
+         *
+         *     Unauthenticated, so it is throttled hard: the token is the only credential
+         *     and there is nothing else standing between a guesser and someone's inbox
+         *     settings. It can only ever turn email off.
+         */
+        post: operations["NotificationPreferenceController_unsubscribe"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notification/read-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["NotificationController_markAllRead"];
+        trace?: never;
+    };
+    "/notification/unread-count": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["NotificationController_getUnreadCount"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notification/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["NotificationController_deleteNotification"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notification/{id}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["NotificationController_markRead"];
+        trace?: never;
+    };
+    "/public/job/sitemap/entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Feeds `app/sitemap.ts` in the web app. Cached for an hour in job-service,
+         *     so the crawl budget of every search engine put together costs one query.
+         */
+        get: operations["PublicJobController_findPublicJobSitemap"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/job/{jobId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Throttled harder than the authenticated routes because there is no account
+         *     behind a caller here — this is the cheapest endpoint on the platform to
+         *     enumerate, and it returns a whole posting per call.
+         */
+        get: operations["PublicJobController_findOneJob"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/user/career-scopes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PublicUserController_getCareerScopes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/user/landing-stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PublicUserController_getLandingStats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/build-resume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ResumeBuilderController_buildResume"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/cover-letter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ResumeBuilderController_generateCoverLetter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/cover-letter-pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ResumeBuilderController_generateCoverLetterPdf"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/cover-letter/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ResumeBuilderController_streamCoverLetter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/drafts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ResumeDraftController_list"];
+        put?: never;
+        post: operations["ResumeDraftController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/drafts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ResumeDraftController_read"];
+        put: operations["ResumeDraftController_update"];
+        post?: never;
+        delete: operations["ResumeDraftController_remove"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ResumeBuilderController_generateResume"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/generate-from-text": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ResumeBuilderController_generateResumeFromText"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/interview-prep-pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ResumeBuilderController_generateInterviewPrepPdf"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/optimize": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ResumeBuilderController_optimizeResume"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/optimize/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ResumeBuilderController_streamOptimizeResume"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/polish-cover-letter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ResumeBuilderController_polishCoverLetter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/polish-cover-letter/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ResumeBuilderController_streamPolishCoverLetter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/refine-bio/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ResumeBuilderController_streamRefineBio"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/template/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ResumeTemplateController_findAllResumeTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/template/create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ResumeTemplateController_createResumeTemplate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/template/one/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ResumeTemplateController_findOneResumeTemplateById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resume/template/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ResumeTemplateController_searchResumeTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/social/facebook/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["FacebookController_facebookCallback"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/social/facebook/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["FacebookController_facebookAuth"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/social/github/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GithubController_githubCallback"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/social/github/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GithubController_githubAuth"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/social/google/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GoogleController_googleCallback"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/social/google/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GoogleController_googleAuth"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/social/linkedin/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["LinkedInController_linkedInCallback"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/social/linkedin/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["LinkedInController_linkedInAuth"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/social/mobile/exchange": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["MobileOAuthController_exchange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/storage/{folder}/{path}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PublicStorageController_getPublicFile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/account/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AccountLifecycleController_requestDeletion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/account/delete/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AccountLifecycleController_cancelDeletion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/account/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Downloads the account's data as a JSON file. Service-side rate-limited
+         *     to once per 24 hours per user (see `AccountLifecycleService.exportData`);
+         *     this throttle is a second belt on the same braces.
+         *
+         *     The service returns the DTO; this controller sets the download headers
+         *     and streams the JSON body. `Content-Type: application/json` keeps the
+         *     file readable by whatever the user opens it with; `Content-Disposition`
+         *     gives it a filename dated to now so multiple exports don't overwrite.
+         */
+        get: operations["AccountLifecycleController_exportData"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_findAllUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CompanyController_findAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/all-favorites/{cid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_findAllCompanyFavorite"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/count": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CompanyController_countAllCompanies"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/count-favorite/{cid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_countCompanyFavorite"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/one/{companyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CompanyController_findOneById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/remove-avatar/{companyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CompanyController_removeCompanyAvatar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/remove-cover/{companyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CompanyController_removeCompanyCover"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/remove-images/{companyId}/{imageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["CompanyController_removeCompanyImage"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/remove-open-position/{companyId}/{opId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["CompanyController_removeOpenPosition"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/update-info/{companyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["CompanyController_updateCompanyInfo"];
+        trace?: never;
+    };
+    "/user/company/upload-avatar/{companyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CompanyController_uploadCompanyAvatar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/upload-cover/{companyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CompanyController_uploadCompanyCover"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/upload-images/{companyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CompanyController_uploadCompanyImages"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/{cid}/favorite/employee/{eid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UserController_companyFavoriteEmployee"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/company/{cid}/unfavorite/{favoriteId}/employee/{eid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UserController_companyUnfavoriteEmployee"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/current-user": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_getCurrentUser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["EmployeeController_findAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/all-favorites/{eid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_findAllEmployeeFavorite"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/count-favorite/{eid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_countEmployeeFavorite"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/one/{employeeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["EmployeeController_findOneById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/remove-avatar/{employeeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["EmployeeController_removeEmployeeAvatar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/remove-cover-letter/{employeeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["EmployeeController_removeEmployeeCoverLetter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/remove-education/{employeeId}/{educationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["EmployeeController_removeEmployeeEducation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/remove-experience/{employeeId}/{experienceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["EmployeeController_removeEmployeeExperience"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/remove-resume/{employeeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["EmployeeController_removeEmployeeResume"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/search-employee": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["EmployeeController_searchEmployee"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/update-info/{employeeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["EmployeeController_updateEmployeeInfo"];
+        trace?: never;
+    };
+    "/user/employee/upload-avatar/{employeeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["EmployeeController_uploadEmployeeAvatar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/upload-cover-letter/{employeeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["EmployeeController_uploadEmployeeCoverLetter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/upload-resume/{employeeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["EmployeeController_uploadEmployeeResume"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/{eid}/favorite/company/{cid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UserController_employeeFavoriteCompany"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/{eid}/unfavorite/{favoriteId}/company/{cid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UserController_employeeUnfavoriteCompany"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/employee/{employeeId}/document/{type}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["EmployeeController_getDocument"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/find-all-career-scopes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_findAllCareerScopes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/me/privacy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["ProfileAnalyticsController_updatePrivacySettings"];
+        trace?: never;
+    };
+    "/user/me/profile-analytics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ProfileAnalyticsController_getMyProfileAnalytics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/moderation/block-status/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ModerationController_getBlockStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/moderation/block/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ModerationController_blockUser"];
+        delete: operations["ModerationController_unblockUser"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/moderation/blocked": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ModerationController_listBlockedUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/moderation/hidden-ids": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ModerationController_getHiddenProfileIds"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/moderation/report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ModerationController_reportUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/one/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_findOneUserById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/push-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UserController_updatePushNotificationToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/recommendation/company/{companyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_getCompanyRecommendations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/recommendation/employee/{employeeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_getEmployeeRecommendations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/support/report-problem": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SupportController_reportProblem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        JobDTO: {
-            title: string;
-            description: string;
-            type: string;
-            experienceRequired: string;
-            educationRequired: string;
-            skillsRequired: string;
-            salary?: string;
-            salaryMin?: number;
-            salaryMax?: number;
-            salaryCurrency?: string;
+        AdminActionResponseDTO: {
+            message: string;
+        };
+        AdminAuditEntryDTO: {
             /** @enum {string} */
-            workMode?: "remote" | "on_site" | "hybrid" | "flexible";
-            location?: string;
-            languagesRequired?: string[];
-            openingsCount?: number;
-            /** Format: date-time */
-            expireDate: string;
-        };
-        BenefitDTO: {
-            label: string;
-        };
-        ValueDTO: {
-            label: string;
-        };
-        CareerScopeDTO: {
-            name: string;
-            description?: string;
-        };
-        SocialDTO: {
-            platform?: string;
-            url?: string;
-        };
-        CompanyRegisterDTO: {
-            authEmail?: boolean;
-            /** Format: email */
-            email: string;
-            password: string;
-            name: string;
-            description: string;
-            phone: string;
-            avatar?: Record<string, never>;
-            cover?: Record<string, never>;
-            images?: Record<string, never>[];
-            industry: string;
-            location: string;
-            companySize: number;
-            foundedYear: number;
-            jobs?: components["schemas"]["JobDTO"][];
-            benefits?: components["schemas"]["BenefitDTO"][];
-            values?: components["schemas"]["ValueDTO"][];
-            careerScopes?: components["schemas"]["CareerScopeDTO"][];
-            socials?: components["schemas"]["SocialDTO"][];
-            /** Format: uri */
-            websiteUrl?: string;
-            companyType?: string;
-        };
-        SkillResponseDTO: {
-            id?: string;
-            name: string;
-            description?: string;
-        };
-        ExperienceResponseDTO: {
-            id?: string;
-            title: string;
-            company?: string;
-            description: string;
-            /** Format: date-time */
-            startDate: string;
-            /** Format: date-time */
-            endDate: string;
-        };
-        EducationResponseDTO: {
-            id?: string;
-            school: string;
-            degree: string;
-            year: string;
-        };
-        SocialResponseDTO: {
-            id?: string;
-            platform: string;
-            url: string;
-        };
-        CareerScopesResponseDTO: {
-            id?: string;
-            name: string;
-            description?: string;
-        };
-        EmployeeResponseDTO: {
-            userId?: string;
-            id: string;
-            firstname: string;
-            lastname: string;
-            /** Format: date-time */
-            dob?: string;
-            username: string;
-            /** @enum {string} */
-            gender: "male" | "female" | "other";
-            avatar?: string;
-            phone: string;
-            email?: string;
-            job: string;
-            yearsOfExperience: string;
-            availability: string;
-            description: string;
-            location: string;
-            resume?: string;
-            coverLetter?: string;
-            /** @enum {string} */
-            workMode?: "remote" | "on_site" | "hybrid" | "flexible";
-            /** @enum {string} */
-            noticePeriod?: "immediate" | "2_weeks" | "1_month";
-            portfolioUrl?: string;
-            linkedinUrl?: string;
-            languages?: string[];
-            expectedSalaryMin?: number;
-            expectedSalaryMax?: number;
-            isHide: boolean;
-            skills?: components["schemas"]["SkillResponseDTO"][];
-            experiences?: components["schemas"]["ExperienceResponseDTO"][];
-            educations?: components["schemas"]["EducationResponseDTO"][];
-            socials?: components["schemas"]["SocialResponseDTO"][];
-            careerScopes?: components["schemas"]["CareerScopesResponseDTO"][];
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-        };
-        ImageResponseDTO: {
-            id?: string;
-            image: string;
-        };
-        JobPositionResponseDTO: {
-            experience: string;
-            education: string;
-            skills: string[];
-            deadlineDate: string | null;
-            postedDate: string | null;
-            id: string;
-            title: string;
-            description: string;
-            salary: string;
-            salaryMin?: number;
-            salaryMax?: number;
-            salaryCurrency?: string;
-            /** @enum {string} */
-            workMode?: "remote" | "on_site" | "hybrid" | "flexible";
-            location?: string;
-            languagesRequired?: string[];
-            openingsCount?: number;
-            type: string;
-        };
-        ValuesAndBenefitsResponseDTO: {
-            id?: number;
-            label: string;
-        };
-        CompanyResponseDTO: {
-            availableTimes: string[];
-            id: string;
-            name: string;
-            industry: string;
-            description: string;
-            avatar?: string;
-            cover?: string;
-            companySize: number;
-            foundedYear: number;
-            location: string;
-            phone?: string;
-            email?: string;
-            websiteUrl?: string;
-            companyType?: string;
-            images?: components["schemas"]["ImageResponseDTO"][];
-            openPositions?: components["schemas"]["JobPositionResponseDTO"][];
-            values?: components["schemas"]["ValuesAndBenefitsResponseDTO"][];
-            benefits?: components["schemas"]["ValuesAndBenefitsResponseDTO"][];
-            careerScopes?: components["schemas"]["CareerScopesResponseDTO"][];
-            socials: components["schemas"]["SocialResponseDTO"][];
+            action: "user_suspended" | "user_banned" | "user_reinstated" | "report_status_changed" | "job_hidden" | "job_restored";
+            actorEmail: string | null;
             /** Format: date-time */
             createdAt: string;
+            id: string;
+            metadata: {
+                [key: string]: unknown;
+            } | null;
+            reason: string | null;
+            targetReportId: string | null;
+            targetUserId: string | null;
         };
-        UserResponseDTO: {
+        AdminHideJobBodyDTO: {
+            /**
+             * @description Required and substantial, like a suspension reason: it is shown to the
+             *     company whose posting was taken down, and it is the only part of the
+             *     audit row a human will read later.
+             */
+            reason: string;
+        };
+        AdminJobListItemDTO: {
+            companyId: string | null;
+            companyName: string;
+            /** @description Pending reports against the company that placed it. */
+            companyOpenReportCount: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            expireDate: string | null;
+            /**
+             * Format: date-time
+             * @description Null means the posting is live.
+             */
+            hiddenAt: string | null;
+            hiddenReason: string | null;
+            id: string;
+            location: string | null;
+            title: string;
+            type: string;
+        };
+        AdminOverviewDTO: {
+            bannedUsers: number;
+            companies: number;
+            employees: number;
+            hiddenJobs: number;
+            liveJobs: number;
+            newUsersLast7Days: number;
+            pendingReports: number;
+            suspendedUsers: number;
+            totalUsers: number;
+        };
+        AdminPagedAuditDTO: {
+            items: components["schemas"]["AdminAuditEntryDTO"][];
+            limit: number;
+            page: number;
+            total: number;
+        };
+        AdminPagedJobsDTO: {
+            items: components["schemas"]["AdminJobListItemDTO"][];
+            limit: number;
+            page: number;
+            total: number;
+        };
+        AdminPagedProblemReportsDTO: {
+            items: components["schemas"]["AdminProblemReportDTO"][];
+            limit: number;
+            page: number;
+            total: number;
+        };
+        AdminPagedReportsDTO: {
+            items: components["schemas"]["AdminReportDTO"][];
+            limit: number;
+            page: number;
+            total: number;
+        };
+        AdminPagedUsersDTO: {
+            items: components["schemas"]["AdminUserListItemDTO"][];
+            limit: number;
+            page: number;
+            total: number;
+        };
+        AdminProblemReportDTO: {
+            /** @enum {string} */
+            category: "bug" | "account" | "payment" | "content" | "other";
+            /** Format: date-time */
+            createdAt: string;
+            details: string;
+            id: string;
+            pageUrl: string | null;
+            /** @description Null when the reporter's account has since been deleted (FK is SET NULL). */
+            reporter: components["schemas"]["AdminProblemReportReporterDTO"] | null;
+            resolutionNote: string | null;
+            /** @enum {string} */
+            status: "pending" | "reviewed" | "resolved" | "dismissed";
+            userAgent: string | null;
+        };
+        AdminProblemReportReporterDTO: {
+            email: string;
             id: string;
             /** @enum {string} */
             role: "employee" | "company" | "admin" | "none";
-            email?: string;
-            phone?: string;
-            isEmailVerified?: boolean;
-            profileCompleted?: boolean;
-            isTwoFactorEnabled?: boolean;
-            employee?: components["schemas"]["EmployeeResponseDTO"];
-            company?: components["schemas"]["CompanyResponseDTO"];
+        };
+        AdminReportDTO: {
+            /** Format: date-time */
+            createdAt: string;
+            details: string | null;
+            id: string;
             /** @enum {string} */
-            lastLoginMethod?: "email_password" | "phone_otp" | "google" | "facebook" | "linkedin" | "github";
+            reason: "spam" | "harassment" | "inappropriate_content" | "fake_profile" | "scam" | "other";
+            reported: components["schemas"]["AdminReportPartyDTO"] | null;
+            reporter: components["schemas"]["AdminReportPartyDTO"] | null;
+            /** @enum {string} */
+            status: "pending" | "reviewed" | "resolved" | "dismissed";
+        };
+        AdminReportPartyDTO: {
+            email: string | null;
+            id: string;
+            name: string;
+            /** @enum {string} */
+            role: "employee" | "company" | "admin" | "none";
+        };
+        AdminUpdateProblemReportStatusBodyDTO: {
+            note?: string;
+            /** @enum {string} */
+            status: "pending" | "reviewed" | "resolved" | "dismissed";
+        };
+        AdminUpdateReportStatusBodyDTO: {
+            note?: string;
+            /** @enum {string} */
+            status: "pending" | "reviewed" | "resolved" | "dismissed";
+        };
+        AdminUpdateUserStatusBodyDTO: {
+            /**
+             * @description Required, and required to be substantial. The reason is shown to the
+             *     affected user and is the only part of the audit row a human will actually
+             *     read six months from now; "spam" tells nobody anything.
+             */
+            reason: string;
+            /** @enum {string} */
+            status: "active" | "suspended" | "banned";
+            /**
+             * @description ISO date. Only meaningful for a suspension; a ban never expires and the
+             *     service rejects the combination rather than silently ignoring it.
+             */
+            suspendedUntil?: string;
+        };
+        AdminUserDetailDTO: {
+            avatar: string | null;
+            companyId: string | null;
             /** Format: date-time */
-            lastLoginAt?: string;
+            createdAt: string;
+            email: string | null;
+            employeeId: string | null;
+            id: string;
+            isEmailVerified: boolean;
             /** Format: date-time */
-            createdAt?: string;
+            lastLoginAt: string | null;
+            lastLoginMethod: string | null;
+            name: string;
+            /** @description Reports filed against this account that are still pending. */
+            openReportCount: number;
+            phone: string | null;
+            profileCompleted: boolean;
+            reportsAgainst: components["schemas"]["AdminReportDTO"][];
+            /** @enum {string} */
+            role: "employee" | "company" | "admin" | "none";
+            /**
+             * @description The status as the platform enforces it — an expired suspension reads as active.
+             * @enum {string}
+             */
+            status: "active" | "suspended" | "banned";
+            statusHistory: components["schemas"]["AdminAuditEntryDTO"][];
+            statusReason: string | null;
+            /**
+             * @description The status as stored, so an admin can tell a lapsed suspension from a lifted one.
+             * @enum {string}
+             */
+            storedStatus: "active" | "suspended" | "banned";
             /** Format: date-time */
-            updatedAt?: string;
+            suspendedUntil: string | null;
+        };
+        AdminUserListItemDTO: {
+            avatar: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            email: string | null;
+            id: string;
+            isEmailVerified: boolean;
+            /** Format: date-time */
+            lastLoginAt: string | null;
+            name: string;
+            /** @description Reports filed against this account that are still pending. */
+            openReportCount: number;
+            phone: string | null;
+            profileCompleted: boolean;
+            /** @enum {string} */
+            role: "employee" | "company" | "admin" | "none";
+            /**
+             * @description The status as the platform enforces it — an expired suspension reads as active.
+             * @enum {string}
+             */
+            status: "active" | "suspended" | "banned";
+            statusReason: string | null;
+            /**
+             * @description The status as stored, so an admin can tell a lapsed suspension from a lifted one.
+             * @enum {string}
+             */
+            storedStatus: "active" | "suspended" | "banned";
+            /** Format: date-time */
+            suspendedUntil: string | null;
+        };
+        AiInterviewPrepQuestion: {
+            category: string;
+            question: string;
+            questionKm: string;
+            tip: string;
+            tipKm: string;
+        };
+        AiInterviewPrepResponseDTO: {
+            questions: components["schemas"]["AiInterviewPrepQuestion"][];
+        };
+        AiMatchExplanationResponseDTO: {
+            explanation: string;
+            gaps: string[];
+            score: number;
+            strengths: string[];
+            verdict: string;
+        };
+        ApplicationNoteResponseDTO: {
+            applicationId: string;
+            authorId: string | null;
+            authorName: string | null;
+            body: string;
+            /** Format: date-time */
+            createdAt: string;
+            id: string;
+        };
+        ApplicationStatusHistoryEntryDTO: {
+            actorId: string | null;
+            actorName: string | null;
+            applicationId: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** @enum {string|null} */
+            from: "pending" | "reviewed" | "shortlisted" | "interviewing" | "offered" | "rejected" | "hired" | "withdrawn" | null;
+            id: string;
+            note: string | null;
+            /** @enum {string} */
+            to: "pending" | "reviewed" | "shortlisted" | "interviewing" | "offered" | "rejected" | "hired" | "withdrawn";
+        };
+        ApplyApplicationDTO: {
+            coverLetterNote?: string;
+            /** Format: uuid */
+            jobId: string;
+        };
+        ApplyApplicationResponseDTO: {
+            /** Format: date-time */
+            appliedAt: string;
+            coverLetterNote?: string;
+            employeeId?: string;
+            employeeName?: string;
+            id: string;
+            jobId?: string;
+            jobTitle?: string;
+            /**
+             * @description The applicant's overall fit for this company, 0-100, reused from
+             *     `JobMatching.matchScore` rather than recomputed. Null when the pair has
+             *     never been scored — an applicant who arrived without ever swiping.
+             *     Only populated on the company's applicant list.
+             */
+            matchScore?: number | null;
+            /** @description Set only on a rejection, and only when the company gave one. */
+            rejectionReason?: string | null;
+            /**
+             * Format: date-time
+             * @description Null until the owning company first opens the applicant list.
+             */
+            reviewedAt?: string | null;
+            /** @enum {string} */
+            status: "pending" | "reviewed" | "shortlisted" | "interviewing" | "offered" | "rejected" | "hired" | "withdrawn";
+            /**
+             * Format: date-time
+             * @description Null while the application has never left PENDING.
+             */
+            statusChangedAt?: string | null;
+        };
+        BlockActionResponseDTO: {
+            blocked: boolean;
+            message: string;
+        };
+        BlockStatusResponseDTO: {
+            blockedByMe: boolean;
+            blockedMe: boolean;
+            isBlocked: boolean;
+        };
+        BlockedUserResponseDTO: {
+            avatar: string | null;
+            /** Format: date-time */
+            blockedAt: string;
+            companyId: string | null;
+            employeeId: string | null;
+            id: string;
+            name: string;
+            /** @enum {string} */
+            role: "employee" | "company" | "admin" | "none";
+        };
+        BuildResumeDTO: {
+            availability?: string;
+            careerScopes?: string[];
+            design?: components["schemas"]["ResumeDesignDTO"];
+            education?: string;
+            experience: components["schemas"]["ResumeExperienceDTO"][];
+            personalInfo: components["schemas"]["PersonalInfoDTO"];
+            sectionOrder?: ("summary" | "experience" | "skills" | "education" | "careerScopes")[];
+            skills: string[];
+            summary?: string;
+            /** @enum {string} */
+            template: "modern" | "classic" | "creative" | "minimalist" | "timeline" | "bold" | "compact" | "elegant" | "colorful" | "professional" | "corporate" | "dark" | "executive" | "tech" | "academic" | "startup" | "swiss" | "pastel";
+            yearsOfExperience?: string;
+        };
+        BuildResumeResponseDTO: {
+            /** @description Base64-encoded PDF content */
+            data: string;
+            filename: string;
+            mimeType: string;
+        };
+        BulkUpdateApplicationStatusDTO: {
+            /**
+             * @description Applications to move. All are validated against the same target status;
+             *     per-row failures come back in the response rather than failing the batch,
+             *     so a mixed selection (some already terminal, some fine to move) is still
+             *     usable.
+             */
+            applicationIds: string[];
+            rejectionReason?: string;
+            /** @enum {string} */
+            status: "pending" | "reviewed" | "shortlisted" | "interviewing" | "offered" | "rejected" | "hired" | "withdrawn";
+        };
+        BulkUpdateApplicationStatusItemResultDTO: {
+            applicationId: string;
+            ok: boolean;
+            /** @description Human-readable reason on failure. Null on success. */
+            reason: string | null;
+            /**
+             * @description New status when ok; unchanged status when not.
+             * @enum {string}
+             */
+            status: "pending" | "reviewed" | "shortlisted" | "interviewing" | "offered" | "rejected" | "hired" | "withdrawn";
+        };
+        BulkUpdateApplicationStatusResponseDTO: {
+            failedCount: number;
+            results: components["schemas"]["BulkUpdateApplicationStatusItemResultDTO"][];
+            updatedCount: number;
+        };
+        CancelAccountDeletionResponseDTO: {
+            message: string;
+        };
+        CareerScopesResponseDTO: {
+            description?: string;
+            id?: string;
+            name: string;
+        };
+        CompanyFavoriteEmployeeResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        CompanyFavoritesListItemDTO: {
+            createdAt: string;
+            employee: components["schemas"]["EmployeeResponseDTO"];
+            id: string;
+            userId: string;
+        };
+        CompanyInJobResponseDTO: {
+            avatar: string;
+            companySize: number;
+            id: string;
+            industry: string;
+            location: string;
+            name: string;
+            user: components["schemas"]["UserInJobResponseDTO"];
+        };
+        CompanyRegisterDTO: {
+            authEmail?: boolean;
+            avatar?: Record<string, never>;
+            benefits?: components["schemas"]["RegisterCompanyBenefitDTO"][];
+            careerScopes?: components["schemas"]["RegisterCompanyCareerScopeDTO"][];
+            companySize: number;
+            companyType?: string;
+            cover?: Record<string, never>;
+            description: string;
+            /** Format: email */
+            email: string;
+            foundedYear: number;
+            images?: Record<string, never>[];
+            industry: string;
+            jobs?: components["schemas"]["RegisterCompanyJobDTO"][];
+            location: string;
+            name: string;
+            password: string;
+            phone: string;
+            socials?: components["schemas"]["RegisterCompanySocialDTO"][];
+            values?: components["schemas"]["RegisterCompanyValueDTO"][];
+            /** Format: uri */
+            websiteUrl?: string;
         };
         CompanyRegisterResponseDTO: {
             accessToken?: string | null;
+            message: string;
             refreshToken?: string | null;
-            user?: components["schemas"]["UserResponseDTO"];
             requiresTwoFactor?: boolean;
+            success?: boolean;
             /**
              * @description Short-lived signed proof that the password step just succeeded. Replaces
              *     the bare `userId` this used to return: an id is public — it comes back in
@@ -2305,67 +3114,245 @@ export interface components {
              *     asking. The signature is what binds the two halves of the login.
              */
             twoFactorToken?: string;
+            user?: components["schemas"]["UserResponseDTO"];
+        };
+        CompanyResponseDTO: {
+            availableTimes: string[];
+            avatar?: string;
+            benefits?: components["schemas"]["ValuesAndBenefitsResponseDTO"][];
+            careerScopes?: components["schemas"]["CareerScopesResponseDTO"][];
+            companySize: number;
+            companyType?: string;
+            cover?: string;
+            /** Format: date-time */
+            createdAt: string;
+            description: string;
+            email?: string;
+            foundedYear: number;
+            id: string;
+            images?: components["schemas"]["ImageResponseDTO"][];
+            industry: string;
+            location: string;
+            name: string;
+            openPositions?: components["schemas"]["JobPositionResponseDTO"][];
+            phone?: string;
+            socials: components["schemas"]["SocialResponseDTO"][];
+            values?: components["schemas"]["ValuesAndBenefitsResponseDTO"][];
+            websiteUrl?: string;
+        };
+        CompanyUnfavoriteEmployeeResponseDTO: {
             message: string;
             success?: boolean;
         };
-        EducationDTO: {
-            school?: string;
+        CountAllUsersResponseDTO: {
+            totalCompanies?: number;
+            totalEmployees?: number;
+            totalUsers?: number;
+        };
+        CreateApplicationNoteDTO: {
+            body: string;
+        };
+        CreateInterviewDTO: {
+            /**
+             * Format: uuid
+             * @description The application this interview is for.
+             *
+             *     Optional: an interview scheduled off a mutual match has no application
+             *     behind it, and that path is unchanged. When it is supplied, it both links
+             *     the interview to a role and stands in for the match gate — an application
+             *     is the candidate asking to be considered, which is the consent the gate
+             *     exists to check.
+             */
+            applicationId?: string;
+            /** Format: uuid */
+            companyId: string;
+            createdBy?: string;
+            description?: string;
+            durationMinutes?: number;
+            /** Format: uuid */
+            employeeId: string;
+            location?: string;
+            meetingLink?: string;
+            scheduledAt: string;
+            /**
+             * @description IANA timezone the client picked the time in — e.g. `Asia/Phnom_Penh`.
+             *
+             *     Optional so an older client that does not send it still works; the server
+             *     stores null and the renderer falls back to UTC. The web app sends
+             *     `Intl.DateTimeFormat().resolvedOptions().timeZone` on submit.
+             */
+            timezone?: string;
+            title: string;
+        };
+        CreateInterviewResponseDTO: {
+            /** @description Null for interviews that came from a match rather than an application. */
+            applicationId?: string | null;
+            company: components["schemas"]["CompanyResponseDTO"];
+            /** Format: date-time */
+            createdAt: string;
+            createdBy: string | null;
+            description: string | null;
+            durationMinutes: number;
+            employee: components["schemas"]["EmployeeResponseDTO"];
+            id: string;
+            location: string | null;
+            meetingLink: string | null;
+            /** @description Auth user ID to notify via socket — populated by the service, not persisted. */
+            notifyUserId?: string | null;
+            /** Format: date-time */
+            scheduledAt: string;
+            status: string;
+            /** @description IANA timezone name of the scheduler, or null on legacy rows. */
+            timezone: string | null;
+            title: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        CreateNotificationCurrentUserDTO: {
+            data?: {
+                [key: string]: unknown;
+            };
+            /**
+             * @description Files to attach to the email side of the notification. Ignored when
+             *     `sendEmail` resolves to false. Kept optional — the vast majority of
+             *     emits have no attachment; only interview invites do today.
+             */
+            emailAttachments?: Record<string, never>[];
+            message: string;
+            /**
+             * @description Whether this notification may also be emailed. Defaults to true.
+             *
+             *     The default is safe because the *preference* defaults decide the outcome:
+             *     a chat message resolves to the MESSAGE category, whose email default is
+             *     off, so opting every emit in does not turn the platform into a mailing
+             *     list. Pass `false` only for something that should never be email, whatever
+             *     the reader has chosen.
+             */
+            sendEmail?: boolean;
+            sendPush?: boolean;
+            senderAvatar?: string;
+            title: string;
+            type?: string;
+            userId?: string;
+        };
+        CreateNotificationCurrentUserResponseDTO: {
+            /** Format: date-time */
+            createdAt: string;
+            data: {
+                [key: string]: unknown;
+            } | null;
+            id: string;
+            isRead: boolean;
+            message: string;
+            title: string;
+            type: string | null;
+        };
+        CreateReportBodyDTO: {
+            details?: string;
+            /** @enum {string} */
+            reason: "spam" | "harassment" | "inappropriate_content" | "fake_profile" | "scam" | "other";
+            /** Format: uuid */
+            reportedId: string;
+        };
+        CreateResumeDraftDTO: {
+            /** @description Incomplete resume document, including design and sectionOrder. Maximum 2 MB. */
+            content: {
+                [key: string]: unknown;
+            };
+            /** Format: uuid */
+            id: string;
+            name: string;
+        };
+        CreateResumeTemplateDTO: {
+            description: string;
+            isPremium: boolean;
+            price: number;
+            /** @enum {string} */
+            templateKey: "modern" | "classic" | "creative" | "minimalist" | "timeline" | "bold" | "compact" | "elegant" | "colorful" | "professional" | "corporate" | "dark" | "executive" | "tech" | "academic" | "startup" | "swiss" | "pastel";
+            title: string;
+        };
+        CreateResumeTemplateResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        CreateSavedSearchDTO: {
+            /**
+             * @description The search DTO to persist. Validated as SearchJobDTO so a bad filter is
+             *     rejected at the door rather than at digest time when the user cannot see
+             *     the failure.
+             */
+            filters: components["schemas"]["SearchJobDTO"];
+            /** @enum {string} */
+            frequency?: "off" | "daily" | "weekly";
+            name: string;
+        };
+        DeleteNotificationResponseDTO: {
+            affected?: number;
+            success: boolean;
+        };
+        DeviceTokenBodyDTO: {
+            token: string;
+        };
+        DeviceTokenResponseDTO: {
+            success: boolean;
+        };
+        EducationResponseDTO: {
             degree: string;
+            id?: string;
+            school: string;
             year: string;
         };
-        SkillDTO: {
-            name: string;
-            description?: string;
+        EmployeeFavoriteCompanyResponseDTO: {
+            message: string;
+            success?: boolean;
         };
-        ExperienceDTO: {
-            title: string;
-            company?: string;
-            description: string;
-            /** Format: date-time */
-            startDate: string;
-            /** Format: date-time */
-            endDate: string;
+        EmployeeFavoritesListItemDTO: {
+            company: components["schemas"]["CompanyResponseDTO"];
+            createdAt: string;
+            id: string;
+            userId: string;
         };
         EmployeeRegisterDTO: {
             authEmail?: boolean;
-            /** Format: email */
-            email?: string;
-            password: string;
-            firstname?: string;
-            lastname?: string;
+            availability?: string;
+            careerScopes?: components["schemas"]["RegisterEmployeeCareerScopeDTO"][];
+            description?: string;
             /** Format: date-time */
             dob?: string;
-            username?: string;
+            educations?: components["schemas"]["RegisterEmployeeEducationDTO"][];
+            /** Format: email */
+            email?: string;
+            expectedSalaryMax?: number;
+            expectedSalaryMin?: number;
+            experiences?: components["schemas"]["RegisterEmployeeExperienceDTO"][];
+            firstname?: string;
             /** @enum {string} */
             gender?: "male" | "female" | "other";
             job: string;
-            yearsOfExperience?: string;
-            availability?: string;
-            description?: string;
-            location: string;
-            phone?: string;
-            educations?: components["schemas"]["EducationDTO"][];
-            skills?: components["schemas"]["SkillDTO"][];
-            experiences?: components["schemas"]["ExperienceDTO"][];
-            careerScopes?: components["schemas"]["CareerScopeDTO"][];
-            socials?: components["schemas"]["SocialDTO"][];
-            /** @enum {string} */
-            workMode?: "remote" | "on_site" | "hybrid" | "flexible";
-            /** @enum {string} */
-            noticePeriod?: "immediate" | "2_weeks" | "1_month";
-            /** Format: uri */
-            portfolioUrl?: string;
+            languages?: string[];
+            lastname?: string;
             /** Format: uri */
             linkedinUrl?: string;
-            languages?: string[];
-            expectedSalaryMin?: number;
-            expectedSalaryMax?: number;
+            location: string;
+            /** @enum {string} */
+            noticePeriod?: "immediate" | "2_weeks" | "1_month";
+            password: string;
+            phone?: string;
+            /** Format: uri */
+            portfolioUrl?: string;
+            skills?: components["schemas"]["RegisterEmployeeSkillDTO"][];
+            socials?: components["schemas"]["RegisterEmployeeSocialDTO"][];
+            username?: string;
+            /** @enum {string} */
+            workMode?: "remote" | "on_site" | "hybrid" | "flexible";
+            yearsOfExperience?: string;
         };
         EmployeeRegisterResponseDTO: {
             accessToken?: string | null;
+            message: string;
             refreshToken?: string | null;
-            user?: components["schemas"]["UserResponseDTO"];
             requiresTwoFactor?: boolean;
+            success?: boolean;
             /**
              * @description Short-lived signed proof that the password step just succeeded. Replaces
              *     the bare `userId` this used to return: an id is public — it comes back in
@@ -2373,53 +3360,166 @@ export interface components {
              *     asking. The signature is what binds the two halves of the login.
              */
             twoFactorToken?: string;
-            message: string;
-            success?: boolean;
-        };
-        LoginDTO: {
-            identifier: string;
-            password: string;
-        };
-        LoginResponseDTO: {
-            accessToken?: string | null;
-            refreshToken?: string | null;
             user?: components["schemas"]["UserResponseDTO"];
-            requiresTwoFactor?: boolean;
-            /**
-             * @description Short-lived signed proof that the password step just succeeded. Replaces
-             *     the bare `userId` this used to return: an id is public — it comes back in
-             *     feed, search and matching responses — so it proved nothing about who was
-             *     asking. The signature is what binds the two halves of the login.
-             */
-            twoFactorToken?: string;
-            message: string;
-            success?: boolean;
         };
-        LoginOtpDTO: {
+        EmployeeResponseDTO: {
+            availability: string;
+            avatar?: string;
+            careerScopes?: components["schemas"]["CareerScopesResponseDTO"][];
+            coverLetter?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            description: string;
+            /** Format: date-time */
+            dob?: string;
+            educations?: components["schemas"]["EducationResponseDTO"][];
+            email?: string;
+            expectedSalaryMax?: number;
+            expectedSalaryMin?: number;
+            experiences?: components["schemas"]["ExperienceResponseDTO"][];
+            firstname: string;
+            /** @enum {string} */
+            gender: "male" | "female" | "other";
+            id: string;
+            isHide: boolean;
+            job: string;
+            languages?: string[];
+            lastname: string;
+            linkedinUrl?: string;
+            location: string;
+            /** @enum {string} */
+            noticePeriod?: "immediate" | "2_weeks" | "1_month";
             phone: string;
+            portfolioUrl?: string;
+            resume?: string;
+            skills?: components["schemas"]["SkillResponseDTO"][];
+            socials?: components["schemas"]["SocialResponseDTO"][];
+            /** Format: date-time */
+            updatedAt?: string;
+            userId?: string;
+            username: string;
+            /** @enum {string} */
+            workMode?: "remote" | "on_site" | "hybrid" | "flexible";
+            yearsOfExperience: string;
         };
-        LoginOtpResponseDTO: {
+        EmployeeUnfavoriteCompanyResponseDTO: {
             message: string;
             success?: boolean;
         };
-        VerifyOtpDTO: {
-            phone: string;
-            otp: string;
-        };
-        VerifyOtpResponseDTO: {
-            accessToken?: string | null;
-            refreshToken?: string | null;
-            user?: components["schemas"]["UserResponseDTO"];
-            requiresTwoFactor?: boolean;
+        EmployerAnalyticsResponseDTO: {
             /**
-             * @description Short-lived signed proof that the password step just succeeded. Replaces
-             *     the bare `userId` this used to return: an id is public — it comes back in
-             *     feed, search and matching responses — so it proved nothing about who was
-             *     asking. The signature is what binds the two halves of the login.
+             * @description Applications sitting in a stage the recruiter is still working — the
+             *     live pipeline as defined by the ATS board, excluding terminal states
+             *     and withdrawals.
              */
-            twoFactorToken?: string;
-            message: string;
-            success?: boolean;
+            activePipeline: number;
+            /** @description Total applications received, current vs prior 30-day window. */
+            applicationsDelta: components["schemas"]["TimeWindowDeltaDTO"];
+            /**
+             * @description All applications for the company bucketed by stage. Includes terminal
+             *     stages so the funnel view can render the whole flow, not just the live
+             *     portion.
+             */
+            funnel: components["schemas"]["EmployerFunnelStageDTO"][];
+            /** @description Hires in the last 30 days. */
+            hired30d: number;
+            /**
+             * @description Median days between the applicant arriving (`appliedAt`) and the
+             *     company first moving them off PENDING. A ballpark of how responsive
+             *     the recruiter side is — null when the company has no moved rows yet.
+             */
+            medianDaysToFirstMove: number | null;
+            /** @description Jobs the company currently has posted (not hidden or expired). */
+            openPositions: number;
+            /** @description Rejections in the last 30 days. */
+            rejected30d: number;
+            /**
+             * @description The company's jobs ordered by applicant volume, capped at a small N. A
+             *     job with zero applicants is included so a slow job stands out rather
+             *     than silently disappearing from the list.
+             */
+            topJobs: components["schemas"]["TopJobDTO"][];
+        };
+        EmployerFunnelStageDTO: {
+            count: number;
+            /** @enum {string} */
+            status: "pending" | "reviewed" | "shortlisted" | "interviewing" | "offered" | "rejected" | "hired" | "withdrawn";
+        };
+        ExperienceResponseDTO: {
+            company?: string;
+            description: string;
+            /** Format: date-time */
+            endDate: string;
+            id?: string;
+            /** Format: date-time */
+            startDate: string;
+            title: string;
+        };
+        ExperienceSuggestionDTO: {
+            improvedAchievements: string[];
+            improvedDescription: string;
+            index: number;
+        };
+        FavoriteCountResponseDTO: {
+            count: number;
+        };
+        FindCurrentLikeResponseDTO: {
+            company?: components["schemas"]["CompanyResponseDTO"];
+            /** Format: date-time */
+            createdAt?: string;
+            /**
+             * Format: date-time
+             * @description When the owner requested deletion. Populated on `/user/current-user` so
+             *     the web can show the grace-period banner without a second round trip.
+             *     Null for normal accounts.
+             */
+            deletedAt?: string | null;
+            email?: string;
+            employee?: components["schemas"]["EmployeeResponseDTO"];
+            id: string;
+            isEmailVerified?: boolean;
+            isTwoFactorEnabled?: boolean;
+            /** Format: date-time */
+            lastLoginAt?: string;
+            /** @enum {string} */
+            lastLoginMethod?: "email_password" | "phone_otp" | "google" | "facebook" | "linkedin" | "github";
+            phone?: string;
+            profileCompleted?: boolean;
+            /** @enum {string} */
+            role: "employee" | "company" | "admin" | "none";
+            /** Format: date-time */
+            updatedAt?: string;
+        };
+        FindCurrentMatchingResponseDTO: {
+            company?: components["schemas"]["CompanyResponseDTO"];
+            /** Format: date-time */
+            createdAt?: string;
+            /**
+             * Format: date-time
+             * @description When the owner requested deletion. Populated on `/user/current-user` so
+             *     the web can show the grace-period banner without a second round trip.
+             *     Null for normal accounts.
+             */
+            deletedAt?: string | null;
+            email?: string;
+            employee?: components["schemas"]["EmployeeResponseDTO"];
+            id: string;
+            isEmailVerified?: boolean;
+            isTwoFactorEnabled?: boolean;
+            /** Format: date-time */
+            lastLoginAt?: string;
+            /** @enum {string} */
+            lastLoginMethod?: "email_password" | "phone_otp" | "google" | "facebook" | "linkedin" | "github";
+            /** @description Overall weighted fit, 0–100. */
+            matchScore?: number | null;
+            phone?: string;
+            profileCompleted?: boolean;
+            /** @enum {string} */
+            role: "employee" | "company" | "admin" | "none";
+            /** @description Skill overlap alone, 0–100. */
+            skillScore?: number | null;
+            /** Format: date-time */
+            updatedAt?: string;
         };
         ForgotPasswordDTO: {
             identifier: string;
@@ -2428,20 +3528,220 @@ export interface components {
             message: string;
             success?: boolean;
         };
-        ResetPasswordDTO: {
-            newPassword: string;
-            confirmPassword: string;
-            token?: string;
+        GenerateCoverLetterDTO: {
+            companyDescription?: string;
+            companyIndustry?: string;
+            companyName: string;
+            employeeDescription?: string;
+            employeeExperience?: string;
+            employeeJob?: string;
+            employeeName: string;
+            employeeSkills: string[];
+            openPositions: string[];
         };
-        ResetPasswordResponseDTO: {
+        GenerateCoverLetterPdfDTO: {
+            companyIndustry?: string;
+            companyName: string;
+            coverLetterText: string;
+            employeeJob?: string;
+            employeeName: string;
+            /** @description 'classic' | 'modern' | 'minimal' | 'bold' — defaults to 'classic' */
+            style?: string;
+        };
+        GenerateCoverLetterPdfResponseDTO: {
+            data: string;
+            filename: string;
+            mimeType: string;
+        };
+        GenerateCoverLetterResponseDTO: {
+            coverLetter: string;
+        };
+        GenerateInterviewPrepPdfDTO: {
+            companyIndustry?: string;
+            companyName: string;
+            interviewTitle: string;
+            questions: components["schemas"]["InterviewPrepPdfQuestionDTO"][];
+        };
+        GenerateInterviewPrepPdfResponseDTO: {
+            data: string;
+            filename: string;
+            mimeType: string;
+        };
+        GenerateResumeFromTextDTO: {
+            sourceText: string;
+            /** @enum {string} */
+            template: "modern" | "classic" | "creative" | "minimalist" | "timeline" | "bold" | "compact" | "elegant" | "colorful" | "professional" | "corporate" | "dark" | "executive" | "tech" | "academic" | "startup" | "swiss" | "pastel";
+        };
+        GetAllNotificationResponseDTO: {
+            /** Format: date-time */
+            createdAt: string;
+            data: {
+                [key: string]: unknown;
+            } | null;
+            id: string;
+            isRead: boolean;
+            message: string;
+            title: string;
+            type: string | null;
+        };
+        GetApplicationResponseDTO: {
+            /** Format: date-time */
+            appliedAt: string;
+            coverLetterNote?: string;
+            employeeId?: string;
+            employeeName?: string;
+            id: string;
+            jobId?: string;
+            jobTitle?: string;
+            /**
+             * @description The applicant's overall fit for this company, 0-100, reused from
+             *     `JobMatching.matchScore` rather than recomputed. Null when the pair has
+             *     never been scored — an applicant who arrived without ever swiping.
+             *     Only populated on the company's applicant list.
+             */
+            matchScore?: number | null;
+            /** @description Set only on a rejection, and only when the company gave one. */
+            rejectionReason?: string | null;
+            /**
+             * Format: date-time
+             * @description Null until the owning company first opens the applicant list.
+             */
+            reviewedAt?: string | null;
+            /** @enum {string} */
+            status: "pending" | "reviewed" | "shortlisted" | "interviewing" | "offered" | "rejected" | "hired" | "withdrawn";
+            /**
+             * Format: date-time
+             * @description Null while the application has never left PENDING.
+             */
+            statusChangedAt?: string | null;
+        };
+        GetInterviewResponseDTO: {
+            /** @description Null for interviews that came from a match rather than an application. */
+            applicationId?: string | null;
+            company: components["schemas"]["CompanyResponseDTO"];
+            /** Format: date-time */
+            createdAt: string;
+            createdBy: string | null;
+            description: string | null;
+            durationMinutes: number;
+            employee: components["schemas"]["EmployeeResponseDTO"];
+            id: string;
+            location: string | null;
+            meetingLink: string | null;
+            /** @description Auth user ID to notify via socket — populated by the service, not persisted. */
+            notifyUserId?: string | null;
+            /** Format: date-time */
+            scheduledAt: string;
+            status: string;
+            /** @description IANA timezone name of the scheduler, or null on legacy rows. */
+            timezone: string | null;
+            title: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        ImageResponseDTO: {
+            id?: string;
+            image: string;
+        };
+        InitiateChatDTO: {
+            /** Format: uuid */
+            receiverId: string;
+        };
+        InitiateChatResponseDTO: {
+            alreadyExists: boolean;
+            avatar: string;
+            chatId: string;
+            email: string;
+            id: string;
+            isRead: boolean;
+            name: string;
+            preview: string;
+            time: string;
+        };
+        InterviewPrepPdfQuestionDTO: {
+            category: string;
+            question: string;
+            questionKm: string;
+            tip: string;
+            tipKm: string;
+        };
+        JobPipelineResponseDTO: {
+            columns: components["schemas"]["PipelineColumnDTO"][];
+            jobId: string;
+            jobTitle: string;
+            totalCount: number;
+        };
+        JobPositionResponseDTO: {
+            deadlineDate: string | null;
+            description: string;
+            education: string;
+            experience: string;
+            id: string;
+            languagesRequired?: string[];
+            location?: string;
+            openingsCount?: number;
+            postedDate: string | null;
+            salary: string;
+            salaryCurrency?: string;
+            salaryMax?: number;
+            salaryMin?: number;
+            skills: string[];
+            title: string;
+            type: string;
+            /** @enum {string} */
+            workMode?: "remote" | "on_site" | "hybrid" | "flexible";
+        };
+        JobResponseDTO: {
+            company: components["schemas"]["CompanyInJobResponseDTO"];
+            deadlineDate: string | null;
+            description: string;
+            education: string;
+            experience: string;
+            id: string;
+            isHide: boolean;
+            languagesRequired?: string[];
+            location?: string;
+            openingsCount?: number;
+            postedDate: string | null;
+            salary: string;
+            salaryCurrency?: string;
+            salaryMax?: number;
+            salaryMin?: number;
+            skills: string[];
+            title: string;
+            type: string;
+            /** @enum {string} */
+            workMode?: "remote" | "on_site" | "hybrid" | "flexible";
+        };
+        LandingStatsResponseDTO: {
+            companies: number;
+            employees: number;
+            users: number;
+        };
+        LivenessResponseDTO: {
+            release: string;
+            service: string;
+            status: string;
+            timestamp: string;
+            uptime: number;
+        };
+        LoginDTO: {
+            identifier: string;
+            password: string;
+        };
+        LoginOtpDTO: {
+            phone: string;
+        };
+        LoginOtpResponseDTO: {
             message: string;
             success?: boolean;
         };
-        RefreshTokenResponseDTO: {
+        LoginResponseDTO: {
             accessToken?: string | null;
+            message: string;
             refreshToken?: string | null;
-            user?: components["schemas"]["UserResponseDTO"];
             requiresTwoFactor?: boolean;
+            success?: boolean;
             /**
              * @description Short-lived signed proof that the password step just succeeded. Replaces
              *     the bare `userId` this used to return: an id is public — it comes back in
@@ -2449,172 +3749,116 @@ export interface components {
              *     asking. The signature is what binds the two halves of the login.
              */
             twoFactorToken?: string;
-            message: string;
-            success?: boolean;
+            user?: components["schemas"]["UserResponseDTO"];
         };
-        VerifyEmailDTO: {
-            /** Format: email */
-            email: string;
-            otp: string;
+        MarkNotificationAsReadResponseDTO: {
+            affected?: number;
+            success: boolean;
         };
-        VerifyEmailResponseDTO: {
-            message: string;
-            success?: boolean;
+        MatchAnalyticsItemDTO: {
+            avatar: string | null;
+            id: string;
+            /** Format: date-time */
+            matchedAt: string;
+            name: string;
         };
-        ResendEmailOtpDTO: {
-            /** Format: email */
-            email: string;
+        MatchCountResponseDTO: {
+            /** @description Total confirmed matches for this profile. */
+            count: number;
+            /**
+             * @description Matches this side has not opened yet — the badge number, computed here so
+             *     the client never does arithmetic on it.
+             *
+             *     The badge used to be `count` minus a high-water mark in the browser's
+             *     localStorage. That mark only ever grew, so unmatches left it above the
+             *     total and pinned the badge to zero, and it did not travel between devices.
+             */
+            unseenCount: number;
         };
-        ResendEmailOtpResponseDTO: {
-            message: string;
-            success?: boolean;
+        MatchResponseDTO: {
+            companyLiked: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            employeeLiked: boolean;
+            id: string;
+            isMatched: boolean;
+            /** @description Overall weighted fit, 0–100. */
+            matchScore: number | null;
+            /** @description User IDs who received a notification from this action — used by api-gateway to emit socket badge increments */
+            notificationTargets?: string[];
+            /** @description Skill overlap alone, 0–100. */
+            skillScore: number | null;
         };
-        TwoFactorSetupResponseDTO: {
-            qrCodeUrl: string;
-            secret: string;
-            message: string;
-            success?: boolean;
+        MatchingAnalyticsResponseDTO: {
+            matchRate: number;
+            monthlyActivity: components["schemas"]["MonthlyActivityItemDTO"][];
+            recentMatches: components["schemas"]["MatchAnalyticsItemDTO"][];
+            totalFavorites: number;
+            totalLikesGiven: number;
+            totalLikesReceived: number;
+            totalMatches: number;
+            weeklyActivity: components["schemas"]["WeeklyActivityItemDTO"][];
         };
-        TwoFactorEnableResponseDTO: {
-            message: string;
-            success?: boolean;
+        MobileOAuthExchangeDTO: {
+            code: string;
+            codeVerifier: string;
         };
-        TwoFactorDisableResponseDTO: {
-            message: string;
-            success?: boolean;
+        MonthlyActivityItemDTO: {
+            likes: number;
+            matches: number;
+            /** @description ISO year-month label, e.g. "2025-01" */
+            month: string;
+            received: number;
         };
-        TwoFactorVerifyLoginDTO: {
-            twoFactorToken: string;
-            otp: string;
+        NotificationListByUserResponseDTO: {
+            items: components["schemas"]["GetAllNotificationResponseDTO"][];
+            limit: number;
+            page: number;
+            total: number;
         };
-        TwoFactorVerifyLoginResponseDTO: {
-            accessToken?: string;
-            refreshToken?: string;
-            user: components["schemas"]["UserResponseDTO"];
-            message: string;
-            success?: boolean;
+        NotificationPreferenceResponseDTO: {
+            categories: Record<string, never>;
+            emailEnabled: boolean;
+            pushEnabled: boolean;
         };
-        LivenessResponseDTO: {
-            status: string;
-            service: string;
-            release: string;
-            uptime: number;
-            timestamp: string;
+        OptimizeResumeDTO: {
+            availability?: string;
+            careerScopes?: string[];
+            design?: components["schemas"]["ResumeDesignDTO"];
+            education?: string;
+            experience: components["schemas"]["ResumeExperienceDTO"][];
+            personalInfo: components["schemas"]["PersonalInfoDTO"];
+            sectionOrder?: ("summary" | "experience" | "skills" | "education" | "careerScopes")[];
+            skills: string[];
+            summary?: string;
+            /** @enum {string} */
+            template: "modern" | "classic" | "creative" | "minimalist" | "timeline" | "bold" | "compact" | "elegant" | "colorful" | "professional" | "corporate" | "dark" | "executive" | "tech" | "academic" | "startup" | "swiss" | "pastel";
+            yearsOfExperience?: string;
+        };
+        OptimizeResumeResponseDTO: {
+            experienceSuggestions: components["schemas"]["ExperienceSuggestionDTO"][];
+            overallFeedback: string;
+            suggestedSkills: string[];
+            suggestedSummary: string;
         };
         PersonalInfoDTO: {
-            fullName: string;
+            age?: number;
             /** Format: email */
             email: string;
-            phone?: string;
-            location?: string;
-            age?: number;
+            fullName: string;
             job?: string;
+            location?: string;
+            phone?: string;
             profilePicture?: string;
             socials?: {
                 [key: string]: string;
             };
         };
-        ResumeDesignDTO: {
+        PipelineColumnDTO: {
+            applications: components["schemas"]["GetApplicationResponseDTO"][];
+            count: number;
             /** @enum {string} */
-            layout: "single" | "two-column" | "left-sidebar" | "right-sidebar";
-            /** @enum {string} */
-            columnRatio: "narrow" | "balanced" | "wide";
-            /** @enum {string} */
-            headerLayout: "stacked" | "split" | "centered" | "compact";
-            /** @enum {string} */
-            avatarPlacement: "start" | "center" | "end";
-            sidebarSections: ("summary" | "skills" | "education" | "careerScopes")[];
-            /** @enum {string} */
-            palette: "ocean" | "cobalt" | "violet" | "emerald" | "amber" | "rose" | "graphite" | "midnight" | "sand";
-            /** @enum {string} */
-            typography: "sans" | "serif" | "geometric" | "humanist" | "mono";
-            /** @enum {string} */
-            density: "compact" | "balanced" | "spacious";
-            /** @enum {string} */
-            headerStyle: "solid" | "soft" | "minimal";
-            /** @enum {string} */
-            sectionStyle: "line" | "bar" | "pill" | "plain";
-            /** @enum {string} */
-            cornerStyle: "square" | "soft" | "rounded";
-            /** @enum {string} */
-            experienceStyle: "plain" | "cards" | "timeline";
-            /** @enum {string} */
-            skillsStyle: "chips" | "grid" | "list";
-            /** @enum {string} */
-            educationStyle: "plain" | "cards" | "timeline";
-            /** @enum {string} */
-            summaryStyle: "plain" | "highlight" | "quote";
-            /** @enum {string} */
-            decoration: "none" | "top-band" | "side-band" | "geometric";
-            /**
-             * @description User-picked #RRGGBB accent override. Strict hex only — this value is
-             *      rendered into PDF HTML, so nothing looser may ever pass validation.
-             */
-            customAccent?: string;
-        };
-        BuildResumeDTO: {
-            personalInfo: components["schemas"]["PersonalInfoDTO"];
-            summary?: string;
-            yearsOfExperience?: string;
-            availability?: string;
-            experience: components["schemas"]["ExperienceDTO"][];
-            skills: string[];
-            education?: string;
-            careerScopes?: string[];
-            sectionOrder?: ("summary" | "experience" | "skills" | "education" | "careerScopes")[];
-            design?: components["schemas"]["ResumeDesignDTO"];
-            /** @enum {string} */
-            template: "modern" | "classic" | "creative" | "minimalist" | "timeline" | "bold" | "compact" | "elegant" | "colorful" | "professional" | "corporate" | "dark" | "executive" | "tech" | "academic" | "startup" | "swiss" | "pastel";
-        };
-        GenerateResumeFromTextDTO: {
-            sourceText: string;
-            /** @enum {string} */
-            template: "modern" | "classic" | "creative" | "minimalist" | "timeline" | "bold" | "compact" | "elegant" | "colorful" | "professional" | "corporate" | "dark" | "executive" | "tech" | "academic" | "startup" | "swiss" | "pastel";
-        };
-        BuildResumeResponseDTO: {
-            filename: string;
-            mimeType: string;
-            /** @description Base64-encoded PDF content */
-            data: string;
-        };
-        OptimizeResumeDTO: {
-            personalInfo: components["schemas"]["PersonalInfoDTO"];
-            summary?: string;
-            yearsOfExperience?: string;
-            availability?: string;
-            experience: components["schemas"]["ExperienceDTO"][];
-            skills: string[];
-            education?: string;
-            careerScopes?: string[];
-            sectionOrder?: ("summary" | "experience" | "skills" | "education" | "careerScopes")[];
-            design?: components["schemas"]["ResumeDesignDTO"];
-            /** @enum {string} */
-            template: "modern" | "classic" | "creative" | "minimalist" | "timeline" | "bold" | "compact" | "elegant" | "colorful" | "professional" | "corporate" | "dark" | "executive" | "tech" | "academic" | "startup" | "swiss" | "pastel";
-        };
-        ExperienceSuggestionDTO: {
-            index: number;
-            improvedDescription: string;
-            improvedAchievements: string[];
-        };
-        OptimizeResumeResponseDTO: {
-            overallFeedback: string;
-            suggestedSummary: string;
-            experienceSuggestions: components["schemas"]["ExperienceSuggestionDTO"][];
-            suggestedSkills: string[];
-        };
-        GenerateCoverLetterDTO: {
-            employeeName: string;
-            employeeJob?: string;
-            employeeSkills: string[];
-            employeeExperience?: string;
-            employeeDescription?: string;
-            companyName: string;
-            companyIndustry?: string;
-            companyDescription?: string;
-            openPositions: string[];
-        };
-        GenerateCoverLetterResponseDTO: {
-            coverLetter: string;
+            status: "pending" | "reviewed" | "shortlisted" | "interviewing" | "offered" | "rejected" | "hired" | "withdrawn";
         };
         PolishCoverLetterDTO: {
             coverLetterText: string;
@@ -2622,185 +3866,180 @@ export interface components {
         PolishCoverLetterResponseDTO: {
             coverLetter: string;
         };
-        GenerateCoverLetterPdfDTO: {
-            employeeName: string;
-            employeeJob?: string;
-            companyName: string;
-            companyIndustry?: string;
-            coverLetterText: string;
-            /** @description 'classic' | 'modern' | 'minimal' | 'bold' — defaults to 'classic' */
-            style?: string;
+        ProfileAnalyticsResponseDTO: {
+            /**
+             * @description The signed-in user's own privacy state, threaded through the same read
+             *     so the profile page never has to make a second call to know whether to
+             *     show the "browsing privately" indicator beside the counts.
+             */
+            browsePrivately: boolean;
+            profileViews30d: number;
+            profileViews7d: number;
+            recentViewers: components["schemas"]["RecentViewerDTO"][];
+            searchAppearances30d: number;
         };
-        GenerateCoverLetterPdfResponseDTO: {
-            filename: string;
-            mimeType: string;
-            data: string;
+        PublicCompanyInJobDTO: {
+            avatar: string | null;
+            companySize: number | null;
+            id: string;
+            industry: string | null;
+            location: string | null;
+            name: string;
         };
-        InterviewPrepPdfQuestionDTO: {
-            question: string;
-            questionKm: string;
-            category: string;
-            tip: string;
-            tipKm: string;
+        PublicJobDetailDTO: {
+            company: components["schemas"]["PublicCompanyInJobDTO"];
+            /** @description ISO 8601. */
+            createdAt: string;
+            description: string;
+            educationRequired: string;
+            experienceRequired: string;
+            /** @description ISO 8601, or null when the posting does not expire. */
+            expireDate: string | null;
+            id: string;
+            languagesRequired: string[];
+            location: string | null;
+            openingsCount: number | null;
+            salary: string | null;
+            salaryCurrency: string | null;
+            salaryMax: number | null;
+            salaryMin: number | null;
+            skills: string[];
+            title: string;
+            type: string;
+            /** @enum {string|null} */
+            workMode: "remote" | "on_site" | "hybrid" | "flexible" | null;
         };
-        GenerateInterviewPrepPdfDTO: {
-            interviewTitle: string;
-            companyName: string;
-            companyIndustry?: string;
-            questions: components["schemas"]["InterviewPrepPdfQuestionDTO"][];
+        PublicJobSitemapEntryDTO: {
+            id: string;
+            /** @description ISO 8601 — becomes `<lastmod>`. */
+            updatedAt: string;
         };
-        GenerateInterviewPrepPdfResponseDTO: {
-            filename: string;
-            mimeType: string;
-            data: string;
+        ReadAllNotificationResponseDTO: {
+            affected?: number;
+            success: boolean;
+        };
+        RecentViewerDTO: {
+            /** Format: date-time */
+            viewedAt: string;
+            /** @description Avatar URL, or null on hidden / signed-out. */
+            viewerAvatar: string | null;
+            /** @description Null when the viewer was hidden or signed out. */
+            viewerId: string | null;
+            /** @description Display name where we can name them; null on hidden / signed-out. */
+            viewerName: string | null;
+            /**
+             * @description 'employee' | 'company', or null on signed-out. Companies see companies
+             *      showing up as viewers; that is deliberate — recruiters compare notes.
+             * @enum {string|null}
+             */
+            viewerRole: "employee" | "company" | "admin" | "none" | null;
         };
         RefineProfileBioDTO: {
-            /** @enum {string} */
-            type: "employeeBio" | "employeeJobTitle" | "companyBio" | "experienceDescription" | "achievementBullet" | "skillSuggestion" | "educationDescription";
-            currentText?: string;
-            jobTitle?: string;
-            skills?: string[];
-            experience?: string;
             availability?: string;
+            benefits?: string[];
             careerScopes?: string[];
             companyName?: string;
+            currentText?: string;
+            experience?: string;
             industry?: string;
+            jobTitle?: string;
             openPositions?: string[];
-            benefits?: string[];
+            skills?: string[];
+            /** @enum {string} */
+            type: "employeeBio" | "employeeJobTitle" | "companyBio" | "experienceDescription" | "achievementBullet" | "skillSuggestion" | "educationDescription";
             values?: string[];
         };
-        ResumeTemplateResponseDTO: {
-            id: string;
-            templateKey: string;
-            title: string;
-            description: string;
-            image: string | null;
-            price: number | null;
-            isPremium: boolean;
-            /** Format: date-time */
-            createdAt: string;
+        RefreshTokenRequestDTO: {
+            refreshToken?: string;
         };
-        CreateResumeTemplateDTO: {
-            /** @enum {string} */
-            templateKey: "modern" | "classic" | "creative" | "minimalist" | "timeline" | "bold" | "compact" | "elegant" | "colorful" | "professional" | "corporate" | "dark" | "executive" | "tech" | "academic" | "startup" | "swiss" | "pastel";
-            title: string;
-            description: string;
-            price: number;
-            isPremium: boolean;
-        };
-        CreateResumeTemplateResponseDTO: {
+        RefreshTokenResponseDTO: {
+            accessToken?: string | null;
             message: string;
+            refreshToken?: string | null;
+            requiresTwoFactor?: boolean;
             success?: boolean;
+            /**
+             * @description Short-lived signed proof that the password step just succeeded. Replaces
+             *     the bare `userId` this used to return: an id is public — it comes back in
+             *     feed, search and matching responses — so it proved nothing about who was
+             *     asking. The signature is what binds the two halves of the login.
+             */
+            twoFactorToken?: string;
+            user?: components["schemas"]["UserResponseDTO"];
         };
-        SearchResumeTemplateResponseDTO: {
-            id: string;
-            templateKey: string;
-            title: string;
-            description: string;
-            image: string | null;
-            price: number | null;
-            isPremium: boolean;
-            /** Format: date-time */
-            createdAt: string;
+        RegisterCompanyBenefitDTO: {
+            label: string;
         };
-        UpdatePushNotificationTokenBodyDTO: {
-            token?: string | null;
-        };
-        UpdatePushNotificationTokenResponseDTO: {
-            message: string;
-            success?: boolean;
-        };
-        EmployeeFavoriteCompanyResponseDTO: {
-            message: string;
-            success?: boolean;
-        };
-        EmployeeUnfavoriteCompanyResponseDTO: {
-            message: string;
-            success?: boolean;
-        };
-        CompanyFavoriteEmployeeResponseDTO: {
-            message: string;
-            success?: boolean;
-        };
-        CompanyUnfavoriteEmployeeResponseDTO: {
-            message: string;
-            success?: boolean;
-        };
-        EmployeeFavoritesListItemDTO: {
-            id: string;
-            createdAt: string;
-            userId: string;
-            company: components["schemas"]["CompanyResponseDTO"];
-        };
-        CompanyFavoritesListItemDTO: {
-            id: string;
-            createdAt: string;
-            userId: string;
-            employee: components["schemas"]["EmployeeResponseDTO"];
-        };
-        FavoriteCountResponseDTO: {
-            count: number;
-        };
-        UpdateEmployeeInfoDTO: {
-            /** Format: email */
-            email?: string;
-            firstname?: string;
-            lastname?: string;
-            /** Format: date-time */
-            dob?: string | null;
-            username?: string;
-            /** @enum {string} */
-            gender?: "male" | "female" | "other";
-            job?: string;
-            yearsOfExperience?: string;
-            availability?: string;
+        RegisterCompanyCareerScopeDTO: {
             description?: string;
+            name: string;
+        };
+        RegisterCompanyJobDTO: {
+            description: string;
+            educationRequired: string;
+            experienceRequired: string;
+            /** Format: date-time */
+            expireDate: string;
+            languagesRequired?: string[];
             location?: string;
-            phone?: string;
-            educations?: components["schemas"]["EducationDTO"][];
-            skills?: components["schemas"]["SkillDTO"][];
-            experiences?: components["schemas"]["ExperienceDTO"][];
-            careerScopes?: components["schemas"]["CareerScopeDTO"][];
-            socials?: components["schemas"]["SocialDTO"][];
-            /** @enum {string|null} */
-            workMode?: "remote" | "on_site" | "hybrid" | "flexible" | null;
-            /** @enum {string|null} */
-            noticePeriod?: "immediate" | "2_weeks" | "1_month" | null;
-            /** Format: uri */
-            portfolioUrl?: string | null;
-            /** Format: uri */
-            linkedinUrl?: string | null;
-            languages?: string[] | null;
-            expectedSalaryMin?: number | null;
-            expectedSalaryMax?: number | null;
-            isHide?: boolean;
-            skillIdsToDelete?: string[];
-            careerScopeIdsToDelete?: string[];
-            experienceIdsToDelete?: string[];
-            educationIdsToDelete?: string[];
-            socialIdsToDelete?: string[];
+            openingsCount?: number;
+            salary?: string;
+            salaryCurrency?: string;
+            salaryMax?: number;
+            salaryMin?: number;
+            skillsRequired: string;
+            title: string;
+            type: string;
+            /** @enum {string} */
+            workMode?: "remote" | "on_site" | "hybrid" | "flexible";
         };
-        UpdateEmployeeInfoResponseDTO: {
+        RegisterCompanySocialDTO: {
+            platform?: string;
+            url?: string;
+        };
+        RegisterCompanyValueDTO: {
+            label: string;
+        };
+        RegisterEmployeeCareerScopeDTO: {
+            description?: string;
+            name: string;
+        };
+        RegisterEmployeeEducationDTO: {
+            degree: string;
+            school?: string;
+            year: string;
+        };
+        RegisterEmployeeExperienceDTO: {
+            company?: string;
+            description: string;
+            /** Format: date-time */
+            endDate: string;
+            /** Format: date-time */
+            startDate: string;
+            title: string;
+        };
+        RegisterEmployeeSkillDTO: {
+            description?: string;
+            name: string;
+        };
+        RegisterEmployeeSocialDTO: {
+            platform?: string;
+            /** Format: uri */
+            url?: string;
+        };
+        RemoveCompanyAvatarResponseDTO: {
             message: string;
-            employee: components["schemas"]["EmployeeResponseDTO"];
+            success?: boolean;
         };
-        UploadEmployeeAvatarResponseDTO: {
+        RemoveCompanyCoverResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        RemoveCompanyImageResponseDTO: {
             message: string;
             success?: boolean;
         };
         RemoveEmployeeAvatarResponseDTO: {
-            message: string;
-            success?: boolean;
-        };
-        UploadEmployeeResumeResponseDTO: {
-            message: string;
-            success?: boolean;
-        };
-        RemoveEmployeeResumeResponseDTO: {
-            message: string;
-            success?: boolean;
-        };
-        UploadEmployeeCoverLetterResponseDTO: {
             message: string;
             success?: boolean;
         };
@@ -2816,151 +4055,13 @@ export interface components {
             message: string;
             success?: boolean;
         };
-        SearchEmployeeResponseDTO: {
-            userId?: string;
-            id: string;
-            firstname: string;
-            lastname: string;
-            /** Format: date-time */
-            dob?: string;
-            username: string;
-            /** @enum {string} */
-            gender: "male" | "female" | "other";
-            avatar?: string;
-            phone: string;
-            email?: string;
-            job: string;
-            yearsOfExperience: string;
-            availability: string;
-            description: string;
-            location: string;
-            resume?: string;
-            coverLetter?: string;
-            /** @enum {string} */
-            workMode?: "remote" | "on_site" | "hybrid" | "flexible";
-            /** @enum {string} */
-            noticePeriod?: "immediate" | "2_weeks" | "1_month";
-            portfolioUrl?: string;
-            linkedinUrl?: string;
-            languages?: string[];
-            expectedSalaryMin?: number;
-            expectedSalaryMax?: number;
-            isHide: boolean;
-            skills?: components["schemas"]["SkillResponseDTO"][];
-            experiences?: components["schemas"]["ExperienceResponseDTO"][];
-            educations?: components["schemas"]["EducationResponseDTO"][];
-            socials?: components["schemas"]["SocialResponseDTO"][];
-            careerScopes?: components["schemas"]["CareerScopesResponseDTO"][];
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-        };
-        SearchEmployeeResult: {
-            data: components["schemas"]["SearchEmployeeResponseDTO"][];
-            total: number;
-            page: number;
-            pageSize: number;
-            isUsingFallback: boolean;
-        };
-        UpdateCompanyInfoDTO: {
-            /** Format: email */
-            email?: string;
-            name?: string;
-            description?: string;
-            avatar?: Record<string, never>;
-            cover?: Record<string, never>;
-            industry?: string;
-            location?: string;
-            phone?: string;
-            companySize?: number;
-            foundedYear?: number;
-            jobs?: components["schemas"]["JobDTO"][];
-            benefitIdsToDelete?: number[];
-            valueIdsToDelete?: number[];
-            careerScopeIdsToDelete?: string[];
-            socialIdsToDelete?: string[];
-            jobIdsToDelete?: string[];
-            benefits?: components["schemas"]["BenefitDTO"][];
-            values?: components["schemas"]["ValueDTO"][];
-            careerScopes?: components["schemas"]["CareerScopeDTO"][];
-            socials?: components["schemas"]["SocialDTO"][];
-            /** Format: uri */
-            websiteUrl?: string | null;
-            companyType?: string | null;
-        };
-        UpdateCompanyInfoResponseDTO: {
-            message: string;
-            company: components["schemas"]["CompanyResponseDTO"];
-        };
-        UploadCompanyAvatarResponseDTO: {
-            message: string;
-            success?: boolean;
-        };
-        RemoveCompanyAvatarResponseDTO: {
-            message: string;
-            success?: boolean;
-        };
-        UploadCompanyCoverResponseDTO: {
-            message: string;
-            success?: boolean;
-        };
-        RemoveCompanyCoverResponseDTO: {
-            message: string;
-            success?: boolean;
-        };
-        UploadCompanyImagesResponseDTO: {
-            message: string;
-            success?: boolean;
-        };
-        RemoveCompanyImageResponseDTO: {
+        RemoveEmployeeResumeResponseDTO: {
             message: string;
             success?: boolean;
         };
         RemoveOpenPositionResponseDTO: {
             message: string;
             success?: boolean;
-        };
-        CountAllUsersResponseDTO: {
-            totalUsers?: number;
-            totalEmployees?: number;
-            totalCompanies?: number;
-        };
-        LandingStatsResponseDTO: {
-            users: number;
-            companies: number;
-            employees: number;
-        };
-        BlockActionResponseDTO: {
-            message: string;
-            blocked: boolean;
-        };
-        BlockedUserResponseDTO: {
-            id: string;
-            employeeId: string | null;
-            companyId: string | null;
-            name: string;
-            avatar: string | null;
-            /** @enum {string} */
-            role: "employee" | "company" | "admin" | "none";
-            /** Format: date-time */
-            blockedAt: string;
-        };
-        BlockStatusResponseDTO: {
-            isBlocked: boolean;
-            blockedByMe: boolean;
-            blockedMe: boolean;
-        };
-        CreateReportBodyDTO: {
-            /** Format: uuid */
-            reportedId: string;
-            /** @enum {string} */
-            reason: "spam" | "harassment" | "inappropriate_content" | "fake_profile" | "scam" | "other";
-            details?: string;
-        };
-        ReportUserResponseDTO: {
-            message: string;
-            reportId: string;
         };
         ReportProblemBodyDTO: {
             /** @enum {string} */
@@ -2972,106 +4073,292 @@ export interface components {
         ReportProblemResponseDTO: {
             message: string;
         };
-        InitiateChatDTO: {
-            /** Format: uuid */
-            receiverId: string;
+        ReportUserResponseDTO: {
+            message: string;
+            reportId: string;
         };
-        InitiateChatResponseDTO: {
-            id: string;
-            chatId: string;
-            name: string;
-            avatar: string;
+        RequestAccountDeletionResponseDTO: {
+            message: string;
+            /** @description ISO 8601 — when the account will be hard-deleted if not cancelled. */
+            scheduledFor: string;
+        };
+        ResendEmailOtpDTO: {
+            /** Format: email */
             email: string;
-            isRead: boolean;
-            preview: string;
-            time: string;
-            alreadyExists: boolean;
         };
-        UploadAttachmentResponseDTO: {
-            url: string;
+        ResendEmailOtpResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        ResetPasswordDTO: {
+            confirmPassword: string;
+            newPassword: string;
+            token?: string;
+        };
+        ResetPasswordResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        ResumeDesignDTO: {
             /** @enum {string} */
-            type: "image" | "document" | "audio";
-            filename: string;
-            size: number;
+            avatarPlacement: "start" | "center" | "end";
+            /** @enum {string} */
+            columnRatio: "narrow" | "balanced" | "wide";
+            /** @enum {string} */
+            cornerStyle: "square" | "soft" | "rounded";
+            /**
+             * @description User-picked #RRGGBB accent override. Strict hex only — this value is
+             *      rendered into PDF HTML, so nothing looser may ever pass validation.
+             */
+            customAccent?: string;
+            /** @enum {string} */
+            decoration: "none" | "top-band" | "side-band" | "geometric";
+            /** @enum {string} */
+            density: "compact" | "balanced" | "spacious";
+            /** @enum {string} */
+            educationStyle: "plain" | "cards" | "timeline";
+            /** @enum {string} */
+            experienceStyle: "plain" | "cards" | "timeline";
+            /** @enum {string} */
+            headerLayout: "stacked" | "split" | "centered" | "compact";
+            /** @enum {string} */
+            headerStyle: "solid" | "soft" | "minimal";
+            /** @enum {string} */
+            layout: "single" | "two-column" | "left-sidebar" | "right-sidebar";
+            /** @enum {string} */
+            palette: "ocean" | "cobalt" | "violet" | "emerald" | "amber" | "rose" | "graphite" | "midnight" | "sand";
+            /** @enum {string} */
+            sectionStyle: "line" | "bar" | "pill" | "plain";
+            sidebarSections: ("summary" | "skills" | "education" | "careerScopes")[];
+            /** @enum {string} */
+            skillsStyle: "chips" | "grid" | "list";
+            /** @enum {string} */
+            summaryStyle: "plain" | "highlight" | "quote";
+            /** @enum {string} */
+            typography: "sans" | "serif" | "geometric" | "humanist" | "mono";
         };
-        UserInJobResponseDTO: {
-            id: string;
-        };
-        CompanyInJobResponseDTO: {
+        ResumeDraftRecordDTO: {
+            content: {
+                [key: string]: unknown;
+            };
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
             id: string;
             name: string;
-            avatar: string;
-            companySize: number;
-            industry: string;
-            location: string;
-            user: components["schemas"]["UserInJobResponseDTO"];
+            revision: number;
+            /** Format: date-time */
+            updatedAt: string;
         };
-        JobResponseDTO: {
-            experience: string;
-            education: string;
-            skills: string[];
-            deadlineDate: string | null;
-            postedDate: string | null;
+        ResumeDraftSummaryDTO: {
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
             id: string;
-            title: string;
+            name: string;
+            revision: number;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        ResumeExperienceDTO: {
+            achievements: string[];
+            company: string;
             description: string;
-            type: string;
-            salary: string;
-            salaryMin?: number;
-            salaryMax?: number;
-            salaryCurrency?: string;
+            endDate?: string;
+            position: string;
+            startDate: string;
+        };
+        ResumeTemplateResponseDTO: {
+            /** Format: date-time */
+            createdAt: string;
+            description: string;
+            id: string;
+            image: string | null;
+            isPremium: boolean;
+            price: number | null;
+            templateKey: string;
+            title: string;
+        };
+        SavedSearchPreviewResponseDTO: {
+            newMatchCount: number;
+            totalMatches: number;
+        };
+        SavedSearchResponseDTO: {
+            /** Format: date-time */
+            createdAt: string;
+            filters: {
+                [key: string]: unknown;
+            };
+            /** @enum {string} */
+            frequency: "off" | "daily" | "weekly";
+            id: string;
+            /** Format: date-time */
+            lastNotifiedAt: string | null;
+            lastResultJobIds: string[];
+            name: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        SearchEmployeeResponseDTO: {
+            availability: string;
+            avatar?: string;
+            careerScopes?: components["schemas"]["CareerScopesResponseDTO"][];
+            coverLetter?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            description: string;
+            /** Format: date-time */
+            dob?: string;
+            educations?: components["schemas"]["EducationResponseDTO"][];
+            email?: string;
+            expectedSalaryMax?: number;
+            expectedSalaryMin?: number;
+            experiences?: components["schemas"]["ExperienceResponseDTO"][];
+            firstname: string;
+            /** @enum {string} */
+            gender: "male" | "female" | "other";
+            id: string;
+            isHide: boolean;
+            job: string;
+            languages?: string[];
+            lastname: string;
+            linkedinUrl?: string;
+            location: string;
+            /** @enum {string} */
+            noticePeriod?: "immediate" | "2_weeks" | "1_month";
+            phone: string;
+            portfolioUrl?: string;
+            resume?: string;
+            skills?: components["schemas"]["SkillResponseDTO"][];
+            socials?: components["schemas"]["SocialResponseDTO"][];
+            /** Format: date-time */
+            updatedAt?: string;
+            userId?: string;
+            username: string;
             /** @enum {string} */
             workMode?: "remote" | "on_site" | "hybrid" | "flexible";
+            yearsOfExperience: string;
+        };
+        SearchEmployeeResult: {
+            data: components["schemas"]["SearchEmployeeResponseDTO"][];
+            isUsingFallback: boolean;
+            page: number;
+            pageSize: number;
+            total: number;
+        };
+        SearchJobDTO: {
+            careerScopes?: string[];
+            companySizeMax?: number;
+            companySizeMin?: number;
+            educationRequired?: string[];
+            excludeCompanyIds?: string[];
+            experienceLevel?: string;
+            jobType?: string[];
+            keyword?: string;
             location?: string;
-            languagesRequired?: string[];
-            openingsCount?: number;
-            company: components["schemas"]["CompanyInJobResponseDTO"];
-            isHide: boolean;
+            page?: number;
+            pageSize?: number;
+            postedDateFrom?: string;
+            postedDateTo?: string;
+            /** Format: uuid */
+            requesterId?: string;
+            salaryMax?: number;
+            salaryMin?: number;
+            sortBy?: string;
+            sortOrder?: string;
+            /** @enum {string} */
+            workMode?: "remote" | "on_site" | "hybrid" | "flexible";
         };
         SearchJobResponseDTO: {
-            experience: string;
-            education: string;
-            skills: string[];
+            company: components["schemas"]["CompanyInJobResponseDTO"];
             deadlineDate: string | null;
-            postedDate: string | null;
-            id: string;
-            title: string;
             description: string;
-            type: string;
+            education: string;
+            experience: string;
+            id: string;
+            isHide: boolean;
+            languagesRequired?: string[];
+            location?: string;
+            openingsCount?: number;
+            postedDate: string | null;
             salary: string;
-            salaryMin?: number;
-            salaryMax?: number;
             salaryCurrency?: string;
+            salaryMax?: number;
+            salaryMin?: number;
+            skills: string[];
+            title: string;
+            type: string;
             /** @enum {string} */
             workMode?: "remote" | "on_site" | "hybrid" | "flexible";
-            location?: string;
-            languagesRequired?: string[];
-            openingsCount?: number;
-            company: components["schemas"]["CompanyInJobResponseDTO"];
-            isHide: boolean;
         };
         SearchJobResult: {
             data: components["schemas"]["SearchJobResponseDTO"][];
-            total: number;
+            isUsingFallback: boolean;
             page: number;
             pageSize: number;
-            isUsingFallback: boolean;
+            total: number;
         };
-        MatchResponseDTO: {
-            id: string;
-            employeeLiked: boolean;
-            companyLiked: boolean;
-            isMatched: boolean;
-            /** @description Skill overlap alone, 0–100. */
-            skillScore: number | null;
-            /** @description Overall weighted fit, 0–100. */
-            matchScore: number | null;
+        SearchResumeTemplateResponseDTO: {
             /** Format: date-time */
             createdAt: string;
-            /** @description User IDs who received a notification from this action — used by api-gateway to emit socket badge increments */
-            notificationTargets?: string[];
+            description: string;
+            id: string;
+            image: string | null;
+            isPremium: boolean;
+            price: number | null;
+            templateKey: string;
+            title: string;
+        };
+        SkillResponseDTO: {
+            description?: string;
+            id?: string;
+            name: string;
+        };
+        SocialResponseDTO: {
+            id?: string;
+            platform: string;
+            url: string;
+        };
+        TimeWindowDeltaDTO: {
+            current: number;
+            delta: number;
+            previous: number;
+        };
+        TopJobDTO: {
+            activePipeline: number;
+            hired: number;
+            jobId: string;
+            rejected: number;
+            title: string;
+            totalApplicants: number;
+        };
+        TwoFactorDisableResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        TwoFactorEnableResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        TwoFactorSetupResponseDTO: {
+            message: string;
+            qrCodeUrl: string;
+            secret: string;
+            success?: boolean;
+        };
+        TwoFactorVerifyLoginDTO: {
+            otp: string;
+            twoFactorToken: string;
+        };
+        TwoFactorVerifyLoginResponseDTO: {
+            accessToken?: string;
+            message: string;
+            refreshToken?: string;
+            success?: boolean;
+            user: components["schemas"]["UserResponseDTO"];
         };
         UnMatchResposneDTO: {
+            message: string;
             /**
              * @description Auth user IDs of both former match participants — populated by the service,
              *     not persisted. Socket rooms are keyed by auth user ID (chat.gateway joins
@@ -3079,297 +4366,376 @@ export interface components {
              *     broadcast to these rather than to the eid/cid it was called with.
              */
             notifyUserIds?: string[];
-            message: string;
             success?: boolean;
-        };
-        MatchCountResponseDTO: {
-            /** @description Total confirmed matches for this profile. */
-            count: number;
-            /**
-             * @description Matches this side has not opened yet — the badge number, computed here so
-             *     the client never does arithmetic on it.
-             *
-             *     The badge used to be `count` minus a high-water mark in the browser's
-             *     localStorage. That mark only ever grew, so unmatches left it above the
-             *     total and pinned the badge to zero, and it did not travel between devices.
-             */
-            unseenCount: number;
-        };
-        FindCurrentLikeResponseDTO: {
-            id: string;
-            /** @enum {string} */
-            role: "employee" | "company" | "admin" | "none";
-            email?: string;
-            phone?: string;
-            isEmailVerified?: boolean;
-            profileCompleted?: boolean;
-            isTwoFactorEnabled?: boolean;
-            employee?: components["schemas"]["EmployeeResponseDTO"];
-            company?: components["schemas"]["CompanyResponseDTO"];
-            /** @enum {string} */
-            lastLoginMethod?: "email_password" | "phone_otp" | "google" | "facebook" | "linkedin" | "github";
-            /** Format: date-time */
-            lastLoginAt?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-        };
-        FindCurrentMatchingResponseDTO: {
-            id: string;
-            /** @enum {string} */
-            role: "employee" | "company" | "admin" | "none";
-            email?: string;
-            phone?: string;
-            isEmailVerified?: boolean;
-            profileCompleted?: boolean;
-            isTwoFactorEnabled?: boolean;
-            employee?: components["schemas"]["EmployeeResponseDTO"];
-            company?: components["schemas"]["CompanyResponseDTO"];
-            /** @enum {string} */
-            lastLoginMethod?: "email_password" | "phone_otp" | "google" | "facebook" | "linkedin" | "github";
-            /** Format: date-time */
-            lastLoginAt?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            /** @description Skill overlap alone, 0–100. */
-            skillScore?: number | null;
-            /** @description Overall weighted fit, 0–100. */
-            matchScore?: number | null;
-        };
-        WeeklyActivityItemDTO: {
-            day: string;
-            likes: number;
-            received: number;
-            matches: number;
-        };
-        MonthlyActivityItemDTO: {
-            /** @description ISO year-month label, e.g. "2025-01" */
-            month: string;
-            likes: number;
-            received: number;
-            matches: number;
-        };
-        MatchAnalyticsItemDTO: {
-            id: string;
-            name: string;
-            avatar: string | null;
-            /** Format: date-time */
-            matchedAt: string;
-        };
-        MatchingAnalyticsResponseDTO: {
-            totalLikesGiven: number;
-            totalLikesReceived: number;
-            totalMatches: number;
-            matchRate: number;
-            weeklyActivity: components["schemas"]["WeeklyActivityItemDTO"][];
-            monthlyActivity: components["schemas"]["MonthlyActivityItemDTO"][];
-            totalFavorites: number;
-            recentMatches: components["schemas"]["MatchAnalyticsItemDTO"][];
-        };
-        AiMatchExplanationResponseDTO: {
-            score: number;
-            verdict: string;
-            explanation: string;
-            strengths: string[];
-            gaps: string[];
-        };
-        AiInterviewPrepQuestion: {
-            question: string;
-            questionKm: string;
-            category: string;
-            tip: string;
-            tipKm: string;
-        };
-        AiInterviewPrepResponseDTO: {
-            questions: components["schemas"]["AiInterviewPrepQuestion"][];
-        };
-        CreateInterviewDTO: {
-            /** Format: uuid */
-            employeeId: string;
-            /** Format: uuid */
-            companyId: string;
-            title: string;
-            description?: string;
-            scheduledAt: string;
-            durationMinutes?: number;
-            location?: string;
-            meetingLink?: string;
-            createdBy?: string;
-        };
-        CreateInterviewResponseDTO: {
-            id: string;
-            title: string;
-            description: string | null;
-            /** Format: date-time */
-            scheduledAt: string;
-            durationMinutes: number;
-            location: string | null;
-            meetingLink: string | null;
-            status: string;
-            createdBy: string | null;
-            employee: components["schemas"]["EmployeeResponseDTO"];
-            company: components["schemas"]["CompanyResponseDTO"];
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            /** @description Auth user ID to notify via socket — populated by the service, not persisted. */
-            notifyUserId?: string | null;
-        };
-        GetInterviewResponseDTO: {
-            id: string;
-            title: string;
-            description: string | null;
-            /** Format: date-time */
-            scheduledAt: string;
-            durationMinutes: number;
-            location: string | null;
-            meetingLink: string | null;
-            status: string;
-            createdBy: string | null;
-            employee: components["schemas"]["EmployeeResponseDTO"];
-            company: components["schemas"]["CompanyResponseDTO"];
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            /** @description Auth user ID to notify via socket — populated by the service, not persisted. */
-            notifyUserId?: string | null;
-        };
-        UpdateInterviewStatusDTO: {
-            /** Format: uuid */
-            interviewId: string;
-            /** @enum {string} */
-            status: "pending" | "accepted" | "declined" | "cancelled" | "completed";
-            /** Format: uuid */
-            requestUserId?: string;
-            requestUserRole?: string;
-        };
-        UpdateInterviewStatusResponseDTO: {
-            id: string;
-            title: string;
-            description: string | null;
-            /** Format: date-time */
-            scheduledAt: string;
-            durationMinutes: number;
-            location: string | null;
-            meetingLink: string | null;
-            status: string;
-            createdBy: string | null;
-            employee: components["schemas"]["EmployeeResponseDTO"];
-            company: components["schemas"]["CompanyResponseDTO"];
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            /** @description Auth user ID to notify via socket — populated by the service, not persisted. */
-            notifyUserId?: string | null;
-        };
-        ApplyApplicationDTO: {
-            /** Format: uuid */
-            jobId: string;
-            coverLetterNote?: string;
-        };
-        ApplyApplicationResponseDTO: {
-            id: string;
-            /** @enum {string} */
-            status: "pending" | "reviewed" | "shortlisted" | "rejected" | "hired";
-            coverLetterNote?: string;
-            /** Format: date-time */
-            appliedAt: string;
-            jobId?: string;
-            jobTitle?: string;
-            employeeId?: string;
-            employeeName?: string;
-        };
-        GetApplicationResponseDTO: {
-            id: string;
-            /** @enum {string} */
-            status: "pending" | "reviewed" | "shortlisted" | "rejected" | "hired";
-            coverLetterNote?: string;
-            /** Format: date-time */
-            appliedAt: string;
-            jobId?: string;
-            jobTitle?: string;
-            employeeId?: string;
-            employeeName?: string;
-        };
-        UpdateApplicationStatusDTO: {
-            /** Format: uuid */
-            applicationId: string;
-            /** @enum {string} */
-            status: "pending" | "reviewed" | "shortlisted" | "rejected" | "hired";
-        };
-        UpdateApplicationStatusResponseDTO: {
-            id: string;
-            /** @enum {string} */
-            status: "pending" | "reviewed" | "shortlisted" | "rejected" | "hired";
-            coverLetterNote?: string;
-            /** Format: date-time */
-            appliedAt: string;
-            jobId?: string;
-            jobTitle?: string;
-            employeeId?: string;
-            employeeName?: string;
-        };
-        GetAllNotificationResponseDTO: {
-            id: string;
-            title: string;
-            message: string;
-            type: string | null;
-            data: {
-                [key: string]: unknown;
-            } | null;
-            isRead: boolean;
-            /** Format: date-time */
-            createdAt: string;
-        };
-        NotificationListByUserResponseDTO: {
-            items: components["schemas"]["GetAllNotificationResponseDTO"][];
-            total: number;
-            page: number;
-            limit: number;
         };
         UnreadCountResponseDTO: {
             unreadCount: number;
         };
-        MarkNotificationAsReadResponseDTO: {
-            success: boolean;
-            affected?: number;
+        UnsubscribeBodyDTO: {
+            token: string;
         };
-        ReadAllNotificationResponseDTO: {
-            success: boolean;
-            affected?: number;
-        };
-        DeleteNotificationResponseDTO: {
-            success: boolean;
-            affected?: number;
-        };
-        CreateNotificationCurrentUserDTO: {
-            title: string;
+        UnsubscribeResponseDTO: {
             message: string;
-            userId?: string;
-            type?: string;
-            data?: {
-                [key: string]: unknown;
-            };
-            sendPush?: boolean;
-            senderAvatar?: string;
         };
-        CreateNotificationCurrentUserResponseDTO: {
+        UpdateApplicationStatusDTO: {
+            /** Format: uuid */
+            applicationId: string;
+            /**
+             * @description Optional, and only meaningful alongside REJECTED — the service drops it for
+             *     every other status rather than letting a stale reason ride along a move
+             *     back up the pipeline.
+             */
+            rejectionReason?: string;
+            /** @enum {string} */
+            status: "pending" | "reviewed" | "shortlisted" | "interviewing" | "offered" | "rejected" | "hired" | "withdrawn";
+        };
+        UpdateApplicationStatusResponseDTO: {
+            /** Format: date-time */
+            appliedAt: string;
+            coverLetterNote?: string;
+            employeeId?: string;
+            employeeName?: string;
             id: string;
-            title: string;
+            jobId?: string;
+            jobTitle?: string;
+            /**
+             * @description The applicant's overall fit for this company, 0-100, reused from
+             *     `JobMatching.matchScore` rather than recomputed. Null when the pair has
+             *     never been scored — an applicant who arrived without ever swiping.
+             *     Only populated on the company's applicant list.
+             */
+            matchScore?: number | null;
+            /** @description Set only on a rejection, and only when the company gave one. */
+            rejectionReason?: string | null;
+            /**
+             * Format: date-time
+             * @description Null until the owning company first opens the applicant list.
+             */
+            reviewedAt?: string | null;
+            /** @enum {string} */
+            status: "pending" | "reviewed" | "shortlisted" | "interviewing" | "offered" | "rejected" | "hired" | "withdrawn";
+            /**
+             * Format: date-time
+             * @description Null while the application has never left PENDING.
+             */
+            statusChangedAt?: string | null;
+        };
+        UpdateCompanyBenefitDTO: {
+            id?: number;
+            label?: string;
+        };
+        UpdateCompanyCareerScopeDTO: {
+            description?: string;
+            id?: string;
+            name?: string;
+        };
+        UpdateCompanyInfoDTO: {
+            avatar?: Record<string, never>;
+            benefitIdsToDelete?: number[];
+            benefits?: components["schemas"]["UpdateCompanyBenefitDTO"][];
+            careerScopeIdsToDelete?: string[];
+            careerScopes?: components["schemas"]["UpdateCompanyCareerScopeDTO"][];
+            companySize?: number;
+            companyType?: string | null;
+            cover?: Record<string, never>;
+            description?: string;
+            /** Format: email */
+            email?: string;
+            foundedYear?: number;
+            industry?: string;
+            jobIdsToDelete?: string[];
+            jobs?: components["schemas"]["UpdateCompanyJobDTO"][];
+            location?: string;
+            name?: string;
+            phone?: string;
+            socialIdsToDelete?: string[];
+            socials?: components["schemas"]["UpdateCompanySocialDTO"][];
+            valueIdsToDelete?: number[];
+            values?: components["schemas"]["UpdateCompanyValueDTO"][];
+            /** Format: uri */
+            websiteUrl?: string | null;
+        };
+        UpdateCompanyInfoResponseDTO: {
+            company: components["schemas"]["CompanyResponseDTO"];
             message: string;
-            type: string | null;
-            data: {
-                [key: string]: unknown;
-            } | null;
-            isRead: boolean;
+        };
+        UpdateCompanyJobDTO: {
+            description?: string;
+            educationRequired?: string;
+            experienceRequired?: string;
+            /** Format: date-time */
+            expireDate?: string | null;
+            id?: string;
+            languagesRequired?: string[] | null;
+            location?: string;
+            openingsCount?: number;
+            salaryCurrency?: string;
+            salaryMax?: number;
+            salaryMin?: number;
+            skillsRequired?: string;
+            title?: string;
+            type?: string;
+            /** @enum {string} */
+            workMode?: "remote" | "on_site" | "hybrid" | "flexible";
+        };
+        UpdateCompanySocialDTO: {
+            id?: string;
+            platform?: string;
+            url?: string;
+        };
+        UpdateCompanyValueDTO: {
+            id?: number;
+            label?: string;
+        };
+        UpdateEmployeeCareerScopeDTO: {
+            description?: string;
+            id?: string;
+            name?: string;
+        };
+        UpdateEmployeeEducationDTO: {
+            degree: string;
+            id?: string;
+            school?: string;
+            year: string;
+        };
+        UpdateEmployeeExperienceDTO: {
+            company?: string;
+            description?: string;
+            /** Format: date-time */
+            endDate?: string;
+            id?: string;
+            /** Format: date-time */
+            startDate?: string;
+            title?: string;
+        };
+        UpdateEmployeeInfoDTO: {
+            availability?: string;
+            careerScopeIdsToDelete?: string[];
+            careerScopes?: components["schemas"]["UpdateEmployeeCareerScopeDTO"][];
+            description?: string;
+            /** Format: date-time */
+            dob?: string | null;
+            educationIdsToDelete?: string[];
+            educations?: components["schemas"]["UpdateEmployeeEducationDTO"][];
+            /** Format: email */
+            email?: string;
+            expectedSalaryMax?: number | null;
+            expectedSalaryMin?: number | null;
+            experienceIdsToDelete?: string[];
+            experiences?: components["schemas"]["UpdateEmployeeExperienceDTO"][];
+            firstname?: string;
+            /** @enum {string} */
+            gender?: "male" | "female" | "other";
+            isHide?: boolean;
+            job?: string;
+            languages?: string[] | null;
+            lastname?: string;
+            /** Format: uri */
+            linkedinUrl?: string | null;
+            location?: string;
+            /** @enum {string|null} */
+            noticePeriod?: "immediate" | "2_weeks" | "1_month" | null;
+            phone?: string;
+            /** Format: uri */
+            portfolioUrl?: string | null;
+            skillIdsToDelete?: string[];
+            skills?: components["schemas"]["UpdateEmployeeSkillDTO"][];
+            socialIdsToDelete?: string[];
+            socials?: components["schemas"]["UpdateEmployeeSocialDTO"][];
+            username?: string;
+            /** @enum {string|null} */
+            workMode?: "remote" | "on_site" | "hybrid" | "flexible" | null;
+            yearsOfExperience?: string;
+        };
+        UpdateEmployeeInfoResponseDTO: {
+            employee: components["schemas"]["EmployeeResponseDTO"];
+            message: string;
+        };
+        UpdateEmployeeSkillDTO: {
+            description?: string;
+            id?: string;
+            name?: string;
+        };
+        UpdateEmployeeSocialDTO: {
+            id?: string;
+            platform?: string;
+            /** Format: uri */
+            url?: string;
+        };
+        UpdateInterviewStatusDTO: {
+            /** Format: uuid */
+            interviewId: string;
+            /** Format: uuid */
+            requestUserId?: string;
+            requestUserRole?: string;
+            /** @enum {string} */
+            status: "pending" | "accepted" | "declined" | "cancelled" | "completed";
+        };
+        UpdateInterviewStatusResponseDTO: {
+            /** @description Null for interviews that came from a match rather than an application. */
+            applicationId?: string | null;
+            company: components["schemas"]["CompanyResponseDTO"];
             /** Format: date-time */
             createdAt: string;
+            createdBy: string | null;
+            description: string | null;
+            durationMinutes: number;
+            employee: components["schemas"]["EmployeeResponseDTO"];
+            id: string;
+            location: string | null;
+            meetingLink: string | null;
+            /** @description Auth user ID to notify via socket — populated by the service, not persisted. */
+            notifyUserId?: string | null;
+            /** Format: date-time */
+            scheduledAt: string;
+            status: string;
+            /** @description IANA timezone name of the scheduler, or null on legacy rows. */
+            timezone: string | null;
+            title: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateNotificationPreferenceBodyDTO: {
+            /**
+             * @description Validated only as "an object" here. The category and channel keys are
+             *     checked against the enums in `NotificationPreferenceService.update`, which
+             *     drops anything it does not recognize — doing it there rather than with a
+             *     nested validator keeps one place responsible for what may be written to
+             *     the jsonb column, instead of two that can disagree.
+             */
+            categories?: Record<string, never>;
+            emailEnabled?: boolean;
+            pushEnabled?: boolean;
+        };
+        UpdatePrivacyDTO: {
+            browsePrivately: boolean;
+        };
+        UpdatePrivacyResponseDTO: {
+            browsePrivately: boolean;
+        };
+        UpdatePushNotificationTokenBodyDTO: {
+            token?: string | null;
+        };
+        UpdatePushNotificationTokenResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        UpdateResumeDraftDTO: {
+            /** @description Incomplete resume document, including design and sectionOrder. Maximum 2 MB. */
+            content: {
+                [key: string]: unknown;
+            };
+            name: string;
+            revision: number;
+        };
+        UpdateSavedSearchDTO: {
+            /**
+             * @description Optional; when present replaces the filters wholesale. A saved search is
+             *     a snapshot the user can revise — this is how they revise it.
+             */
+            filters?: components["schemas"]["SearchJobDTO"];
+            /** @enum {string} */
+            frequency?: "off" | "daily" | "weekly";
+            name?: string;
+        };
+        UploadAttachmentResponseDTO: {
+            filename: string;
+            size: number;
+            /** @enum {string} */
+            type: "image" | "document" | "audio";
+            url: string;
+        };
+        UploadCompanyAvatarResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        UploadCompanyCoverResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        UploadCompanyImagesResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        UploadEmployeeAvatarResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        UploadEmployeeCoverLetterResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        UploadEmployeeResumeResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        UserInJobResponseDTO: {
+            id: string;
+        };
+        UserResponseDTO: {
+            company?: components["schemas"]["CompanyResponseDTO"];
+            /** Format: date-time */
+            createdAt?: string;
+            /**
+             * Format: date-time
+             * @description When the owner requested deletion. Populated on `/user/current-user` so
+             *     the web can show the grace-period banner without a second round trip.
+             *     Null for normal accounts.
+             */
+            deletedAt?: string | null;
+            email?: string;
+            employee?: components["schemas"]["EmployeeResponseDTO"];
+            id: string;
+            isEmailVerified?: boolean;
+            isTwoFactorEnabled?: boolean;
+            /** Format: date-time */
+            lastLoginAt?: string;
+            /** @enum {string} */
+            lastLoginMethod?: "email_password" | "phone_otp" | "google" | "facebook" | "linkedin" | "github";
+            phone?: string;
+            profileCompleted?: boolean;
+            /** @enum {string} */
+            role: "employee" | "company" | "admin" | "none";
+            /** Format: date-time */
+            updatedAt?: string;
+        };
+        ValuesAndBenefitsResponseDTO: {
+            id?: number;
+            label: string;
+        };
+        VerifyEmailDTO: {
+            /** Format: email */
+            email: string;
+            otp: string;
+        };
+        VerifyEmailResponseDTO: {
+            message: string;
+            success?: boolean;
+        };
+        VerifyOtpDTO: {
+            otp: string;
+            phone: string;
+        };
+        VerifyOtpResponseDTO: {
+            accessToken?: string | null;
+            message: string;
+            refreshToken?: string | null;
+            requiresTwoFactor?: boolean;
+            success?: boolean;
+            /**
+             * @description Short-lived signed proof that the password step just succeeded. Replaces
+             *     the bare `userId` this used to return: an id is public — it comes back in
+             *     feed, search and matching responses — so it proved nothing about who was
+             *     asking. The signature is what binds the two halves of the login.
+             */
+            twoFactorToken?: string;
+            user?: components["schemas"]["UserResponseDTO"];
+        };
+        WeeklyActivityItemDTO: {
+            day: string;
+            likes: number;
+            matches: number;
+            received: number;
         };
     };
     responses: never;
@@ -3380,6 +4746,293 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    AdminReportController_listAudit: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                targetUserId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPagedAuditDTO"];
+                };
+            };
+        };
+    };
+    AdminJobController_listJobs: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                /** @description Matched against the job title and the company name. */
+                search?: string;
+                /**
+                 * @description Which side of the takedown line to show. Omitted means visible only —
+                 *     the queue an admin works — rather than everything, so a page of hidden
+                 *     postings is something you ask for.
+                 */
+                visibility?: "visible" | "hidden" | "all";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPagedJobsDTO"];
+                };
+            };
+        };
+    };
+    AdminJobController_hideJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                jobId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminHideJobBodyDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminActionResponseDTO"];
+                };
+            };
+        };
+    };
+    AdminJobController_restoreJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                jobId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminActionResponseDTO"];
+                };
+            };
+        };
+    };
+    AdminProblemReportController_listReports: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                status?: "pending" | "reviewed" | "resolved" | "dismissed";
+                category?: "bug" | "account" | "payment" | "content" | "other";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPagedProblemReportsDTO"];
+                };
+            };
+        };
+    };
+    AdminProblemReportController_updateStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reportId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminUpdateProblemReportStatusBodyDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminActionResponseDTO"];
+                };
+            };
+        };
+    };
+    AdminReportController_listReports: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                status?: "pending" | "reviewed" | "resolved" | "dismissed";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPagedReportsDTO"];
+                };
+            };
+        };
+    };
+    AdminReportController_updateReportStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reportId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminUpdateReportStatusBodyDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminActionResponseDTO"];
+                };
+            };
+        };
+    };
+    AdminUserController_listUsers: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                /** @description Matched against email and phone. */
+                search?: string;
+                role?: "employee" | "company" | "admin" | "none";
+                status?: "active" | "suspended" | "banned";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPagedUsersDTO"];
+                };
+            };
+        };
+    };
+    AdminUserController_getOverview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOverviewDTO"];
+                };
+            };
+        };
+    };
+    AdminUserController_getUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserDetailDTO"];
+                };
+            };
+        };
+    };
+    AdminUserController_updateUserStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminUpdateUserStatusBodyDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminActionResponseDTO"];
+                };
+            };
+        };
+    };
     AiQuotaController_getQuota: {
         parameters: {
             query?: never;
@@ -3395,6 +5048,231 @@ export interface operations {
                 };
                 content: {
                     "application/json": Record<string, never>;
+                };
+            };
+        };
+    };
+    AuthController_twoFactorDisable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TwoFactorDisableResponseDTO"];
+                };
+            };
+        };
+    };
+    AuthController_twoFactorEnable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TwoFactorEnableResponseDTO"];
+                };
+            };
+        };
+    };
+    AuthController_twoFactorSetup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TwoFactorSetupResponseDTO"];
+                };
+            };
+        };
+    };
+    AuthController_twoFactorVerifyLogin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TwoFactorVerifyLoginDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TwoFactorVerifyLoginResponseDTO"];
+                };
+            };
+        };
+    };
+    AuthController_forgotPassword: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ForgotPasswordDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForgotPasswordResponseDTO"];
+                };
+            };
+        };
+    };
+    AuthController_getIceServers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginResponseDTO"];
+                };
+            };
+        };
+    };
+    AuthController_loginOtp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginOtpDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginOtpResponseDTO"];
+                };
+            };
+        };
+    };
+    AuthController_logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_parseResume: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+        };
+    };
+    AuthController_refreshToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RefreshTokenRequestDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RefreshTokenResponseDTO"];
                 };
             };
         };
@@ -3445,98 +5323,6 @@ export interface operations {
             };
         };
     };
-    AuthController_login: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoginDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LoginResponseDTO"];
-                };
-            };
-        };
-    };
-    AuthController_loginOtp: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoginOtpDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LoginOtpResponseDTO"];
-                };
-            };
-        };
-    };
-    AuthController_verifyOtp: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["VerifyOtpDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VerifyOtpResponseDTO"];
-                };
-            };
-        };
-    };
-    AuthController_forgotPassword: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ForgotPasswordDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ForgotPasswordResponseDTO"];
-                };
-            };
-        };
-    };
     AuthController_resetPassword: {
         parameters: {
             query?: never;
@@ -3559,42 +5345,6 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ResetPasswordResponseDTO"];
                 };
-            };
-        };
-    };
-    AuthController_refreshToken: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RefreshTokenResponseDTO"];
-                };
-            };
-        };
-    };
-    AuthController_logout: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };
@@ -3644,64 +5394,7 @@ export interface operations {
             };
         };
     };
-    AuthController_twoFactorSetup: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TwoFactorSetupResponseDTO"];
-                };
-            };
-        };
-    };
-    AuthController_twoFactorEnable: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TwoFactorEnableResponseDTO"];
-                };
-            };
-        };
-    };
-    AuthController_twoFactorDisable: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TwoFactorDisableResponseDTO"];
-                };
-            };
-        };
-    };
-    AuthController_twoFactorVerifyLogin: {
+    AuthController_verifyOtp: {
         parameters: {
             query?: never;
             header?: never;
@@ -3710,7 +5403,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TwoFactorVerifyLoginDTO"];
+                "application/json": components["schemas"]["VerifyOtpDTO"];
             };
         };
         responses: {
@@ -3719,189 +5412,18 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TwoFactorVerifyLoginResponseDTO"];
+                    "application/json": components["schemas"]["VerifyOtpResponseDTO"];
                 };
             };
         };
     };
-    AuthController_parseResume: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": Record<string, never>;
-                };
-            };
-        };
-    };
-    AuthController_getIceServers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GoogleController_googleAuth: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GoogleController_googleCallback: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    LinkedInController_linkedInAuth: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    LinkedInController_linkedInCallback: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GithubController_githubAuth: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GithubController_githubCallback: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    FacebookController_facebookAuth: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    FacebookController_facebookCallback: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    PublicStorageController_getPublicFile: {
+    ChatController_getAttachment: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                folder: string;
+                date: string;
+                filename: string;
             };
             cookie?: never;
         };
@@ -3912,1534 +5434,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
-            };
-        };
-    };
-    HealthController_checkHealth: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LivenessResponseDTO"];
-                };
-            };
-        };
-    };
-    HealthController_checkReadiness: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description The Health Check is successful */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example ok */
-                        status?: string;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       }
-                         *     }
-                         */
-                        info?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /** @example {} */
-                        error?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       }
-                         *     }
-                         */
-                        details?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description The Health Check is not successful */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example error */
-                        status?: string;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       }
-                         *     }
-                         */
-                        info?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /**
-                         * @example {
-                         *       "redis": {
-                         *         "status": "down",
-                         *         "message": "Could not connect"
-                         *       }
-                         *     }
-                         */
-                        error?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       },
-                         *       "redis": {
-                         *         "status": "down",
-                         *         "message": "Could not connect"
-                         *       }
-                         *     }
-                         */
-                        details?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    HealthController_checkLiveness: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LivenessResponseDTO"];
-                };
-            };
-        };
-    };
-    ResumeBuilderController_generateResume: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BuildResumeDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BuildResumeDTO"];
-                };
-            };
-        };
-    };
-    ResumeBuilderController_generateResumeFromText: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GenerateResumeFromTextDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BuildResumeDTO"];
-                };
-            };
-        };
-    };
-    ResumeBuilderController_buildResume: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BuildResumeDTO"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BuildResumeResponseDTO"];
-                };
-            };
-        };
-    };
-    ResumeBuilderController_optimizeResume: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OptimizeResumeDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OptimizeResumeResponseDTO"];
-                };
-            };
-        };
-    };
-    ResumeBuilderController_generateCoverLetter: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GenerateCoverLetterDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GenerateCoverLetterResponseDTO"];
-                };
-            };
-        };
-    };
-    ResumeBuilderController_streamCoverLetter: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GenerateCoverLetterDTO"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ResumeBuilderController_polishCoverLetter: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PolishCoverLetterDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PolishCoverLetterResponseDTO"];
-                };
-            };
-        };
-    };
-    ResumeBuilderController_streamPolishCoverLetter: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PolishCoverLetterDTO"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ResumeBuilderController_streamOptimizeResume: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OptimizeResumeDTO"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ResumeBuilderController_generateCoverLetterPdf: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GenerateCoverLetterPdfDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GenerateCoverLetterPdfResponseDTO"];
-                };
-            };
-        };
-    };
-    ResumeBuilderController_generateInterviewPrepPdf: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GenerateInterviewPrepPdfDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GenerateInterviewPrepPdfResponseDTO"];
-                };
-            };
-        };
-    };
-    ResumeBuilderController_streamRefineBio: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RefineProfileBioDTO"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ResumeTemplateController_findAllResumeTemplate: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResumeTemplateResponseDTO"][];
-                };
-            };
-        };
-    };
-    ResumeTemplateController_findOneResumeTemplateById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResumeTemplateResponseDTO"];
-                };
-            };
-        };
-    };
-    ResumeTemplateController_createResumeTemplate: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateResumeTemplateDTO"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CreateResumeTemplateResponseDTO"];
-                };
-            };
-        };
-    };
-    ResumeTemplateController_searchResumeTemplate: {
-        parameters: {
-            query: {
-                isPremium: boolean;
-                title: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SearchResumeTemplateResponseDTO"][];
-                };
-            };
-        };
-    };
-    UserController_findAllUsers: {
-        parameters: {
-            query?: {
-                skip?: number;
-                limit?: number;
-                requesterId?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserResponseDTO"][];
-                };
-            };
-        };
-    };
-    UserController_findOneUserById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserResponseDTO"];
-                };
-            };
-        };
-    };
-    UserController_getCurrentUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserResponseDTO"];
-                };
-            };
-        };
-    };
-    UserController_updatePushNotificationToken: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdatePushNotificationTokenBodyDTO"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UpdatePushNotificationTokenResponseDTO"];
-                };
-            };
-        };
-    };
-    UserController_employeeFavoriteCompany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                eid: string;
-                cid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EmployeeFavoriteCompanyResponseDTO"];
-                };
-            };
-        };
-    };
-    UserController_employeeUnfavoriteCompany: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                eid: string;
-                cid: string;
-                favoriteId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EmployeeUnfavoriteCompanyResponseDTO"];
-                };
-            };
-        };
-    };
-    UserController_companyFavoriteEmployee: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                cid: string;
-                eid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CompanyFavoriteEmployeeResponseDTO"];
-                };
-            };
-        };
-    };
-    UserController_companyUnfavoriteEmployee: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                cid: string;
-                eid: string;
-                favoriteId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CompanyUnfavoriteEmployeeResponseDTO"];
-                };
-            };
-        };
-    };
-    UserController_findAllEmployeeFavorite: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                eid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EmployeeFavoritesListItemDTO"][];
-                };
-            };
-        };
-    };
-    UserController_findAllCompanyFavorite: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                cid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CompanyFavoritesListItemDTO"][];
-                };
-            };
-        };
-    };
-    UserController_countEmployeeFavorite: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                eid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FavoriteCountResponseDTO"];
-                };
-            };
-        };
-    };
-    UserController_countCompanyFavorite: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                cid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FavoriteCountResponseDTO"];
-                };
-            };
-        };
-    };
-    UserController_findAllCareerScopes: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CareerScopesResponseDTO"][];
-                };
-            };
-        };
-    };
-    UserController_getEmployeeRecommendations: {
-        parameters: {
-            query?: {
-                limit?: number;
-            };
-            header?: never;
-            path: {
-                employeeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CompanyResponseDTO"][];
-                };
-            };
-        };
-    };
-    UserController_getCompanyRecommendations: {
-        parameters: {
-            query?: {
-                limit?: number;
-            };
-            header?: never;
-            path: {
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EmployeeResponseDTO"][];
-                };
-            };
-        };
-    };
-    EmployeeController_findAll: {
-        parameters: {
-            query?: {
-                skip?: number;
-                limit?: number;
-                requesterId?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EmployeeResponseDTO"][];
-                };
-            };
-        };
-    };
-    EmployeeController_findOneById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                employeeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EmployeeResponseDTO"];
-                };
-            };
-        };
-    };
-    EmployeeController_getDocument: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                employeeId: string;
-                type: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    EmployeeController_updateEmployeeInfo: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                employeeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateEmployeeInfoDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UpdateEmployeeInfoResponseDTO"];
-                };
-            };
-        };
-    };
-    EmployeeController_uploadEmployeeAvatar: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                employeeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UploadEmployeeAvatarResponseDTO"];
-                };
-            };
-        };
-    };
-    EmployeeController_removeEmployeeAvatar: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                employeeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RemoveEmployeeAvatarResponseDTO"];
-                };
-            };
-        };
-    };
-    EmployeeController_uploadEmployeeResume: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                employeeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UploadEmployeeResumeResponseDTO"];
-                };
-            };
-        };
-    };
-    EmployeeController_removeEmployeeResume: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                employeeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RemoveEmployeeResumeResponseDTO"];
-                };
-            };
-        };
-    };
-    EmployeeController_uploadEmployeeCoverLetter: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                employeeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UploadEmployeeCoverLetterResponseDTO"];
-                };
-            };
-        };
-    };
-    EmployeeController_removeEmployeeCoverLetter: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                employeeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RemoveEmployeeCoverLetterResponseDTO"];
-                };
-            };
-        };
-    };
-    EmployeeController_removeEmployeeEducation: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                employeeId: string;
-                educationId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RemoveEmployeeEducationResponseDTO"];
-                };
-            };
-        };
-    };
-    EmployeeController_removeEmployeeExperience: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                employeeId: string;
-                experienceId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RemoveEmployeeExperienceResponseDTO"];
-                };
-            };
-        };
-    };
-    EmployeeController_searchEmployee: {
-        parameters: {
-            query?: {
-                keyword?: string;
-                location?: string;
-                careerScopes?: string[];
-                jobType?: string;
-                experienceLevel?: string;
-                education?: string[];
-                sortBy?: string;
-                sortOrder?: "ASC" | "DESC";
-                page?: number;
-                pageSize?: number;
-                excludeEmployeeIds?: string[];
-                requesterId?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SearchEmployeeResult"];
-                };
-            };
-        };
-    };
-    CompanyController_findAll: {
-        parameters: {
-            query?: {
-                skip?: number;
-                limit?: number;
-                requesterId?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CompanyResponseDTO"][];
-                };
-            };
-        };
-    };
-    CompanyController_findOneById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CompanyResponseDTO"];
-                };
-            };
-        };
-    };
-    CompanyController_updateCompanyInfo: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateCompanyInfoDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UpdateCompanyInfoResponseDTO"];
-                };
-            };
-        };
-    };
-    CompanyController_uploadCompanyAvatar: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UploadCompanyAvatarResponseDTO"];
-                };
-            };
-        };
-    };
-    CompanyController_removeCompanyAvatar: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RemoveCompanyAvatarResponseDTO"];
-                };
-            };
-        };
-    };
-    CompanyController_uploadCompanyCover: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UploadCompanyCoverResponseDTO"];
-                };
-            };
-        };
-    };
-    CompanyController_removeCompanyCover: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RemoveCompanyCoverResponseDTO"];
-                };
-            };
-        };
-    };
-    CompanyController_uploadCompanyImages: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                companyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UploadCompanyImagesResponseDTO"];
-                };
-            };
-        };
-    };
-    CompanyController_removeCompanyImage: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                companyId: string;
-                imageId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RemoveCompanyImageResponseDTO"];
-                };
-            };
-        };
-    };
-    CompanyController_removeOpenPosition: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                companyId: string;
-                opId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RemoveOpenPositionResponseDTO"];
-                };
-            };
-        };
-    };
-    CompanyController_countAllCompanies: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CountAllUsersResponseDTO"];
-                };
-            };
-        };
-    };
-    PublicUserController_getLandingStats: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LandingStatsResponseDTO"];
-                };
-            };
-        };
-    };
-    ModerationController_blockUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BlockActionResponseDTO"];
-                };
-            };
-        };
-    };
-    ModerationController_unblockUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BlockActionResponseDTO"];
-                };
-            };
-        };
-    };
-    ModerationController_listBlockedUsers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BlockedUserResponseDTO"][];
-                };
-            };
-        };
-    };
-    ModerationController_getBlockStatus: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BlockStatusResponseDTO"];
-                };
-            };
-        };
-    };
-    ModerationController_getHiddenProfileIds: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": string[];
-                };
-            };
-        };
-    };
-    ModerationController_reportUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateReportBodyDTO"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReportUserResponseDTO"];
-                };
-            };
-        };
-    };
-    SupportController_reportProblem: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ReportProblemBodyDTO"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReportProblemResponseDTO"];
-                };
             };
         };
     };
@@ -5504,14 +5498,11 @@ export interface operations {
             };
         };
     };
-    ChatController_getAttachment: {
+    HealthController_checkHealth: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                date: string;
-                filename: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -5520,7 +5511,146 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LivenessResponseDTO"];
+                };
+            };
+        };
+    };
+    HealthController_checkLiveness: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LivenessResponseDTO"];
+                };
+            };
+        };
+    };
+    HealthController_checkReadiness: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The Health Check is successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @example {
+                         *       "database": {
+                         *         "status": "up"
+                         *       }
+                         *     }
+                         */
+                        details?: {
+                            [key: string]: {
+                                status: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                        };
+                        /** @example {} */
+                        error?: {
+                            [key: string]: {
+                                status: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                        } | null;
+                        /**
+                         * @example {
+                         *       "database": {
+                         *         "status": "up"
+                         *       }
+                         *     }
+                         */
+                        info?: {
+                            [key: string]: {
+                                status: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                        } | null;
+                        /** @example ok */
+                        status?: string;
+                    };
+                };
+            };
+            /** @description The Health Check is not successful */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @example {
+                         *       "database": {
+                         *         "status": "up"
+                         *       },
+                         *       "redis": {
+                         *         "message": "Could not connect",
+                         *         "status": "down"
+                         *       }
+                         *     }
+                         */
+                        details?: {
+                            [key: string]: {
+                                status: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                        };
+                        /**
+                         * @example {
+                         *       "redis": {
+                         *         "message": "Could not connect",
+                         *         "status": "down"
+                         *       }
+                         *     }
+                         */
+                        error?: {
+                            [key: string]: {
+                                status: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                        } | null;
+                        /**
+                         * @example {
+                         *       "database": {
+                         *         "status": "up"
+                         *       }
+                         *     }
+                         */
+                        info?: {
+                            [key: string]: {
+                                status: string;
+                            } & {
+                                [key: string]: unknown;
+                            };
+                        } | null;
+                        /** @example error */
+                        status?: string;
+                    };
+                };
             };
         };
     };
@@ -5543,6 +5673,370 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["JobResponseDTO"][];
+                };
+            };
+        };
+    };
+    ApplicationController_applyApplication: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplyApplicationDTO"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplyApplicationResponseDTO"];
+                };
+            };
+        };
+    };
+    ApplicationController_bulkUpdateApplicationStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BulkUpdateApplicationStatusDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BulkUpdateApplicationStatusResponseDTO"];
+                };
+            };
+        };
+    };
+    ApplicationController_getJobApplications: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                jobId: string;
+                companyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetApplicationResponseDTO"][];
+                };
+            };
+        };
+    };
+    ApplicationController_getMyApplications: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetApplicationResponseDTO"][];
+                };
+            };
+        };
+    };
+    ApplicationController_getJobPipeline: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                jobId: string;
+                companyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobPipelineResponseDTO"];
+                };
+            };
+        };
+    };
+    ApplicationController_updateApplicationStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateApplicationStatusDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateApplicationStatusResponseDTO"];
+                };
+            };
+        };
+    };
+    ApplicationController_withdrawApplication: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                applicationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ApplicationController_listApplicationStatusHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                applicationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicationStatusHistoryEntryDTO"][];
+                };
+            };
+        };
+    };
+    ApplicationController_listApplicationNotes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                applicationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicationNoteResponseDTO"][];
+                };
+            };
+        };
+    };
+    ApplicationController_createApplicationNote: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                applicationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateApplicationNoteDTO"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicationNoteResponseDTO"];
+                };
+            };
+        };
+    };
+    ApplicationController_deleteApplicationNote: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                applicationId: string;
+                noteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EmployerAnalyticsController_getEmployerAnalytics: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmployerAnalyticsResponseDTO"];
+                };
+            };
+        };
+    };
+    SavedSearchController_listSavedSearches: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SavedSearchResponseDTO"][];
+                };
+            };
+        };
+    };
+    SavedSearchController_createSavedSearch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateSavedSearchDTO"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SavedSearchResponseDTO"];
+                };
+            };
+        };
+    };
+    SavedSearchController_deleteSavedSearch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                savedSearchId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    SavedSearchController_updateSavedSearch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                savedSearchId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSavedSearchDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SavedSearchResponseDTO"];
+                };
+            };
+        };
+    };
+    SavedSearchController_previewSavedSearch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                savedSearchId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SavedSearchPreviewResponseDTO"];
                 };
             };
         };
@@ -5582,263 +6076,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SearchJobResult"];
-                };
-            };
-        };
-    };
-    JobMatchingController_employeeLikes: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                eid: string;
-                cid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MatchResponseDTO"];
-                };
-            };
-        };
-    };
-    JobMatchingController_unmatch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                eid: string;
-                cid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UnMatchResposneDTO"];
-                };
-            };
-        };
-    };
-    JobMatchingController_markEmployeeMatchingSeen: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                eid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MatchCountResponseDTO"];
-                };
-            };
-        };
-    };
-    JobMatchingController_markCompanyMatchingSeen: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                cid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MatchCountResponseDTO"];
-                };
-            };
-        };
-    };
-    JobMatchingController_companyLikes: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                eid: string;
-                cid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MatchResponseDTO"];
-                };
-            };
-        };
-    };
-    JobMatchingController_findCurrentEmployeeLiked: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                eid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FindCurrentLikeResponseDTO"][];
-                };
-            };
-        };
-    };
-    JobMatchingController_findCurrentCompanyLiked: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                cid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FindCurrentLikeResponseDTO"][];
-                };
-            };
-        };
-    };
-    JobMatchingController_findCurrentEmployeeMatching: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                eid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FindCurrentMatchingResponseDTO"][];
-                };
-            };
-        };
-    };
-    JobMatchingController_findCurrentCompanyMatching: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                cid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FindCurrentMatchingResponseDTO"][];
-                };
-            };
-        };
-    };
-    JobMatchingController_findCurrentEmployeeMatchingCount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                eid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MatchCountResponseDTO"];
-                };
-            };
-        };
-    };
-    JobMatchingController_findCurrentCompanyMatchingCount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                cid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MatchCountResponseDTO"];
-                };
-            };
-        };
-    };
-    JobMatchingController_getMatchingAnalytics: {
-        parameters: {
-            query: {
-                role: string;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MatchingAnalyticsResponseDTO"];
                 };
             };
         };
@@ -5957,6 +6194,241 @@ export interface operations {
             };
         };
     };
+    JobMatchingController_getMatchingAnalytics: {
+        parameters: {
+            query: {
+                role: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatchingAnalyticsResponseDTO"];
+                };
+            };
+        };
+    };
+    JobMatchingController_companyLikes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eid: string;
+                cid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatchResponseDTO"];
+                };
+            };
+        };
+    };
+    JobMatchingController_markCompanyMatchingSeen: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatchCountResponseDTO"];
+                };
+            };
+        };
+    };
+    JobMatchingController_findCurrentCompanyLiked: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FindCurrentLikeResponseDTO"][];
+                };
+            };
+        };
+    };
+    JobMatchingController_findCurrentCompanyMatchingCount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatchCountResponseDTO"];
+                };
+            };
+        };
+    };
+    JobMatchingController_findCurrentCompanyMatching: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FindCurrentMatchingResponseDTO"][];
+                };
+            };
+        };
+    };
+    JobMatchingController_findCurrentEmployeeLiked: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FindCurrentLikeResponseDTO"][];
+                };
+            };
+        };
+    };
+    JobMatchingController_findCurrentEmployeeMatchingCount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatchCountResponseDTO"];
+                };
+            };
+        };
+    };
+    JobMatchingController_findCurrentEmployeeMatching: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FindCurrentMatchingResponseDTO"][];
+                };
+            };
+        };
+    };
+    JobMatchingController_employeeLikes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eid: string;
+                cid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatchResponseDTO"];
+                };
+            };
+        };
+    };
+    JobMatchingController_markEmployeeMatchingSeen: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatchCountResponseDTO"];
+                };
+            };
+        };
+    };
     InterviewController_createInterview: {
         parameters: {
             query?: never;
@@ -5980,12 +6452,12 @@ export interface operations {
             };
         };
     };
-    InterviewController_getInterviewsByEmployee: {
+    InterviewController_getInterviewsByCompany: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                employeeId: string;
+                companyId: string;
             };
             cookie?: never;
         };
@@ -6001,12 +6473,12 @@ export interface operations {
             };
         };
     };
-    InterviewController_getInterviewsByCompany: {
+    InterviewController_getInterviewsByEmployee: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                companyId: string;
+                employeeId: string;
             };
             cookie?: never;
         };
@@ -6045,100 +6517,33 @@ export interface operations {
             };
         };
     };
-    ApplicationController_applyApplication: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ApplyApplicationDTO"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApplyApplicationResponseDTO"];
-                };
-            };
-        };
-    };
-    ApplicationController_getMyApplications: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GetApplicationResponseDTO"][];
-                };
-            };
-        };
-    };
-    ApplicationController_getJobApplications: {
+    JobMatchingController_unmatch: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                jobId: string;
-                companyId: string;
+                eid: string;
+                cid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            200: {
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetApplicationResponseDTO"][];
+                    "application/json": components["schemas"]["UnMatchResposneDTO"];
                 };
             };
         };
     };
-    ApplicationController_updateApplicationStatus: {
+    MetricsController_metrics: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateApplicationStatusDTO"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UpdateApplicationStatusResponseDTO"];
-                };
-            };
-        };
-    };
-    ApplicationController_withdrawApplication: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                applicationId: string;
-            };
             cookie?: never;
         };
         requestBody?: never;
@@ -6216,7 +6621,53 @@ export interface operations {
             };
         };
     };
-    NotificationController_getUnreadCount: {
+    NotificationController_registerDeviceToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeviceTokenBodyDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeviceTokenResponseDTO"];
+                };
+            };
+        };
+    };
+    NotificationController_removeDeviceToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeviceTokenBodyDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeviceTokenResponseDTO"];
+                };
+            };
+        };
+    };
+    NotificationPreferenceController_getPreferences: {
         parameters: {
             query?: never;
             header?: never;
@@ -6230,28 +6681,53 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UnreadCountResponseDTO"];
+                    "application/json": components["schemas"]["NotificationPreferenceResponseDTO"];
                 };
             };
         };
     };
-    NotificationController_markRead: {
+    NotificationPreferenceController_updatePreferences: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                id: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateNotificationPreferenceBodyDTO"];
+            };
+        };
         responses: {
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MarkNotificationAsReadResponseDTO"];
+                    "application/json": components["schemas"]["NotificationPreferenceResponseDTO"];
+                };
+            };
+        };
+    };
+    NotificationPreferenceController_unsubscribe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UnsubscribeBodyDTO"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnsubscribeResponseDTO"];
                 };
             };
         };
@@ -6271,6 +6747,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ReadAllNotificationResponseDTO"];
+                };
+            };
+        };
+    };
+    NotificationController_getUnreadCount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnreadCountResponseDTO"];
                 };
             };
         };
@@ -6296,7 +6791,578 @@ export interface operations {
             };
         };
     };
-    MetricsController_metrics: {
+    NotificationController_markRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarkNotificationAsReadResponseDTO"];
+                };
+            };
+        };
+    };
+    PublicJobController_findPublicJobSitemap: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicJobSitemapEntryDTO"][];
+                };
+            };
+        };
+    };
+    PublicJobController_findOneJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                jobId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicJobDetailDTO"];
+                };
+            };
+        };
+    };
+    PublicUserController_getCareerScopes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CareerScopesResponseDTO"][];
+                };
+            };
+        };
+    };
+    PublicUserController_getLandingStats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LandingStatsResponseDTO"];
+                };
+            };
+        };
+    };
+    ResumeBuilderController_buildResume: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BuildResumeDTO"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildResumeResponseDTO"];
+                };
+            };
+        };
+    };
+    ResumeBuilderController_generateCoverLetter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenerateCoverLetterDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GenerateCoverLetterResponseDTO"];
+                };
+            };
+        };
+    };
+    ResumeBuilderController_generateCoverLetterPdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenerateCoverLetterPdfDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GenerateCoverLetterPdfResponseDTO"];
+                };
+            };
+        };
+    };
+    ResumeBuilderController_streamCoverLetter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenerateCoverLetterDTO"];
+            };
+        };
+        responses: {
+            /** @description SSE chunk/done/error envelopes. JSON records are carried inside chunk.v. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    ResumeDraftController_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResumeDraftSummaryDTO"][];
+                };
+            };
+        };
+    };
+    ResumeDraftController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateResumeDraftDTO"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResumeDraftRecordDTO"];
+                };
+            };
+        };
+    };
+    ResumeDraftController_read: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResumeDraftRecordDTO"];
+                };
+            };
+        };
+    };
+    ResumeDraftController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateResumeDraftDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResumeDraftRecordDTO"];
+                };
+            };
+        };
+    };
+    ResumeDraftController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ResumeBuilderController_generateResume: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BuildResumeDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildResumeDTO"];
+                };
+            };
+        };
+    };
+    ResumeBuilderController_generateResumeFromText: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenerateResumeFromTextDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildResumeDTO"];
+                };
+            };
+        };
+    };
+    ResumeBuilderController_generateInterviewPrepPdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenerateInterviewPrepPdfDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GenerateInterviewPrepPdfResponseDTO"];
+                };
+            };
+        };
+    };
+    ResumeBuilderController_optimizeResume: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OptimizeResumeDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OptimizeResumeResponseDTO"];
+                };
+            };
+        };
+    };
+    ResumeBuilderController_streamOptimizeResume: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OptimizeResumeDTO"];
+            };
+        };
+        responses: {
+            /** @description SSE chunk/done/error envelopes. JSON records are carried inside chunk.v. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    ResumeBuilderController_polishCoverLetter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PolishCoverLetterDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PolishCoverLetterResponseDTO"];
+                };
+            };
+        };
+    };
+    ResumeBuilderController_streamPolishCoverLetter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PolishCoverLetterDTO"];
+            };
+        };
+        responses: {
+            /** @description SSE chunk/done/error envelopes. JSON records are carried inside chunk.v. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    ResumeBuilderController_streamRefineBio: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RefineProfileBioDTO"];
+            };
+        };
+        responses: {
+            /** @description SSE chunk/done/error envelopes. JSON records are carried inside chunk.v. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    ResumeTemplateController_findAllResumeTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResumeTemplateResponseDTO"][];
+                };
+            };
+        };
+    };
+    ResumeTemplateController_createResumeTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateResumeTemplateDTO"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateResumeTemplateResponseDTO"];
+                };
+            };
+        };
+    };
+    ResumeTemplateController_findOneResumeTemplateById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResumeTemplateResponseDTO"];
+                };
+            };
+        };
+    };
+    ResumeTemplateController_searchResumeTemplate: {
+        parameters: {
+            query: {
+                isPremium: boolean;
+                title: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchResumeTemplateResponseDTO"][];
+                };
+            };
+        };
+    };
+    FacebookController_facebookCallback: {
         parameters: {
             query?: never;
             header?: never;
@@ -6310,6 +7376,1264 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    FacebookController_facebookAuth: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GithubController_githubCallback: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GithubController_githubAuth: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GoogleController_googleCallback: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GoogleController_googleAuth: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    LinkedInController_linkedInCallback: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    LinkedInController_linkedInAuth: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileOAuthController_exchange: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MobileOAuthExchangeDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicStorageController_getPublicFile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                folder: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountLifecycleController_requestDeletion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestAccountDeletionResponseDTO"];
+                };
+            };
+        };
+    };
+    AccountLifecycleController_cancelDeletion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CancelAccountDeletionResponseDTO"];
+                };
+            };
+        };
+    };
+    AccountLifecycleController_exportData: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_findAllUsers: {
+        parameters: {
+            query?: {
+                skip?: number;
+                limit?: number;
+                requesterId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponseDTO"][];
+                };
+            };
+        };
+    };
+    CompanyController_findAll: {
+        parameters: {
+            query?: {
+                skip?: number;
+                limit?: number;
+                requesterId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyResponseDTO"][];
+                };
+            };
+        };
+    };
+    UserController_findAllCompanyFavorite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyFavoritesListItemDTO"][];
+                };
+            };
+        };
+    };
+    CompanyController_countAllCompanies: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CountAllUsersResponseDTO"];
+                };
+            };
+        };
+    };
+    UserController_countCompanyFavorite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FavoriteCountResponseDTO"];
+                };
+            };
+        };
+    };
+    CompanyController_findOneById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                companyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyResponseDTO"];
+                };
+            };
+        };
+    };
+    CompanyController_removeCompanyAvatar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                companyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemoveCompanyAvatarResponseDTO"];
+                };
+            };
+        };
+    };
+    CompanyController_removeCompanyCover: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                companyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemoveCompanyCoverResponseDTO"];
+                };
+            };
+        };
+    };
+    CompanyController_removeCompanyImage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                companyId: string;
+                imageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemoveCompanyImageResponseDTO"];
+                };
+            };
+        };
+    };
+    CompanyController_removeOpenPosition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                companyId: string;
+                opId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemoveOpenPositionResponseDTO"];
+                };
+            };
+        };
+    };
+    CompanyController_updateCompanyInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                companyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCompanyInfoDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateCompanyInfoResponseDTO"];
+                };
+            };
+        };
+    };
+    CompanyController_uploadCompanyAvatar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                companyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadCompanyAvatarResponseDTO"];
+                };
+            };
+        };
+    };
+    CompanyController_uploadCompanyCover: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                companyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadCompanyCoverResponseDTO"];
+                };
+            };
+        };
+    };
+    CompanyController_uploadCompanyImages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                companyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadCompanyImagesResponseDTO"];
+                };
+            };
+        };
+    };
+    UserController_companyFavoriteEmployee: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: string;
+                eid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyFavoriteEmployeeResponseDTO"];
+                };
+            };
+        };
+    };
+    UserController_companyUnfavoriteEmployee: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cid: string;
+                eid: string;
+                favoriteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyUnfavoriteEmployeeResponseDTO"];
+                };
+            };
+        };
+    };
+    UserController_getCurrentUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponseDTO"];
+                };
+            };
+        };
+    };
+    EmployeeController_findAll: {
+        parameters: {
+            query?: {
+                skip?: number;
+                limit?: number;
+                requesterId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmployeeResponseDTO"][];
+                };
+            };
+        };
+    };
+    UserController_findAllEmployeeFavorite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmployeeFavoritesListItemDTO"][];
+                };
+            };
+        };
+    };
+    UserController_countEmployeeFavorite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FavoriteCountResponseDTO"];
+                };
+            };
+        };
+    };
+    EmployeeController_findOneById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmployeeResponseDTO"];
+                };
+            };
+        };
+    };
+    EmployeeController_removeEmployeeAvatar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemoveEmployeeAvatarResponseDTO"];
+                };
+            };
+        };
+    };
+    EmployeeController_removeEmployeeCoverLetter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemoveEmployeeCoverLetterResponseDTO"];
+                };
+            };
+        };
+    };
+    EmployeeController_removeEmployeeEducation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeeId: string;
+                educationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemoveEmployeeEducationResponseDTO"];
+                };
+            };
+        };
+    };
+    EmployeeController_removeEmployeeExperience: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeeId: string;
+                experienceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemoveEmployeeExperienceResponseDTO"];
+                };
+            };
+        };
+    };
+    EmployeeController_removeEmployeeResume: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemoveEmployeeResumeResponseDTO"];
+                };
+            };
+        };
+    };
+    EmployeeController_searchEmployee: {
+        parameters: {
+            query?: {
+                keyword?: string;
+                location?: string;
+                careerScopes?: string[];
+                jobType?: string;
+                experienceLevel?: string;
+                education?: string[];
+                /** @description Match candidates holding ANY of these skills. */
+                skills?: string[];
+                sortBy?: string;
+                sortOrder?: "DESC" | "ASC";
+                page?: number;
+                pageSize?: number;
+                excludeEmployeeIds?: string[];
+                requesterId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchEmployeeResult"];
+                };
+            };
+        };
+    };
+    EmployeeController_updateEmployeeInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateEmployeeInfoDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateEmployeeInfoResponseDTO"];
+                };
+            };
+        };
+    };
+    EmployeeController_uploadEmployeeAvatar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadEmployeeAvatarResponseDTO"];
+                };
+            };
+        };
+    };
+    EmployeeController_uploadEmployeeCoverLetter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadEmployeeCoverLetterResponseDTO"];
+                };
+            };
+        };
+    };
+    EmployeeController_uploadEmployeeResume: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadEmployeeResumeResponseDTO"];
+                };
+            };
+        };
+    };
+    UserController_employeeFavoriteCompany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eid: string;
+                cid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmployeeFavoriteCompanyResponseDTO"];
+                };
+            };
+        };
+    };
+    UserController_employeeUnfavoriteCompany: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eid: string;
+                cid: string;
+                favoriteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmployeeUnfavoriteCompanyResponseDTO"];
+                };
+            };
+        };
+    };
+    EmployeeController_getDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeeId: string;
+                type: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_findAllCareerScopes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CareerScopesResponseDTO"][];
+                };
+            };
+        };
+    };
+    ProfileAnalyticsController_updatePrivacySettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePrivacyDTO"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdatePrivacyResponseDTO"];
+                };
+            };
+        };
+    };
+    ProfileAnalyticsController_getMyProfileAnalytics: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileAnalyticsResponseDTO"];
+                };
+            };
+        };
+    };
+    ModerationController_getBlockStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlockStatusResponseDTO"];
+                };
+            };
+        };
+    };
+    ModerationController_blockUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlockActionResponseDTO"];
+                };
+            };
+        };
+    };
+    ModerationController_unblockUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlockActionResponseDTO"];
+                };
+            };
+        };
+    };
+    ModerationController_listBlockedUsers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlockedUserResponseDTO"][];
+                };
+            };
+        };
+    };
+    ModerationController_getHiddenProfileIds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+        };
+    };
+    ModerationController_reportUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateReportBodyDTO"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportUserResponseDTO"];
+                };
+            };
+        };
+    };
+    UserController_findOneUserById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponseDTO"];
+                };
+            };
+        };
+    };
+    UserController_updatePushNotificationToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePushNotificationTokenBodyDTO"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdatePushNotificationTokenResponseDTO"];
+                };
+            };
+        };
+    };
+    UserController_getCompanyRecommendations: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                companyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmployeeResponseDTO"][];
+                };
+            };
+        };
+    };
+    UserController_getEmployeeRecommendations: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                employeeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyResponseDTO"][];
+                };
+            };
+        };
+    };
+    SupportController_reportProblem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReportProblemBodyDTO"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportProblemResponseDTO"];
+                };
             };
         };
     };

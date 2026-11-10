@@ -24,7 +24,11 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { makeEmployeeSignUpSchema, TEmployeeSignUp } from "./validation";
+import {
+  makeEmployeeSignUpSchema,
+  TEmployeeSignUp,
+  TEmployeeSignUpInput,
+} from "./validation";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
@@ -138,7 +142,7 @@ export default function EmployeeSignup() {
   );
 
   // ── Initialize Employee Form with Default Values ───────────────────
-  const empForm = useForm<TEmployeeSignUp>({
+  const empForm = useForm<TEmployeeSignUpInput, unknown, TEmployeeSignUp>({
     mode: "onChange",
     resolver: zodResolver(employeeSignUpSchema),
     defaultValues: defaultFormValues,

@@ -1,5 +1,5 @@
 import { normalizeMediaUrl } from "@/utils/functions/media";
-import { z } from "zod";
+import { z } from "zod/v3";
 import type {
   TChatHistoryResponse,
   TChatProfile,

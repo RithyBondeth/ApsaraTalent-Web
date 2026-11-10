@@ -21,22 +21,13 @@ import phoneNumberSvg from "@/assets/auth/phone-number.svg";
 import phoneOTPSvg from "@/assets/auth/phone-otp.svg";
 
 // ─── Utils (shared across pages) ──────────────────────────────────────────────
-// Supplied artwork, trimmed to its alpha box and re-encoded — the files arrived
-// with transparent padding (34% of the mark's width was empty) and weighed
-// 1.8 MB between them; they are 610 KB now.
-//
-// The two lockups are cropped to the SAME rectangle, the union of their two
-// alpha boxes, so they share one aspect ratio and the dancer does not shift
-// when the theme flips. Cropped to their own boxes they were 1.7483 and 1.7052,
-// and LogoComponent carries a single ratio per variant.
-//
-// Only the lockup needs a twin: its wordmark is near-black ink that all but
-// vanishes on the dark page, so the dark file letters it in white. The mark is
-// the dancer alone — blue and white throughout — and reads on either theme, so
-// it ships once.
+// Approved AT artwork rendered from logo-at-*.svg by generate-brand-assets.mjs.
+// Both transparent lockups have identical dimensions; the dark wordmark is
+// white. Each monogram matches its theme's primary token and the mobile app.
 import logo from "@/assets/utils/logo-for-lightmode.png";
 import logoDark from "@/assets/utils/logo-for-darkmode.png";
 import logoWithoutTitle from "@/assets/utils/logo-without-text.png";
+import logoWithoutTitleDark from "@/assets/utils/logo-without-text-darkmode.png";
 
 export {
   // Socials
@@ -56,4 +47,5 @@ export {
   logo,
   logoDark,
   logoWithoutTitle,
+  logoWithoutTitleDark,
 };

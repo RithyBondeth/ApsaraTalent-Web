@@ -170,20 +170,37 @@ try {
     );
   }
 
-  // The favicon is app/icon.png, served through Next's file convention rather
-  // than a literal public path, so this asserts the route the document actually
-  // links to instead of a filename.
-  const iconHref = (await (await fetch(`${baseUrl}/`)).text()).match(
-    /<link[^>]*rel="icon"[^>]*href="([^"]+)"/,
-  )?.[1];
-  assert(Boolean(iconHref), "document did not link a favicon");
-
-  const icon = await fetch(new URL(iconHref, baseUrl));
-  assert(icon.status === 200, `${iconHref} returned ${icon.status}`);
-  assert(
-    (icon.headers.get("content-type") ?? "").includes("image/png"),
-    `${iconHref} did not return PNG content`,
+  // Next links both the PNG icon and multi-size ICO through file conventions.
+  // Check each linked asset's media type and signature rather than link order.
+  const iconHrefs = Array.from(
+    (await (await fetch(`${baseUrl}/`)).text()).matchAll(
+      /<link[^>]*rel="icon"[^>]*href="([^"]+)"/g,
+    ),
+    (match) => match[1],
   );
+  assert(iconHrefs.length > 0, "document did not link a favicon");
+
+  for (const iconHref of iconHrefs) {
+    const icon = await fetch(new URL(iconHref, baseUrl));
+    assert(icon.status === 200, `${iconHref} returned ${icon.status}`);
+    const contentType = icon.headers.get("content-type") ?? "";
+    const bytes = Buffer.from(await icon.arrayBuffer());
+    const isPng =
+      contentType.includes("image/png") &&
+      bytes
+        .subarray(0, 8)
+        .equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+    const isIco =
+      /image\/(?:x-icon|vnd\.microsoft\.icon)/.test(contentType) &&
+      bytes.length >= 6 &&
+      bytes.readUInt16LE(0) === 0 &&
+      bytes.readUInt16LE(2) === 1 &&
+      bytes.readUInt16LE(4) > 0;
+    assert(
+      isPng || isIco,
+      `${iconHref} did not return a valid PNG or ICO icon`,
+    );
+  }
 
   const notFound = await fetch(`${baseUrl}/this-route-must-not-exist`);
   assert(notFound.status === 404, `Unknown route returned ${notFound.status}`);

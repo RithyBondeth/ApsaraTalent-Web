@@ -491,7 +491,7 @@ function LoginPage() {
         <div className="auth-stagger flex w-full flex-col gap-6">
           {/* Logo & Title Section */}
           <div style={{ "--d": "0ms" } as React.CSSProperties}>
-            <LogoComponent className="!h-16 w-auto self-start" priority />
+            <LogoComponent height={40} className="self-start" priority />
             <TypographyH2 className="mt-5 phone-xl:text-2xl">
               {t("loginPageTitle")}
             </TypographyH2>

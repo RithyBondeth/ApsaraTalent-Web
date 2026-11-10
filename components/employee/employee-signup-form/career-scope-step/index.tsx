@@ -1,6 +1,9 @@
 "use client";
 
-import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
+import {
+  TEmployeeSignUp,
+  TEmployeeSignUpInput,
+} from "@/app/(auth)/signup/employee/validation";
 import { useEffect, useRef, useState } from "react";
 import { IStepFormProps } from "../props";
 import { Button } from "@/components/ui/button";
@@ -40,7 +43,7 @@ export default function EmployeeCareerScopeStepForm({
   getValues,
   setValue,
   errors,
-}: IStepFormProps<TEmployeeSignUp>) {
+}: IStepFormProps<TEmployeeSignUpInput, TEmployeeSignUp>) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
   const tCommon = useTranslations("common");

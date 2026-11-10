@@ -2,7 +2,12 @@ import apiClient from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import {
   API_ADMIN_AUDIT_URL,
+  API_ADMIN_JOBS_URL,
+  API_ADMIN_JOB_RESTORE_URL,
+  API_ADMIN_JOB_URL,
   API_ADMIN_OVERVIEW_URL,
+  API_ADMIN_PROBLEM_REPORTS_URL,
+  API_ADMIN_PROBLEM_REPORT_STATUS_URL,
   API_ADMIN_REPORTS_URL,
   API_ADMIN_REPORT_STATUS_URL,
   API_ADMIN_USERS_URL,
@@ -11,9 +16,14 @@ import {
 } from "@/utils/constants/apis/admin.api.constant";
 import {
   TAdminAuditEntry,
+  TAdminJob,
+  TAdminJobQuery,
   TAdminOverview,
   TAdminPage,
+  TAdminProblemReport,
+  TAdminProblemReportQuery,
   TAdminReport,
+  TAdminUpdateProblemReportPayload,
   TAdminUpdateReportPayload,
   TAdminUpdateStatusPayload,
   TAdminUser,
@@ -37,8 +47,14 @@ type TAdminState = {
   reports: TAdminPage<TAdminReport> | null;
   loadingReports: boolean;
 
+  problemReports: TAdminPage<TAdminProblemReport> | null;
+  loadingProblemReports: boolean;
+
   audit: TAdminPage<TAdminAuditEntry> | null;
   loadingAudit: boolean;
+
+  jobs: TAdminPage<TAdminJob> | null;
+  loadingJobs: boolean;
 
   /** True while a status change is in flight — disables the action buttons. */
   saving: boolean;
@@ -60,11 +76,19 @@ type TAdminState = {
     reportId: string,
     payload: TAdminUpdateReportPayload,
   ) => Promise<boolean>;
+  getProblemReports: (query?: TAdminProblemReportQuery) => Promise<void>;
+  updateProblemReportStatus: (
+    reportId: string,
+    payload: TAdminUpdateProblemReportPayload,
+  ) => Promise<boolean>;
   getAudit: (query?: {
     page?: number;
     limit?: number;
     targetUserId?: string;
   }) => Promise<void>;
+  getJobs: (query?: TAdminJobQuery) => Promise<void>;
+  hideJob: (jobId: string, reason: string) => Promise<boolean>;
+  restoreJob: (jobId: string) => Promise<boolean>;
   clearError: () => void;
 };
 
@@ -90,9 +114,13 @@ export const useAdminStore = create<TAdminState>((set, get) => ({
   userDetail: null,
   loadingUserDetail: false,
   reports: null,
+  loadingProblemReports: false,
+  problemReports: null,
   loadingReports: false,
   audit: null,
   loadingAudit: false,
+  jobs: null,
+  loadingJobs: false,
   saving: false,
   error: null,
 
@@ -201,6 +229,141 @@ export const useAdminStore = create<TAdminState>((set, get) => ({
       set({
         saving: false,
         error: extractApiErrorMessage(error, "Failed to update the report"),
+      });
+      return false;
+    }
+  },
+
+  getProblemReports: async (query = {}) => {
+    set({ loadingProblemReports: true });
+    try {
+      const res = await apiClient.get<TAdminPage<TAdminProblemReport>>(
+        API_ADMIN_PROBLEM_REPORTS_URL,
+        { params: pruneParams(query) },
+      );
+      set({
+        problemReports: res.data,
+        loadingProblemReports: false,
+        error: null,
+      });
+    } catch (error) {
+      set({
+        loadingProblemReports: false,
+        error: extractApiErrorMessage(error, "Failed to load problem reports"),
+      });
+    }
+  },
+
+  updateProblemReportStatus: async (reportId, payload) => {
+    set({ saving: true, error: null });
+    try {
+      await apiClient.patch(
+        API_ADMIN_PROBLEM_REPORT_STATUS_URL(reportId),
+        payload,
+      );
+      set((state) => ({
+        saving: false,
+        // Same in-place patch as user reports — the row must not jump out of
+        // the list while the admin is still reading it.
+        problemReports: state.problemReports
+          ? {
+              ...state.problemReports,
+              items: state.problemReports.items.map((report) =>
+                report.id === reportId
+                  ? {
+                      ...report,
+                      status: payload.status,
+                      resolutionNote: payload.note ?? report.resolutionNote,
+                    }
+                  : report,
+              ),
+            }
+          : null,
+      }));
+      return true;
+    } catch (error) {
+      set({
+        saving: false,
+        error: extractApiErrorMessage(error, "Failed to update the report"),
+      });
+      return false;
+    }
+  },
+
+  getJobs: async (query = {}) => {
+    set({ loadingJobs: true });
+    try {
+      const res = await apiClient.get<TAdminPage<TAdminJob>>(
+        API_ADMIN_JOBS_URL,
+        { params: pruneParams(query) },
+      );
+      set({ jobs: res.data, loadingJobs: false, error: null });
+    } catch (error) {
+      set({
+        loadingJobs: false,
+        error: extractApiErrorMessage(error, "Failed to load job postings"),
+      });
+    }
+  },
+
+  hideJob: async (jobId, reason) => {
+    set({ saving: true, error: null });
+    try {
+      // The reason travels in the body of a DELETE, which axios only sends
+      // under an explicit `data` key.
+      await apiClient.delete(API_ADMIN_JOB_URL(jobId), { data: { reason } });
+      set((state) => ({
+        saving: false,
+        // Patched in place rather than refetched: under the default
+        // "visible" filter a refetch would drop the row out of the list the
+        // moment it is hidden, and the admin loses the undo they may want.
+        jobs: state.jobs
+          ? {
+              ...state.jobs,
+              items: state.jobs.items.map((job) =>
+                job.id === jobId
+                  ? {
+                      ...job,
+                      hiddenAt: new Date().toISOString(),
+                      hiddenReason: reason,
+                    }
+                  : job,
+              ),
+            }
+          : null,
+      }));
+      return true;
+    } catch (error) {
+      set({
+        saving: false,
+        error: extractApiErrorMessage(error, "Failed to hide the posting"),
+      });
+      return false;
+    }
+  },
+
+  restoreJob: async (jobId) => {
+    set({ saving: true, error: null });
+    try {
+      await apiClient.post(API_ADMIN_JOB_RESTORE_URL(jobId));
+      set((state) => ({
+        saving: false,
+        jobs: state.jobs
+          ? {
+              ...state.jobs,
+              items: state.jobs.items.map((job) =>
+                job.id === jobId
+                  ? { ...job, hiddenAt: null, hiddenReason: null }
+                  : job,
+              ),
+            }
+          : null,
+      }));
+      return true;
+    } catch (error) {
+      set({
+        saving: false,
+        error: extractApiErrorMessage(error, "Failed to restore the posting"),
       });
       return false;
     }

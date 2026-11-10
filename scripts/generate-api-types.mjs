@@ -22,7 +22,7 @@ import path from "node:path";
 
 const run = promisify(execFile);
 
-const SPEC_URL = process.env.API_SPEC_URL ?? "http://localhost:3000/docs-json";
+const SPEC_URL = process.env.API_SPEC_URL ?? "contracts/openapi.json";
 const OUTPUT = path.join("utils", "interfaces", "generated", "api.ts");
 const checkOnly = process.argv.includes("--check");
 

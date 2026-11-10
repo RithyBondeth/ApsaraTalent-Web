@@ -22,4 +22,9 @@ export interface IUser {
   employee?: IEmployee;
   company?: ICompany;
   createdAt?: string;
+  /**
+   * Populated when the account owner requested deletion. Feeds the
+   * grace-period banner on the settings page. Null on normal accounts.
+   */
+  deletedAt?: string | null;
 }

@@ -32,8 +32,8 @@ import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useLanguageStore } from "@/stores/languages/language-store";
-import { useThemeStore } from "@/stores/themes/theme-store";
+import { useLanguageStore } from "@/stores/languages/language.store";
+import { useThemeStore } from "@/stores/themes/theme.store";
 import { useThemeTransition } from "@/hooks/utils/use-theme-transition";
 import {
   clearAuthCookies,
@@ -43,7 +43,6 @@ import { setCookie } from "cookies-next/client";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import MenuIcon from "./menu-icon";
 import { INavbarUserMenuProps } from "./props";
@@ -61,7 +60,6 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
   // the theme change the same way, instead of this one snapping.
   const { toggleTheme } = useThemeTransition();
   const { language, setLanguage } = useLanguageStore();
-  const router = useRouter();
   const t = useTranslations("sidebarFooter");
 
   /* -------------------------------- All States ----------------------------- */
@@ -129,8 +127,8 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
 
     // Also try client-side clearing as backup
     clearAuthCookies();
-    router.push("/");
-    window.location.reload();
+    // One full navigation clears in-memory state and avoids a racing reload.
+    window.location.replace("/");
   };
 
   // ── Handle Theme Toggle ─────────────────────────────────────────

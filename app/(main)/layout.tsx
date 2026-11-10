@@ -7,7 +7,7 @@ import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-cl
 import { useChatConnection } from "@/hooks/chat/use-chat-connection";
 import { usePushNotifications } from "@/hooks/notification/use-push-notifications";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useThemeStore } from "@/stores/themes/theme-store";
+import { useThemeStore } from "@/stores/themes/theme.store";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { PageState } from "@/components/utils/feedback/page-state";

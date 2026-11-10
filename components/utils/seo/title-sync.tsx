@@ -1,6 +1,6 @@
 "use client";
 
-import { useLanguageStore } from "@/stores/languages/language-store";
+import { useLanguageStore } from "@/stores/languages/language.store";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { BRAND_NAME } from "@/utils/constants/config.constant";

@@ -1,4 +1,7 @@
-import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
+import {
+  TEmployeeSignUp,
+  TEmployeeSignUpInput,
+} from "@/app/(auth)/signup/employee/validation";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
@@ -25,7 +28,7 @@ export default function ExperienceStepForm({
   control,
   errors,
   setValue,
-}: IStepFormProps<TEmployeeSignUp>) {
+}: IStepFormProps<TEmployeeSignUpInput, TEmployeeSignUp>) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
   const tr = useTranslations("resumeBuilder");
@@ -72,7 +75,8 @@ export default function ExperienceStepForm({
 
   // ── Refine Experience ─────────────────────────────────────────
   const handleRefine = async (index: number) => {
-    const desc = experienceValues[index]?.description;
+    const desc = experienceValues?.[index]?.description;
+    if (!desc) return;
     const result = await refineContent(desc, "experience");
     if (result && typeof result === "string" && setValue) {
       setValue(`experience.${index}.description`, result, {
@@ -194,7 +198,7 @@ export default function ExperienceStepForm({
                 render={({ field }) => (
                   <DatePicker
                     placeholder={t("empExperienceStartDatePlaceholder")}
-                    date={field.value ? new Date(field.value) : undefined}
+                    date={field.value instanceof Date ? field.value : undefined}
                     onDateChange={(date) =>
                       field.onChange(date ? new Date(date) : "")
                     }
@@ -217,7 +221,7 @@ export default function ExperienceStepForm({
                 render={({ field }) => (
                   <DatePicker
                     placeholder={t("empExperienceEndDatePlaceholder")}
-                    date={field.value ? new Date(field.value) : undefined}
+                    date={field.value instanceof Date ? field.value : undefined}
                     onDateChange={(date) =>
                       field.onChange(date ? new Date(date) : "")
                     }

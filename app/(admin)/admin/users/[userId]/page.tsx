@@ -56,7 +56,12 @@ export default function AdminUserDetailPage() {
   /* -------------------------------- Render UI ------------------------------- */
   if (loadingUserDetail && !userDetail) {
     return (
-      <div className="space-y-4">
+      <div className="flex flex-col gap-5">
+        {/* Back link — kept as a plain skeleton row rather than the live link
+            because the surrounding chrome should feel loading, not half-live. */}
+        <Skeleton className="h-4 w-32" />
+        {/* Identity card, then the two activity sections below. Heights match
+            what the real page renders at so first paint does not stretch. */}
         <Skeleton className="h-32 w-full" />
         <Skeleton className="h-64 w-full" />
       </div>

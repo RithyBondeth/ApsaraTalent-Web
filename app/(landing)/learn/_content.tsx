@@ -18,7 +18,7 @@ import {
   StaticSection,
   StaticStep,
 } from "@/components/static-content/static-page";
-import { useLanguageStore } from "@/stores/languages/language-store";
+import { useLanguageStore } from "@/stores/languages/language.store";
 
 /* ----------------------- Content Types & Data ----------------------- */
 type TTocItem = { id: string; label: string };

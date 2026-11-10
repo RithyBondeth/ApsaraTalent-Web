@@ -47,7 +47,7 @@ export function RecentMatchesList({
         >
           {/* Avatar Section */}
           <CachedAvatar
-            src={match.avatar}
+            src={match.avatar ?? undefined}
             alt={match.name}
             className="size-10 shrink-0 !rounded-none border border-border"
             rounded="md"
@@ -63,7 +63,7 @@ export function RecentMatchesList({
               {match.name}
             </TypographyP>
             <TypographyMuted className="text-[11px] text-muted-foreground">
-              {timeAgo(match.matchDate, tc)}
+              {timeAgo(match.matchedAt, tc)}
             </TypographyMuted>
           </div>
         </div>

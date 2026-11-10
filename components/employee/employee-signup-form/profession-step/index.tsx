@@ -1,4 +1,7 @@
-import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
+import {
+  TEmployeeSignUp,
+  TEmployeeSignUpInput,
+} from "@/app/(auth)/signup/employee/validation";
 import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,7 +42,7 @@ export default function ProfessionStepForm({
   control,
   errors,
   setValue,
-}: IStepFormProps<TEmployeeSignUp>) {
+}: IStepFormProps<TEmployeeSignUpInput, TEmployeeSignUp>) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
   const tr = useTranslations("resumeBuilder");

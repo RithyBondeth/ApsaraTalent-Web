@@ -9,7 +9,7 @@ describe("client preference stores", () => {
   afterEach(() => vi.restoreAllMocks());
 
   it("updates and persists the selected language", async () => {
-    const { useLanguageStore } = await import("../languages/language-store");
+    const { useLanguageStore } = await import("../languages/language.store");
     useLanguageStore.setState({ language: "en" });
     useLanguageStore.getState().setLanguage("km");
     expect(useLanguageStore.getState().language).toBe("km");
@@ -17,7 +17,7 @@ describe("client preference stores", () => {
   });
 
   it("tracks hydration and toggles explicit and system themes", async () => {
-    const { useThemeStore } = await import("../themes/theme-store");
+    const { useThemeStore } = await import("../themes/theme.store");
     useThemeStore.setState({
       theme: "dark",
       systemTheme: "light",
@@ -59,7 +59,7 @@ describe("client preference stores", () => {
           dispatchEvent: vi.fn(),
         }) as MediaQueryList,
     );
-    const { useThemeStore } = await import("../themes/theme-store");
+    const { useThemeStore } = await import("../themes/theme.store");
     expect(useThemeStore.getState().systemTheme).toBe("light");
     dark = true;
     listener?.();

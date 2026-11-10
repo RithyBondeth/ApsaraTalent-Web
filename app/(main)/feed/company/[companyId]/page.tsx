@@ -54,7 +54,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
@@ -63,6 +63,8 @@ import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useMyApplicationsStore } from "@/stores/apis/job/my-applications.store";
+import { ApplyJobDialog } from "@/components/application/apply-job-dialog";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   LIKE_DEBOUNCE_MS,
@@ -105,11 +107,35 @@ export default function CompanyDetailPage() {
   const countAllEmployeeFavoritesStore =
     useCountCurrentEmployeeFavoritesStore();
   const currentEmployeeId = currentUser?.employee?.id;
+  const myApplications = useMyApplicationsStore((state) => state.applications);
+
+  /*
+    The apply button has to know whether this employee already has an open
+    application for each position, so the whole list is fetched once and keyed
+    by job. Fetching per position card would be one request per open role.
+  */
+  const applicationByJobId = useMemo(
+    () =>
+      new Map(
+        myApplications
+          .filter((application) => application.jobId)
+          .map((application) => [application.jobId as string, application]),
+      ),
+    [myApplications],
+  );
 
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (typeof window !== "undefined") setIsInitialized(true);
   }, []);
+
+  // Only an employee can apply, so only an employee pays for the request.
+  useEffect(() => {
+    if (!currentEmployeeId) return;
+    const store = useMyApplicationsStore.getState();
+    if (store.applications.length === 0 && !store.loading)
+      store.queryMyApplications();
+  }, [currentEmployeeId]);
 
   // Block access if this company was already liked by the current employee
   useEffect(() => {
@@ -500,6 +526,19 @@ export default function CompanyDetailPage() {
                               {salaryText(item)}
                             </span>
                           </div>
+                        </div>
+                      )}
+
+                      {/* Apply Action Section */}
+                      {currentEmployeeId && item.id && (
+                        <div className="mt-4 flex justify-end border-t border-border/60 pt-4">
+                          <ApplyJobDialog
+                            jobId={item.id}
+                            jobTitle={item.title}
+                            existingStatus={
+                              applicationByJobId.get(item.id)?.status
+                            }
+                          />
                         </div>
                       )}
                     </div>

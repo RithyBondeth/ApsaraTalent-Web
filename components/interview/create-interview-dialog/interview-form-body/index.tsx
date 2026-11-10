@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { IInterviewFormBodyProps } from "./props";
-import { useLanguageStore } from "@/stores/languages/language-store";
+import { useLanguageStore } from "@/stores/languages/language.store";
 import { km, enUS } from "date-fns/locale";
 
 const Calendar = dynamic(
