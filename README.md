@@ -2,6 +2,24 @@
 
 The Next.js frontend for Apsara Talent, a Cambodia-focused platform connecting professionals and companies through profiles, matching, messaging, interviews, and AI-assisted resume tools.
 
+<!-- product-images:start -->
+
+## Product preview
+
+<p align="center">
+  <img src="docs/product-images/hero.png" alt="Apsara Talent — Web and mobile recruitment platform for candidates and companies in Cambodia." width="100%">
+</p>
+
+<table>
+<tr>
+  <td width="33%"><img src="docs/product-images/feature-01.png" alt="Opportunity, closer to you. — Explore the platform connecting candidates with companies." width="100%"></td>
+  <td width="33%"><img src="docs/product-images/feature-02.png" alt="A resume with a head start. — Build and preview a resume within the recruitment workflow." width="100%"></td>
+  <td width="33%"><img src="docs/product-images/feature-03.png" alt="Take Apsara Talent with you — Native iOS app preview." width="100%"></td>
+</tr>
+</table>
+
+<!-- product-images:end -->
+
 ## Requirements
 
 - Node.js 20.9 or newer

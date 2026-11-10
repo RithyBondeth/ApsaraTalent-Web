@@ -16,7 +16,6 @@ import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { LucideLogOut, LucideShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 /**
@@ -40,7 +39,6 @@ import { useState } from "react";
 export function AdminHeader() {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("admin.header");
-  const router = useRouter();
 
   /* -------------------------------- All States ------------------------------ */
   const [logoutOpen, setLogoutOpen] = useState(false);
@@ -79,10 +77,8 @@ export function AdminHeader() {
     await clearAuthCookiesServerSide();
     clearAuthCookies();
 
-    router.push("/");
-    // A full reload drops every Zustand store, so nothing of this session
-    // survives into the next one.
-    window.location.reload();
+    // One full navigation clears in-memory state and avoids a racing reload.
+    window.location.replace("/");
   };
 
   /* -------------------------------- Render UI ------------------------------- */

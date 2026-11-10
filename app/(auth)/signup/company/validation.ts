@@ -3,7 +3,7 @@ import {
   COMPANY_TYPE_MAX_LENGTH,
   FOUNDED_YEAR_MIN,
 } from "@/utils/constants/ui.constant";
-import * as z from "zod";
+import * as z from "zod/v3";
 
 // ─── Helper Validation ──────────────────────────────────────────
 const makeDateRequired = (requiredError: string) =>
@@ -179,5 +179,9 @@ export const makeCompanySignupSchema = (m: {
   });
 
 export type TCompanySignup = z.infer<
+  ReturnType<typeof makeCompanySignupSchema>
+>;
+
+export type TCompanySignupInput = z.input<
   ReturnType<typeof makeCompanySignupSchema>
 >;

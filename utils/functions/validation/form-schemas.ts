@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/v3";
 import {
   ACCEPTED_FILE_TYPES,
   DOCUMENT_SIZE,
