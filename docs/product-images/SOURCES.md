@@ -1,16 +1,12 @@
-# Apsara Talent — product image sources
+# Apsara Talent product artwork
+
+The careers magazine · web and mobile layout draws its palette from the product screenshots.
+Open the HTML files in `source/` to edit the artwork. Ubuntu is used for English and Kantumruy Pro for Khmer. Font licenses are included.
+
+The artwork uses original project logos and interface captures. Workflow graphics illustrate the product's documented capabilities.
 
 Repository: https://github.com/RithyBondeth/ApsaraTalent-Web
 
 Local project UI/demo captures. Sample data may be visible.
 
-Feature copy is based on the repository's public README captured on 2026-11-10. Diagrams are explanatory graphics, not screenshots or performance claims. Original captures are copied into source/assets and remain unchanged.
-
-## Editable assets
-
-The original overview capture, logo, and any additional product captures are included unchanged under `source/assets`. Open `source/hero.html` or the feature HTML files to review the standalone layouts. The bundled font license is in `source/assets/FONT-LICENSE.txt`.
-
-Final hero export: 2400 × 1350 PNG (1200 × 675 CSS pixels at 2×).
-Final feature exports: 1080 × 1440 PNG (540 × 720 CSS pixels at 2×).
-
-No application code or existing screenshots are replaced by this kit.
+The logo is the official light-mode wordmark from ApsaraTalent Web. The desktop image is a local web landing-page capture and the mobile image is the Flutter app's sign-in screen from an iPhone simulator.
