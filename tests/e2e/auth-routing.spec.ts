@@ -138,6 +138,9 @@ test("logging out ends the session through the API", async ({ page }) => {
     )
     .not.toContain("auth-session-role");
 
+  // Let the post-logout navigation finish before testing a protected route.
+  await page.waitForURL((url) => url.pathname === "/");
+
   // 3. and the session is really over — protected routes bounce to login
   await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/login\?callbackUrl=/);
