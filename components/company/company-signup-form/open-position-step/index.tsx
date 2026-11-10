@@ -1,4 +1,7 @@
-import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
+import {
+  TCompanySignup,
+  TCompanySignupInput,
+} from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -61,7 +64,7 @@ export default function OpenPositionStepForm({
   setValue,
   getValues,
   trigger,
-}: IStepFormProps<TCompanySignup>) {
+}: IStepFormProps<TCompanySignupInput, TCompanySignup>) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
   const tr = useTranslations("resumeBuilder");
@@ -458,7 +461,9 @@ export default function OpenPositionStepForm({
                       placeholder={`${t("cmpOpenPositionDeadlinePlaceholder")} *`}
                       aria-label={t("cmpOpenPositionDeadlineDate")}
                       aria-required="true"
-                      date={field.value ? new Date(field.value) : undefined}
+                      date={
+                        field.value instanceof Date ? field.value : undefined
+                      }
                       onDateChange={(date) =>
                         field.onChange(date ? new Date(date) : "")
                       }

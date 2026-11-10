@@ -2,7 +2,7 @@ import {
   optionalFileValidation,
   optionalImageValidation,
 } from "@/utils/functions/validation";
-import * as z from "zod";
+import * as z from "zod/v3";
 
 // ─── Helper Validation ──────────────────────────────────────────
 const makeDateRequired = (requiredError: string) =>
@@ -161,5 +161,9 @@ export const makeEmployeeSignUpSchema = (m: {
   });
 
 export type TEmployeeSignUp = z.infer<
+  ReturnType<typeof makeEmployeeSignUpSchema>
+>;
+
+export type TEmployeeSignUpInput = z.input<
   ReturnType<typeof makeEmployeeSignUpSchema>
 >;

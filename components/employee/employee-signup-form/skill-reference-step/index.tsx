@@ -1,4 +1,7 @@
-import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
+import {
+  TEmployeeSignUp,
+  TEmployeeSignUpInput,
+} from "@/app/(auth)/signup/employee/validation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -31,7 +34,7 @@ export default function SkillReferenceStepForm({
   setValue,
   getValues,
   trigger,
-}: IStepFormProps<TEmployeeSignUp>) {
+}: IStepFormProps<TEmployeeSignUpInput, TEmployeeSignUp>) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
   const tToast = useTranslations("toast");

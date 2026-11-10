@@ -1,4 +1,7 @@
-import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
+import {
+  TCompanySignup,
+  TCompanySignupInput,
+} from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +24,7 @@ export default function BenefitValueStepForm({
   setValue,
   trigger,
   errors,
-}: IStepFormProps<TCompanySignup>) {
+}: IStepFormProps<TCompanySignupInput, TCompanySignup>) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
   const tToast = useTranslations("toast");

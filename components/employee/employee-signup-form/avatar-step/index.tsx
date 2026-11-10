@@ -1,4 +1,7 @@
-import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
+import {
+  TEmployeeSignUp,
+  TEmployeeSignUpInput,
+} from "@/app/(auth)/signup/employee/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 import { DragDropFile } from "@/components/utils/forms/drag-drop-file";
@@ -11,7 +14,7 @@ export default function AvatarStepForm({
   setValue,
   getValues,
   errors,
-}: IStepFormProps<TEmployeeSignUp>) {
+}: IStepFormProps<TEmployeeSignUpInput, TEmployeeSignUp>) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
 
@@ -59,7 +62,7 @@ export default function AvatarStepForm({
       {/* Drag Drop File Section */}
       <div className="flex w-full justify-center">
         {setValue && (
-          <DragDropFile<TEmployeeSignUp>
+          <DragDropFile<TEmployeeSignUpInput>
             preview={preview}
             onFilesSelected={handleFilesSelected}
             acceptedFileTypes="image/*"

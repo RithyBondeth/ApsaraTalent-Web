@@ -1,5 +1,7 @@
 "use client";
 
+import type { z } from "zod/v3";
+
 import { Button } from "@/components/ui/button";
 import { AuthField } from "@/components/auth/auth-field";
 import { AuthSelect } from "@/components/auth/auth-select";
@@ -184,7 +186,11 @@ export default function SignupPage() {
   }, [parsedData]);
 
   // ── Initialize Cmp Form with Default Values ────────────────────────────
-  const cmpForm = useForm<TBasicSignupCompanySchema>({
+  const cmpForm = useForm<
+    z.input<ReturnType<typeof makeBasicSignupCompanySchema>>,
+    unknown,
+    TBasicSignupCompanySchema
+  >({
     resolver: zodResolver(makeBasicSignupCompanySchema(signupMessages)),
     defaultValues: {
       email: "",
@@ -195,7 +201,11 @@ export default function SignupPage() {
   });
 
   // ── Initialize Emp Form with Default Values ────────────────────────────
-  const empForm = useForm<TBasicSignupEmployeeSchema>({
+  const empForm = useForm<
+    z.input<ReturnType<typeof makeBasicSignupEmployeeSchema>>,
+    unknown,
+    TBasicSignupEmployeeSchema
+  >({
     resolver: zodResolver(makeBasicSignupEmployeeSchema(signupMessages)),
     defaultValues: defaultEmpValues,
   });
@@ -492,6 +502,7 @@ export default function SignupPage() {
                     }
                     error={employeeErrors.phone?.message}
                     {...field}
+                    value={typeof field.value === "string" ? field.value : ""}
                   />
                 )}
               />

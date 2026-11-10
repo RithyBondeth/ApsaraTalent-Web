@@ -1,5 +1,7 @@
 "use client";
 
+import type { z } from "zod/v3";
+
 import SearchBar from "@/components/search/search-bar";
 import SearchCompanyCard from "@/components/search/search-company-card";
 import SearchPageHero from "@/components/search/search-page-hero";
@@ -58,6 +60,12 @@ import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { SearchCompanyCardSkeleton } from "@/components/search/skeleton";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
+
+function dateFilterToIso(value: unknown): string | undefined {
+  return value instanceof Date && !Number.isNaN(value.getTime())
+    ? value.toISOString()
+    : undefined;
+}
 
 export default function EmployeeSearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -141,7 +149,11 @@ export default function EmployeeSearchPage() {
     restores the exact filter state that was active when the URL was captured.
   */
   const { register, control, setValue, getValues, handleSubmit, watch } =
-    useForm<TEmployeeSearchSchema>({
+    useForm<
+      z.input<typeof employeeSearchSchema>,
+      unknown,
+      TEmployeeSearchSchema
+    >({
       resolver: zodResolver(employeeSearchSchema),
       defaultValues: {
         keyword: searchParams.get("q") ?? "",
@@ -208,7 +220,7 @@ export default function EmployeeSearchPage() {
   // the user's back button still exits the search page cleanly.
   // Note: filter changes always reset to page 1, so no page param is written here.
   const syncToUrl = useCallback(
-    (values: TEmployeeSearchSchema) => {
+    (values: z.input<typeof employeeSearchSchema>) => {
       const params = new URLSearchParams();
       if (values.keyword) params.set("q", values.keyword);
       if (values.location && values.location !== "all")
@@ -229,9 +241,10 @@ export default function EmployeeSearchPage() {
         params.set("smin", String(values.salaryRange.min));
       if (values.salaryRange?.max !== undefined)
         params.set("smax", String(values.salaryRange.max));
-      if (values.date?.from)
+      if (values.date?.from instanceof Date)
         params.set("dfrom", values.date.from.toISOString());
-      if (values.date?.to) params.set("dto", values.date.to.toISOString());
+      if (values.date?.to instanceof Date)
+        params.set("dto", values.date.to.toISOString());
       // Default is off, so only the on state needs to survive a refresh.
       if (values.useCareerScopes) params.set("scope", "1");
       const qs = params.toString();
@@ -257,7 +270,7 @@ export default function EmployeeSearchPage() {
 
   // ── Real Search Function ────────────────────────────────────────
   const runSearch = useCallback(
-    (data: TEmployeeSearchSchema, restorePage?: number) => {
+    (data: z.input<typeof employeeSearchSchema>, restorePage?: number) => {
       querySearchJobs({
         careerScopes: buildCareerScopes(data.useCareerScopes),
         // Only send keyword when it satisfies the server's @MinLength(2);
@@ -270,8 +283,8 @@ export default function EmployeeSearchPage() {
         jobType: data.jobType === "all" ? undefined : data.jobType,
         companySizeMin: data.companySize?.min,
         companySizeMax: data.companySize?.max,
-        postedDateFrom: data.date?.from?.toISOString(),
-        postedDateTo: data.date?.to?.toISOString(),
+        postedDateFrom: dateFilterToIso(data.date?.from),
+        postedDateTo: dateFilterToIso(data.date?.to),
         salaryMin: data.salaryRange?.min,
         salaryMax: data.salaryRange?.max,
         educationRequired:
@@ -313,8 +326,8 @@ export default function EmployeeSearchPage() {
       jobType: data.jobType === "all" ? undefined : data.jobType,
       companySizeMin: data.companySize?.min,
       companySizeMax: data.companySize?.max,
-      postedDateFrom: data.date?.from?.toISOString(),
-      postedDateTo: data.date?.to?.toISOString(),
+      postedDateFrom: dateFilterToIso(data.date?.from),
+      postedDateTo: dateFilterToIso(data.date?.to),
       salaryMin: data.salaryRange?.min,
       salaryMax: data.salaryRange?.max,
       educationRequired:
@@ -644,8 +657,14 @@ export default function EmployeeSearchPage() {
                     name="date"
                     control={control}
                     render={({ field }) => {
-                      const from = field.value?.from;
-                      const to = field.value?.to;
+                      const from =
+                        field.value?.from instanceof Date
+                          ? field.value.from
+                          : undefined;
+                      const to =
+                        field.value?.to instanceof Date
+                          ? field.value.to
+                          : undefined;
 
                       let selectedValue: string = "all";
                       if (!from && !to) selectedValue = "all";
@@ -1145,9 +1164,10 @@ export default function EmployeeSearchPage() {
                               : getValues("jobType"),
                           companySizeMin: getValues("companySize")?.min,
                           companySizeMax: getValues("companySize")?.max,
-                          postedDateFrom:
-                            getValues("date")?.from?.toISOString(),
-                          postedDateTo: getValues("date")?.to?.toISOString(),
+                          postedDateFrom: dateFilterToIso(
+                            getValues("date")?.from,
+                          ),
+                          postedDateTo: dateFilterToIso(getValues("date")?.to),
                           salaryMin: getValues("salaryRange")?.min,
                           salaryMax: getValues("salaryRange")?.max,
                           educationRequired: getValues("educationLevel")?.length

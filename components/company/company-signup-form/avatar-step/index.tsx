@@ -1,4 +1,7 @@
-import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
+import {
+  TCompanySignup,
+  TCompanySignupInput,
+} from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 import ErrorMessage from "@/components/utils/feedback/error-message";
@@ -11,7 +14,7 @@ export default function AvatarCompanyStepForm({
   setValue,
   getValues,
   errors,
-}: IStepFormProps<TCompanySignup>) {
+}: IStepFormProps<TCompanySignupInput, TCompanySignup>) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
 
@@ -59,7 +62,7 @@ export default function AvatarCompanyStepForm({
       {/* Drag Drop File Section */}
       <div className="flex w-full justify-center">
         {setValue && (
-          <DragDropFile<TCompanySignup>
+          <DragDropFile<TCompanySignupInput>
             onFilesSelected={handleFilesSelected}
             acceptedFileTypes="image/*"
             maxFileSize={5242880}

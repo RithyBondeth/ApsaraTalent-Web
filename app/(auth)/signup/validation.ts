@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/v3";
 
 // ── Basic Signup Employee Schema ─────────────────────────────────────────────
 export const makeBasicSignupEmployeeSchema = (m: {

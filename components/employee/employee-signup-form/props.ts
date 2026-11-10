@@ -8,9 +8,12 @@ import {
   UseFormTrigger,
 } from "react-hook-form";
 
-export interface IStepFormProps<T extends FieldValues> {
+export interface IStepFormProps<
+  T extends FieldValues,
+  TParsed extends FieldValues = T,
+> {
   register: UseFormRegister<T>;
-  control?: Control<T>;
+  control?: Control<T, unknown, TParsed>;
   errors?: FieldErrors<T>;
   setValue?: UseFormSetValue<T>;
   getValues?: UseFormGetValues<T>;

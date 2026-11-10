@@ -1,5 +1,7 @@
 "use client";
 
+import type { z } from "zod/v3";
+
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import AuthShell from "@/components/auth/auth-shell";
@@ -57,7 +59,7 @@ export default function PhoneNumberPage() {
     control,
     formState: { errors },
     reset,
-  } = useForm<TPhoneLoginForm>({
+  } = useForm<z.input<typeof phoneLoginSchema>, unknown, TPhoneLoginForm>({
     resolver: zodResolver(phoneLoginSchema),
   });
 
